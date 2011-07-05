@@ -1,0 +1,5 @@
+/modules/contrib
+/nodejs/.monitor
+/nodejs/node_modules
+/nodejs/settings.js
+
