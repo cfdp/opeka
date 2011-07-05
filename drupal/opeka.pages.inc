@@ -20,12 +20,18 @@ function opeka_main_page() {
   // connecting to the nowjs server.
   drupal_add_js($js_url, array('type' => 'external', 'weight' => -42));
 
+  // Settings to expose to the JavaScript client.
+  $settings = array(
+    'path' => base_path() . drupal_get_path('module', 'opeka'),
+  );
+  drupal_add_js(array('opeka' => $settings), 'setting');
+
   // Load the required JavaScript files.
   $path = drupal_get_path('module', 'opeka');
   foreach (array('jquery.tmpl.min.js', 'opeka.frontend.js') as $filename) {
     drupal_add_js($path . '/js/' . $filename);
   }
 
-  return '<div id="chat-placeholder">' . t('Loading chat…') . '</div>';
+  return '<div id="opeka-placeholder">' . t('Loading chat…') . '</div>';
 }
 
