@@ -34,7 +34,7 @@ function Server(httpPort) {
    * resources required for the safe operation of the chat.
    */
   everyone.now.clientReady = function (localUser, callback) {
-    // Do something here.
+    util.log(localUser.nickname + ' connected.');
   };
 
   /**

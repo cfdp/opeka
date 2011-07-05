@@ -1,0 +1,56 @@
+<?php
+/**
+ * @file
+ * Drupal module for Opeka project.
+ *
+ * Provides user-facing and admin-targeted pages including the JavaScript
+ * needed for communication with nowjs.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function opeka_permission() {
+  return array(
+    'access opeka chat' => array(
+      'title' => t('Access the chat system'),
+      'description' => t('Grants a user normal access to the Opeka chat system.'),
+    ),
+    'administer opeka chat' => array(
+      'title' => t('Administer the chat system'),
+      'description' => t('Grants a user access to the admin backend of the Opeka chat system.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function opeka_menu() {
+  $items = array();
+
+  $items['opeka'] = array(
+    'page callback' => 'opeka_main_page',
+    'access arguments' => array('access opeka chat'),
+    'file' => 'opeka.pages.inc',
+  );
+
+  $items['admin/opeka'] = array(
+    'title' => 'Chat',
+    'page callback' => 'opeka_admin_page',
+    'access arguments' => array('administer opeka chat'),
+    'file' => 'opeka.admin.inc',
+  );
+
+  $items['admin/config/services/opeka'] = array(
+    'title' => 'Opeka chat system',
+    'description' => 'Provides settings for the chat service.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('opeka_admin_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'opeka.admin.inc',
+  );
+
+  return $items;
+}
+
