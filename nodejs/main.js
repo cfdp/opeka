@@ -11,7 +11,7 @@ var client = drupal.db.connect(settings.databaseConnection, function (err, conne
   }
   else if (connection) {
     util.log('Database connection established, initlialising Now.js server...');
-    var server = new spravka.Server(settings.httpPort);
+    var server = new opeka.Server(settings.httpPort);
   }
 });
 

@@ -19,7 +19,7 @@ function Server(httpPort) {
   // Create a simple server that responds via HTTP.
   self.server = require('http').createServer(function(req, response) {
     response.writeHead(200);
-    response.write('Welcome to Spravka.');
+    response.write('Welcome to Opeka.');
     response.end();
   });
   self.server.listen(self.httpPort);
