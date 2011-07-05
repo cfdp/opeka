@@ -1,0 +1,20 @@
+{
+  "name": "opeka",
+  "description": "Opeka: A secure anonymous chat, built with nowjs and Drupal",
+  "homepage": "http://cyberhus.dk/",
+  "version": "0.1.0",
+  "author": "Cyberhus <info@cyberhus.dk>",
+  "main": "main.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "dependencies":{
+    "async": ">=0.1.6",
+    "drupal": ">=0.2.0",
+    "now": ">=0.6.0"
+  }
+}
+
