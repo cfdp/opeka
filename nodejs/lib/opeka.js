@@ -15,8 +15,6 @@ var drupal = require("drupal"),
 function Server(httpPort) {
   var self = this;
   self.httpPort = httpPort;
-  self.councellorCount = 0;
-  self.userCount = 0;
 
   // Create a simple server that responds via HTTP.
   self.server = require('http').createServer(function(req, response) {
@@ -29,6 +27,9 @@ function Server(httpPort) {
   // Initialise Now.js on our server object.
   self.everyone = nowjs.initialize(self.server);
 
+  self.councellors = nowjs.getGroup('councellors');
+  self.guests = nowjs.getGroup("guests");
+
   /**
    * This function is called by the client when he's ready to load the chat.
    *
@@ -38,10 +39,10 @@ function Server(httpPort) {
   self.everyone.now.clientReady = function (localUser, callback) {
     util.log(localUser.nickname + ' connected.');
 
-    // When user joins, increment our counter and let the clients know.
-    // (councellors not implemented yet).
-    self.userCount += 1;
-    self.everyone.now.updateOnlineCount(self.userCount, self.councellorCount);
+    // Since we haven't implemented the backend yet, all users are added
+    // to the guests group.
+    self.guests.addUser(this.user.clientId);
+    self.everyone.now.updateOnlineCount(self.guests.count, self.councellors.count);
   };
 
   /**
@@ -51,9 +52,11 @@ function Server(httpPort) {
    * disconnected, etc.
    */
   self.everyone.on("disconnect", function () {
-    // When user disconnects, update the counts.
-    self.userCount -= 1;
-    self.everyone.now.updateOnlineCount(self.userCount, self.councellorCount);
+    // We need to wait a single tick before updating the online counts,
+    // since there's a bit of delay before they are accurate.
+    process.nextTick(function () {
+      self.everyone.now.updateOnlineCount(self.guests.count, self.councellors.count);
+    });
   });
 }
 

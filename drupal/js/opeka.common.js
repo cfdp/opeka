@@ -9,9 +9,9 @@ var opeka = {};
   /**
    * For when the server updates the online counts.
    */
-  now.updateOnlineCount = function (users, councellors) {
+  now.updateOnlineCount = function (guests, councellors) {
     $('#opeka-online-status')
-      .find('.users').text(users).end()
+      .find('.guests').text(guests).end()
       .find('.councellors').text(councellors).end();
   }
 })(jQuery);
