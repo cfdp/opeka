@@ -28,7 +28,7 @@ function opeka_main_page() {
 
   // Load the required JavaScript files.
   $path = drupal_get_path('module', 'opeka');
-  foreach (array('jquery.tmpl.min.js', 'opeka.frontend.js') as $filename) {
+  foreach (array('opeka.common.js', 'jquery.tmpl.min.js', 'opeka.frontend.js') as $filename) {
     drupal_add_js($path . '/js/' . $filename);
   }
 

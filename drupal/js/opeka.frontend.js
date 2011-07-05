@@ -3,8 +3,6 @@
  * Opeka nowjs integration code for the frontend.
  */
 
-var opeka = {};
-
 (function ($) {
 
 /**

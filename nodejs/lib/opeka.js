@@ -15,6 +15,8 @@ var drupal = require("drupal"),
 function Server(httpPort) {
   var self = this;
   self.httpPort = httpPort;
+  self.councellorCount = 0;
+  self.userCount = 0;
 
   // Create a simple server that responds via HTTP.
   self.server = require('http').createServer(function(req, response) {
@@ -35,6 +37,11 @@ function Server(httpPort) {
    */
   everyone.now.clientReady = function (localUser, callback) {
     util.log(localUser.nickname + ' connected.');
+
+    // When user joins, increment our counter and let the clients know.
+    // (councellors not implemented yet).
+    self.userCount += 1;
+    everyone.now.updateOnlineCount(self.userCount, self.councellorCount);
   };
 
   /**
@@ -44,7 +51,9 @@ function Server(httpPort) {
    * disconnected, etc.
    */
   everyone.on("disconnect", function () {
-    // Do something here.
+    // When user disconnects, update the counts.
+    self.userCount -= 1;
+    everyone.now.updateOnlineCount(self.userCount, self.councellorCount);
   });
 }
 
