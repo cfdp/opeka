@@ -5,6 +5,8 @@
 
 var opeka = {};
 
+(function ($) {
+
 /**
  * When the connection to Now.js is set up, report ourselves ready.
  */
@@ -21,4 +23,6 @@ now.ready(function() {
     $(window).trigger('opekaFrontendReady');
   });
 });
+
+})(jQuery);
 
