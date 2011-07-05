@@ -27,7 +27,7 @@ function Server(httpPort) {
   self.server.listen(self.httpPort);
 
   // Initialise Now.js on our server object.
-  var everyone = nowjs.initialize(self.server);
+  self.everyone = nowjs.initialize(self.server);
 
   /**
    * This function is called by the client when he's ready to load the chat.
@@ -35,13 +35,13 @@ function Server(httpPort) {
    * This usually means after loading client-side templates and other
    * resources required for the safe operation of the chat.
    */
-  everyone.now.clientReady = function (localUser, callback) {
+  self.everyone.now.clientReady = function (localUser, callback) {
     util.log(localUser.nickname + ' connected.');
 
     // When user joins, increment our counter and let the clients know.
     // (councellors not implemented yet).
     self.userCount += 1;
-    everyone.now.updateOnlineCount(self.userCount, self.councellorCount);
+    self.everyone.now.updateOnlineCount(self.userCount, self.councellorCount);
   };
 
   /**
@@ -50,10 +50,10 @@ function Server(httpPort) {
    * This includes closing open chats, letting others know he was
    * disconnected, etc.
    */
-  everyone.on("disconnect", function () {
+  self.everyone.on("disconnect", function () {
     // When user disconnects, update the counts.
     self.userCount -= 1;
-    everyone.now.updateOnlineCount(self.userCount, self.councellorCount);
+    self.everyone.now.updateOnlineCount(self.userCount, self.councellorCount);
   });
 }
 
