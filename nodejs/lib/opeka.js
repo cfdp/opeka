@@ -9,12 +9,12 @@
 var drupal = require("drupal"),
     nowjs = require("now"),
     util = require("util"),
-	fs = require("fs"),
-	roomManager = require("./roomManager"),
+    fs = require("fs"),
+    roomManager = require("./roomManager"),
     options = {
-	  key: fs.readFileSync('certs/server-key.pem'),
-	  cert: fs.readFileSync('certs/server-cert.pem')	
-	},
+      key: fs.readFileSync('certs/server-key.pem'),
+      cert: fs.readFileSync('certs/server-cert.pem')
+    },
     opeka = {};
 
 
@@ -24,22 +24,20 @@ function Server(httpPort) {
 
   // Create a simple server that responds via HTTPS.
   self.server = require('https').createServer(options, function(req, res) {
-	if (req.url == "/admin")
-	{
-	  	fs.readFile(__dirname+'/pages/admin_backend.html', function(err, _data){
-			res.writeHead(200, {'Content-Type':'text/html'});
-			res.write(_data);
-	    	res.end();
-	  	});
-	}
-	else
-	{
-	  	fs.readFile(__dirname+'/pages/client_frontend.html', function(err, _data){
-			res.writeHead(200, {'Content-Type':'text/html'});
-			res.write(_data);
-	    	res.end();
-	  	});
-	}
+  if (req.url == "/admin") {
+    fs.readFile(__dirname+'/pages/admin_backend.html', function(err, _data){
+    res.writeHead(200, {'Content-Type':'text/html'});
+    res.write(_data);
+      res.end();
+    });
+  }
+  else {
+    fs.readFile(__dirname+'/pages/client_frontend.html', function(err, _data){
+    res.writeHead(200, {'Content-Type':'text/html'});
+    res.write(_data);
+      res.end();
+    });
+  }
   });
   self.server.listen(self.httpPort);
 
@@ -49,8 +47,8 @@ function Server(httpPort) {
   self.councellors = nowjs.getGroup('councellors');
   self.guests = nowjs.getGroup("guests");
 
-  self.roomsMap = {}
-  self.roomsArr = new Array();
+  self.roomsMap = {};
+  self.roomsArr = [];
   self.roomCount = 0;
 
   /**
@@ -62,9 +60,9 @@ function Server(httpPort) {
    */
   self.everyone.now.clientReady = function (localUser, callback) {
     util.log(localUser.nickname + ' connected.');
-    console.log("Joined Joined Joined: " + this.now.name);
-	
-	//Add to guest group
+
+    // Since we haven't implemented the backend yet, all users are added
+    // to the guests group.
     self.guests.addUser(this.user.clientId);
     self.everyone.now.updateOnlineCount(self.guests.count, self.councellors.count);
   };
@@ -74,49 +72,49 @@ function Server(httpPort) {
    */
   self.everyone.now.newClientReady = function () {
     console.log("Joined: " + this.now.name);
-    //Initialize the room variable
-	this.now.room = null;
-	//Print the available rooms
+    // Initialize the room variable
+    this.now.room = null;
+    // Print the available rooms
     self.everyone.now.receiveRooms(self.roomsArr);
   };
-  
+
   /**
    * This function is called by the Counselors in order to create a new room
    */
   self.everyone.now.createRoom = function (roomName, maxSize) {
-	var newRoom = new roomManager.room(roomName, maxSize);
-	self.roomsMap[roomName] = newRoom;
-	self.roomsArr[self.roomCount]  = newRoom;
-	self.roomCount++;
+    var newRoom = new roomManager.room(roomName, maxSize);
+    self.roomsMap[roomName] = newRoom;
+    self.roomsArr[self.roomCount]  = newRoom;
+    self.roomCount++;
     console.log("Room created: " + roomName);
     self.everyone.now.receiveRooms(self.roomsArr);
   };
 
-   /**
-    * This function is used by the clients in order to change rooms
-    */
-   self.everyone.now.changeRoom = function(newRoom){
-	if (this.now.room != null){
-		var group = nowjs.getGroup(this.now.room.name);
-		group.removeUser(this.user.clientId);
-		this.now.clearMessages();
-		group.now.receiveMessage("**", this.now.name + " left the room.");
-	}
-	var newRoom = self.roomsMap[newRoom];
-	if (newRoom != null){
-	  	var group = nowjs.getGroup(newRoom.name);
-		group.addUser(this.user.clientId);
-		group.now.receiveMessage("**", this.now.name + " joined the room.");
-	  	this.now.room = newRoom;
-      	console.log(this.now.name + " joined " + this.now.room.name);
-	  }else{
-	  	this.now.receiveMessage("**", "ERROR! Room does not exists");		
-	  }
-	}
+  /**
+  * This function is used by the clients in order to change rooms
+  */
+  self.everyone.now.changeRoom = function(newRoom){
+    if (this.now.room != null){
+      var group = nowjs.getGroup(this.now.room.name);
+      group.removeUser(this.user.clientId);
+      this.now.clearMessages();
+      group.now.receiveMessage("**", this.now.name + " left the room.");
+    }
+    var newRoom = self.roomsMap[newRoom];
+    if (newRoom != null){
+    var group = nowjs.getGroup(newRoom.name);
+    group.addUser(this.user.clientId);
+    group.now.receiveMessage("**", this.now.name + " joined the room.");
+      this.now.room = newRoom;
+        console.log(this.now.name + " joined " + this.now.room.name);
+    }else{
+      this.now.receiveMessage("**", "ERROR! Room does not exists");
+    }
+  };
 
-	self.everyone.now.distributeMessage = function(message){
-	  nowjs.getGroup(this.now.room.name).now.receiveMessage(this.now.name, message);
-	};
+  self.everyone.now.distributeMessage = function (message){
+    nowjs.getGroup(this.now.room.name).now.receiveMessage(this.now.name, message);
+  };
 
 
   /**
