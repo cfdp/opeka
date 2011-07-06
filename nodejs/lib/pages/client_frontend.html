@@ -14,7 +14,7 @@ $(document).ready(function(){
   }
 
   now.receiveRooms = function(rooms){
-	document.getElementById('rooms').innerHTML = "";
+	document.getElementById('rooms').innerHTML = "Available rooms:<br>";
 	if (rooms.length == 0)
 		$("#rooms").append("No rooms available");
 	else{
@@ -25,11 +25,21 @@ $(document).ready(function(){
   now.receiveMessage = function(name, message){
     $("#chat").append("<br>" + name + ": " + message);
   }
-  
-  now.name = prompt("What's your name?", "");
-  
+
+  now.clearMessages = function(){
+	document.getElementById('chat').innerHTML = "";	
+  }
+    
   $("#connect-button").click(function(){
+	  now.name = $("#username-input").val();
+      $("#username-input").val("");
 	  now.newClientReady();
+	  document.getElementById('connect').innerHTML = "";
+  });
+
+  $("#send-button").click(function(){
+    now.distributeMessage($("#text-input").val());
+    $("#text-input").val("");
   });
 
 });
@@ -37,17 +47,24 @@ $(document).ready(function(){
 </script>
 </head>
 
-<body>	
-Available rooms:
+<body>
 
 <div id="rooms">
+	You are not connected.
 </div>
 
 <div id="chat">
 </div>
 
+<input type="text" id="text-input">
+<input type="button" value="Send" id="send-button">
 
+<div id="connect">
+Username:
+<input type="text" id="username-input">
 <input type="button" value="Connect" id="connect-button">
+</div>
+
 
 </body>
 </html>
