@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>nowjs test</title>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script src="/nowjs/now.js"></script>
+
+<script>
+$(document).ready(function(){
+
+  $("#createroom-button").click(function(){
+    now.createRoom($("#text-input").val(), 1);
+    $("#text-input").val("");
+  });
+  
+
+
+
+});
+</script>
+</head>
+
+<body>
+
+<div id="rooms">
+</div>
+
+<input type="text" id="text-input">
+<input type="button" value="Create Room" id="createroom-button">
+
+</body>
+</html>

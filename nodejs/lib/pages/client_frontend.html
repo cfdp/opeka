@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>nowjs test</title>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script src="/nowjs/now.js"></script>
+
+<script>
+$(document).ready(function(){
+
+  function printElt(element, index, array) {
+	//$("#rooms").append("<br>" + element);
+	  $("#rooms").append("<a href=\"#\" onClick=\"now.changeRoom($(this).text());\">"+element.name+"</a><br>");
+  }
+
+  now.receiveRooms = function(rooms){
+	document.getElementById('rooms').innerHTML = "";
+	if (rooms.length == 0)
+		$("#rooms").append("No rooms available");
+	else{
+		rooms.forEach(printElt)
+	}
+  }
+
+  now.receiveMessage = function(name, message){
+    $("#chat").append("<br>" + name + ": " + message);
+  }
+  
+  now.name = prompt("What's your name?", "");
+  
+  $("#connect-button").click(function(){
+	  now.newClientReady();
+  });
+
+});
+
+</script>
+</head>
+
+<body>	
+Available rooms:
+
+<div id="rooms">
+</div>
+
+<div id="chat">
+</div>
+
+
+<input type="button" value="Connect" id="connect-button">
+
+</body>
+</html>
