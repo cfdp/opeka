@@ -25,7 +25,7 @@ function opeka_admin_page() {
   $settings = array(
     'path' => base_path() . drupal_get_path('module', 'opeka'),
     'user' => array(
-      'nickname' => $user->name,
+      'name' => $user->name,
       'uid' => (integer) $user->uid,
       'sid' => $user->sid,
       'admin' => TRUE,

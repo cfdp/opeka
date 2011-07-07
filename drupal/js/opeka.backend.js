@@ -15,11 +15,33 @@ opeka.prepare = function () {
     $('body').append(templates);
 
     // Replace the placeholder with the backend interface.
-    $("#opeka-placeholder").replaceWith($("#opeka_backend_tmpl").tmpl());
+    $("#opeka-placeholder").replaceWith($("#opeka_backend_tmpl").tmpl({
+      user: Drupal.settings.opeka.user
+    }));
 
-    // When we're done setting up, let the server know.
-    now.clientReady(Drupal.settings.opeka.user, function () {
-      $(window).trigger('opekaBackendReady');
+    // Set up the admin interface.
+    var backendWrapper = $("#opeka-backend");
+        connectInterface = backendWrapper.find('.connect-interface');
+
+    // For handling the connect button.
+    connectInterface.find('.connect').click(function (event) {
+      var user = Drupal.settings.opeka.user;
+
+      $(this).attr("disabled", true);
+
+      // Pass along the nickname the user entered.
+      user.nickname = connectInterface.find('.nickname').val();
+
+      // When the connect button is pressed, mark the client as ready.
+      // When we're done setting up, let the server know.
+      now.clientReady(Drupal.settings.opeka.user, function () {
+        // Hide the connect interface.
+        connectInterface.fadeOut();
+
+        $(window).trigger('opekaBackendReady');
+      });
+
+      event.preventDefault();
     });
   });
 };

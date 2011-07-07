@@ -1,6 +1,17 @@
 <script id="opeka_backend_tmpl" type="x-jquery-tmpl">
-  <p id="opeka-online-status">
-    Der er <span class="guests">0</span> gæster og
-    <span class="councellors">0</span> rådgivere online.
-  </p>
+  <div id="opeka-backend">
+    <div class="online-interface element-hidden">
+    </div>
+
+    <form action="#" class="connect-interface">
+      <label>Kaldenavn</label>
+      <input class="nickname" type="text" value="${user.name}" />
+      <button class="connect">Klar til chat…</button> 
+    </form>
+
+    <p id="opeka-online-status">
+      Der er <span class="guests">0</span> gæster og
+      <span class="councellors">0</span> rådgivere online.
+    </p>
+  </div>
 </script>
