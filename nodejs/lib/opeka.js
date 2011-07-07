@@ -68,6 +68,9 @@ function Server(httpPort) {
         throw err;
       }
 
+      // Add the user to the overall group he belongs in.
+      // This is important, since it governs what methods he has access
+      // to, so only councellors can create rooms, etc.
       if (account.isAdmin) {
         self.councellors.addUser(context.user.clientId);
       }
@@ -75,6 +78,7 @@ function Server(httpPort) {
         self.guests.addUser(context.user.clientId);
       }
 
+      // Update online users count for all clients.
       self.everyone.now.updateOnlineCount(self.guests.count, self.councellors.count);
 
       callback(account);
@@ -130,6 +134,14 @@ function Server(httpPort) {
     nowjs.getGroup(this.now.room.name).now.receiveMessage(this.now.name, message);
   };
 
+  /**
+   * When a client connects, let him know how many others are online.
+   *
+   * The client not counted as online until it calls clientReady.
+   */
+  self.everyone.on("connect", function () {
+    this.now.updateOnlineCount(self.guests.count, self.councellors.count);
+  });
 
   /**
    * When a client disconnects, we need to clean up after him.
