@@ -11,7 +11,7 @@ function opeka_main_page() {
   $js_url = variable_get('opeka_nowjs_url', 'http://localhost:3000/nowjs/now.js');
 
   if (!$js_url) {
-    $errormsg = t('Spravka web service URL missing.');
+    $errormsg = t('Opeka web service URL missing.');
     drupal_set_message($errormsg, 'error');
     return $errormsg;
   }

@@ -30,6 +30,7 @@ function opeka_menu() {
   $items = array();
 
   $items['opeka'] = array(
+    'title' => 'Chat',
     'page callback' => 'opeka_main_page',
     'access arguments' => array('access opeka chat'),
     'file' => 'opeka.pages.inc',

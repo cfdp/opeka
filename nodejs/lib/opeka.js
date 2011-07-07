@@ -15,7 +15,9 @@ var drupal = require("drupal"),
       key: fs.readFileSync('certs/server-key.pem'),
       cert: fs.readFileSync('certs/server-cert.pem')
     },
-    opeka = {};
+    opeka = {
+      user: require('./user')
+    };
 
 
 function Server(httpPort) {
@@ -56,15 +58,27 @@ function Server(httpPort) {
    *
    * This usually means after loading client-side templates and other
    * resources required for the safe operation of the chat.
-   * OBS: This function is not used yet since it depends on Drupal
    */
-  self.everyone.now.clientReady = function (localUser, callback) {
-    util.log(localUser.nickname + ' connected.');
+  self.everyone.now.clientReady = function (clientUser, callback) {
+    var context = this;
+    util.log(clientUser.nickname + ' connected.');
 
-    // Since we haven't implemented the backend yet, all users are added
-    // to the guests group.
-    self.guests.addUser(this.user.clientId);
-    self.everyone.now.updateOnlineCount(self.guests.count, self.councellors.count);
+    opeka.user.authenticate(clientUser, function (err, account) {
+      if (err) {
+        throw err;
+      }
+
+      if (account.isAdmin) {
+        self.councellors.addUser(context.user.clientId);
+      }
+      else {
+        self.guests.addUser(context.user.clientId);
+      }
+
+      self.everyone.now.updateOnlineCount(self.guests.count, self.councellors.count);
+
+      callback(account);
+    });
   };
 
   /**
