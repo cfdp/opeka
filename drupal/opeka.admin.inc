@@ -50,8 +50,14 @@ function opeka_admin_page() {
  * Admin settings form for Opeka.
  */
 function opeka_admin_settings_form($form, &$form_state) {
-  $form[] = array(
-    '#markup' => 'Not implmented yet.',
+  form_load_include($form_state, 'admin.inc', 'lol_queue');
+
+  $form['opeka_nowjs_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Opeka server URL'),
+    '#description' => t('URL to the Spravka webservice JavaScript start point, eg. http://localhost:3000/nowjs/now.js'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('opeka_nowjs_url', ''),
   );
 
   return system_settings_form($form);
