@@ -10,12 +10,12 @@ var drupal = require("drupal"),
     nowjs = require("now"),
     util = require("util"),
     fs = require("fs"),
-    roomManager = require("./roomManager"),
     options = {
       key: fs.readFileSync('certs/server-key.pem'),
       cert: fs.readFileSync('certs/server-cert.pem')
     },
     opeka = {
+      rooms: require('./rooms'),
       user: require('./user')
     };
 
@@ -49,10 +49,6 @@ function Server(httpPort) {
   self.councellors = nowjs.getGroup('councellors');
   self.guests = nowjs.getGroup("guests");
 
-  self.roomsMap = {};
-  self.roomsArr = [];
-  self.roomCount = 0;
-
   /**
    * This function is called by the client when he's ready to load the chat.
    *
@@ -60,7 +56,7 @@ function Server(httpPort) {
    * resources required for the safe operation of the chat.
    */
   self.everyone.now.clientReady = function (clientUser, callback) {
-    var context = this;
+    var client = this;
     util.log(clientUser.nickname + ' connected.');
 
     opeka.user.authenticate(clientUser, function (err, account) {
@@ -72,66 +68,83 @@ function Server(httpPort) {
       // This is important, since it governs what methods he has access
       // to, so only councellors can create rooms, etc.
       if (account.isAdmin) {
-        self.councellors.addUser(context.user.clientId);
+        self.councellors.addUser(client.user.clientId);
       }
       else {
-        self.guests.addUser(context.user.clientId);
+        self.guests.addUser(client.user.clientId);
       }
+
+      // Store the account and nickname for later use.
+      client.user.account = account;
+      client.user.nickname = clientUser.nickname;
 
       // Update online users count for all clients.
       self.everyone.now.updateOnlineCount(self.guests.count, self.councellors.count);
+
+      // Send the rooms to the newly connected client.
+      client.now.receiveRooms(opeka.rooms.clientSideList(), opeka.rooms.roomOrder);
 
       callback(account);
     });
   };
 
   /**
-  * This function is called by the client when he's ready to load the chat.
-   */
-  self.everyone.now.newClientReady = function () {
-    console.log("Joined: " + this.now.name);
-    // Initialize the room variable
-    this.now.room = null;
-    // Print the available rooms
-    self.everyone.now.receiveRooms(self.roomsArr);
-  };
-
-  /**
    * This function is called by the Counselors in order to create a new room
    */
-  self.everyone.now.createRoom = function (roomName, maxSize) {
-    var newRoom = new roomManager.room(roomName, maxSize);
-    self.roomsMap[roomName] = newRoom;
-    self.roomsArr[self.roomCount]  = newRoom;
-    self.roomCount++;
-    console.log("Room created: " + roomName);
-    self.everyone.now.receiveRooms(self.roomsArr);
+  self.councellors.now.createRoom = function (roomName, maxSize, callback) {
+    var room = opeka.rooms.create(roomName, maxSize);
+
+    util.log("Room created: " + roomName);
+    self.everyone.now.receiveRooms(opeka.rooms.clientSideList(), opeka.rooms.roomOrder);
+
+    if (callback) {
+      callback(null, room);
+    }
   };
 
   /**
   * This function is used by the clients in order to change rooms
   */
-  self.everyone.now.changeRoom = function(newRoom){
-    if (this.now.room != null){
-      var group = nowjs.getGroup(this.now.room.name);
-      group.removeUser(this.user.clientId);
-      this.now.clearMessages();
-      group.now.receiveMessage("**", this.now.name + " left the room.");
+  self.everyone.now.changeRoom = function (roomId) {
+    var newRoom = opeka.rooms.get(roomId);
+
+    // If user is already in a different room, leave it.
+    if (this.user.activeRoomId) {
+      var oldRoom = opeka.room.get(this.user.activeRoomId);
+      oldRoom.removeUser(this.user.clientId);
+
+      oldRoom.group.now.receiveMessage({
+        date: new Date(),
+        message: this.user.nickname + " left the room.",
+        system: true
+      });
+
+      this.user.activeRoomId = null;
     }
-    var newRoom = self.roomsMap[newRoom];
-    if (newRoom != null){
-    var group = nowjs.getGroup(newRoom.name);
-    group.addUser(this.user.clientId);
-    group.now.receiveMessage("**", this.now.name + " joined the room.");
-      this.now.room = newRoom;
-        console.log(this.now.name + " joined " + this.now.room.name);
-    }else{
-      this.now.receiveMessage("**", "ERROR! Room does not exists");
+
+    if (newRoom) {
+      newRoom.addUser(this.user.clientId);
+      this.user.activeRoomId = roomId;
+
+      newRoom.group.now.receiveMessage({
+        date: new Date(),
+        message: this.user.nickname + " joined the room “" + newRoom.name + "”.",
+        system: true
+      });
     }
   };
 
-  self.everyone.now.distributeMessage = function (message){
-    nowjs.getGroup(this.now.room.name).now.receiveMessage(this.now.name, message);
+  self.everyone.now.sendMessageToRoom = function (roomId, messageText) {
+    var room = opeka.rooms.get(roomId),
+        messageObj = {
+          date: new Date(),
+          message: messageText,
+          name: this.user.nickname
+        };
+
+    if (room && room.group.count) {
+      room.group.now.receiveMessage(messageObj);
+    }
   };
 
   /**

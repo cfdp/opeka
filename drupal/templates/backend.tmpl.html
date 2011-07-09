@@ -1,12 +1,31 @@
 <script id="opeka_backend_tmpl" type="x-jquery-tmpl">
   <div id="opeka-backend">
-    <div class="online-interface element-hidden">
-    </div>
-
     <form action="#" class="connect-interface">
-      <label>Kaldenavn</label>
-      <input class="nickname" type="text" value="${user.name}" />
+      <label for="nickname">Kaldenavn</label>
+      <input id="nickname" type="text" value="${user.name}" /><br />
       <button class="connect">Klar til chat…</button> 
+    </form>
+
+    <form id="opeka-chat" class="element-hidden">
+      <ul id="chat-message-list">
+        <li class="placeholder">Ingen beskeder modtaget.</li>
+      </ul>
+      <label for="opeka-chat-message">Skriv en besked</label>
+      <input id="opeka-chat-message" type="text" />
+      <button id="opeka-send-message">Send besked</button>
+    </form>
+
+    <form action="#" class="online-interface element-hidden">
+      <h3>Vælg et eksisterende rum</h3>
+
+      <ul id="opeka-room-list">
+        <li class="placeholder">Ingen rum aktive.</li>
+      </ul>
+
+      <h3>Opret et nyt chatrum</h3>
+      <label for="nickname">Rummets navn</label>
+      <input id="room-name" type="text" /><br />
+      <button>Opret rum</button> 
     </form>
 
     <p id="opeka-online-status">
@@ -15,3 +34,21 @@
     </p>
   </div>
 </script>
+
+<script id="opeka_room_list_item_tmpl" type="x-jquery-tmpl">
+  <li class="room">
+    <a href="#${roomUrl}">${roomName}</a>
+  </li>
+</script>
+
+<script id="opeka_chat_message_tmpl" type="x-jquery-tmpl">
+  {{if message.system}}
+    <li class="system-message">${message.message}</li>
+  {{else}}
+  <li class="chat-message">
+    <span class="sender-name">[${message.name}]:</span> 
+    <span class="message">${message.message}</span>
+  </li>
+  {{/if}}
+</script>
+

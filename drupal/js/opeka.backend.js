@@ -6,7 +6,7 @@
 (function ($) {
 
 /**
- * Prepare the client, load templates, etc. 
+ * Prepare the client, load templates, etc.
  */
 opeka.prepare = function () {
   // Load the template file for rendering data from the server.
@@ -21,26 +21,44 @@ opeka.prepare = function () {
 
     // Set up the admin interface.
     var backendWrapper = $("#opeka-backend");
-        connectInterface = backendWrapper.find('.connect-interface');
+        connectForm = backendWrapper.find('.connect-interface');
+        roomForm = backendWrapper.find('.online-interface');
 
-    // For handling the connect button.
-    connectInterface.find('.connect').click(function (event) {
+    // Configure the connect button click event to make os ready to chat.
+    connectForm.find('.connect').click(function (event) {
       var user = Drupal.settings.opeka.user;
 
       $(this).attr("disabled", true);
 
       // Pass along the nickname the user entered.
-      user.nickname = connectInterface.find('.nickname').val();
+      user.nickname = connectForm.find('#nickname').val();
 
       // When the connect button is pressed, mark the client as ready.
       // When we're done setting up, let the server know.
       now.clientReady(Drupal.settings.opeka.user, function () {
         // Hide the connect interface.
-        connectInterface.fadeOut();
+        connectForm.fadeOut();
 
-        $(window).trigger('opekaBackendReady');
+        // Show the chat interface.
+        roomForm.fadeIn();
+
+        // Trigger the hashChange event, so if the user came to the page
+        // with a room in the URL, it opens now.
+        $(window).trigger('hashchange');
       });
 
+      event.preventDefault();
+    });
+
+    // Configure the create room interface.
+    roomForm.find('button').click(function (event) {
+      // When the room is created, show the chat interface.
+      now.createRoom(roomForm.find('#room-name').val(), null, function (err, room) {
+        if (room) {
+          now.changeRoom(room.id);
+          $.bbq.pushState({room: room.id});
+        }
+      });
       event.preventDefault();
     });
   });
