@@ -26,20 +26,9 @@ function Server(httpPort) {
 
   // Create a simple server that responds via HTTPS.
   self.server = require('https').createServer(options, function(req, res) {
-  if (req.url == "/admin") {
-    fs.readFile(__dirname+'/pages/admin_backend.html', function(err, _data){
-    res.writeHead(200, {'Content-Type':'text/html'});
-    res.write(_data);
-      res.end();
-    });
-  }
-  else {
-    fs.readFile(__dirname+'/pages/client_frontend.html', function(err, _data){
-    res.writeHead(200, {'Content-Type':'text/html'});
-    res.write(_data);
-      res.end();
-    });
-  }
+    res.writeHead(200);
+    res.write('Welcome to Opeka.');
+    res.end();
   });
   self.server.listen(self.httpPort);
 
