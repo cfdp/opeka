@@ -23,7 +23,7 @@ var opeka = {};
     opeka.rooms = rooms;
 
     roomList.find('.room').remove();
-    if (rooms) {
+    if (roomOrder.length > 0) {
       roomList.find('.placeholder').hide();
       $.each(roomOrder, function () {
         var roomId = this.toString();
