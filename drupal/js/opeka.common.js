@@ -97,10 +97,22 @@ var opeka = {};
 
   // Handle the send chat message for both admins and guests.
   $("#opeka-send-message").live('click', function (event) {
-    var message = $('#opeka-chat-message').val().trim();
+    var button = $(this),
+        message = $('#opeka-chat-message').val().trim();
 
     if (opeka.activeRoomId && message) {
+      // Disable the button to prevent multiple presses.
+      button.attr("disabled", true);
+
       now.sendMessageToRoom(opeka.activeRoomId, message);
+
+      // Wait a second before enabling the button again.
+      window.setTimeout(function () {
+        // Clear the message field.
+        $('#opeka-chat-message').val('');
+
+        button.attr("disabled", false);
+      }, 500);
     }
 
     event.preventDefault();
