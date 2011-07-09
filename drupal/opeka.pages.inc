@@ -26,6 +26,10 @@ function opeka_main_page() {
   );
   drupal_add_js(array('opeka' => $settings), 'setting');
 
+  // Load the required JavaScript libraries.
+  drupal_add_library('system', 'jquery.bbq');
+  drupal_add_library('system', 'ui.dialog');
+
   // Load the required JavaScript files.
   $path = drupal_get_path('module', 'opeka');
   foreach (array('opeka.common.js', 'jquery.tmpl.min.js', 'opeka.frontend.js') as $filename) {

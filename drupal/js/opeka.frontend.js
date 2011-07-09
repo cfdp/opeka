@@ -15,18 +15,38 @@ opeka.prepare = function () {
     $('body').append(templates);
 
     // Replace the placeholder with the frontend status interface.
-    $("#opeka-placeholder").replaceWith($("#opeka_frontend_status_tmpl").tmpl());
+    $("#opeka-placeholder").replaceWith($("#opeka_frontend_tmpl").tmpl());
 
-    // Hardcoded for testing purposes.
-    var clientData = {
-      nickname: 'Otto Testenheimer',
-      age: 24,
-      gender: 'female'
-    }
+    // Set up the admin interface.
+    var frontendWrapper = $("#opeka-frontend");
+        connectForm = frontendWrapper.find('.connect-interface');
+        roomForm = frontendWrapper.find('.online-interface');
 
-    // When we're done setting up, let the server know.
-    now.clientReady(clientData, function () {
-      $(window).trigger('opekaFrontendReady');
+    // Configure the connect button click event to make os ready to chat.
+    connectForm.find('.connect').click(function (event) {
+      var clientData = {};
+
+      // Disable the button to prevent multiple presses.
+      $(this).attr("disabled", true);
+
+      // Pass along the nickname the user entered.
+      clientData.nickname = connectForm.find('#nickname').val().trim() || 'Anonym';
+
+      // When the connect button is pressed, mark the client as ready.
+      // When we're done setting up, let the server know.
+      now.clientReady(clientData, function () {
+        // Hide the connect interface.
+        connectForm.fadeOut();
+
+        // Show the chat interface.
+        roomForm.fadeIn();
+
+        // Trigger the hashChange event, so if the user came to the page
+        // with a room in the URL, it opens now.
+        $(window).trigger('hashchange');
+      });
+
+      event.preventDefault();
     });
   });
 };
