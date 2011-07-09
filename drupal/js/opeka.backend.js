@@ -28,14 +28,15 @@ opeka.prepare = function () {
     connectForm.find('.connect').click(function (event) {
       var user = Drupal.settings.opeka.user;
 
+      // Disable the button to prevent multiple presses.
       $(this).attr("disabled", true);
 
       // Pass along the nickname the user entered.
-      user.nickname = connectForm.find('#nickname').val();
+      user.nickname = connectForm.find('#nickname').val().trim() || 'Anonym';
 
       // When the connect button is pressed, mark the client as ready.
       // When we're done setting up, let the server know.
-      now.clientReady(Drupal.settings.opeka.user, function () {
+      now.clientReady(user, function () {
         // Hide the connect interface.
         connectForm.fadeOut();
 
