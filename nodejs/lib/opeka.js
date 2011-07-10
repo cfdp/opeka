@@ -81,14 +81,29 @@ function Server(httpPort) {
    * This function is called by the Counselors in order to create a new room
    */
   self.councellors.now.createRoom = function (roomName, maxSize, callback) {
-    var room = opeka.rooms.create(roomName, maxSize);
+	if ((roomName.length == 0 || maxSize <=0) && callback){
+	  callback("Error creating room: size <= 0 or room name too short.",null);
+	} else {
+      var room = opeka.rooms.create(roomName, maxSize);
 
-    util.log("Room created: " + roomName);
-    self.everyone.now.receiveRooms(opeka.rooms.clientSideList(), opeka.rooms.roomOrder);
+      util.log("Room created: " + roomName);
+      self.everyone.now.receiveRooms(opeka.rooms.clientSideList(), opeka.rooms.roomOrder);
 
-    if (callback) {
-      callback(null, room);
+      if (callback) {
+        callback(null, room);
+      }
     }
+  };
+
+  /**
+   * This function is called by the Counselors in order to delete a room from the system
+   */
+  self.councellors.now.deleteRoom = function (roomId) {
+	var room = opeka.rooms.get(roomId);
+	if (room != null) {
+      //remove room from the system
+	  opeka.rooms.remove(roomId);
+	}
   };
 
   /**

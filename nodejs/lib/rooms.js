@@ -32,6 +32,19 @@ function get(roomId) {
 }
 
 /**
+ * Remove a room from the system.
+ */
+function remove(roomId){
+  var room = rooms[roomId];
+  if (room != null){
+	room.removeAllUsers();
+    var idx = roomOrder.indexOf(roomId);
+	roomOrder.splice(idx, 1);
+	rooms[roomId] = null;
+  }
+}
+
+/**
  * Get a room list, containing room metadata safe to send to the client.
  */
 function clientSideList() {
@@ -83,8 +96,22 @@ function Room(roomId, name, maxSize) {
     return {
       id: self.id,
       name: self.name,
-      maxSide: self.maxSize
+      maxSize: self.maxSize
     };
+  };
+
+  /**
+   * Remove all users from the room.
+   */
+  self.removeAllUsers = function(){
+	var keys = [];
+	for(var key in self.group._groupScopes){
+	  keys.push(key);
+	}
+	
+	for (var userId in keys){
+		self.removeUser(userId);
+	}
   };
 
   return self;
@@ -92,6 +119,7 @@ function Room(roomId, name, maxSize) {
 
 module.exports = {
   create: create,
+  remove: remove,
   get: get,
   clientSideList: clientSideList,
   roomOrder: roomOrder,
