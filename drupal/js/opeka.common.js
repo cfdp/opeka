@@ -6,6 +6,18 @@
 var opeka = {};
 
 (function ($) {
+
+  /* This method is used in order to update the active room of the users 
+   * in case a counselor have deleted it
+   */
+  now.updateActiveRoom = function(){
+	if (!opeka.rooms[opeka.activeRoomId]){
+        now.changeRoom(null);
+        opeka.activeRoomId = null;
+        opeka.closeChat();
+	}
+  };
+
   /**
    * For when the server updates the online counts.
    */

@@ -30,7 +30,9 @@ opeka.prepare = function () {
       $(this).attr("disabled", true);
 
       // Pass along the nickname the user entered.
-      clientData.nickname = connectForm.find('#nickname').val().trim() || 'Anonym';
+	  clientData.nickname = connectForm.find('#nickname').val().trim() || 'Anonym';
+	  clientData.age = connectForm.find('#age').val().trim() || '0';
+	  clientData.gender = connectForm.find('#gender').val() || 'N';
 
       // When the connect button is pressed, mark the client as ready.
       // When we're done setting up, let the server know.

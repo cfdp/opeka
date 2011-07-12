@@ -9,7 +9,7 @@
  */
 function opeka_admin_page() {
   global $user;
-  $js_url = variable_get('opeka_nowjs_url', 'http://localhost:3000/nowjs/now.js');
+  $js_url = variable_get('opeka_nowjs_url', 'https://localhost:3000/nowjs/now.js');
 
   if (!$js_url) {
     $errormsg = t('Opeka web service URL missing.');

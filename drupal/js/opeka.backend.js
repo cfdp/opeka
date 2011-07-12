@@ -42,6 +42,25 @@ opeka.prepare = function () {
 
         // Show the chat interface.
         roomForm.fadeIn();
+		roomForm.find('.delete-room').click(function (event) {
+	      event.preventDefault();
+		  var roomId = roomForm.find('#del-room').val().trim();
+		  if (roomId){
+			now.deleteRoom(roomId);
+ 		  }
+	    });
+	
+	  $("#opeka-send-whisper-message").live('click', function (event) {
+		var userid = $('#opeka-whisper-message-user').val().trim();
+	    var message = $('#opeka-whisper-message').val().trim();
+
+	    if (userid && message) {
+	      now.whisper(userid, message);
+	    }
+
+	    event.preventDefault();
+	  });
+	
 
         // Trigger the hashChange event, so if the user came to the page
         // with a room in the URL, it opens now.
@@ -52,9 +71,9 @@ opeka.prepare = function () {
     });
 
     // Configure the create room interface.
-    roomForm.find('button').click(function (event) {
+    roomForm.find('.create-room').click(function (event) {
       // When the room is created, show the chat interface.
-      now.createRoom(roomForm.find('#room-name').val(), null, function (err, room) {
+      now.createRoom(roomForm.find('#room-name').val(), 1, function (err, room) {
         if (room) {
           now.changeRoom(room.id);
           $.bbq.pushState({room: room.id});

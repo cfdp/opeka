@@ -13,6 +13,12 @@
       <label for="opeka-chat-message">Skriv en besked</label>
       <input id="opeka-chat-message" type="text" />
       <button id="opeka-send-message">Send besked</button>
+
+      <label for="opeka-whisper-message">Skriv en besked to an user-id</label>
+      <input id="opeka-whisper-message-user" placeholder="User ID" type="text" />
+      <input id="opeka-whisper-message" placeholder="Message" type="text" />
+      <button id="opeka-send-whisper-message">Send whisper</button>
+
     </form>
 
     <form action="#" class="online-interface element-hidden">
@@ -23,9 +29,14 @@
       </ul>
 
       <h3>Opret et nyt chatrum</h3>
-      <label for="nickname">Rummets navn</label>
+      <label for="room-name">Rummets navn</label>
       <input id="room-name" type="text" /><br />
-      <button>Opret rum</button> 
+      <button class="create-room">Opret rum</button> 
+
+      <label for="del-room">Delete Room:</label>
+      <input id="del-room" type="text" placeholder="Room-id" /><br />
+      <button class="delete-room">Delete</button>
+
     </form>
 
     <p id="opeka-online-status">
@@ -37,7 +48,7 @@
 
 <script id="opeka_room_list_item_tmpl" type="x-jquery-tmpl">
   <li class="room">
-    <a href="#${roomUrl}">${roomName}</a>
+    <a href="#${roomUrl}">${roomName}</a> Id-${roomUrl}
   </li>
 </script>
 
