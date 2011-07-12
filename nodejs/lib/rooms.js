@@ -67,6 +67,12 @@ function Room(roomId, name, maxSize) {
   self.name = name;
   self.maxSize = maxSize;
   self.group = nowjs.getGroup(roomId);
+  
+  self.isFull = function() {
+	if (self.maxSize && self.group.count >= self.maxSize)
+	  return true;
+	else return false;
+  }
 
   /**
    * Add a user to the group.

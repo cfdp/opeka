@@ -91,7 +91,17 @@ function Server(httpPort) {
           message: messageText,
           name: this.user.nickname +' - WHISPER'
         };
-    group.now.receiveMessage(messageObj);
+    try{
+      group.now.receiveMessage(messageObj);
+	  this.now.receiveMessage(messageObj);
+	} catch (err) {
+	    var messageObj2 = {
+              date: new Date(),
+              message: 'Whisper failed: User not online',
+     	      system: true
+            };
+	    this.now.receiveMessage(messageObj2);
+	}
   }
 
   /**
@@ -103,7 +113,7 @@ function Server(httpPort) {
 	} else {
       var room = opeka.rooms.create(roomName, maxSize);
 
-      util.log("Room created: " + roomName);
+      util.log("Room created: " + roomName + " " + maxSize);
       self.everyone.now.receiveRooms(opeka.rooms.clientSideList(), opeka.rooms.roomOrder);
 
       if (callback) {
@@ -134,8 +144,11 @@ function Server(httpPort) {
   /**
   * This function is used by the clients in order to change rooms
   */
-  self.everyone.now.changeRoom = function (roomId) {
+  self.everyone.now.changeRoom = function (roomId, callback) {
     var newRoom = opeka.rooms.get(roomId);
+	//check if the room is full
+    if (newRoom.isFull())
+      callback(true);
 
     // If user is already in a different room, leave it.
     if (opeka.rooms.get(this.user.activeRoomId)) {
@@ -151,8 +164,7 @@ function Server(httpPort) {
       this.user.activeRoomId = null;
     }
 
-    if (newRoom) {
-      newRoom.addUser(this.user.clientId);
+    if (newRoom && newRoom.addUser(this.user.clientId)) {
       this.user.activeRoomId = roomId;
 
       newRoom.group.now.receiveMessage({
@@ -161,6 +173,7 @@ function Server(httpPort) {
         system: true
       });
     }
+	callback(false);
   };
 
   self.everyone.now.sendMessageToRoom = function (roomId, messageText) {
@@ -171,7 +184,7 @@ function Server(httpPort) {
           name: this.user.nickname
         };
 
-    if (room && room.group.count) {
+    if (room && room.group.count && this.user.activeRoomId == roomId) {
       room.group.now.receiveMessage(messageObj);
     }
   };

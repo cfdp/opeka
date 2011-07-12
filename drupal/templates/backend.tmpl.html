@@ -11,7 +11,7 @@
         <li class="placeholder">Ingen beskeder modtaget.</li>
       </ul>
       <label for="opeka-chat-message">Skriv en besked</label>
-      <input id="opeka-chat-message" type="text" />
+      <input id="opeka-chat-message" placeholder="Message" type="text" />
       <button id="opeka-send-message">Send besked</button>
 
       <label for="opeka-whisper-message">Skriv en besked to an user-id</label>
@@ -30,11 +30,19 @@
 
       <h3>Opret et nyt chatrum</h3>
       <label for="room-name">Rummets navn</label>
-      <input id="room-name" type="text" /><br />
+      <input id="room-name" placeholder="Room Name" type="text" /><br />
+	  <select id="room-size"  name="room-size">
+	        <option value="2" selected="selected">2</option>
+	        <option value="5">5</option>
+	        <option value="10">10</option>
+	        <option value="20">20</option>
+	        <option value="30">30</option>
+	   </select>
+
       <button class="create-room">Opret rum</button> 
 
       <label for="del-room">Delete Room:</label>
-      <input id="del-room" type="text" placeholder="Room-id" /><br />
+      <input id="del-room" type="text" placeholder="Room ID" /><br />
       <button class="delete-room">Delete</button>
 
     </form>
@@ -43,6 +51,7 @@
       Der er <span class="guests">0</span> gæster og
       <span class="councellors">0</span> rådgivere online.
     </p>
+
   </div>
 </script>
 

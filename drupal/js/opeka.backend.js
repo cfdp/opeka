@@ -47,6 +47,7 @@ opeka.prepare = function () {
 		  var roomId = roomForm.find('#del-room').val().trim();
 		  if (roomId){
 			now.deleteRoom(roomId);
+			$('#del-room').val('');
  		  }
 	    });
 	
@@ -56,6 +57,8 @@ opeka.prepare = function () {
 
 	    if (userid && message) {
 	      now.whisper(userid, message);
+		  $('#opeka-whisper-message-user').val('');
+		  $('#opeka-whisper-message').val('');
 	    }
 
 	    event.preventDefault();
@@ -73,12 +76,13 @@ opeka.prepare = function () {
     // Configure the create room interface.
     roomForm.find('.create-room').click(function (event) {
       // When the room is created, show the chat interface.
-      now.createRoom(roomForm.find('#room-name').val(), 20, function (err, room) {
+      now.createRoom(roomForm.find('#room-name').val(), roomForm.find('#room-size').val(), function (err, room) {
         if (room) {
           now.changeRoom(room.id);
           $.bbq.pushState({room: room.id});
         }
       });
+	  $('#room-name').val('');
       event.preventDefault();
     });
   });

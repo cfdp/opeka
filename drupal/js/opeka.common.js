@@ -93,10 +93,15 @@ var opeka = {};
 
     // We have change to a chat room.
     if (roomId) {
-      now.changeRoom(roomId);
-      opeka.closeChat();
-      opeka.activeRoomId = roomId;
-      opeka.openChat(roomId);
+	  now.changeRoom(roomId, function(full){
+		if (!full){
+          opeka.closeChat();
+          opeka.activeRoomId = roomId;
+          opeka.openChat(roomId);
+	    }else{
+		  alert('This room is full');
+        }
+	  });
     }
     else {
       if (opeka.activeRoomId) {
@@ -113,6 +118,7 @@ var opeka = {};
 
     if (opeka.activeRoomId && message) {
       now.sendMessageToRoom(opeka.activeRoomId, message);
+	  $('#opeka-chat-message').val('');
     }
 
     event.preventDefault();
