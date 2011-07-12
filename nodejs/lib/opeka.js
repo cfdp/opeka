@@ -25,7 +25,7 @@ function Server(httpPort) {
   self.httpPort = httpPort;
 
   // Create a simple server that responds via HTTPS.
-  self.server = require('https').createServer(options, function(req, res) {
+    self.server = require('https').createServer(options, function(req, res) {
     res.writeHead(200);
     res.write('Welcome to Opeka.');
     res.end();
@@ -46,7 +46,10 @@ function Server(httpPort) {
    */
   self.everyone.now.clientReady = function (clientUser, callback) {
     var client = this;
-    util.log(clientUser.nickname + ' connected.');
+    util.log('user: '+clientUser.nickname + ' connected.');
+    util.log('age: '+clientUser.age);
+    util.log('gender: '+clientUser.gender);
+    util.log('id: '+client.user.clientId);
 
     opeka.user.authenticate(clientUser, function (err, account) {
       if (err) {
@@ -61,6 +64,9 @@ function Server(httpPort) {
       }
       else {
         self.guests.addUser(client.user.clientId);
+		//The following is done in order to put each user in a single group.
+		//In this way we are able to give to the counselors the ability to whisper
+		nowjs.getGroup(client.user.clientId).addUser(client.user.clientId);
       }
 
       // Store the account and nickname for later use.
@@ -76,6 +82,17 @@ function Server(httpPort) {
       callback(account);
     });
   };
+
+  /* Function used by the counselors in order to whisper to an user */
+  self.councellors.now.whisper = function (userId, messageText) {
+	var group = nowjs.getGroup(userId),
+	    messageObj = {
+          date: new Date(),
+          message: messageText,
+          name: this.user.nickname +' - WHISPER'
+        };
+    group.now.receiveMessage(messageObj);
+  }
 
   /**
    * This function is called by the Counselors in order to create a new room
@@ -103,7 +120,15 @@ function Server(httpPort) {
 	if (room != null) {
       //remove room from the system
 	  opeka.rooms.remove(roomId);
+      util.log("Room deleted: " + roomId);
+      self.everyone.now.receiveRooms(opeka.rooms.clientSideList(), opeka.rooms.roomOrder);
+      self.everyone.now.updateActiveRoom();
 	}
+  };
+
+  /* Function used mainly for testing */
+  self.everyone.now.print = function(message) {
+	util.log(message);
   };
 
   /**
@@ -113,8 +138,8 @@ function Server(httpPort) {
     var newRoom = opeka.rooms.get(roomId);
 
     // If user is already in a different room, leave it.
-    if (this.user.activeRoomId) {
-      var oldRoom = opeka.room.get(this.user.activeRoomId);
+    if (opeka.rooms.get(this.user.activeRoomId)) {
+      var oldRoom = opeka.rooms.get(this.user.activeRoomId);
       oldRoom.removeUser(this.user.clientId);
 
       oldRoom.group.now.receiveMessage({
