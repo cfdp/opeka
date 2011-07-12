@@ -73,7 +73,7 @@ opeka.prepare = function () {
     // Configure the create room interface.
     roomForm.find('.create-room').click(function (event) {
       // When the room is created, show the chat interface.
-      now.createRoom(roomForm.find('#room-name').val(), 1, function (err, room) {
+      now.createRoom(roomForm.find('#room-name').val(), 20, function (err, room) {
         if (room) {
           now.changeRoom(room.id);
           $.bbq.pushState({room: room.id});
