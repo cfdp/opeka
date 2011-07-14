@@ -32,9 +32,29 @@
     <form action="#" class="online-interface element-hidden">
       <h3>Vælg et eksisterende rum</h3>
 
+      <h3>Public chatrooms</h3>
       <ul id="opeka-room-list">
         <li class="placeholder">Ingen rum aktive.</li>
       </ul>
+
+      <h3>Private chatrooms</h3>
+      <ul id="opeka-trial-room-list">
+        <li class="placeholder">Ingen rum aktive.</li>
+      </ul>
+
+      <h3>Opret et nyt private chatrum</h3>
+      <label for="private-room-name">Create Private Room</label>
+      <input id="private-room-name" placeholder="Private Room Name" type="text" />
+	  <select id="private-room-size"  name="room-size">
+	        <option value="2" selected="selected">2</option>
+	        <option value="5">5</option>
+	        <option value="10">10</option>
+	        <option value="20">20</option>
+	        <option value="30">30</option>
+	   </select>
+
+      <button class="create-private-room">Opret rum</button> 
+
 
       <h3>Opret et nyt chatrum</h3>
       <label for="room-name">Create Room</label>
@@ -53,6 +73,10 @@
       <input id="del-room" type="text" placeholder="Room ID" />
       <input id="del-room-final-message" type="text" placeholder="Final Message" />
       <button class="delete-room">Delete</button>
+
+      <label for="del-private-room">Delete Private Room:</label>
+      <input id="del-private-room" type="text" placeholder="Private Room ID" />
+      <button class="delete-private-room">Delete</button>
 
     </form>
 

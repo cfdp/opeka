@@ -106,7 +106,7 @@ function Server(httpPort) {
   }
 
   /**
-   * This function is called by the Counselors in order to create a new room
+   * This function is called by the Counselors in order to create a new public room
    */
   self.councellors.now.createRoom = function (roomName, maxSize, callback) {
 	if ((roomName.length == 0 || maxSize <=0) && callback){
@@ -116,6 +116,24 @@ function Server(httpPort) {
 
       util.log("Room created: " + roomName + " " + maxSize);
       self.everyone.now.receiveRooms(opeka.rooms.clientSideList(), opeka.rooms.roomOrder);
+
+      if (callback) {
+        callback(null, room);
+      }
+    }
+  };
+
+  /**
+   * This function is called by the Counselors in order to create a new private room
+   */
+  self.councellors.now.createPrivateRoom = function (roomName, maxSize, callback) {
+	if ((roomName.length == 0 || maxSize <=0) && callback){
+	  callback("Error creating room: size <= 0 or room name too short.",null);
+	} else {
+      var room = opeka.rooms.createPrivate(roomName, maxSize);
+
+      util.log("Private Room created: " + roomName + " " + maxSize);
+      self.councellors.now.receivePrivateRooms(opeka.rooms.clientSideList_private(), opeka.rooms.privateRoomOrder);
 
       if (callback) {
         callback(null, room);
@@ -136,6 +154,20 @@ function Server(httpPort) {
       util.log("Room deleted: " + roomId + " Final Message: "+ finalMessage);
       self.everyone.now.receiveRooms(opeka.rooms.clientSideList(), opeka.rooms.roomOrder);
       self.everyone.now.updateActiveRoom();
+	}
+  };
+
+  /**
+   * This function is called by the Counselors in order to delete a private room from the system
+   */
+  self.councellors.now.deletePrivateRoom = function (roomId) {
+	var room = opeka.rooms.getPrivate(roomId);
+	if (room != null) {
+      //remove room from the system
+	  opeka.rooms.removePrivate(roomId);
+      util.log("Private Room deleted: " + roomId);
+      self.councellors.now.receivePrivateRooms(opeka.rooms.clientSideList_private(), opeka.rooms.privateRoomOrder);
+      self.councellors.now.updateActiveRoom();
 	}
   };
 

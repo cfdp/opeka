@@ -6,6 +6,31 @@
 (function ($) {
 
 /**
+ * Recieve the room list from the server.
+ */
+now.receivePrivateRooms = function (rooms, roomOrder) {
+  var roomList = $("#opeka-trial-room-list");
+  opeka.privateRooms = rooms;
+
+  roomList.find('.room').remove();
+  if (roomOrder.length > 0) {
+    roomList.find('.placeholder').hide();
+    $.each(roomOrder, function () {
+      var roomId = this.toString();
+      // Generate a list item with a link for each room.
+      roomList.append($("#opeka_room_list_item_tmpl").tmpl({
+        roomUrl: $.param({room: roomId}),
+        roomName: rooms[roomId].name
+      }));
+    });
+  }
+  else {
+    roomList.find('.placeholder').show();
+  }
+};
+
+
+/**
  * Prepare the client, load templates, etc.
  */
 opeka.prepare = function () {
@@ -52,47 +77,56 @@ opeka.prepare = function () {
 			$('#del-room-final-message').val('');
  		  }
 	    });
+
+		roomForm.find('.delete-private-room').click(function (event) {
+	      event.preventDefault();
+		  var roomId = roomForm.find('#del-private-room').val().trim();
+		  if (roomId){
+			now.deletePrivateRoom(roomId);
+			$('#del-private-room').val('');
+ 		  }
+	    });
 	  
-	  // Define function that has to be executed when the whisper button
-	  // is pressed
-	  $("#opeka-send-whisper-message").live('click', function (event) {
-		var userid = $('#opeka-whisper-message-user').val().trim();
-	    var message = $('#opeka-whisper-message').val().trim();
+  	  	// Define function that has to be executed when the whisper button
+	  	// is pressed
+	  	$("#opeka-send-whisper-message").live('click', function (event) {
+		  var userid = $('#opeka-whisper-message-user').val().trim();
+	      var message = $('#opeka-whisper-message').val().trim();
 
-	    if (userid && message) {
-	      now.whisper(userid, message);
-		  $('#opeka-whisper-message-user').val('');
-		  $('#opeka-whisper-message').val('');
-	    }
+   	      if (userid && message) {
+	        now.whisper(userid, message);
+		    $('#opeka-whisper-message-user').val('');
+		    $('#opeka-whisper-message').val('');
+	      }
 
-	    event.preventDefault();
-	  });
+  	      event.preventDefault();
+	    });
       
-	  // Define function that has to be executed when the delete message button
-	  // is pressed
-	  $("#opeka-delete").live('click', function (event) {
-	    var messageid = $('#opeka-delete-message').val().trim();
+  	  	// Define function that has to be executed when the delete message button
+	  	// is pressed
+	  	$("#opeka-delete").live('click', function (event) {
+	      var messageid = $('#opeka-delete-message').val().trim();
 
-	    if (messageid) {
-	      now.deleteMsg(messageid);
-		  $('#opeka-delete-message').val('');
-	    }
+	      if (messageid) {
+	        now.deleteMsg(messageid);
+		    $('#opeka-delete-message').val('');
+	      }
 
-	    event.preventDefault();
-	  });
+	      event.preventDefault();
+	    });
 
-	  // Define function that has to be executed when the delete all messages button
-	  // is pressed
-	  $("#opeka-deleteall").live('click', function (event) {
-	    var clientid = $('#opeka-deleteall-messages').val().trim();
+  	  	// Define function that has to be executed when the delete all messages button
+	    // is pressed
+	  	$("#opeka-deleteall").live('click', function (event) {
+	      var clientid = $('#opeka-deleteall-messages').val().trim();
 
-	    if (clientid) {
-	      now.deleteAllMsg(clientid);
-		  $('#opeka-deleteall-messages').val('');
-	    }
+	      if (clientid) {
+	        now.deleteAllMsg(clientid);
+		    $('#opeka-deleteall-messages').val('');
+	      }
 
-	    event.preventDefault();
-	  });
+	      event.preventDefault();
+	    });
 	
 
         // Trigger the hashChange event, so if the user came to the page
@@ -115,6 +149,20 @@ opeka.prepare = function () {
 	  $('#room-name').val('');
       event.preventDefault();
     });
+
+    // Configure the create private room interface.
+    roomForm.find('.create-private-room').click(function (event) {
+      // When the room is created, show the chat interface.
+      now.createPrivateRoom(roomForm.find('#private-room-name').val(), roomForm.find('#private-room-size').val(), function (err, room) {
+        if (room) {
+          now.changeRoom(room.id);
+          $.bbq.pushState({room: room.id});
+        }
+      });
+	  $('#private-room-name').val('');
+      event.preventDefault();
+    });
+
   });
 };
 
