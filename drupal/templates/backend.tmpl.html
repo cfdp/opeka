@@ -19,6 +19,14 @@
       <input id="opeka-whisper-message" placeholder="Message" type="text" />
       <button id="opeka-send-whisper-message">Send whisper</button>
 
+      <label for="opeka-delete-message">Delete Message</label>
+      <input id="opeka-delete-message" placeholder="Message ID" type="text" />
+      <button id="opeka-delete">Delete Message</button>
+
+      <label for="opeka-deleteall-messages">Delete All Messages</label>
+      <input id="opeka-deleteall-messages" placeholder="Client ID" type="text" />
+      <button id="opeka-deleteall">Delete All Messages</button>
+
     </form>
 
     <form action="#" class="online-interface element-hidden">
@@ -65,10 +73,14 @@
   {{if message.system}}
     <li class="system-message">${message.message}</li>
   {{else}}
-  <li class="chat-message">
-    <span class="sender-name">[${message.name}]:</span> 
-    <span class="message">${message.message}</span>
-  </li>
+  <div id="${message.messageId}" class="${message.senderId}">
+	  <li class="chat-message">
+		    <span class="sender-name">[${message.name}]:</span> 
+		    <span class="message">${message.message}</span>
+		    <span class="sender-id">id = ${message.senderId}</span> 
+		    <span class="message-id">msgid = ${message.messageId}</span>
+	  </li>
+  </div>
   {{/if}}
 </script>
 

@@ -50,7 +50,9 @@ opeka.prepare = function () {
 			$('#del-room').val('');
  		  }
 	    });
-	
+	  
+	  // Define function that has to be executed when the whisper button
+	  // is pressed
 	  $("#opeka-send-whisper-message").live('click', function (event) {
 		var userid = $('#opeka-whisper-message-user').val().trim();
 	    var message = $('#opeka-whisper-message').val().trim();
@@ -59,6 +61,32 @@ opeka.prepare = function () {
 	      now.whisper(userid, message);
 		  $('#opeka-whisper-message-user').val('');
 		  $('#opeka-whisper-message').val('');
+	    }
+
+	    event.preventDefault();
+	  });
+      
+	  // Define function that has to be executed when the delete message button
+	  // is pressed
+	  $("#opeka-delete").live('click', function (event) {
+	    var messageid = $('#opeka-delete-message').val().trim();
+
+	    if (messageid) {
+	      now.deleteMsg(messageid);
+		  $('#opeka-delete-message').val('');
+	    }
+
+	    event.preventDefault();
+	  });
+
+	  // Define function that has to be executed when the delete all messages button
+	  // is pressed
+	  $("#opeka-deleteall").live('click', function (event) {
+	    var clientid = $('#opeka-deleteall-messages').val().trim();
+
+	    if (clientid) {
+	      now.deleteAllMsg(clientid);
+		  $('#opeka-deleteall-messages').val('');
 	    }
 
 	    event.preventDefault();

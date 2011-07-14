@@ -21,7 +21,16 @@ opeka.prepare = function () {
     var frontendWrapper = $("#opeka-frontend");
         connectForm = frontendWrapper.find('.connect-interface');
         roomForm = frontendWrapper.find('.online-interface');
-
+		infoDiv = frontendWrapper.find('.contents-not-chatting');
+	
+	infoDiv.load("http://127.0.0.1:8080/Cyberhus.dk.html .hours", function(response, status, xhr) {
+	  if (status == "error") {
+	    var msg = "Sorry but there was an error retrieving opening hours: ";
+	    infoDiv.html(msg + xhr.status + " " + xhr.statusText);
+	  }
+	});
+	
+	
     // Configure the connect button click event to make os ready to chat.
     connectForm.find('.connect').click(function (event) {
       var clientData = {};

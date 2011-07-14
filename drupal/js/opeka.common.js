@@ -7,6 +7,16 @@ var opeka = {};
 
 (function ($) {
 
+  /* Method used in order to effect a local removal of all the messages of a single user*/
+  now.localDeleteAllMsg = function(clientId){
+	$('#chat-message-list').find("."+clientId).html('');
+  };
+  
+  /* Method used in order to effect a local removal of a single message*/
+  now.localDeleteMsg = function(msgId){
+	$('#chat-message-list').find("#"+msgId).html('');
+  };
+
   /* This method is used in order to update the active room of the users 
    * in case a counselor have deleted it
    */

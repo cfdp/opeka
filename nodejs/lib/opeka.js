@@ -14,6 +14,7 @@ var drupal = require("drupal"),
       key: fs.readFileSync('certs/server-key.pem'),
       cert: fs.readFileSync('certs/server-cert.pem')
     },
+    uuid = require('node-uuid'),
     opeka = {
       rooms: require('./rooms'),
       user: require('./user')
@@ -136,9 +137,27 @@ function Server(httpPort) {
 	}
   };
 
+  /* Function used in order to delete all messages of a single user */
+  self.councellors.now.deleteAllMsg = function (clientId) {
+	var room = opeka.rooms.get(this.user.activeRoomId);
+	if (room){
+		room.group.now.localDeleteAllMsg(clientId);
+		util.log("Deleting All: "+clientId);
+	}
+  }
+
+  /* Function used in order to delete a single message */
+  self.councellors.now.deleteMsg = function (msgId) {
+	var room = opeka.rooms.get(this.user.activeRoomId);
+	if (room){
+		room.group.now.localDeleteMsg(msgId);
+		util.log("Deleting: "+msgId);
+	}
+  }
+
   /* Function used mainly for testing */
   self.everyone.now.print = function(message) {
-	util.log(message);
+	util.log("Log: "+message);
   };
 
   /**
@@ -181,9 +200,11 @@ function Server(httpPort) {
         messageObj = {
           date: new Date(),
           message: messageText,
-          name: this.user.nickname
+          name: this.user.nickname,
+		  messageId: uuid(),
+		  senderId: this.user.clientId
         };
-
+	util.log("msgid: "+messageObj.messageId);
     if (room && room.group.count && this.user.activeRoomId == roomId) {
       room.group.now.receiveMessage(messageObj);
     }

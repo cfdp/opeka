@@ -26,6 +26,8 @@
       <button id="opeka-send-message">Send besked</button>
     </form>
 
+	<div class="contents-not-chatting"></div>
+
     <div class="online-interface element-hidden">
       <h3>Vælg et chatrum</h3>
 
@@ -51,10 +53,12 @@
   {{if message.system}}
     <li class="system-message">${message.message}</li>
   {{else}}
-  <li class="chat-message">
-    <span class="sender-name">[${message.name}]:</span> 
-    <span class="message">${message.message}</span>
-  </li>
+  <div id="${message.messageId}" class="${message.senderId}">
+	  <li class="chat-message">
+	      <span class="sender-name">[${message.name}]:</span> 
+	      <span class="message">${message.message}</span>
+	  </li>
+  </div>
   {{/if}}
 </script>
 
