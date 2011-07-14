@@ -126,12 +126,14 @@ function Server(httpPort) {
   /**
    * This function is called by the Counselors in order to delete a room from the system
    */
-  self.councellors.now.deleteRoom = function (roomId) {
+  self.councellors.now.deleteRoom = function (roomId, finalMessage) {
 	var room = opeka.rooms.get(roomId);
 	if (room != null) {
+	  //send finalMessage
+	  room.group.now.finalMessage(this.user.nickname, finalMessage);
       //remove room from the system
 	  opeka.rooms.remove(roomId);
-      util.log("Room deleted: " + roomId);
+      util.log("Room deleted: " + roomId + " Final Message: "+ finalMessage);
       self.everyone.now.receiveRooms(opeka.rooms.clientSideList(), opeka.rooms.roomOrder);
       self.everyone.now.updateActiveRoom();
 	}
@@ -166,7 +168,7 @@ function Server(httpPort) {
   self.everyone.now.changeRoom = function (roomId, callback) {
     var newRoom = opeka.rooms.get(roomId);
 	//check if the room is full
-    if (newRoom.isFull())
+    if (newRoom && newRoom.isFull() && callback)
       callback(true);
 
     // If user is already in a different room, leave it.
@@ -192,7 +194,8 @@ function Server(httpPort) {
         system: true
       });
     }
-	callback(false);
+	if (callback)
+		callback(false);
   };
 
   self.everyone.now.sendMessageToRoom = function (roomId, messageText) {

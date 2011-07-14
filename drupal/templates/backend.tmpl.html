@@ -14,7 +14,7 @@
       <input id="opeka-chat-message" placeholder="Message" type="text" />
       <button id="opeka-send-message">Send besked</button>
 
-      <label for="opeka-whisper-message">Skriv en besked to an user-id</label>
+      <label for="opeka-whisper-message">Whisper to an user</label>
       <input id="opeka-whisper-message-user" placeholder="User ID" type="text" />
       <input id="opeka-whisper-message" placeholder="Message" type="text" />
       <button id="opeka-send-whisper-message">Send whisper</button>
@@ -23,7 +23,7 @@
       <input id="opeka-delete-message" placeholder="Message ID" type="text" />
       <button id="opeka-delete">Delete Message</button>
 
-      <label for="opeka-deleteall-messages">Delete All Messages</label>
+      <label for="opeka-deleteall-messages">Delete All Messages from an User</label>
       <input id="opeka-deleteall-messages" placeholder="Client ID" type="text" />
       <button id="opeka-deleteall">Delete All Messages</button>
 
@@ -37,8 +37,8 @@
       </ul>
 
       <h3>Opret et nyt chatrum</h3>
-      <label for="room-name">Rummets navn</label>
-      <input id="room-name" placeholder="Room Name" type="text" /><br />
+      <label for="room-name">Create Room</label>
+      <input id="room-name" placeholder="Room Name" type="text" />
 	  <select id="room-size"  name="room-size">
 	        <option value="2" selected="selected">2</option>
 	        <option value="5">5</option>
@@ -50,7 +50,8 @@
       <button class="create-room">Opret rum</button> 
 
       <label for="del-room">Delete Room:</label>
-      <input id="del-room" type="text" placeholder="Room ID" /><br />
+      <input id="del-room" type="text" placeholder="Room ID" />
+      <input id="del-room-final-message" type="text" placeholder="Final Message" />
       <button class="delete-room">Delete</button>
 
     </form>
@@ -77,8 +78,8 @@
 	  <li class="chat-message">
 		    <span class="sender-name">[${message.name}]:</span> 
 		    <span class="message">${message.message}</span>
-		    <span class="sender-id">id = ${message.senderId}</span> 
-		    <span class="message-id">msgid = ${message.messageId}</span>
+		    <span class="sender-id">Client ID = ${message.senderId}</span> 
+		    <span class="message-id">Message ID = ${message.messageId}</span>
 	  </li>
   </div>
   {{/if}}

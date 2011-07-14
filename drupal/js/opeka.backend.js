@@ -45,9 +45,11 @@ opeka.prepare = function () {
 		roomForm.find('.delete-room').click(function (event) {
 	      event.preventDefault();
 		  var roomId = roomForm.find('#del-room').val().trim();
-		  if (roomId){
-			now.deleteRoom(roomId);
+		  var finalMessage = roomForm.find('#del-room-final-message').val().trim();
+		  if (roomId && finalMessage){
+			now.deleteRoom(roomId, finalMessage);
 			$('#del-room').val('');
+			$('#del-room-final-message').val('');
  		  }
 	    });
 	  
