@@ -1,0 +1,72 @@
+<?php
+/**
+ * @file
+ * Database scema and installation code for Opeka.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function opeka_schema() {
+  $schema = array();
+
+  $schema['opeka_bans'] = array(
+    'description' => 'Keeps track of bans, so that certain IP-addresses can be denied access to the chat for limited periods of time.',
+    'fields' => array(
+      'ban_id' => array(
+        'description' => 'Unique ban ID.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'ip_hash' => array(
+        'description' => 'SHA512 hash of the user’s IP address, for identification.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+      ),
+      'expiry' => array(
+        'description' => 'Unix timestamp for when the ban expires. NULL for never.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
+    ),
+    'primary key' => array('ban_id'),
+    'indexes' => array('ip_expires' => array('ip_hash', 'expiry')),
+  );
+
+  $schema['opeka_chats'] = array(
+    'description' => 'A log of chats on the site, so we can see if someone has been here before.',
+    'fields' => array(
+      'chat_id' => array(
+        'description' => 'Unique chat ID.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'ip_hash' => array(
+        'description' => 'SHA512 hash of the user’s IP address, for identification.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+      ),
+      'quarter' => array(
+        'description' => 'A simple year/quarter datestamp for when the chat occurred, eg. 2011Q3.',
+        'type' => 'varchar',
+        'length' => 6,
+      ),
+    ),
+    'primary key' => array('chat_id'),
+    'indexes' => array('ip_hash' => array('ip_hash')),
+  );
+
+  return $schema;
+}
+
+/**
+ * Install our new database schema.
+ */
+function opeka_update_7000(&$sandbox) {
+  drupal_install_schema('opeka');
+}
+
