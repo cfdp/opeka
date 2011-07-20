@@ -5,30 +5,54 @@
 
 (function ($) {
 
-/**
- * Recieve the room list from the server.
- */
-now.receivePrivateRooms = function (rooms, roomOrder) {
-  var roomList = $("#opeka-trial-room-list");
-  opeka.privateRooms = rooms;
+  /**
+   * Recieve the room list from the server.
+   */
+now.receiveRooms = function (rooms, roomOrder) {
+  var public_roomList = $("#opeka-room-list");
+  var private_roomList = $("#opeka-trial-room-list");
+  var priv = false;
+  var pub = false;
+  opeka.rooms = rooms;
 
-  roomList.find('.room').remove();
+  public_roomList.find('.room').remove();
+  private_roomList.find('.room').remove();
+
   if (roomOrder.length > 0) {
-    roomList.find('.placeholder').hide();
+    public_roomList.find('.placeholder').hide();
+    private_roomList.find('.placeholder').hide();
     $.each(roomOrder, function () {
       var roomId = this.toString();
       // Generate a list item with a link for each room.
-      roomList.append($("#opeka_room_list_item_tmpl").tmpl({
-        roomUrl: $.param({room: roomId}),
-        roomName: rooms[roomId].name
-      }));
+	  if (rooms[roomId].private){
+		if (!priv)
+		  priv = true;
+        private_roomList.append($("#opeka_room_list_item_tmpl").tmpl({
+          roomUrl: $.param({room: roomId}),
+          roomName: rooms[roomId].name
+        }));
+	  }else{
+		if (!pub)
+		  pub = true;
+        public_roomList.append($("#opeka_room_list_item_tmpl").tmpl({
+          roomUrl: $.param({room: roomId}),
+          roomName: rooms[roomId].name
+        }));
+	  }
     });
   }
   else {
-    roomList.find('.placeholder').show();
+    public_roomList.find('.placeholder').show();
+    private_roomList.find('.placeholder').show();
   }
-};
+  
+  if (!priv)
+    private_roomList.find('.placeholder').show();
 
+  if (!pub)
+    public_roomList.find('.placeholder').show();
+
+};
 
 /**
  * Prepare the client, load templates, etc.
@@ -140,7 +164,7 @@ opeka.prepare = function () {
     // Configure the create room interface.
     roomForm.find('.create-room').click(function (event) {
       // When the room is created, show the chat interface.
-      now.createRoom(roomForm.find('#room-name').val(), roomForm.find('#room-size').val(), function (err, room) {
+      now.createRoom(roomForm.find('#room-name').val(), roomForm.find('#room-size').val(), roomForm.find('#room_private_id').is(':checked'), function (err, room) {
         if (room) {
           now.changeRoom(room.id);
           $.bbq.pushState({room: room.id});

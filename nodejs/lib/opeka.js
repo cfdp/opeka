@@ -47,10 +47,6 @@ function Server(httpPort) {
    */
   self.everyone.now.clientReady = function (clientUser, callback) {
     var client = this;
-    util.log('user: '+clientUser.nickname + ' connected.');
-    util.log('age: '+clientUser.age);
-    util.log('gender: '+clientUser.gender);
-    util.log('id: '+client.user.clientId);
 
     opeka.user.authenticate(clientUser, function (err, account) {
       if (err) {
@@ -62,12 +58,18 @@ function Server(httpPort) {
       // to, so only councellors can create rooms, etc.
       if (account.isAdmin) {
         self.councellors.addUser(client.user.clientId);
+
+        // Send the rooms to the newly connected client.
+        client.now.receiveRooms(opeka.rooms.clientSideList_all(), opeka.rooms.all_roomOrder);
       }
       else {
         self.guests.addUser(client.user.clientId);
 		//The following is done in order to put each user in a single group.
 		//In this way we are able to give to the counselors the ability to whisper
 		nowjs.getGroup(client.user.clientId).addUser(client.user.clientId);
+		
+		// Send the rooms to the newly connected client.
+        client.now.receiveRooms(opeka.rooms.clientSideList_public(), opeka.rooms.public_roomOrder);
       }
 
       // Store the account and nickname for later use.
@@ -76,9 +78,6 @@ function Server(httpPort) {
 
       // Update online users count for all clients.
       self.everyone.now.updateOnlineCount(self.guests.count, self.councellors.count);
-
-      // Send the rooms to the newly connected client.
-      client.now.receiveRooms(opeka.rooms.clientSideList(), opeka.rooms.roomOrder);
 
       callback(account);
     });
@@ -90,7 +89,8 @@ function Server(httpPort) {
 	    messageObj = {
           date: new Date(),
           message: messageText,
-          name: this.user.nickname +' - WHISPER'
+		  whisper: true,
+          name: this.user.nickname
         };
     try{
       group.now.receiveMessage(messageObj);
@@ -108,32 +108,16 @@ function Server(httpPort) {
   /**
    * This function is called by the Counselors in order to create a new public room
    */
-  self.councellors.now.createRoom = function (roomName, maxSize, callback) {
+  self.councellors.now.createRoom = function (roomName, maxSize, priv, callback) {
 	if ((roomName.length == 0 || maxSize <=0) && callback){
 	  callback("Error creating room: size <= 0 or room name too short.",null);
 	} else {
-      var room = opeka.rooms.create(roomName, maxSize);
-
-      util.log("Room created: " + roomName + " " + maxSize);
-      self.everyone.now.receiveRooms(opeka.rooms.clientSideList(), opeka.rooms.roomOrder);
-
-      if (callback) {
-        callback(null, room);
-      }
-    }
-  };
-
-  /**
-   * This function is called by the Counselors in order to create a new private room
-   */
-  self.councellors.now.createPrivateRoom = function (roomName, maxSize, callback) {
-	if ((roomName.length == 0 || maxSize <=0) && callback){
-	  callback("Error creating room: size <= 0 or room name too short.",null);
-	} else {
-      var room = opeka.rooms.createPrivate(roomName, maxSize);
-
-      util.log("Private Room created: " + roomName + " " + maxSize);
-      self.councellors.now.receivePrivateRooms(opeka.rooms.clientSideList_private(), opeka.rooms.privateRoomOrder);
+      var room = opeka.rooms.create(roomName, maxSize, priv);
+		  
+	  if (self.councellors && self.councellors.count && self.councellors.count != 0)
+        self.councellors.now.receiveRooms(opeka.rooms.clientSideList_all(), opeka.rooms.all_roomOrder);
+	  if (self.guests && self.guests.count && self.guests.count != 0)
+        self.guests.now.receiveRooms(opeka.rooms.clientSideList_public(), opeka.rooms.public_roomOrder);
 
       if (callback) {
         callback(null, room);
@@ -148,46 +132,40 @@ function Server(httpPort) {
 	var room = opeka.rooms.get(roomId);
 	if (room != null) {
 	  //send finalMessage
-	  room.group.now.finalMessage(this.user.nickname, finalMessage);
+	  if (room.group && room.group.count != 0)
+	    room.group.now.finalMessage(this.user.nickname, finalMessage);
+
+	  var priv = room.private;
+
       //remove room from the system
 	  opeka.rooms.remove(roomId);
-      util.log("Room deleted: " + roomId + " Final Message: "+ finalMessage);
-      self.everyone.now.receiveRooms(opeka.rooms.clientSideList(), opeka.rooms.roomOrder);
-      self.everyone.now.updateActiveRoom();
-	}
-  };
 
-  /**
-   * This function is called by the Counselors in order to delete a private room from the system
-   */
-  self.councellors.now.deletePrivateRoom = function (roomId) {
-	var room = opeka.rooms.getPrivate(roomId);
-	if (room != null) {
-      //remove room from the system
-	  opeka.rooms.removePrivate(roomId);
-      util.log("Private Room deleted: " + roomId);
-      self.councellors.now.receivePrivateRooms(opeka.rooms.clientSideList_private(), opeka.rooms.privateRoomOrder);
-      self.councellors.now.updateActiveRoom();
+	  if (self.councellors && self.councellors.count && self.councellors.count != 0){
+        self.councellors.now.receiveRooms(opeka.rooms.clientSideList_all(), opeka.rooms.all_roomOrder);
+        self.councellors.now.updateActiveRoom();
+      }
+
+	  if(!priv && self.guests && self.guests.count && self.guests.count != 0){
+        self.guests.now.receiveRooms(opeka.rooms.clientSideList_public(), opeka.rooms.public_roomOrder);
+        self.guests.now.updateActiveRoom();
+	  }
+	
 	}
   };
 
   /* Function used in order to delete all messages of a single user */
   self.councellors.now.deleteAllMsg = function (clientId) {
 	var room = opeka.rooms.get(this.user.activeRoomId);
-	if (room){
+	if (room)
 		room.group.now.localDeleteAllMsg(clientId);
-		util.log("Deleting All: "+clientId);
-	}
-  }
+  };
 
   /* Function used in order to delete a single message */
   self.councellors.now.deleteMsg = function (msgId) {
 	var room = opeka.rooms.get(this.user.activeRoomId);
-	if (room){
+	if (room)
 		room.group.now.localDeleteMsg(msgId);
-		util.log("Deleting: "+msgId);
-	}
-  }
+  };
 
   /* Function used mainly for testing */
   self.everyone.now.print = function(message) {
@@ -239,7 +217,6 @@ function Server(httpPort) {
 		  messageId: uuid(),
 		  senderId: this.user.clientId
         };
-	util.log("msgid: "+messageObj.messageId);
     if (room && room.group.count && this.user.activeRoomId == roomId) {
       room.group.now.receiveMessage(messageObj);
     }
@@ -261,6 +238,21 @@ function Server(httpPort) {
    * disconnected, etc.
    */
   self.everyone.on("disconnect", function () {
+	
+	//leave the active room, if it is defined and it still exists
+	if (opeka.rooms.get(this.user.activeRoomId)){
+		var oldRoom = opeka.rooms.get(this.user.activeRoomId);
+      oldRoom.removeUser(this.user.clientId);
+
+      oldRoom.group.now.receiveMessage({
+        date: new Date(),
+        message: this.user.nickname + " left the room.",
+        system: true
+      });
+
+      this.user.activeRoomId = null;
+	}
+	
     // We need to wait a single tick before updating the online counts,
     // since there's a bit of delay before they are accurate.
     process.nextTick(function () {

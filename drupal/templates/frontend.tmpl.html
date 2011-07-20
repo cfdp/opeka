@@ -19,11 +19,23 @@
 
 	<div id="final-message" title="Final Chat Message from Counselor"></div>
 
+	<div id="errors" title="Error"></div>
+
     <form id="opeka-chat" class="element-hidden">
-      <ul id="chat-message-list">
-        <li class="placeholder">Ingen beskeder modtaget.</li>
-      </ul>
-      <label for="opeka-chat-message">Skriv en besked</label>
+	  <table>
+	    <thead><th id="th-room"></th></thead>
+	    <tbody>
+		  <tr>
+		    <td>
+      		  <ul id="chat-message-list">
+        	    <li class="placeholder">Ingen beskeder modtaget.</li>
+      		  </ul>
+			</td>
+		  </tr>
+		</tbody>
+	  </table>
+      
+	  <label for="opeka-chat-message">Skriv en besked</label>
       <input id="opeka-chat-message" type="text" />
       <button id="opeka-send-message">Send besked</button>
     </form>
@@ -54,6 +66,12 @@
 <script id="opeka_chat_message_tmpl" type="x-jquery-tmpl">
   {{if message.system}}
     <li class="system-message">${message.message}</li>
+
+  {{else message.whisper}}
+    <li class="whisper-message">
+      <span class="sender-name">[${message.name} - WHISPER]:</span> 
+      <span class="message">${message.message}</span>
+	</li>
   {{else}}
   <div id="${message.messageId}" class="${message.senderId}">
 	  <li class="chat-message">

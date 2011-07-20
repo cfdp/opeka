@@ -5,9 +5,8 @@
 var nowjs = require("now"),
     uuid = require('node-uuid');
     rooms = {},
-    roomOrder = [],
-    privateRooms = {},
-    privateRoomOrder = [];
+    public_roomOrder = [];
+    all_roomOrder = [];
 
 /**
  * Create a new room.
@@ -16,25 +15,16 @@ var nowjs = require("now"),
  * sure all new rooms are created through this function, and thus,
  * properly registered.
  */
-function create(name, maxSize) {
+function create(name, maxSize, priv) {
   var roomId = uuid(),
-      room = new Room(roomId, name, maxSize);
+      room = new Room(roomId, name, maxSize, priv);
 
   rooms[roomId] = room;
-  roomOrder.push(roomId);
-
-  return room;
-}
-
-/**
- * Create a new private room.
- */
-function createPrivate(name, maxSize) {
-  var roomId = uuid(),
-      room = new Room(roomId, name, maxSize);
-
-  privateRooms[roomId] = room;
-  privateRoomOrder.push(roomId);
+  if (priv) all_roomOrder.push(roomId);
+  else {
+    all_roomOrder.push(roomId);	
+    public_roomOrder.push(roomId);	
+  }
 
   return room;
 }
@@ -47,44 +37,30 @@ function get(roomId) {
 }
 
 /**
- * Get a private room from the list.
- */
-function getPrivate(roomId) {
-  return privateRooms[roomId];
-}
-
-/**
  * Remove a room from the system.
  */
 function remove(roomId){
   var room = rooms[roomId];
   if (room != null){
 	room.removeAllUsers();
-    var idx = roomOrder.indexOf(roomId);
-	roomOrder.splice(idx, 1);
+    var idx = all_roomOrder.indexOf(roomId);
+	all_roomOrder.splice(idx, 1);
+	
+	if (!room.private){
+	  var idx = public_roomOrder.indexOf(roomId);
+	  public_roomOrder.splice(idx, 1);
+	}
+	
 	rooms[roomId] = null;
   }
 }
 
 /**
- * Remove a private room from the system.
+ * Get a list of public rooms, containing room metadata safe to send to the client.
  */
-function removePrivate(roomId){
-  var room = privateRooms[roomId];
-  if (room != null){
-	room.removeAllUsers();
-    var idx = privateRoomOrder.indexOf(roomId);
-	privateRoomOrder.splice(idx, 1);
-	privateRooms[roomId] = null;
-  }
-}
-
-/**
- * Get a room list, containing room metadata safe to send to the client.
- */
-function clientSideList() {
+function clientSideList_public() {
   var roomList = {};
-  roomOrder.forEach(function (roomId, index) {
+  public_roomOrder.forEach(function (roomId, index) {
     roomList[roomId] = rooms[roomId].getInfo();
   });
 
@@ -92,12 +68,12 @@ function clientSideList() {
 }
 
 /**
- * Get a private room list, containing room metadata safe to send to the client.
+ * Get a list of all rooms, containing room metadata safe to send to the client.
  */
-function clientSideList_private() {
+function clientSideList_all() {
   var roomList = {};
-  privateRoomOrder.forEach(function (roomId, index) {
-    roomList[roomId] = privateRooms[roomId].getInfo();
+  all_roomOrder.forEach(function (roomId, index) {
+    roomList[roomId] = rooms[roomId].getInfo();
   });
 
   return roomList;
@@ -108,12 +84,13 @@ function clientSideList_private() {
  *
  * It also protects the room's group-object from prying eyes.
  */
-function Room(roomId, name, maxSize) {
+function Room(roomId, name, maxSize, priv) {
   var self = this;
   self.id = roomId;
   self.name = name;
   self.maxSize = maxSize;
   self.group = nowjs.getGroup(roomId);
+  self.private = priv;
   
   self.isFull = function() {
 	if (self.maxSize && self.group.count >= self.maxSize)
@@ -149,7 +126,8 @@ function Room(roomId, name, maxSize) {
     return {
       id: self.id,
       name: self.name,
-      maxSize: self.maxSize
+      maxSize: self.maxSize,
+	  private: self.private
     };
   };
 
@@ -172,14 +150,11 @@ function Room(roomId, name, maxSize) {
 
 module.exports = {
   create: create,
-  createPrivate: createPrivate,
   remove: remove,
-  removePrivate: removePrivate,
   get: get,
-  getPrivate: getPrivate,
-  clientSideList: clientSideList,
-  clientSideList_private: clientSideList_private,
-  roomOrder: roomOrder,
-  privateRoomOrder: privateRoomOrder,
+  clientSideList_all: clientSideList_all,
+  clientSideList_public: clientSideList_public,
+  public_roomOrder: public_roomOrder,
+  all_roomOrder: all_roomOrder
 };
 

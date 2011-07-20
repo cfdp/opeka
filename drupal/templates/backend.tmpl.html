@@ -5,11 +5,30 @@
       <input id="nickname" type="text" placeholder="Anonym" value="${user.name}" /><br />
       <button class="connect">Klar til chat…</button> 
     </form>
-
+	
     <form id="opeka-chat" class="element-hidden">
-      <ul id="chat-message-list">
-        <li class="placeholder">Ingen beskeder modtaget.</li>
-      </ul>
+	  <table>
+	    <thead><th id="th-room" colspan="2"></th></thead>
+	    <tbody>
+		  <tr>
+		    <td></td>
+		    <td style="border-bottom: 1px dashed; border-left: 1px dashed;"> Users </td>
+		  </tr>
+		  <tr>
+		    <td>
+        	  <ul id="chat-message-list">
+                <li class="placeholder">Ingen beskeder modtaget.</li>
+              </ul>
+            </td>
+		    <td style="border-left: 1px dashed;">
+			  <ul id="chat-user-list">
+                <li class="placeholder">TODO: User list.</li>
+              </ul>
+			</td>
+		  </tr>
+		</tbody>
+	  </table>
+
       <label for="opeka-chat-message">Skriv en besked</label>
       <input id="opeka-chat-message" placeholder="Message" type="text" />
       <button id="opeka-send-message">Send besked</button>
@@ -29,6 +48,10 @@
 
     </form>
 
+	<div id="final-message" title="Final Chat Message from Counselor"></div>
+
+	<div id="errors" title="Error"></div>
+
     <form action="#" class="online-interface element-hidden">
       <h3>Vælg et eksisterende rum</h3>
 
@@ -42,23 +65,10 @@
         <li class="placeholder">Ingen rum aktive.</li>
       </ul>
 
-      <h3>Opret et nyt private chatrum</h3>
-      <label for="private-room-name">Create Private Room</label>
-      <input id="private-room-name" placeholder="Private Room Name" type="text" />
-	  <select id="private-room-size"  name="room-size">
-	        <option value="2" selected="selected">2</option>
-	        <option value="5">5</option>
-	        <option value="10">10</option>
-	        <option value="20">20</option>
-	        <option value="30">30</option>
-	   </select>
-
-      <button class="create-private-room">Opret rum</button> 
-
-
       <h3>Opret et nyt chatrum</h3>
       <label for="room-name">Create Room</label>
       <input id="room-name" placeholder="Room Name" type="text" />
+	  Size:
 	  <select id="room-size"  name="room-size">
 	        <option value="2" selected="selected">2</option>
 	        <option value="5">5</option>
@@ -66,6 +76,8 @@
 	        <option value="20">20</option>
 	        <option value="30">30</option>
 	   </select>
+	  Private:
+      <input id="room_private_id" type="checkbox" name="room-private" value="Y"/>
 
       <button class="create-room">Opret rum</button> 
 
@@ -97,6 +109,11 @@
 <script id="opeka_chat_message_tmpl" type="x-jquery-tmpl">
   {{if message.system}}
     <li class="system-message">${message.message}</li>
+  {{else message.whisper}}
+    <li class="whisper-message">
+      <span class="sender-name">[${message.name} - WHISPER]:</span> 
+      <span class="message">${message.message}</span>
+	</li>
   {{else}}
   <div id="${message.messageId}" class="${message.senderId}">
 	  <li class="chat-message">

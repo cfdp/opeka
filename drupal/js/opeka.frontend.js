@@ -5,6 +5,30 @@
 
 (function ($) {
 
+  /**
+   * Recieve the room list from the server.
+   */
+now.receiveRooms = function (rooms, roomOrder) {
+  var roomList = $("#opeka-room-list");
+  opeka.rooms = rooms;
+
+  roomList.find('.room').remove();
+  if (roomOrder.length > 0) {
+    roomList.find('.placeholder').hide();
+    $.each(roomOrder, function () {
+      var roomId = this.toString();
+      // Generate a list item with a link for each room.
+      roomList.append($("#opeka_room_list_item_tmpl").tmpl({
+        roomUrl: $.param({room: roomId}),
+        roomName: rooms[roomId].name
+      }));
+    });
+  }
+  else {
+    roomList.find('.placeholder').show();
+  }
+};
+
 /**
  * Prepare the client, load templates, etc. 
  */
@@ -48,6 +72,7 @@ opeka.prepare = function () {
       now.clientReady(clientData, function () {
         // Hide the connect interface.
         connectForm.fadeOut();
+		infoDiv.fadeOut();
 
         // Show the chat interface.
         roomForm.fadeIn();
