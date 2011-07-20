@@ -84,6 +84,37 @@ function Server(httpPort) {
   };
 
   /* Function used by the counselors in order to whisper to an user */
+  self.councellors.now.kick = function (userId, messageText) {
+	var group = nowjs.getGroup(userId);
+	try {
+	  var room = opeka.rooms.get(this.user.activeRoomId);
+	  var idx = room.usersIdx[userId];
+	  if (idx){
+		  var nickname = this.user.nickname;
+	      group.now.changeRoom(null, function(){
+			  group.now.displayWarning("You have been kicked out the room by "+nickname+" for the following reason: "+messageText);
+			  room.counsellorGroup.now.receiveUserList(room.users);	
+	      }, true);
+      }else{
+		  var messageObj2 = {
+		        date: new Date(),
+		        message: 'Kick failed: User is not in your room',
+		     	system: true
+		      };
+		  this.now.receiveMessage(messageObj2);	
+      }
+	}catch (err) {
+	  var messageObj2 = {
+	        date: new Date(),
+	        message: 'Kick failed: User not online',
+	     	system: true
+	      };
+	  this.now.receiveMessage(messageObj2);
+	}
+	
+  };
+
+  /* Function used by the counselors in order to whisper to an user */
   self.councellors.now.whisper = function (userId, messageText) {
 	var group = nowjs.getGroup(userId),
 	    messageObj = {
@@ -175,11 +206,11 @@ function Server(httpPort) {
   /**
   * This function is used by the clients in order to change rooms
   */
-  self.everyone.now.changeRoom = function (roomId, callback) {
+  self.everyone.now.changeRoom = function (roomId, callback, quit) {
     var newRoom = opeka.rooms.get(roomId);
 	//check if the room is full
     if (newRoom && newRoom.isFull() && callback)
-      callback(true);
+      return callback(true);
 
     // If user is already in a different room, leave it.
     if (opeka.rooms.get(this.user.activeRoomId)) {
@@ -191,11 +222,22 @@ function Server(httpPort) {
         message: this.user.nickname + " left the room.",
         system: true
       });
+	
+	  try{
+	    oldRoom.counsellorGroup.now.receiveUserList(oldRoom.users);
+      }catch(ignored){
+        //this is ignored since we have an exception if no counselor are left in the room. We should discuss this eventuality...
+      }
 
       this.user.activeRoomId = null;
+	  
+	  //if no callback this is a kick or an exiplicit request to leave a chat room
+	  if (quit){
+	    this.now.quitRoom(callback);
+      }
     }
 
-    if (newRoom && newRoom.addUser(this.user.clientId)) {
+    if (newRoom && newRoom.addUser(this.user)) {
       this.user.activeRoomId = roomId;
 
       newRoom.group.now.receiveMessage({
@@ -203,7 +245,14 @@ function Server(httpPort) {
         message: this.user.nickname + " joined the room “" + newRoom.name + "”.",
         system: true
       });
+
+	  try{
+	    newRoom.counsellorGroup.now.receiveUserList(newRoom.users);
+	  }catch(ignored){
+		//this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
+      }
     }
+
 	if (callback)
 		callback(false);
   };
@@ -250,6 +299,7 @@ function Server(httpPort) {
         system: true
       });
 
+	  oldRoom.counsellorGroup.now.receiveUserList(oldRoom.users);
       this.user.activeRoomId = null;
 	}
 	

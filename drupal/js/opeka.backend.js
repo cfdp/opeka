@@ -5,9 +5,29 @@
 
 (function ($) {
 
-  /**
-   * Recieve the room list from the server.
-   */
+/**
+ * Recieve the user list from the server.
+ */
+now.receiveUserList = function (userlist){
+  var userList = $("#chat-user-list");
+  userList.find('.user').remove();
+
+  if (userlist.length > 0) {
+	userList.find('.placeholder').hide();
+	$.each(userlist, function () {
+        userList.append($("#opeka_user_list_item_tmpl").tmpl({
+          nickName: this.nickname,
+          clientId: this.clientId
+        }));
+     });
+    }else userList.find('.placeholder').show();
+
+};
+
+
+/**
+ * Recieve the room list from the server.
+ */
 now.receiveRooms = function (rooms, roomOrder) {
   var public_roomList = $("#opeka-room-list");
   var private_roomList = $("#opeka-trial-room-list");
@@ -125,6 +145,22 @@ opeka.prepare = function () {
 
   	      event.preventDefault();
 	    });
+
+  	  	// Define function that has to be executed when the kick button
+	  	// is pressed
+	  	$("#opeka-kick").live('click', function (event) {
+		  var userid = $('#opeka-kick-user').val().trim();
+	      var message = $('#opeka-kick-message').val().trim();
+
+   	      if (userid && message) {
+	        now.kick(userid, message);
+		    $('#opeka-kick-user').val('');
+		    $('#opeka-kick-message').val('');
+	      }
+
+  	      event.preventDefault();
+	    });
+
       
   	  	// Define function that has to be executed when the delete message button
 	  	// is pressed

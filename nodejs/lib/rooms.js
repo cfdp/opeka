@@ -5,8 +5,9 @@
 var nowjs = require("now"),
     uuid = require('node-uuid');
     rooms = {},
-    public_roomOrder = [];
+    public_roomOrder = [],
     all_roomOrder = [];
+    
 
 /**
  * Create a new room.
@@ -90,7 +91,11 @@ function Room(roomId, name, maxSize, priv) {
   self.name = name;
   self.maxSize = maxSize;
   self.group = nowjs.getGroup(roomId);
+  self.counsellorGroup = nowjs.getGroup("counsellors-"+roomId);
   self.private = priv;
+  self.users = [];
+  self.usersIdx = {};
+
   
   self.isFull = function() {
 	if (self.maxSize && self.group.count >= self.maxSize)
@@ -101,11 +106,15 @@ function Room(roomId, name, maxSize, priv) {
   /**
    * Add a user to the group.
    */
-  self.addUser = function (clientId) {
+  self.addUser = function (user) {
     // If we have both rooms and groups, check that we don't exceed the
     // room size (if set) before adding the person to the room.
-    if ((!self.maxSize || self.group.count < self.maxSize) && clientId) {
-      self.group.addUser(clientId);
+    if ((!self.maxSize || self.group.count < self.maxSize) && user) {
+	  var index = self.users.push(user) - 1;
+	  self.usersIdx[user.clientId] = index;
+      self.group.addUser(user.clientId);
+	  if (user.account.isAdmin)
+	    self.counsellorGroup.addUser(user.clientId);
       return true;
     }
     return false;
@@ -115,7 +124,13 @@ function Room(roomId, name, maxSize, priv) {
    * Remove user from group.
    */
   self.removeUser = function (clientId) {
-    self.group.removeUser(clientId);
+	var idx = self.usersIdx[clientId];
+	if (idx){
+		self.users.splice(idx, 1);
+	    self.group.removeUser(clientId);
+		self.usersIdx[clientId] = null;
+	    self.counsellorGroup.removeUser(clientId);
+	}
   };
 
   /**
@@ -135,14 +150,9 @@ function Room(roomId, name, maxSize, priv) {
    * Remove all users from the room.
    */
   self.removeAllUsers = function(){
-	var keys = [];
-	for(var key in self.group._groupScopes){
-	  keys.push(key);
-	}
-	
-	for (var userId in keys){
-		self.removeUser(userId);
-	}
+	for (var user in self.users)
+	  self.removeUser(user.clientId);
+	self.users = [];
   };
 
   return self;

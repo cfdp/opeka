@@ -30,6 +30,16 @@ var opeka = {};
 	$('#chat-message-list').find("#"+msgId).html('');
   };
 
+  //This method is used in order to leave a room
+  now.quitRoom = function(callback){
+    now.changeRoom(null);
+    opeka.activeRoomId = null;
+    opeka.closeChat();
+    window.location.replace("#");
+	if (callback)
+	  callback();
+  };
+
   /* This method is used in order to update the active room of the users 
    * in case a counselor have deleted it
    */
@@ -81,7 +91,7 @@ var opeka = {};
   /**
    * Open the chat interface, if not open already.
    */
-  opeka.closeChat = function (room) {
+  opeka.closeChat = function () {
     $('#opeka-chat').fadeOut();
     opeka.chatIsOpen = false;
   };
@@ -100,6 +110,7 @@ var opeka = {};
           opeka.openChat(roomId);
 	    }else{
 		  now.displayError('This room is full');
+		  window.location.replace("#");
         }
 	  });
     }

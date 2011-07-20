@@ -5,9 +5,16 @@
 
 (function ($) {
 
-  /**
-   * Recieve the room list from the server.
-   */
+/* Display a warning message*/
+now.displayWarning = function(warning){
+  $('#warnings').html(warning);
+  $('#warnings').dialog();
+};
+
+
+/**
+ * Recieve the room list from the server.
+ */
 now.receiveRooms = function (rooms, roomOrder) {
   var roomList = $("#opeka-room-list");
   opeka.rooms = rooms;

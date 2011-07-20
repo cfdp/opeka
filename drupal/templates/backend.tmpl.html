@@ -22,7 +22,7 @@
             </td>
 		    <td style="border-left: 1px dashed;">
 			  <ul id="chat-user-list">
-                <li class="placeholder">TODO: User list.</li>
+                <li class="placeholder">No users.</li>
               </ul>
 			</td>
 		  </tr>
@@ -45,6 +45,11 @@
       <label for="opeka-deleteall-messages">Delete All Messages from an User</label>
       <input id="opeka-deleteall-messages" placeholder="Client ID" type="text" />
       <button id="opeka-deleteall">Delete All Messages</button>
+
+      <label for="opeka-kick-user">Kick an User</label>
+      <input id="opeka-kick-user" placeholder="Client ID" type="text" />
+      <input id="opeka-kick-message" placeholder="Message" type="text" />
+      <button id="opeka-kick">Kick</button>
 
     </form>
 
@@ -86,10 +91,6 @@
       <input id="del-room-final-message" type="text" placeholder="Final Message" />
       <button class="delete-room">Delete</button>
 
-      <label for="del-private-room">Delete Private Room:</label>
-      <input id="del-private-room" type="text" placeholder="Private Room ID" />
-      <button class="delete-private-room">Delete</button>
-
     </form>
 
     <p id="opeka-online-status">
@@ -119,10 +120,15 @@
 	  <li class="chat-message">
 		    <span class="sender-name">[${message.name}]:</span> 
 		    <span class="message">${message.message}</span>
-		    <span class="sender-id">Client ID = ${message.senderId}</span> 
 		    <span class="message-id">Message ID = ${message.messageId}</span>
 	  </li>
   </div>
   {{/if}}
+</script>
+
+<script id="opeka_user_list_item_tmpl" type="x-jquery-tmpl">
+  <li class="user">
+    ${nickName} - ${clientId}
+  </li>
 </script>
 
