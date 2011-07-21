@@ -40,6 +40,18 @@
 	   </select>
       <button id="opeka-send-bookmark">Send bookmark</button>
 
+      <label for="opeka-mute-clientId">Mute an user</label>
+      <input id="opeka-mute-clientId" placeholder="User ID" type="text" />
+      <button id="opeka-mute">Mute user</button>
+
+      <label for="opeka-unmute-clientId">Unmute an user</label>
+      <input id="opeka-unmute-clientId" placeholder="User ID" type="text" />
+      <button id="opeka-unmute">Unmute user</button>
+
+      <button id="opeka-pause">Pause chatroom</button>
+      <button id="opeka-unpause">Unpause chatroom</button>
+
+
       <label for="opeka-whisper-message">Whisper to an user</label>
       <input id="opeka-whisper-message-user" placeholder="User ID" type="text" />
       <input id="opeka-whisper-message" placeholder="Message" type="text" />
@@ -134,8 +146,15 @@
 </script>
 
 <script id="opeka_user_list_item_tmpl" type="x-jquery-tmpl">
-  <li class="user">
-    ${nickName} - ${clientId}
-  </li>
+  {{if user.muted }}
+	  <li class="user">
+	    [Muted] ${user.nickname} - ${user.clientId}
+	  </li>
+  {{else}}
+	  <li class="user">
+	    ${user.nickname} - ${user.clientId}
+	  </li>
+  {{/if}}
+
 </script>
 

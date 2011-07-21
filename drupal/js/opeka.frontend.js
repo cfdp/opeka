@@ -5,6 +5,20 @@
 
 (function ($) {
 
+now.localMute = function(){
+	if (!opeka.mute){
+  	  $("#opeka-send-message").attr('disabled', 'disabled');
+	  opeka.mute = true;
+	}
+};
+
+now.localUnmute = function(){
+	if (opeka.mute){
+	  $("#opeka-send-message").removeAttr('disabled');
+	  opeka.mute = false;
+	}
+};
+
 /* Display a warning message*/
 now.displayWarning = function(warning){
   $('#warnings').html(warning);

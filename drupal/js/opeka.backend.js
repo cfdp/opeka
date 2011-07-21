@@ -16,8 +16,7 @@ now.receiveUserList = function (userlist){
 	userList.find('.placeholder').hide();
 	$.each(userlist, function () {
         userList.append($("#opeka_user_list_item_tmpl").tmpl({
-          nickName: this.nickname,
-          clientId: this.clientId
+		  user: this
         }));
      });
     }else userList.find('.placeholder').show();
@@ -208,6 +207,42 @@ opeka.prepare = function () {
     if (opeka.activeRoomId && message) {
       now.sendMessageToRoom(opeka.activeRoomId, message);
 	  $('#opeka-chat-message').val('');
+    }
+
+    event.preventDefault();
+  });
+
+  //configure the pause interface
+  $("#opeka-pause").live('click', function (event) {
+    now.pause();
+    event.preventDefault();
+  });
+
+  //configure the unpause interface
+  $("#opeka-unpause").live('click', function (event) {
+    now.unpause();
+    event.preventDefault();
+  });
+  
+  //configure the mute interface
+  $("#opeka-mute").live('click', function (event) {
+    var clientid = $('#opeka-mute-clientId').val().trim();
+
+    if (clientid) {
+      now.mute(clientid);
+	    $('#opeka-mute-clientId').val('');
+    }
+
+    event.preventDefault();
+  });
+
+  //configure the unmute interface
+  $("#opeka-unmute").live('click', function (event) {
+    var clientid = $('#opeka-unmute-clientId').val().trim();
+
+    if (clientid) {
+      now.unmute(clientid);
+	    $('#opeka-unmute-clientId').val('');
     }
 
     event.preventDefault();

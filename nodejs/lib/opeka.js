@@ -5,6 +5,14 @@
  * object, so you can instance it from your own code if need be.
  */
 
+
+/*TODO LIST:
+ * Check kick function and user list update
+ * Pause and Mute
+ * Chat duration
+ *
+ */
+
 // Load all our dependencies.
 var drupal = require("drupal"),
     nowjs = require("now"),
@@ -81,6 +89,152 @@ function Server(httpPort) {
 
       callback(account);
     });
+  };
+
+  /* Function used in order to pause a room */
+  self.councellors.now.pause = function (){
+	var room = opeka.rooms.get(this.user.activeRoomId);
+	if (room.paused){
+		var messageObjForAdmin = {
+		    date: new Date(),
+		      message: '[Pause Error]: Room already paused.',
+		      system: true
+		    };			
+		this.now.receiveMessage(messageObjForAdmin);
+		return;
+	}
+	if(room && room.users.length > 1){
+		room.group.now.localMute();
+		room.paused = true;
+		var messageObjForEverybody = {
+		    date: new Date(),
+		      message: '[Pause]: Chat has been paused.',
+		      system: true
+		    };
+		room.group.now.receiveMessage(messageObjForEverybody);
+	}
+  };
+
+  /* Function used in order to unpause a room */
+  self.councellors.now.unpause = function (){
+	var room = opeka.rooms.get(this.user.activeRoomId);
+	if (!room.paused){
+		var messageObjForAdmin = {
+		    date: new Date(),
+		      message: '[Pause Error]: Room is not paused.',
+		      system: true
+		    };			
+		this.now.receiveMessage(messageObjForAdmin);
+		return;
+	}
+	if(room && room.paused){
+		room.group.now.localUnmute();
+		room.paused = false;
+		var messageObjForEverybody = {
+		    date: new Date(),
+		      message: '[Pause]: Chat is available again.',
+		      system: true
+		    };
+		room.group.now.receiveMessage(messageObjForEverybody);
+	}
+  };
+
+  /* Function used in order to unmute a single user */
+  self.councellors.now.unmute = function (userId){
+	var group = nowjs.getGroup(userId);
+	try {
+	  var room = opeka.rooms.get(this.user.activeRoomId);
+	  var idx = room.usersIdx[userId];
+	  if (idx){
+		if (!room.users[idx].muted){
+			var messageObjForAdmin = {
+			    date: new Date(),
+			      message: '[Mute]: User: '+room.users[idx].nickname+' is not muted.',
+			      system: true
+			    };			
+			this.now.receiveMessage(messageObjForAdmin);
+			return;			
+		}
+		group.now.localUnmute();
+		room.users[idx].muted = false;
+		var messageObjForAdmin = {
+		    date: new Date(),
+		      message: '[Mute]: You have unmuted user: '+room.users[idx].nickname,
+		      system: true
+		    };
+		var messageObj = {
+		    date: new Date(),
+		      message: 'Warning: You have been unmuted.',
+		      system: true
+		    };
+		group.now.receiveMessage(messageObj);	
+		this.now.receiveMessage(messageObjForAdmin);
+    	room.counsellorGroup.now.receiveUserList(room.users);
+	  }else{
+		  var messageObj2 = {
+		        date: new Date(),
+		        message: 'Unmute failed: User is not in your room',
+		     	system: true
+		      };
+		  this.now.receiveMessage(messageObj2);		
+	  }
+	}catch(err){
+	  var messageObj2 = {
+	        date: new Date(),
+	        message: 'Unmute failed: User not online',
+	     	system: true
+	      };
+	  this.now.receiveMessage(messageObj2);		
+	}
+  };
+
+  /* Function used in order to mute a single user */
+  self.councellors.now.mute = function (userId){
+	var group = nowjs.getGroup(userId);
+	try {
+	  var room = opeka.rooms.get(this.user.activeRoomId);
+	  var idx = room.usersIdx[userId];
+	  if (idx){
+		if (room.users[idx].muted){
+			var messageObjForAdmin = {
+			    date: new Date(),
+			      message: '[Mute]: User: '+room.users[idx].nickname+' has already been muted.',
+			      system: true
+			    };			
+			this.now.receiveMessage(messageObjForAdmin);
+			return;
+		}
+		group.now.localMute();
+		room.users[idx].muted = true;
+		var messageObjForAdmin = {
+		    date: new Date(),
+		      message: '[Mute]: You have muted user: '+room.users[idx].nickname,
+		      system: true
+		    };
+		var messageObj = {
+		    date: new Date(),
+		      message: 'Warning: You have been muted.',
+		      system: true
+		    };
+		group.now.receiveMessage(messageObj);	
+		this.now.receiveMessage(messageObjForAdmin);
+    	room.counsellorGroup.now.receiveUserList(room.users);
+	  }else{
+		  var messageObj2 = {
+		        date: new Date(),
+		        message: 'Mute failed: User is not in your room',
+		     	system: true
+		      };
+		  this.now.receiveMessage(messageObj2);		
+	  }
+	}catch(err){
+	  var messageObj2 = {
+	        date: new Date(),
+	        message: 'Mute failed: User not online',
+	     	system: true
+	      };
+	  this.now.receiveMessage(messageObj2);		
+	}
   };
 
   /* Function used by the counselors in order to whisper to an user */
@@ -207,6 +361,7 @@ function Server(httpPort) {
   * This function is used by the clients in order to change rooms
   */
   self.everyone.now.changeRoom = function (roomId, callback, quit) {
+	var self = this;
     var newRoom = opeka.rooms.get(roomId);
 	//check if the room is full
     if (newRoom && newRoom.isFull() && callback)
@@ -231,7 +386,6 @@ function Server(httpPort) {
 
       this.user.activeRoomId = null;
 	  
-	  //if no callback this is a kick or an exiplicit request to leave a chat room
 	  if (quit){
 	    this.now.quitRoom(callback);
       }
@@ -245,7 +399,18 @@ function Server(httpPort) {
         message: this.user.nickname + " joined the room “" + newRoom.name + "”.",
         system: true
       });
-
+	  
+	  if (newRoom.paused && !this.user.account.isAdmin){
+		this.now.localMute();
+		process.nextTick(function () {
+	        self.now.receiveMessage({
+	          date: new Date(),
+	          message: "[Warning] The room is paused.",
+	          system: true
+	        });
+	    });
+	  }
+	  
 	  try{
 	    newRoom.counsellorGroup.now.receiveUserList(newRoom.users);
 	  }catch(ignored){
