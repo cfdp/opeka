@@ -26,12 +26,19 @@
               </ul>
 			</td>
 		  </tr>
+		  <tr><td colspan="2" style="border-top: 1px dashed;">
+            <label for="opeka-chat-message">Skriv en besked</label>
+      	    <input size="50" id="opeka-chat-message" placeholder="Message" type="text" />
+      	    <button id="opeka-send-message">Send besked</button>
 		</tbody>
 	  </table>
-
-      <label for="opeka-chat-message">Skriv en besked</label>
-      <input id="opeka-chat-message" placeholder="Message" type="text" />
-      <button id="opeka-send-message">Send besked</button>
+	
+      <label for="bookmark-list">Send a bookmarked link</label>
+	  <select id="bookmark-list"  name="bookmark-list">
+	        <option value="www.au.dk" selected="selected">www.au.dk</option>
+	        <option value="www.cyberhus.dk">www.cyberhus.dk</option>
+	   </select>
+      <button id="opeka-send-bookmark">Send bookmark</button>
 
       <label for="opeka-whisper-message">Whisper to an user</label>
       <input id="opeka-whisper-message-user" placeholder="User ID" type="text" />

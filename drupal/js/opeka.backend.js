@@ -121,15 +121,6 @@ opeka.prepare = function () {
 			$('#del-room-final-message').val('');
  		  }
 	    });
-
-		roomForm.find('.delete-private-room').click(function (event) {
-	      event.preventDefault();
-		  var roomId = roomForm.find('#del-private-room').val().trim();
-		  if (roomId){
-			now.deletePrivateRoom(roomId);
-			$('#del-private-room').val('');
- 		  }
-	    });
 	  
   	  	// Define function that has to be executed when the whisper button
 	  	// is pressed
@@ -210,18 +201,18 @@ opeka.prepare = function () {
       event.preventDefault();
     });
 
-    // Configure the create private room interface.
-    roomForm.find('.create-private-room').click(function (event) {
-      // When the room is created, show the chat interface.
-      now.createPrivateRoom(roomForm.find('#private-room-name').val(), roomForm.find('#private-room-size').val(), function (err, room) {
-        if (room) {
-          now.changeRoom(room.id);
-          $.bbq.pushState({room: room.id});
-        }
-      });
-	  $('#private-room-name').val('');
-      event.preventDefault();
-    });
+  //configure the Bookmark List function
+  $("#opeka-send-bookmark").live('click', function (event) {
+	var message = $('#bookmark-list').val();
+
+    if (opeka.activeRoomId && message) {
+      now.sendMessageToRoom(opeka.activeRoomId, message);
+	  $('#opeka-chat-message').val('');
+    }
+
+    event.preventDefault();
+  });
+
 
   });
 };
