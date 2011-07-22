@@ -5,12 +5,6 @@
  * object, so you can instance it from your own code if need be.
  */
 
-
-/*TODO LIST:
- * Check kick function and user list update
- * Different page for admin chat
- */
-
 // Load all our dependencies.
 var drupal = require("drupal"),
     nowjs = require("now"),
