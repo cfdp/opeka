@@ -5,6 +5,12 @@
 
 (function ($) {
 
+/* Method used in order to print the final message when the chat room has been closed */
+now.admin_finalMessage = function(finalMessage){
+  $('#final-message').html(finalMessage);
+  $('#final-message').dialog();
+};
+
 /**
  * Recieve the user list from the server.
  */

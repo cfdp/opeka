@@ -5,6 +5,12 @@
 
 (function ($) {
 
+/* Method used in order to print the final message when the chat room has been closed */
+now.client_finalMessage = function(adminNick, finalMessage){
+  $('#final-message').html("["+adminNick+"]: "+finalMessage);
+  $('#final-message').dialog();
+};
+
 now.localMute = function(){
 	if (!opeka.mute){
   	  $("#opeka-send-message").attr('disabled', 'disabled');

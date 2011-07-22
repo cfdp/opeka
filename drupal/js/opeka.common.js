@@ -13,13 +13,6 @@ var opeka = {};
 	$('#errors').dialog();
   };
 
-
-  /* Method used in order to print the final message when the chat room has been closed */
-  now.finalMessage = function(adminNick, finalMessage){
-	$('#final-message').html("["+adminNick+"]: "+finalMessage);
-	$('#final-message').dialog();
-  };
-
   /* Method used in order to effect a local removal of all the messages of a single user*/
   now.localDeleteAllMsg = function(clientId){
 	$('#chat-message-list').find("."+clientId).html('');
@@ -32,7 +25,6 @@ var opeka = {};
 
   //This method is used in order to leave a room
   now.quitRoom = function(callback){
-    now.changeRoom(null);
     opeka.activeRoomId = null;
     opeka.closeChat();
     window.location.replace("#");
