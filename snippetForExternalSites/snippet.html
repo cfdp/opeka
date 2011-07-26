@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>External Customer Site</title>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script src="https://127.0.0.1:3000/nowjs/now.js"></script>
+
+<script>
+
+$(document).ready(function(){
+  //the following is setted in order to let the server understood
+  //that this client is interested in know only the status of the chat
+  var clientData = {};
+  clientData.statusOnly = true;
+
+  //the following is the callback called by the server in order to advertise its status:
+  //Status 0 = Chat not active
+  //Status 1 = Chat active but busy
+  //Status 2 = Chat active
+  now.receiveStatus = function(status){
+	if (status == 0)
+	  $(document).find("#status").html("Chat not Active");
+	else if (status == 1)
+	  $(document).find("#status").html("Chat Busy");
+	else $(document).find("#status").html("Chat active");
+  };
+
+  now.updateOnlineCount = function (guests, councellors) {now.clientReady(clientData);};
+
+});
+
+</script>
+</head>
+
+<body>
+
+<div id="status">Chat not Active</div>
+</body>
+</html>

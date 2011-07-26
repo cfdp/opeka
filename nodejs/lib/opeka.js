@@ -38,6 +38,7 @@ function Server(httpPort) {
 
   self.councellors = nowjs.getGroup('councellors');
   self.guests = nowjs.getGroup("guests");
+  self.onlyStatus = nowjs.getGroup("onlyStatus");
 
   /**
    * This function is called by the client when he's ready to load the chat.
@@ -53,10 +54,17 @@ function Server(httpPort) {
         throw err;
       }
 
+
       // Add the user to the overall group he belongs in.
       // This is important, since it governs what methods he has access
       // to, so only councellors can create rooms, etc.
-      if (account.isAdmin) {
+	  if (clientUser.statusOnly){
+		//In this case the user that is connected is only interested in the status of the chat.
+		//This is 0 if not active, 1 if busy and 2 if open.
+		self.onlyStatus.addUser(client.user.clientId);
+		client.now.receiveStatus(self.getCurrentStatus());
+
+      }else if (account.isAdmin) {
         self.councellors.addUser(client.user.clientId);
 
         // Send the rooms to the newly connected client.
@@ -79,7 +87,8 @@ function Server(httpPort) {
       // Update online users count for all clients.
       self.everyone.now.updateOnlineCount(self.guests.count, self.councellors.count);
 
-      callback(account);
+	  if (callback)
+        callback(account);
     });
   };
 
@@ -282,6 +291,7 @@ function Server(httpPort) {
 	  opeka.rooms.remove(roomId, function(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder){
 		self.updateRoomList(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder, priv);
 	  });
+	  
 	}else{
 		this.now.displayError("Error deleting room: a room with the specified ID does not exist.");
 	}
@@ -431,6 +441,27 @@ function Server(httpPort) {
 	  system: true
     };
     to.now.receiveMessage(messageObj);
+  };
+
+  /* Function used in order to retrieve the status of the chat system*/ 
+  self.getCurrentStatus = function(){
+	if (opeka.rooms.public_roomOrder.length == 0){
+	  //No public room is active, the chat is not active
+	  return 0;
+	}else{
+	  //check if any public room is not full
+	  found = false;
+	  public_roomOrder.forEach(function (roomId, index) {
+		var room = opeka.rooms.get(roomId);
+	    if(room && !room.isFull()){
+		  //there are room that are not full, then the chat is available
+		  found = true;
+		  return;
+		}
+	  });
+	  if (found) return 2;
+	  return 1;
+	}
   };
 
 }
