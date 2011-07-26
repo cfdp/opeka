@@ -38,7 +38,6 @@ function Server(httpPort) {
 
   self.councellors = nowjs.getGroup('councellors');
   self.guests = nowjs.getGroup("guests");
-  self.onlyStatus = nowjs.getGroup("onlyStatus");
 
   /**
    * This function is called by the client when he's ready to load the chat.
@@ -54,14 +53,12 @@ function Server(httpPort) {
         throw err;
       }
 
-
       // Add the user to the overall group he belongs in.
       // This is important, since it governs what methods he has access
       // to, so only councellors can create rooms, etc.
 	  if (clientUser.statusOnly){
 		//In this case the user that is connected is only interested in the status of the chat.
 		//This is 0 if not active, 1 if busy and 2 if open.
-		self.onlyStatus.addUser(client.user.clientId);
 		client.now.receiveStatus(self.getCurrentStatus());
 
       }else if (account.isAdmin) {
@@ -78,6 +75,14 @@ function Server(httpPort) {
 		
 		// Send the rooms to the newly connected client.
         client.now.receiveRooms(opeka.rooms.clientSideList_public(), opeka.rooms.public_roomOrder);
+
+        // Store the location information for later use, if they have been defined.
+	    if (clientUser.address){
+		  var add = clientUser.address.split(", ");
+		  client.user.city = add[0];
+		  client.user.state = add[1];
+		}
+
       }
 
       // Store the account and nickname for later use.
