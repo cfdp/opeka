@@ -15,6 +15,7 @@ var drupal = require("drupal"),
       cert: fs.readFileSync('certs/server-cert.pem')
     },
     uuid = require('node-uuid'),
+	scandinavia = ['Sweden', 'Norway'];
     opeka = {
       rooms: require('./rooms'),
       user: require('./user')
@@ -255,12 +256,12 @@ function Server(httpPort) {
   /**
    * This function is called by the Counsellors in order to create a new room
    */
-  self.councellors.now.createRoom = function (roomName, maxSize, priv, callback) {
+  self.councellors.now.createRoom = function (roomName, maxSize, priv, nat, callback) {
 	if ((roomName.length == 0)){
 	  this.now.displayError("Error creating room: room name too short.");
 	  callback("err",null);
 	} else {
-      var room = opeka.rooms.create(roomName, maxSize, priv, function(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder){
+      var room = opeka.rooms.create(roomName, maxSize, priv, nat, function(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder){
 		self.updateRoomList(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder, priv);
       });
 
@@ -326,14 +327,15 @@ function Server(httpPort) {
     var newRoom = opeka.rooms.get(roomId);
 
 	//if an user has been muted it has to be unmuted
-	if (this.user.muted){
-	  this.user.muted = false;
-	  this.now.localUnmute();
+	if (client.user.muted){
+	  client.user.muted = false;
+	  client.now.localUnmute();
 	}
 	
-	//check if the room is full
-    if (newRoom && newRoom.isFull() && callback)
-      return callback(true);
+	//check if the room is full, if yes put the user in queue
+	//     if (newRoom && newRoom.isFull() && callback){
+	//       return callback(true);
+	// }
 
     // If user is already in a different room, leave it.
     if (opeka.rooms.get(client.user.activeRoomId)) {
@@ -345,19 +347,19 @@ function Server(httpPort) {
 	  serv.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.group);
 	
 	  if (quit){
-	    this.now.quitRoom(callback);
+	    client.now.quitRoom(callback);
       }
     }
     
 	//trying to add the user, if this returns false the room is full or does not exists
-	var addedUser = false;
+	var addedUser;
 	if (newRoom){
       addedUser = newRoom.addUser(client.user, function(users){
 	    newRoom.counsellorGroup.now.receiveUserList(users);
       });
 	}
 
-    if (addedUser) {
+    if (addedUser == 'OK') {
       client.user.activeRoomId = roomId;
 	  serv.sendSystemMessage(client.user.nickname + " joined the room “" + newRoom.name + "”.", newRoom.group);
 	  
@@ -371,7 +373,8 @@ function Server(httpPort) {
     }
 
 	if (callback)
-		callback(false);
+		callback(addedUser);
+	
   };
 
   self.everyone.now.sendMessageToRoom = function (roomId, messageText) {

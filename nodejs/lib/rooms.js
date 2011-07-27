@@ -4,6 +4,7 @@
  */
 var nowjs = require("now"),
     uuid = require('node-uuid');
+    util = require("util"),
     rooms = {},
     public_roomOrder = [], //list of only the public rooms
     all_roomOrder = []; //list of all the rooms
@@ -16,9 +17,9 @@ var nowjs = require("now"),
  * sure all new rooms are created through this function, and thus,
  * properly registered.
  */
-function create(name, maxSize, priv, callback) {
+function create(name, maxSize, priv, nat, callback) {
   var roomId = uuid(),
-      room = new Room(roomId, name, maxSize, priv);
+      room = new Room(roomId, name, maxSize, priv, nat);
 
   rooms[roomId] = room;
   if (priv) all_roomOrder.push(roomId);
@@ -91,7 +92,7 @@ function clientSideList_all() {
  *
  * It also protects the room's group-object from prying eyes.
  */
-function Room(roomId, name, maxSize, priv) {
+function Room(roomId, name, maxSize, priv, nat) {
   var self = this;
   self.id = roomId; //id of the room
   self.name = name; //name of the room
@@ -99,8 +100,12 @@ function Room(roomId, name, maxSize, priv) {
   self.group = nowjs.getGroup(roomId); //nowjs group for the room
   self.counsellorGroup = nowjs.getGroup("counsellors-"+roomId); //group populated with all the cousellors in the room
   self.private = priv; //flag that indicates if the room is private
-  self.users = []; //list of users
+  self.users = []; //list of users currently chatting
   self.usersIdx = {}; //mapping ClientID = Index of the user in self.users
+  self.queue = []; //user in queue waiting for chat
+
+  //The following is setted in order to let the counsellor define from which part of the world the user can join the chat
+  if(nat) self.nationality = nat;
 
   /* Function used in order to see if a room is full */
   self.isFull = function() {
@@ -111,10 +116,17 @@ function Room(roomId, name, maxSize, priv) {
 
   /**
    * Add an user to the group.
+   * Returns: 'OK' if the user has been added to the chat, an integer that is stating 
+   * the user place in the queue if the chat is busy, or a negative integer if the user cannot join the chat
    */
   self.addUser = function (user, callback) {
     // If we have both rooms and groups, check that we don't exceed the
     // room size (if set) before adding the person to the room.
+	
+	//nationality check:
+	if (!user.account.isAdmin && self.nationality && user.state && (self.nationality.indexOf(user.state) < 0)){
+	  return -1;
+	}
     if ((!self.maxSize || self.group.count < self.maxSize) && user) {
 	  var index = self.users.push(user) - 1;
 	  self.usersIdx[user.clientId] = index;
@@ -133,13 +145,17 @@ function Room(roomId, name, maxSize, priv) {
 			//this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...			
 		}
       }
-      return true;
-    }
-    return false;
+	  //the chat is free, we return 'OK'
+      return 'OK';
+    }else if(!user.account.isAdmin){
+	  var index = self.queue.push(user) - 1;
+	  return index;
+	}else return -1;
   };
 
   /**
    * Remove user from group.
+   * if somebody is in queue return the user object of the first in queue for this chat room
    */
   self.removeUser = function (clientId, callback) {
 	var idx = self.usersIdx[clientId];
@@ -153,6 +169,17 @@ function Room(roomId, name, maxSize, priv) {
 		self.group.removeUser(clientId);
 		self.usersIdx[clientId] = null;
 		self.counsellorGroup.removeUser(clientId);
+		var found = false;
+		while (self.queue.length > 0 && !found){
+			var user = self.queue.shift();
+			var group = nowjs.getGroup(user.clientId);
+			//the user has to be connected and has not to be in other rooms
+			if (group.count > 0 && !user.activeRoomId){
+				found = true;
+				group.now.changeRoom(self.id);
+				group.now.joinRoom(self.id);
+			}
+		}
 		if(callback) {
           try{
 			callback(self.users);
@@ -184,6 +211,7 @@ function Room(roomId, name, maxSize, priv) {
 	for (var user in self.users)
 	  self.removeUser(user.clientId);
 	self.users = [];
+	self.queue = [];
   };
 
   return self;

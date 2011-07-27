@@ -32,11 +32,21 @@ var opeka = {};
 	  callback();
   };
 
+  //This method is used in order to join a room
+  now.joinRoom = function(roomId, callback){
+      opeka.closeChat();
+      opeka.activeRoomId = roomId;
+      opeka.openChat(roomId);	
+      window.location.replace("#room="+roomId);
+	  if(callback) callback();
+  };
+
+
   /* This method is used in order to update the active room of the users 
    * in case a counselor have deleted it
    */
   now.updateActiveRoom = function(){
-	if (!opeka.rooms[opeka.activeRoomId]){
+	if (opeka.activeRoomId && !opeka.rooms[opeka.activeRoomId]){
         now.changeRoom(null);
         opeka.activeRoomId = null;
         opeka.closeChat();
@@ -95,15 +105,19 @@ var opeka = {};
 
     // We have change to a chat room.
     if (roomId) {
-	  now.changeRoom(roomId, function(full){
-		if (!full){
+	  now.changeRoom(roomId, function(addingStatus){
+		if (addingStatus == 'OK'){
           opeka.closeChat();
           opeka.activeRoomId = roomId;
           opeka.openChat(roomId);
-	    }else{
-		  now.displayError('This room is full');
+	    }else if(addingStatus < 0){
+		  now.displayError('You cannot join this room.');
+          opeka.closeChat();
 		  window.location.replace("#");
-        }
+        }else{
+		  now.displayError('You have been added to queue with position: '+addingStatus);		  
+          opeka.closeChat();
+		}
 	  });
     }
     else {

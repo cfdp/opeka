@@ -196,7 +196,11 @@ opeka.prepare = function () {
     // Configure the create room interface.
     roomForm.find('.create-room').click(function (event) {
       // When the room is created, show the chat interface.
-      now.createRoom(roomForm.find('#room-name').val(), roomForm.find('#room-size').val(), roomForm.find('#room_private_id').is(':checked'), function (err, room) {
+	  var location = roomForm.find('#room-location').val();
+	  if (location == 'Any') location = null;
+	  if (location == 'Denmark') location = ['Denmark'];
+	  if (location == 'Scandinavia') location = ['Sweden','Norway'];
+      now.createRoom(roomForm.find('#room-name').val(), roomForm.find('#room-size').val(), roomForm.find('#room_private_id').is(':checked'), location, function (err, room) {
         if (room) {
           now.changeRoom(room.id);
           $.bbq.pushState({room: room.id});
