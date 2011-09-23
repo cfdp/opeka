@@ -454,17 +454,19 @@ function Server(httpPort) {
     if (opeka.rooms.public_roomOrder.length == 0){
       //No public room is active, the chat is not active
       return 0;
-    }else{
+    } else {
       //check if any public room is not full
       found = false;
       public_roomOrder.forEach(function (roomId, index) {
-      var room = opeka.rooms.get(roomId);
+        var room = opeka.rooms.get(roomId);
+
         if(room && !room.isFull()){
-        //there are room that are not full, then the chat is available
-        found = true;
-        return;
-      }
+          //there are room that are not full, then the chat is available
+          found = true;
+          return;
+        }
       });
+
       if (found) return 2;
       return 1;
     }
