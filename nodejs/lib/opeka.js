@@ -23,7 +23,7 @@ function Server(settings) {
     self.settings = settings;
 
     // Configure the main web server.
-    self.server = self.createServer(self.settings, function () {
+    self.server = self.createServer(self.settings, function (req, res) {
       res.writeHead(200);
       res.write('Welcome to Opeka.');
       res.end();
