@@ -15,7 +15,6 @@ var drupal = require("drupal"),
       cert: fs.readFileSync('certs/server-cert.pem')
     },
     uuid = require('node-uuid'),
-	scandinavia = ['Sweden', 'Norway'];
     opeka = {
       rooms: require('./rooms'),
       user: require('./user')
