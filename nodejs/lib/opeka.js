@@ -47,6 +47,7 @@ function Server(httpPort) {
    */
   self.everyone.now.clientReady = function (clientUser, callback) {
     var client = this;
+    util.log(clientUser.nickname + ' connected.');
 
     opeka.user.authenticate(clientUser, function (err, account) {
       if (err) {
