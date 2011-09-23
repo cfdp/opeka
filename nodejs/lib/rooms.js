@@ -8,7 +8,7 @@ var nowjs = require("now"),
     rooms = {},
     public_roomOrder = [], //list of only the public rooms
     all_roomOrder = []; //list of all the rooms
-    
+
 
 /**
  * Create a new room.
@@ -24,10 +24,10 @@ function create(name, maxSize, priv, nat, callback) {
   rooms[roomId] = room;
   if (priv) all_roomOrder.push(roomId);
   else {
-    all_roomOrder.push(roomId);	
-    public_roomOrder.push(roomId);	
+    all_roomOrder.push(roomId);
+    public_roomOrder.push(roomId);
   }
-  
+
   //Update room list
   if (callback) callback(this.clientSideList_all(), this.all_roomOrder, this.clientSideList_public(), this.public_roomOrder);
 
@@ -47,19 +47,20 @@ function get(roomId) {
 function remove(roomId, callback){
   var room = rooms[roomId];
   if (room){
-	room.removeAllUsers();
-    var idx = all_roomOrder.indexOf(roomId);
-	all_roomOrder.splice(idx, 1);
-	
-	//If the room is not private we have to delete it also from the public room list
-	if (!room.private){
-	  var idx = public_roomOrder.indexOf(roomId);
-	  public_roomOrder.splice(idx, 1);
-	}
-	rooms[roomId] = null;
-	
-	//update room list
-    if (callback) callback(this.clientSideList_all(), this.all_roomOrder, this.clientSideList_public(), this.public_roomOrder);
+    room.removeAllUsers();
+    all_roomOrder.splice(all_roomOrder.indexOf(roomId), 1);
+
+    //If the room is not private we have to delete it also from the public room list
+    if (!room.private){
+      public_roomOrder.splice(public_roomOrder.indexOf(roomId), 1);
+    }
+
+    rooms[roomId] = null;
+
+    //update room list
+    if (callback) {
+      callback(this.clientSideList_all(), this.all_roomOrder, this.clientSideList_public(), this.public_roomOrder);
+    }
   }
 }
 
@@ -116,41 +117,48 @@ function Room(roomId, name, maxSize, priv, nat) {
 
   /**
    * Add an user to the group.
-   * Returns: 'OK' if the user has been added to the chat, an integer that is stating 
+   * Returns: 'OK' if the user has been added to the chat, an integer that is stating
    * the user place in the queue if the chat is busy, or a negative integer if the user cannot join the chat
    */
   self.addUser = function (user, callback) {
     // If we have both rooms and groups, check that we don't exceed the
     // room size (if set) before adding the person to the room.
-	
-	//nationality check:
-	if (!user.account.isAdmin && self.nationality && user.state && (self.nationality.indexOf(user.state) < 0)){
-	  return -1;
-	}
+
+    //nationality check:
+    if (!user.account.isAdmin && self.nationality && user.state && (self.nationality.indexOf(user.state) < 0)){
+      return -1;
+    }
+
     if ((!self.maxSize || self.group.count < self.maxSize) && user) {
-	  var index = self.users.push(user) - 1;
-	  self.usersIdx[user.clientId] = index;
+      var index = self.users.push(user) - 1;
+      self.usersIdx[user.clientId] = index;
       self.group.addUser(user.clientId);
-	  
-	  //Start the timer in order to retrieve at the end the duration of the chat
-	  if (user.account.isAdmin)
-	    self.counsellorGroup.addUser(user.clientId);
-	  else self.chatDurationStart_Min = Math.round((new Date()).getTime() / 60000);
-	  
-	  //Update user list for the admins
-	  if (callback){
-		try{
-		  callback(self.users);
-		}catch(ignore){
-			//this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...			
-		}
+
+      // Start the timer in order to retrieve at the end the duration of the chat
+      if (user.account.isAdmin) {
+        self.counsellorGroup.addUser(user.clientId);
       }
-	  //the chat is free, we return 'OK'
+      else {
+        self.chatDurationStart_Min = Math.round((new Date()).getTime() / 60000);
+      }
+
+      //Update user list for the admins
+      if (callback){
+        try{
+          callback(self.users);
+        } catch(ignore){
+          //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
+        }
+      }
+
+      // The chat is free, we return 'OK'.
       return 'OK';
-    }else if(!user.account.isAdmin){
-	  var index = self.queue.push(user) - 1;
-	  return index;
-	}else return -1;
+    } else if(!user.account.isAdmin) {
+      var index = self.queue.push(user) - 1;
+      return index;
+    } else {
+      return -1;
+    }
   };
 
   /**

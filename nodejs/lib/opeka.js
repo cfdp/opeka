@@ -450,7 +450,7 @@ function Server(httpPort) {
   };
 
   /* Function used in order to retrieve the status of the chat system*/ 
-  self.getCurrentStatus = function(){
+  self.getCurrentStatus = function() {
     if (opeka.rooms.public_roomOrder.length == 0){
       //No public room is active, the chat is not active
       return 0;
@@ -460,7 +460,7 @@ function Server(httpPort) {
       public_roomOrder.forEach(function (roomId, index) {
         var room = opeka.rooms.get(roomId);
 
-        if(room && !room.isFull()){
+        if (room && !room.isFull()) {
           //there are room that are not full, then the chat is available
           found = true;
           return;
