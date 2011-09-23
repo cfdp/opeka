@@ -5,15 +5,8 @@ var drupal = require("drupal"),
 
 // Set up the database connection as our first order of business.
 util.log('Connecting to database...');
-var client = drupal.db.connect(settings.databaseConnection, function (err, connection) {
-  if (err) {
-    util.log('Error connecting to Drupal database: ' + err.message);
-  }
-  else if (connection) {
-    util.log('Database connection established, initlialising Now.js server...');
-    var server = new opeka.Server(settings.httpPort);
-  }
-});
+var client = drupal.db.connect(settings.databaseConnection),
+    server = new opeka.Server(settings.httpPort);
 
 process.on('exit', function () {
   if (!client) {
