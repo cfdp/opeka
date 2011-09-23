@@ -219,7 +219,7 @@ function Room(roomId, name, maxSize, priv, nat) {
       id: self.id,
       name: self.name,
       maxSize: self.maxSize,
-	  private: self.private
+      private: self.private
     };
   };
 
