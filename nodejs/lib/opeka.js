@@ -9,11 +9,6 @@
 var drupal = require("drupal"),
     nowjs = require("now"),
     util = require("util"),
-    fs = require("fs"),
-    options = {
-      key: fs.readFileSync('certs/server-key.pem'),
-      cert: fs.readFileSync('certs/server-cert.pem')
-    },
     uuid = require('node-uuid'),
     opeka = {
       rooms: require('./rooms'),
@@ -21,23 +16,44 @@ var drupal = require("drupal"),
     };
 
 
-function Server(httpPort) {
+function Server(settings) {
   var self = this;
-  self.httpPort = httpPort;
 
-  // Create a simple server that responds via HTTPS.
-    self.server = require('https').createServer(options, function(req, res) {
-    res.writeHead(200);
-    res.write('Welcome to Opeka.');
-    res.end();
-  });
-  self.server.listen(self.httpPort);
+  self.construct = function () {
+    self.settings = settings;
 
-  // Initialise Now.js on our server object.
-  self.everyone = nowjs.initialize(self.server);
+    // Configure the main web server.
+    self.server = self.createServer(self.settings, function () {
+      res.writeHead(200);
+      res.write('Welcome to Opeka.');
+      res.end();
+    });
+    self.server.listen(self.settings.httpPort);
 
-  self.councellors = nowjs.getGroup('councellors');
-  self.guests = nowjs.getGroup("guests");
+    // Initialise Now.js on our server object.
+    self.everyone = nowjs.initialize(self.server);
+
+    // Create groups for councellors and guests.
+    self.councellors = nowjs.getGroup('councellors');
+    self.guests = nowjs.getGroup("guests");
+  }
+
+  /**
+   * Create a server instance, HTTP or HTTPS depending on settings.
+   */
+  self.createServer = function (settings, callback) {
+    if (settings.https) {
+      return require('https').createServer(settings.https, callback);
+    }
+    else {
+      return require('http').createServer(callback);
+    }
+  }
+
+  // The following methods require Nowjs to be instantiated, so we need
+  // to call the constructor here. That is bad form, but it requires
+  // more refactoring to change that I care for right now.
+  self.construct();
 
   /**
    * This function is called by the client when he's ready to load the chat.
@@ -475,6 +491,8 @@ function Server(httpPort) {
       return 1;
     }
   };
+
+  return self;
 }
 
 module.exports = opeka;

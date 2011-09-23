@@ -1,4 +1,5 @@
-var settings = {};
+var fs = require("fs"),
+    settings = {};
 
 settings.httpPort = 3000;
 settings.databaseConnection = {
@@ -8,6 +9,14 @@ settings.databaseConnection = {
   password: 'asdfsecret',
   database: 'john_doe'
 };
+
+
+// Uncomment and configure this if you want to run Nowjs via HTTPS. 
+//settings.https = {
+//  key: fs.readFileSync('certs/server-key.pem'),
+//  cert: fs.readFileSync('certs/server-cert.pem')
+//};
+
 
 module.exports = settings;
 

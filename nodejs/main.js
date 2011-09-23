@@ -12,5 +12,5 @@ if (!client) {
 }
 
 util.log('Starting Opeka chat server on port '  + settings.httpPort);
-server = new opeka.Server(settings.httpPort);
+server = new opeka.Server(settings);
 
