@@ -5,12 +5,12 @@ var drupal = require("drupal"),
 
 // Set up the database connection as our first order of business.
 util.log('Connecting to database...');
-var client = drupal.db.connect(settings.databaseConnection),
-    server = new opeka.Server(settings.httpPort);
+var client = drupal.db.connect(settings.databaseConnection), server;
 
-process.on('exit', function () {
-  if (!client) {
-    util.log('FAIL: Could not connect to database. Exiting.');
-  }
-});
+if (!client) {
+  util.log('FAIL: Could not connect to database. Exiting.');
+}
+
+util.log('Starting Opeka chat server on port '  + settings.httpPort);
+server = new opeka.Server(settings.httpPort);
 
