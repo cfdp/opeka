@@ -22,14 +22,19 @@ function create(name, maxSize, priv, nat, callback) {
       room = new Room(roomId, name, maxSize, priv, nat);
 
   rooms[roomId] = room;
-  if (priv) all_roomOrder.push(roomId);
+
+  if (priv) {
+    all_roomOrder.push(roomId);
+  }
   else {
     all_roomOrder.push(roomId);
     public_roomOrder.push(roomId);
   }
 
-  //Update room list
-  if (callback) callback(this.clientSideList_all(), this.all_roomOrder, this.clientSideList_public(), this.public_roomOrder);
+  // Update room list.
+  if (callback) {
+    callback(this.clientSideList_all(), this.all_roomOrder, this.clientSideList_public(), this.public_roomOrder);
+  } 
 
   return room;
 }
@@ -106,13 +111,18 @@ function Room(roomId, name, maxSize, priv, nat) {
   self.queue = []; //user in queue waiting for chat
 
   //The following is setted in order to let the counsellor define from which part of the world the user can join the chat
-  if(nat) self.nationality = nat;
+  if (nat) {
+    self.nationality = nat;
+  }
 
   /* Function used in order to see if a room is full */
   self.isFull = function() {
-	if (self.maxSize && self.group.count >= self.maxSize)
-	  return true;
-	else return false;
+    if (self.maxSize && self.group.count >= self.maxSize) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   /**
@@ -163,39 +173,40 @@ function Room(roomId, name, maxSize, priv, nat) {
 
   /**
    * Remove user from group.
+   *
    * if somebody is in queue return the user object of the first in queue for this chat room
    */
   self.removeUser = function (clientId, callback) {
-	var idx = self.usersIdx[clientId];
-	if (idx){
-	  try {
-	    self.users[idx].now.activeRoomId = null;
-	  }catch(ignored){
-		//if we have an exception here means that the user is disconnected, thus we do not mind about the activeRoomId
-	  }finally{
-	    self.users.splice(idx, 1);
-		self.group.removeUser(clientId);
-		self.usersIdx[clientId] = null;
-		self.counsellorGroup.removeUser(clientId);
-		var found = false;
-		while (self.queue.length > 0 && !found){
-			var user = self.queue.shift();
-			var group = nowjs.getGroup(user.clientId);
-			//the user has to be connected and has not to be in other rooms
-			if (group.count > 0 && !user.activeRoomId){
-				found = true;
-				group.now.changeRoom(self.id);
-				group.now.joinRoom(self.id);
-			}
-		}
-		if(callback) {
-          try{
-			callback(self.users);
-	      }catch(ignored){
-			//this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
-		  }
-		}
-	  }
+    var idx = self.usersIdx[clientId];
+    if (idx){
+      try {
+        self.users[idx].now.activeRoomId = null;
+      } catch(ignored){
+      //if we have an exception here means that the user is disconnected, thus we do not mind about the activeRoomId
+      } finally{
+        self.users.splice(idx, 1);
+        self.group.removeUser(clientId);
+        self.usersIdx[clientId] = null;
+        self.counsellorGroup.removeUser(clientId);
+        var found = false;
+        while (self.queue.length > 0 && !found){
+          var user = self.queue.shift();
+          var group = nowjs.getGroup(user.clientId);
+          //the user has to be connected and has not to be in other rooms
+          if (group.count > 0 && !user.activeRoomId){
+            found = true;
+            group.now.changeRoom(self.id);
+            group.now.joinRoom(self.id);
+          }
+        }
+        if (callback) {
+          try {
+            callback(self.users);
+          } catch(ignored) {
+            //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
+          }
+        }
+      }
     }
   };
 
@@ -216,10 +227,10 @@ function Room(roomId, name, maxSize, priv, nat) {
    * Remove all users from the room.
    */
   self.removeAllUsers = function(){
-	for (var user in self.users)
-	  self.removeUser(user.clientId);
-	self.users = [];
-	self.queue = [];
+    for (var user in self.users)
+      self.removeUser(user.clientId);
+    self.users = [];
+    self.queue = [];
   };
 
   return self;
