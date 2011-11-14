@@ -2,8 +2,10 @@
  * @file
  * Code for managing chat rooms.
  */
+"use strict";
+
 var nowjs = require("now"),
-    uuid = require('node-uuid');
+    uuid = require('node-uuid'),
     util = require("util"),
     rooms = {},
     public_roomOrder = [], //list of only the public rooms
@@ -34,7 +36,7 @@ function create(name, maxSize, priv, nat, callback) {
   // Update room list.
   if (callback) {
     callback(this.clientSideList_all(), this.all_roomOrder, this.clientSideList_public(), this.public_roomOrder);
-  } 
+  }
 
   return room;
 }
@@ -49,14 +51,14 @@ function get(roomId) {
 /**
  * Remove a room from the system.
  */
-function remove(roomId, callback){
+function remove(roomId, callback) {
   var room = rooms[roomId];
-  if (room){
+  if (room) {
     room.removeAllUsers();
     all_roomOrder.splice(all_roomOrder.indexOf(roomId), 1);
 
     //If the room is not private we have to delete it also from the public room list
-    if (!room.private){
+    if (!room.private) {
       public_roomOrder.splice(public_roomOrder.indexOf(roomId), 1);
     }
 
@@ -135,7 +137,7 @@ function Room(roomId, name, maxSize, priv, nat) {
     // room size (if set) before adding the person to the room.
 
     //nationality check:
-    if (!user.account.isAdmin && self.nationality && user.state && (self.nationality.indexOf(user.state) < 0)){
+    if (!user.account.isAdmin && self.nationality && user.state && (self.nationality.indexOf(user.state) < 0)) {
       return -1;
     }
 
@@ -153,10 +155,10 @@ function Room(roomId, name, maxSize, priv, nat) {
       }
 
       //Update user list for the admins
-      if (callback){
+      if (callback) {
         try{
           callback(self.users);
-        } catch(ignore){
+        } catch(ignore) {
           //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
         }
       }
@@ -178,10 +180,10 @@ function Room(roomId, name, maxSize, priv, nat) {
    */
   self.removeUser = function (clientId, callback) {
     var idx = self.usersIdx[clientId];
-    if (idx){
+    if (idx) {
       try {
         self.users[idx].now.activeRoomId = null;
-      } catch(ignored){
+      } catch(ignored) {
       //if we have an exception here means that the user is disconnected, thus we do not mind about the activeRoomId
       } finally{
         self.users.splice(idx, 1);
@@ -189,11 +191,11 @@ function Room(roomId, name, maxSize, priv, nat) {
         self.usersIdx[clientId] = null;
         self.counsellorGroup.removeUser(clientId);
         var found = false;
-        while (self.queue.length > 0 && !found){
+        while (self.queue.length > 0 && !found) {
           var user = self.queue.shift();
           var group = nowjs.getGroup(user.clientId);
           //the user has to be connected and has not to be in other rooms
-          if (group.count > 0 && !user.activeRoomId){
+          if (group.count > 0 && !user.activeRoomId) {
             found = true;
             group.now.changeRoom(self.id);
             group.now.joinRoom(self.id);
@@ -226,7 +228,7 @@ function Room(roomId, name, maxSize, priv, nat) {
   /**
    * Remove all users from the room.
    */
-  self.removeAllUsers = function(){
+  self.removeAllUsers = function() {
     for (var user in self.users)
       self.removeUser(user.clientId);
     self.users = [];

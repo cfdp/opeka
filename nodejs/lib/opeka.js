@@ -4,10 +4,10 @@
  * This contains the core of the Opeka code encapsulated in the Server
  * object, so you can instance it from your own code if need be.
  */
+"use strict";
 
 // Load all our dependencies.
-var drupal = require("drupal"),
-    nowjs = require("now"),
+var nowjs = require("now"),
     util = require("util"),
     uuid = require('node-uuid'),
     opeka = {
@@ -36,7 +36,7 @@ function Server(settings) {
     // Create groups for councellors and guests.
     self.councellors = nowjs.getGroup('councellors');
     self.guests = nowjs.getGroup("guests");
-  }
+  };
 
   /**
    * Create a server instance, HTTP or HTTPS depending on settings.
@@ -48,7 +48,7 @@ function Server(settings) {
     else {
       return require('http').createServer(callback);
     }
-  }
+  };
 
   // The following methods require Nowjs to be instantiated, so we need
   // to call the constructor here. That is bad form, but it requires
@@ -73,7 +73,7 @@ function Server(settings) {
       // Add the user to the overall group he belongs in.
       // This is important, since it governs what methods he has access
       // to, so only councellors can create rooms, etc.
-      if (clientUser.statusOnly){
+      if (clientUser.statusOnly) {
         //In this case the user that is connected is only interested in the status of the chat.
         // This is 0 if not active, 1 if busy and 2 if open.
         client.now.receiveStatus(self.getCurrentStatus());
@@ -94,7 +94,7 @@ function Server(settings) {
         client.now.receiveRooms(opeka.rooms.clientSideList_public(), opeka.rooms.public_roomOrder);
 
         // Store the location information for later use, if they have been defined.
-        if (clientUser.address){
+        if (clientUser.address) {
           var add = clientUser.address.split(", ");
           client.user.city = add[0];
           client.user.state = add[1];
@@ -108,8 +108,9 @@ function Server(settings) {
       // Update online users count for all clients.
       self.everyone.now.updateOnlineCount(self.guests.count, self.councellors.count);
 
-	  if (callback)
-      callback(account);
+      if (callback) {
+        callback(account);
+      }
     });
   };
 
@@ -119,7 +120,7 @@ function Server(settings) {
     var room = opeka.rooms.get(admin.user.activeRoomId);
 
     //check that the room is not paused
-    if (room.paused){
+    if (room.paused) {
       admin.now.displayError("Error Pause: the room has already been paused.");
       return;
     }
@@ -139,12 +140,12 @@ function Server(settings) {
     var room = opeka.rooms.get(admin.user.activeRoomId);
 
     //check that the room is paused
-    if (!room.paused){
+    if (!room.paused) {
       admin.now.displayError("Error Unpause: the room has not been paused.");
       return;
     }
 
-    if(room && room.paused){
+    if(room && room.paused) {
       room.group.now.localUnmute();
       room.paused = false;
       self.sendSystemMessage('[Pause]: Chat is available again.', room.group);
@@ -157,7 +158,7 @@ function Server(settings) {
     var group = nowjs.getGroup(userId);
 
     //checking if the user exists
-    if (group.count == 0){
+    if (group.count === 0) {
       admin.now.displayError("Error Unmuting: an user with the specified ID does not exists.");
       return;
     }
@@ -165,13 +166,13 @@ function Server(settings) {
     //checking if the user is in the same room as the counsellor
     var room = opeka.rooms.get(admin.user.activeRoomId);
     var idx = room.usersIdx[userId];
-    if (!idx){
+    if (!idx) {
       admin.now.displayError("Error Unmuting: the specified user is not in the same room as yours.");
       return;
     }
 
     //Checking if the user has been already muted
-    if (!room.users[idx].muted){
+    if (!room.users[idx].muted) {
       admin.now.displayError("Error Unmuting: the specified user is not muted.");
       return;
     }
@@ -183,12 +184,12 @@ function Server(settings) {
     };
 
     /* Function used in order to mute a single user */
-    self.councellors.now.mute = function (userId){
+    self.councellors.now.mute = function (userId) {
     var admin = this;
     var group = nowjs.getGroup(userId);
 
     //checking if the user exists
-    if (group.count == 0){
+    if (group.count === 0) {
       admin.now.displayError("Error Muting: an user with the specified ID does not exists.");
       return;
     }
@@ -196,13 +197,13 @@ function Server(settings) {
     //checking if the user is in the same room as the counsellor
     var room = opeka.rooms.get(admin.user.activeRoomId);
     var idx = room.usersIdx[userId];
-    if (!idx){
+    if (!idx) {
       admin.now.displayError("Error Muting: the specified user is not in the same room as yours.");
       return;
     }
 
     //Checking if the user has been already muted
-    if (room.users[idx].muted){
+    if (room.users[idx].muted) {
       admin.now.displayError("Error Muting: the specified user has already been muted.");
       return;
     }
@@ -218,7 +219,7 @@ function Server(settings) {
     var group = nowjs.getGroup(userId);
 
     //checking if the user exists
-    if (group.count == 0){
+    if (group.count === 0) {
       this.now.displayError("Error kicking: an user with the specified ID does not exists.");
       return;
     }
@@ -226,7 +227,7 @@ function Server(settings) {
     //checking if the user is in the same room as the counsellor
     var room = opeka.rooms.get(this.user.activeRoomId);
     var idx = room.usersIdx[userId];
-    if (!idx){
+    if (!idx) {
       this.now.displayError("Error kicking: the specified user is not in the same room as yours.");
       return;
     }
@@ -242,7 +243,7 @@ function Server(settings) {
     var group = nowjs.getGroup(userId);
 
     //checking if the user exists
-    if (group.count == 0){
+    if (group.count === 0) {
       this.now.displayError("Error whispering: an user with the specified ID does not exists.");
       return;
     }
@@ -250,7 +251,7 @@ function Server(settings) {
     //checking if the user is in the same room as the counsellor
     var room = opeka.rooms.get(this.user.activeRoomId);
     var idx = room.usersIdx[userId];
-    if (!idx){
+    if (!idx) {
       this.now.displayError("Error whispering: the specified user is not in the same room as yours.");
       return;
     }
@@ -272,12 +273,12 @@ function Server(settings) {
    * This function is called by the Counsellors in order to create a new room
    */
   self.councellors.now.createRoom = function (roomName, maxSize, priv, nat, callback) {
-    if ((roomName.length == 0)){
+    if ((roomName.length === 0)) {
       this.now.displayError("Error creating room: room name too short.");
       callback("err",null);
     } else {
-      var room = opeka.rooms.create(roomName, maxSize, priv, nat, function(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder){
-		self.updateRoomList(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder, priv);
+      var room = opeka.rooms.create(roomName, maxSize, priv, nat, function(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder) {
+    self.updateRoomList(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder, priv);
       });
 
       if (callback) {
@@ -291,14 +292,16 @@ function Server(settings) {
    */
   self.councellors.now.deleteRoom = function (roomId, finalMessage) {
     var room = opeka.rooms.get(roomId);
-    if (room != null) {
-      //send finalMessage
-      if (room.group && room.group.count != 0){
-      //if there are more than 1 user, for sure there will be one user that is not admin, then we have to send the final message
-      if (room.group.count>1)
+    if (room !== null) {
+      // Send finalMessage
+      if (room.group && room.group.count !== 0) {
+        // If there is more than 1 user, we assume that one is not an
+        // admin, so we have to send the final message.
+        if (room.group.count > 1) {
           room.group.now.client_finalMessage(this.user.nickname, finalMessage);
+        }
         //if chatDurationStart_Min is defined means that the room has been actually used by at least one user
-        if (room.chatDurationStart_Min){
+        if (room.chatDurationStart_Min) {
           var duration = Math.round((new Date()).getTime() / 60000) - room.chatDurationStart_Min;
           room.counsellorGroup.now.admin_finalMessage("Your Final Message has been:"+finalMessage+"\n The chat lasted for "+duration+" minute/s.");
         }else{
@@ -309,7 +312,7 @@ function Server(settings) {
       var priv = room.private;
 
         //remove room from the system
-      opeka.rooms.remove(roomId, function(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder){
+      opeka.rooms.remove(roomId, function(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder) {
       self.updateRoomList(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder, priv);
       });
 
@@ -320,16 +323,18 @@ function Server(settings) {
 
     /* Function used in order to delete all messages of a single user */
     self.councellors.now.deleteAllMsg = function (clientId) {
-    var room = opeka.rooms.get(this.user.activeRoomId);
-    if (room)
-      room.group.now.localDeleteAllMsg(clientId);
+      var room = opeka.rooms.get(this.user.activeRoomId);
+      if (room) {
+        room.group.now.localDeleteAllMsg(clientId);
+      }
     };
 
     /* Function used in order to delete a single message */
     self.councellors.now.deleteMsg = function (msgId) {
-    var room = opeka.rooms.get(this.user.activeRoomId);
-    if (room)
-      room.group.now.localDeleteMsg(msgId);
+      var room = opeka.rooms.get(this.user.activeRoomId);
+      if (room) {
+        room.group.now.localDeleteMsg(msgId);
+      }
     };
 
     /**
@@ -342,43 +347,43 @@ function Server(settings) {
       var newRoom = opeka.rooms.get(roomId);
 
     //if an user has been muted it has to be unmuted
-    if (client.user.muted){
+    if (client.user.muted) {
       client.user.muted = false;
       client.now.localUnmute();
     }
 
     //check if the room is full, if yes put the user in queue
-    //     if (newRoom && newRoom.isFull() && callback){
+    //     if (newRoom && newRoom.isFull() && callback) {
     //       return callback(true);
     // }
 
       // If user is already in a different room, leave it.
       if (opeka.rooms.get(client.user.activeRoomId)) {
         var oldRoom = opeka.rooms.get(client.user.activeRoomId);
-        oldRoom.removeUser(client.user.clientId, function(users){
+        oldRoom.removeUser(client.user.clientId, function(users) {
         oldRoom.counsellorGroup.now.receiveUserList(users);
         });
 
       serv.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.group);
 
-      if (quit){
+      if (quit) {
         client.now.quitRoom(callback);
         }
       }
 
     //trying to add the user, if this returns false the room is full or does not exists
     var addedUser;
-    if (newRoom){
-        addedUser = newRoom.addUser(client.user, function(users){
+    if (newRoom) {
+        addedUser = newRoom.addUser(client.user, function(users) {
         newRoom.counsellorGroup.now.receiveUserList(users);
         });
     }
 
-      if (addedUser == 'OK') {
+      if (addedUser === 'OK') {
         client.user.activeRoomId = roomId;
       serv.sendSystemMessage(client.user.nickname + " joined the room “" + newRoom.name + "”.", newRoom.group);
 
-      if (newRoom.paused && !client.user.account.isAdmin){
+      if (newRoom.paused && !client.user.account.isAdmin) {
       client.now.localMute();
 
       process.nextTick(function () {
@@ -387,9 +392,9 @@ function Server(settings) {
       }
       }
 
-    if (callback)
+    if (callback) {
       callback(addedUser);
-
+    }
   };
 
   self.everyone.now.sendMessageToRoom = function (roomId, messageText) {
@@ -398,10 +403,10 @@ function Server(settings) {
           date: new Date(),
           message: messageText,
           name: this.user.nickname,
-		  messageId: uuid(),
-		  senderId: this.user.clientId
+      messageId: uuid(),
+      senderId: this.user.clientId
         };
-    if (room && room.group.count && this.user.activeRoomId == roomId && !this.user.muted) {
+    if (room && room.group.count && this.user.activeRoomId === roomId && !this.user.muted) {
       room.group.now.receiveMessage(messageObj);
     }
   };
@@ -428,10 +433,10 @@ function Server(settings) {
     process.nextTick(function () {
 
       //leave the active room, if it is defined and it still exists
-      if (opeka.rooms.get(client.user.activeRoomId)){
+      if (opeka.rooms.get(client.user.activeRoomId)) {
         var oldRoom = opeka.rooms.get(client.user.activeRoomId);
 
-        oldRoom.removeUser(client.user.clientId, function(users){
+        oldRoom.removeUser(client.user.clientId, function(users) {
         self.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.group);
         oldRoom.counsellorGroup.now.receiveUserList(oldRoom.users);
       });
@@ -449,35 +454,39 @@ function Server(settings) {
   /**
    * Function used in order to update the room list on both client and admin side.
    */
-  self.updateRoomList = function (clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder, priv){
-    if (self.councellors && self.councellors.count && self.councellors.count != 0)
-	  self.councellors.now.receiveRooms(clientSideList_all, all_roomOrder);
-    if (!priv && self.guests && self.guests.count && self.guests.count != 0)
-	  self.guests.now.receiveRooms(clientSideList_public, public_roomOrder);
+  self.updateRoomList = function (clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder, priv) {
+    if (self.councellors && self.councellors.count && self.councellors.count !== 0) {
+      self.councellors.now.receiveRooms(clientSideList_all, all_roomOrder);
+    }
+    if (!priv && self.guests && self.guests.count && self.guests.count !== 0) {
+      self.guests.now.receiveRooms(clientSideList_public, public_roomOrder);
+    }
     self.everyone.now.updateActiveRoom();
   };
 
   /**
    * Function used in order to send a system message.
    */
-  self.sendSystemMessage = function(messageToSend, to){
+  self.sendSystemMessage = function(messageToSend, to) {
     var messageObj = {
-	  date: new Date(),
-	  message: messageToSend,
-	  system: true
+      date: new Date(),
+      message: messageToSend,
+      system: true
     };
     to.now.receiveMessage(messageObj);
   };
 
   /* Function used in order to retrieve the status of the chat system*/
   self.getCurrentStatus = function() {
-    if (opeka.rooms.public_roomOrder.length == 0){
+    var found;
+    if (opeka.rooms.public_roomOrder.length === 0) {
       //No public room is active, the chat is not active
       return 0;
     } else {
       //check if any public room is not full
       found = false;
-      public_roomOrder.forEach(function (roomId, index) {
+
+      opeka.rooms.public_roomOrder.forEach(function (roomId, index) {
         var room = opeka.rooms.get(roomId);
 
         if (room && !room.isFull()) {
@@ -487,7 +496,9 @@ function Server(settings) {
         }
       });
 
-      if (found) return 2;
+      if (found) {
+        return 2;
+      }
       return 1;
     }
   };

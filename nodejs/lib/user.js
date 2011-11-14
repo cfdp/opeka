@@ -1,6 +1,7 @@
 /**
  * Helpers for user validation and authentication.
  */
+"use strict";
 
 var drupal = require("drupal");
 
@@ -36,7 +37,7 @@ function authenticate(clientUser, callback) {
   }
   // Otherwise, there's little to authenticate.
   else {
-    account = {};
+    var account = {};
     account.isAdmin = false;
 
     callback(null, account);
@@ -45,5 +46,5 @@ function authenticate(clientUser, callback) {
 
 module.exports = {
   authenticate: authenticate
-}
+};
 
