@@ -2,8 +2,10 @@
  * @file
  * Opeka nowjs integration code for the frontend.
  */
+/*global iplocate, now, opeka */
 
 (function ($) {
+  "use strict";
 
 /* Method used in order to print the final message when the chat room has been closed */
 now.client_finalMessage = function(adminNick, finalMessage){
@@ -12,17 +14,17 @@ now.client_finalMessage = function(adminNick, finalMessage){
 };
 
 now.localMute = function(){
-	if (!opeka.mute){
-  	  $("#opeka-send-message").attr('disabled', 'disabled');
-	  opeka.mute = true;
-	}
+  if (!opeka.mute){
+      $("#opeka-send-message").attr('disabled', 'disabled');
+    opeka.mute = true;
+  }
 };
 
 now.localUnmute = function(){
-	if (opeka.mute){
-	  $("#opeka-send-message").removeAttr('disabled');
-	  opeka.mute = false;
-	}
+  if (opeka.mute){
+    $("#opeka-send-message").removeAttr('disabled');
+    opeka.mute = false;
+  }
 };
 
 /* Display a warning message*/
@@ -57,7 +59,7 @@ now.receiveRooms = function (rooms, roomOrder) {
 };
 
 /**
- * Prepare the client, load templates, etc. 
+ * Prepare the client, load templates, etc.
  */
 opeka.prepare = function () {
   // Load the template file for rendering data from the server.
@@ -69,61 +71,58 @@ opeka.prepare = function () {
     $("#opeka-placeholder").replaceWith($("#opeka_frontend_tmpl").tmpl());
 
     // Set up the admin interface.
-    var frontendWrapper = $("#opeka-frontend");
-        connectForm = frontendWrapper.find('.connect-interface');
-        roomForm = frontendWrapper.find('.online-interface');
-		infoDiv = frontendWrapper.find('.contents-not-chatting');
-	
-	infoDiv.load("/Cyberhus.dk.html .hours", function(response, status, xhr) {
-	  if (status == "error") {
-	    var msg = "Sorry but there was an error retrieving opening hours: ";
-	    infoDiv.html(msg + xhr.status + " " + xhr.statusText);
-	  }
-	});
-	
-	
+    var frontendWrapper = $("#opeka-frontend"),
+        connectForm = frontendWrapper.find('.connect-interface'),
+        roomForm = frontendWrapper.find('.online-interface'),
+        infoDiv = frontendWrapper.find('.contents-not-chatting');
+
+  infoDiv.load("/Cyberhus.dk.html .hours", function(response, status, xhr) {
+    if (status === "error") {
+      var msg = "Sorry but there was an error retrieving opening hours: ";
+      infoDiv.html(msg + xhr.status + " " + xhr.statusText);
+    }
+  });
+
+
     // Configure the connect button click event to make os ready to chat.
     connectForm.find('.connect').click(function (event) {
 
       // Disable the button to prevent multiple presses.
       $(this).attr("disabled", true);
 
-	  iplocate({
-	      ip: '',
-	      ipinfodbKey: '656fa6b8c899bdf780648c6a13696d07dbbbab8c37681428a5b6e489985493e9',
-	    }, function(address, latitude, longitude, errorCode, errorMessage){ 
-	      if (errorCode == undefined && errorMessage == undefined ) {
-			var clientData = {};
-		    
-		    // Pass along the location information of the client.
-			clientData.address = address;
-			clientData.latitude = latitude;
-			clientData.longitude = longitude;
-		    
-		    // Pass along the nickname the user entered.
-			clientData.nickname = connectForm.find('#nickname').val().trim() || 'Anonym';
-			clientData.age = connectForm.find('#age').val().trim() || '0';
-			clientData.gender = connectForm.find('#gender').val() || 'N';
+    iplocate({
+        ip: '',
+        ipinfodbKey: '656fa6b8c899bdf780648c6a13696d07dbbbab8c37681428a5b6e489985493e9',
+      }, function(address, latitude, longitude, errorCode, errorMessage) {
+        if (errorCode === undefined && errorMessage === undefined ) {
+          var clientData = {};
 
-		    // When the connect button is pressed, mark the client as ready.
-		    // When we're done setting up, let the server know.
-		    now.clientReady(clientData, function () {
-		      // Hide the connect interface.
-		      connectForm.fadeOut();
-			  infoDiv.fadeOut();
+            // Pass along the location information of the client.
+          clientData.address = address;
+          clientData.latitude = latitude;
+          clientData.longitude = longitude;
 
-		      // Show the chat interface.
-		      roomForm.fadeIn();
+            // Pass along the nickname the user entered.
+          clientData.nickname = connectForm.find('#nickname').val().trim() || 'Anonym';
+          clientData.age = connectForm.find('#age').val().trim() || '0';
+          clientData.gender = connectForm.find('#gender').val() || 'N';
 
-		      // Trigger the hashChange event, so if the user came to the page
-		      // with a room in the URL, it opens now.
-		      $(window).trigger('hashchange');
-		    });
+          // When the connect button is pressed, mark the client as ready.
+          // When we're done setting up, let the server know.
+          now.clientReady(clientData, function () {
+            // Hide the connect interface.
+            connectForm.fadeOut();
+            infoDiv.fadeOut();
 
-	      } else {	
-	        // error retrieving info about IP... let it be undefined
-	      }
-	  });
+            // Show the chat interface.
+            roomForm.fadeIn();
+
+            // Trigger the hashChange event, so if the user came to the page
+            // with a room in the URL, it opens now.
+            $(window).trigger('hashchange');
+          });
+        }
+    });
 
       event.preventDefault();
     });
@@ -137,5 +136,5 @@ now.ready(function() {
   opeka.prepare();
 });
 
-})(jQuery);
+}(jQuery));
 

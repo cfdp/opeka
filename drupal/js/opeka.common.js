@@ -2,25 +2,27 @@
  * @file
  * Opeka nowjs integration code shared between backend and frontend.
  */
+/*global now */
 
 var opeka = {};
 
 (function ($) {
+  "use strict";
 
   /* Method used in order to print the final message when the chat room has been closed */
-  now.displayError = function(error){
-	$('#errors').html(error);
-	$('#errors').dialog();
+  now.displayError = function (error) {
+    $('#errors').html(error);
+    $('#errors').dialog();
   };
 
   /* Method used in order to effect a local removal of all the messages of a single user*/
-  now.localDeleteAllMsg = function(clientId){
-	$('#chat-message-list').find("."+clientId).html('');
+  now.localDeleteAllMsg = function (clientId) {
+    $('#chat-message-list').find("."+clientId).html('');
   };
-  
+
   /* Method used in order to effect a local removal of a single message*/
-  now.localDeleteMsg = function(msgId){
-	$('#chat-message-list').find("#"+msgId).html('');
+  now.localDeleteMsg = function (msgId) {
+    $('#chat-message-list').find("#" + msgId).html('');
   };
 
   //This method is used in order to leave a room
@@ -28,29 +30,33 @@ var opeka = {};
     opeka.activeRoomId = null;
     opeka.closeChat();
     window.location.replace("#");
-	if (callback)
-	  callback();
+
+    if (callback) {
+      callback();
+    }
   };
 
   //This method is used in order to join a room
   now.joinRoom = function(roomId, callback){
-      opeka.closeChat();
-      opeka.activeRoomId = roomId;
-      opeka.openChat(roomId);	
-      window.location.replace("#room="+roomId);
-	  if(callback) callback();
+    opeka.closeChat();
+    opeka.activeRoomId = roomId;
+    opeka.openChat(roomId);
+    window.location.replace("#room="+roomId);
+    if (callback) {
+      callback();
+    }
   };
 
 
-  /* This method is used in order to update the active room of the users 
+  /* This method is used in order to update the active room of the users
    * in case a counselor have deleted it
    */
   now.updateActiveRoom = function(){
-	if (opeka.activeRoomId && !opeka.rooms[opeka.activeRoomId]){
+  if (opeka.activeRoomId && !opeka.rooms[opeka.activeRoomId]){
         now.changeRoom(null);
         opeka.activeRoomId = null;
         opeka.closeChat();
-	}
+  }
   };
 
   /**
@@ -87,7 +93,8 @@ var opeka = {};
     $('#opeka-chat').fadeIn();
 
     opeka.chatIsOpen = true;
-	$('#opeka-chat').find('#th-room').html('Opeka Chat - Room: '+room.name)
+
+    $('#opeka-chat').find('#th-room').html('Opeka Chat - Room: ' + room.name);
   };
 
   /**
@@ -105,20 +112,20 @@ var opeka = {};
 
     // We have change to a chat room.
     if (roomId) {
-	  now.changeRoom(roomId, function(addingStatus){
-		if (addingStatus == 'OK'){
+      now.changeRoom(roomId, function(addingStatus){
+        if (addingStatus === 'OK') {
           opeka.closeChat();
           opeka.activeRoomId = roomId;
           opeka.openChat(roomId);
-	    }else if(addingStatus < 0){
-		  now.displayError('You cannot join this room.');
+        } else if(addingStatus < 0){
+          now.displayError('You cannot join this room.');
           opeka.closeChat();
-		  window.location.replace("#");
-        }else{
-		  now.displayError('You have been added to queue with position: '+addingStatus);		  
-          opeka.closeChat();
-		}
-	  });
+          window.location.replace("#");
+        } else{
+        now.displayError('You have been added to queue with position: '+addingStatus);
+            opeka.closeChat();
+        }
+      });
     }
     else {
       if (opeka.activeRoomId) {
@@ -135,11 +142,11 @@ var opeka = {};
 
     if (opeka.activeRoomId && message) {
       now.sendMessageToRoom(opeka.activeRoomId, message);
-	  $('#opeka-chat-message').val('');
+    $('#opeka-chat-message').val('');
     }
 
     event.preventDefault();
   });
 
-})(jQuery);
+}(jQuery));
 

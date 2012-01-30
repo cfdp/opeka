@@ -2,8 +2,10 @@
  * @file
  * Opeka nowjs integration code for the frontend.
  */
+/*global now, opeka */
 
 (function ($) {
+  "use strict";
 
 /* Method used in order to print the final message when the chat room has been closed */
 now.admin_finalMessage = function(finalMessage){
@@ -19,14 +21,15 @@ now.receiveUserList = function (userlist){
   userList.find('.user').remove();
 
   if (userlist.length > 0) {
-	userList.find('.placeholder').hide();
-	$.each(userlist, function () {
-        userList.append($("#opeka_user_list_item_tmpl").tmpl({
-		  user: this
-        }));
-     });
-    }else userList.find('.placeholder').show();
-
+    userList.find('.placeholder').hide();
+    $.each(userlist, function () {
+      userList.append($("#opeka_user_list_item_tmpl").tmpl({
+        user: this
+      }));
+    });
+  } else {
+    userList.find('.placeholder').show();
+  }
 };
 
 
@@ -49,34 +52,35 @@ now.receiveRooms = function (rooms, roomOrder) {
     $.each(roomOrder, function () {
       var roomId = this.toString();
       // Generate a list item with a link for each room.
-	  if (rooms[roomId].private){
-		if (!priv)
-		  priv = true;
-        private_roomList.append($("#opeka_room_list_item_tmpl").tmpl({
-          roomUrl: $.param({room: roomId}),
-          roomName: rooms[roomId].name
-        }));
-	  }else{
-		if (!pub)
-		  pub = true;
-        public_roomList.append($("#opeka_room_list_item_tmpl").tmpl({
-          roomUrl: $.param({room: roomId}),
-          roomName: rooms[roomId].name
-        }));
-	  }
+      if (rooms[roomId].private) {
+        if (!priv) {
+          priv = true;
+          private_roomList.append($("#opeka_room_list_item_tmpl").tmpl({
+            roomUrl: $.param({room: roomId}),
+            roomName: rooms[roomId].name
+          }));
+        } else if (!pub) {
+          pub = true;
+          public_roomList.append($("#opeka_room_list_item_tmpl").tmpl({
+            roomUrl: $.param({room: roomId}),
+            roomName: rooms[roomId].name
+          }));
+        }
+      }
     });
   }
   else {
     public_roomList.find('.placeholder').show();
     private_roomList.find('.placeholder').show();
   }
-  
-  if (!priv)
+
+  if (!priv) {
     private_roomList.find('.placeholder').show();
+  }
 
-  if (!pub)
+  if (!pub) {
     public_roomList.find('.placeholder').show();
-
+  }
 };
 
 /**
@@ -94,8 +98,8 @@ opeka.prepare = function () {
     }));
 
     // Set up the admin interface.
-    var backendWrapper = $("#opeka-backend");
-        connectForm = backendWrapper.find('.connect-interface');
+    var backendWrapper = $("#opeka-backend"),
+        connectForm = backendWrapper.find('.connect-interface'),
         roomForm = backendWrapper.find('.online-interface');
 
     // Configure the connect button click event to make os ready to chat.
@@ -116,74 +120,74 @@ opeka.prepare = function () {
 
         // Show the chat interface.
         roomForm.fadeIn();
-		roomForm.find('.delete-room').click(function (event) {
-	      event.preventDefault();
-		  var roomId = roomForm.find('#del-room').val().trim();
-		  var finalMessage = roomForm.find('#del-room-final-message').val().trim();
-		  if (roomId && finalMessage){
-			now.deleteRoom(roomId, finalMessage);
-			$('#del-room').val('');
-			$('#del-room-final-message').val('');
- 		  }
-	    });
-	  
-  	  	// Define function that has to be executed when the whisper button
-	  	// is pressed
-	  	$("#opeka-send-whisper-message").live('click', function (event) {
-		  var userid = $('#opeka-whisper-message-user').val().trim();
-	      var message = $('#opeka-whisper-message').val().trim();
+    roomForm.find('.delete-room').click(function (event) {
+        event.preventDefault();
+      var roomId = roomForm.find('#del-room').val().trim();
+      var finalMessage = roomForm.find('#del-room-final-message').val().trim();
+      if (roomId && finalMessage){
+      now.deleteRoom(roomId, finalMessage);
+      $('#del-room').val('');
+      $('#del-room-final-message').val('');
+      }
+      });
 
-   	      if (userid && message) {
-	        now.whisper(userid, message);
-		    $('#opeka-whisper-message-user').val('');
-		    $('#opeka-whisper-message').val('');
-	      }
+        // Define function that has to be executed when the whisper button
+      // is pressed
+      $("#opeka-send-whisper-message").live('click', function (event) {
+      var userid = $('#opeka-whisper-message-user').val().trim();
+        var message = $('#opeka-whisper-message').val().trim();
 
-  	      event.preventDefault();
-	    });
+          if (userid && message) {
+          now.whisper(userid, message);
+        $('#opeka-whisper-message-user').val('');
+        $('#opeka-whisper-message').val('');
+        }
 
-  	  	// Define function that has to be executed when the kick button
-	  	// is pressed
-	  	$("#opeka-kick").live('click', function (event) {
-		  var userid = $('#opeka-kick-user').val().trim();
-	      var message = $('#opeka-kick-message').val().trim();
+          event.preventDefault();
+      });
 
-   	      if (userid && message) {
-	        now.kick(userid, message);
-		    $('#opeka-kick-user').val('');
-		    $('#opeka-kick-message').val('');
-	      }
+        // Define function that has to be executed when the kick button
+      // is pressed
+      $("#opeka-kick").live('click', function (event) {
+      var userid = $('#opeka-kick-user').val().trim();
+        var message = $('#opeka-kick-message').val().trim();
 
-  	      event.preventDefault();
-	    });
+          if (userid && message) {
+          now.kick(userid, message);
+        $('#opeka-kick-user').val('');
+        $('#opeka-kick-message').val('');
+        }
 
-      
-  	  	// Define function that has to be executed when the delete message button
-	  	// is pressed
-	  	$("#opeka-delete").live('click', function (event) {
-	      var messageid = $('#opeka-delete-message').val().trim();
+          event.preventDefault();
+      });
 
-	      if (messageid) {
-	        now.deleteMsg(messageid);
-		    $('#opeka-delete-message').val('');
-	      }
 
-	      event.preventDefault();
-	    });
+        // Define function that has to be executed when the delete message button
+      // is pressed
+      $("#opeka-delete").live('click', function (event) {
+        var messageid = $('#opeka-delete-message').val().trim();
 
-  	  	// Define function that has to be executed when the delete all messages button
-	    // is pressed
-	  	$("#opeka-deleteall").live('click', function (event) {
-	      var clientid = $('#opeka-deleteall-messages').val().trim();
+        if (messageid) {
+          now.deleteMsg(messageid);
+        $('#opeka-delete-message').val('');
+        }
 
-	      if (clientid) {
-	        now.deleteAllMsg(clientid);
-		    $('#opeka-deleteall-messages').val('');
-	      }
+        event.preventDefault();
+      });
 
-	      event.preventDefault();
-	    });
-	
+        // Define function that has to be executed when the delete all messages button
+      // is pressed
+      $("#opeka-deleteall").live('click', function (event) {
+        var clientid = $('#opeka-deleteall-messages').val().trim();
+
+        if (clientid) {
+          now.deleteAllMsg(clientid);
+        $('#opeka-deleteall-messages').val('');
+        }
+
+        event.preventDefault();
+      });
+
 
         // Trigger the hashChange event, so if the user came to the page
         // with a room in the URL, it opens now.
@@ -196,27 +200,29 @@ opeka.prepare = function () {
     // Configure the create room interface.
     roomForm.find('.create-room').click(function (event) {
       // When the room is created, show the chat interface.
-	  var location = roomForm.find('#room-location').val();
-	  if (location == 'Any') location = null;
-	  if (location == 'Denmark') location = ['Denmark'];
-	  if (location == 'Scandinavia') location = ['Sweden','Norway'];
-      now.createRoom(roomForm.find('#room-name').val(), roomForm.find('#room-size').val(), roomForm.find('#room_private_id').is(':checked'), location, function (err, room) {
-        if (room) {
-          now.changeRoom(room.id);
-          $.bbq.pushState({room: room.id});
-        }
-      });
-	  $('#room-name').val('');
-      event.preventDefault();
+    var location = roomForm.find('#room-location').val();
+    if (location === 'Any') { location = null; }
+    if (location === 'Denmark') { location = ['Denmark']; }
+    if (location === 'Scandinavia') { location = ['Sweden','Norway']; }
+
+    now.createRoom(roomForm.find('#room-name').val(), roomForm.find('#room-size').val(), roomForm.find('#room_private_id').is(':checked'), location, function (err, room) {
+      if (room) {
+        now.changeRoom(room.id);
+        $.bbq.pushState({room: room.id});
+      }
     });
+
+    $('#room-name').val('');
+    event.preventDefault();
+  });
 
   //configure the Bookmark List function
   $("#opeka-send-bookmark").live('click', function (event) {
-	var message = $('#bookmark-list').val();
+  var message = $('#bookmark-list').val();
 
     if (opeka.activeRoomId && message) {
       now.sendMessageToRoom(opeka.activeRoomId, message);
-	  $('#opeka-chat-message').val('');
+    $('#opeka-chat-message').val('');
     }
 
     event.preventDefault();
@@ -233,14 +239,14 @@ opeka.prepare = function () {
     now.unpause();
     event.preventDefault();
   });
-  
+
   //configure the mute interface
   $("#opeka-mute").live('click', function (event) {
     var clientid = $('#opeka-mute-clientId').val().trim();
 
     if (clientid) {
       now.mute(clientid);
-	    $('#opeka-mute-clientId').val('');
+      $('#opeka-mute-clientId').val('');
     }
 
     event.preventDefault();
@@ -252,7 +258,7 @@ opeka.prepare = function () {
 
     if (clientid) {
       now.unmute(clientid);
-	    $('#opeka-unmute-clientId').val('');
+      $('#opeka-unmute-clientId').val('');
     }
 
     event.preventDefault();
@@ -269,5 +275,5 @@ now.ready(function() {
   opeka.prepare();
 });
 
-})(jQuery);
+}(jQuery));
 
