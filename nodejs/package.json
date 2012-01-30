@@ -4,18 +4,32 @@
   "homepage": "http://cyberhus.dk/",
   "version": "0.1.0",
   "author": "Cyberhus <info@cyberhus.dk>",
+  "contributors": [
+    "Angelo Agatino Nicolosi",
+    "Mikkel Hoegh <mikkel@hoegh.org> (http://mikkel.hoegh.org/)"
+  ],
   "main": "main.js",
   "directories": {
     "lib": "lib"
   },
   "engines": {
-    "node": "*"
+    "node": "0.6"
   },
-  "dependencies":{
-    "async": "~0.1",
-    "drupal": "~0.3",
-    "now": "~0.6",
-    "node-uuid": "~1.2"
-  }
+  "dependencies": {
+    "async": "0.1.x",
+    "drupal": "0.3.x",
+    "node-uuid": "1.3.x",
+    "now": "0.8.x",
+    "underscore": "1.3.x"
+  },
+  "devDependencies": {
+    "forever": "0.8.x"
+  },
+  "licenses": [
+    {
+      "type": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ]
 }
 
