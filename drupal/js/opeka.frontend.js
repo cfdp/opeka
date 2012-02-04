@@ -7,7 +7,9 @@
 (function ($) {
   "use strict";
 
-/* Method used in order to print the final message when the chat room has been closed */
+/*
+// Method used in order to print the final message when the chat room
+// has been closed.
 now.client_finalMessage = function(adminNick, finalMessage){
   $('#final-message').html("["+adminNick+"]: "+finalMessage);
   $('#final-message').dialog();
@@ -27,16 +29,14 @@ now.localUnmute = function(){
   }
 };
 
-/* Display a warning message*/
+// Display a warning message.
 now.displayWarning = function(warning){
   $('#warnings').html(warning);
   $('#warnings').dialog();
 };
 
 
-/**
- * Recieve the room list from the server.
- */
+// Recieve the room list from the server.
 now.receiveRooms = function (rooms, roomOrder) {
   var roomList = $("#opeka-room-list");
   opeka.rooms = rooms;
@@ -58,9 +58,7 @@ now.receiveRooms = function (rooms, roomOrder) {
   }
 };
 
-/**
- * Prepare the client, load templates, etc.
- */
+// Prepare the client, load templates, etc.
 opeka.prepare = function () {
   // Load the template file for rendering data from the server.
   $.get(Drupal.settings.opeka.path + '/templates/frontend.tmpl.html', function(templates) {
@@ -129,12 +127,10 @@ opeka.prepare = function () {
   });
 };
 
-/**
- * When the connection to Now.js is set up, prepare ourselves.
- */
+// When the connection to Now.js is set up, prepare ourselves.
 now.ready(function() {
   opeka.prepare();
 });
-
+*/
 }(jQuery));
 

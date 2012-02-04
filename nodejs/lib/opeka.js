@@ -7,7 +7,9 @@
 "use strict";
 
 // Load all our dependencies.
-var nowjs = require("now"),
+var _ = require("underscore"),
+    async = require("async"),
+    nowjs = require("now"),
     util = require("util"),
     uuid = require('node-uuid'),
     opeka = {
@@ -48,6 +50,30 @@ function Server(settings) {
     else {
       return require('http').createServer(callback);
     }
+  };
+
+  // Update the client side guest/councellor counts.
+  self.updateUserStatus = function (context) {
+    // Getting the user count for groups is an async operation, so we
+    // need to use async.parallel to marshall the results.
+    async.parallel({
+      councellors: function (callback) {
+        self.councellors.count(function (count) {
+          callback(null, count);
+        });
+      },
+      guests: function (callback) {
+        self.guests.count(function (count) {
+          callback(null, count);
+        });
+      }
+    }, function (err, results) {
+      console.log('counted', results);
+
+      if (results && _.isFunction(context.updateStatus)) {
+        context.updateStatus(results);
+      }
+    });
   };
 
   // The following methods require Nowjs to be instantiated, so we need
@@ -106,7 +132,7 @@ function Server(settings) {
       client.user.nickname = clientUser.nickname;
 
       // Update online users count for all clients.
-      self.everyone.now.updateOnlineCount(self.guests.count, self.councellors.count);
+      self.updateUserStatus(self.everyone.now);
 
       if (callback) {
         callback(account);
@@ -417,7 +443,7 @@ function Server(settings) {
    * The client not counted as online until it calls clientReady.
    */
   self.everyone.on("connect", function () {
-    this.now.updateOnlineCount(self.guests.count, self.councellors.count);
+    self.updateUserStatus(this.now);
   });
 
   /**
@@ -444,7 +470,7 @@ function Server(settings) {
         client.user.activeRoomId = null;
       }
 
-      self.everyone.now.updateOnlineCount(self.guests.count, self.councellors.count);
+      self.updateUserStatus(self.everyone.now);
     });
   });
 

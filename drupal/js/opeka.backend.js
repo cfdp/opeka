@@ -2,40 +2,54 @@
  * @file
  * Opeka nowjs integration code for the frontend.
  */
-/*global now, opeka */
+/*global now, Opeka */
+
+(function (Backbone) {
+  "use strict";
+
+  Opeka.BackendRouter = Backbone.Router.extend({
+    routes: {
+      '': 'overview'
+    },
+
+    // Main overview page.
+    overview: function () {
+      console.log('savsmuld');
+    }
+  });
+
+}(Backbone));
+
 
 (function ($) {
   "use strict";
 
-/* Method used in order to print the final message when the chat room has been closed */
+  // Recieve the user list from the server.
+  now.receiveUserList = function (userlist){
+    var userList = $("#chat-user-list");
+    userList.find('.user').remove();
+
+    if (userlist.length > 0) {
+      userList.find('.placeholder').hide();
+      $.each(userlist, function () {
+        userList.append($("#opeka_user_list_item_tmpl").tmpl({
+          user: this
+        }));
+      });
+    } else {
+      userList.find('.placeholder').show();
+    }
+  };
+
+/*
+// Method used in order to print the final message when the chat room has been closed.
 now.admin_finalMessage = function(finalMessage){
   $('#final-message').html(finalMessage);
   $('#final-message').dialog();
 };
 
-/**
- * Recieve the user list from the server.
- */
-now.receiveUserList = function (userlist){
-  var userList = $("#chat-user-list");
-  userList.find('.user').remove();
 
-  if (userlist.length > 0) {
-    userList.find('.placeholder').hide();
-    $.each(userlist, function () {
-      userList.append($("#opeka_user_list_item_tmpl").tmpl({
-        user: this
-      }));
-    });
-  } else {
-    userList.find('.placeholder').show();
-  }
-};
-
-
-/**
- * Recieve the room list from the server.
- */
+// Recieve the room list from the server.
 now.receiveRooms = function (rooms, roomOrder) {
   var public_roomList = $("#opeka-room-list");
   var private_roomList = $("#opeka-trial-room-list");
@@ -83,9 +97,8 @@ now.receiveRooms = function (rooms, roomOrder) {
   }
 };
 
-/**
- * Prepare the client, load templates, etc.
- */
+
+// Prepare the client, load templates, etc.
 opeka.prepare = function () {
   // Load the template file for rendering data from the server.
   $.get(Drupal.settings.opeka.path + '/templates/backend.tmpl.html', function(templates) {
@@ -268,12 +281,21 @@ opeka.prepare = function () {
   });
 };
 
-/**
- * When the connection to Now.js is set up, prepare ourselves.
- */
+// When the connection to Now.js is set up, prepare ourselves.
 now.ready(function() {
   opeka.prepare();
 });
+*/
+
+  $(function () {
+    // Once the page is loaded, start our app.
+    var nf = new Opeka.NotFoundRouter(),
+        br = new Opeka.BackendRouter();
+
+    Backbone.history.start();
+
+    console.log('pnsa', 'admin/opeka');
+  });
 
 }(jQuery));
 

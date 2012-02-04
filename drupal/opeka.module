@@ -55,3 +55,47 @@ function opeka_menu() {
   return $items;
 }
 
+/**
+ * Load the JavaScript and CSS code required for the Opeka chat.
+ *
+ * @param array $filenames
+ *   Additional JavaScript files to load from our JS folder.
+ * @param array $settings
+ *   Additional settings to be exposed to JavaScript via the
+ *   Drupal.settings.object.
+ */
+function opeka_add_assets($filenames = array(), $settings = array()) {
+  $js_url = variable_get('opeka_nowjs_url', 'https://localhost:3000/nowjs/now.js');
+
+  if (!$js_url) {
+    $errormsg = t('Opeka web service URL missing.');
+    drupal_set_message($errormsg, 'error');
+    return $errormsg;
+  }
+
+  // Add the nowjs JavaScript file to the page. It will take care of
+  // connecting to the nowjs server.
+  drupal_add_js($js_url, array('type' => 'external', 'weight' => -42));
+
+  // Settings to expose to the JavaScript client.
+  $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
+  drupal_add_js(array('opeka' => $settings), 'setting');
+
+  // Load the required JavaScript libraries.
+  drupal_add_library('system', 'ui.dialog');
+
+  // Add our default JavaScript files to the array.
+  $filenames = array_merge(array(
+    'underscore.js',
+    'backbone.js',
+    'opeka.common.js',
+    'opeka.models.js',
+    'opeka.views.js',
+  ), $filenames);
+
+  // Load the required JavaScript files.
+  $path = drupal_get_path('module', 'opeka');
+  foreach ($filenames as $filename) {
+    drupal_add_js($path . '/js/' . $filename);
+  }
+}
