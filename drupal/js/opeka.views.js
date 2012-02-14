@@ -117,10 +117,6 @@
 
   // Dialog to edit/create rooms with.
   Opeka.RoomEditView = Opeka.DialogView.extend({
-    events: {
-      "submit form": "saveRoom"
-    },
-
     initialize: function () {
       // Options passed to DialogView.
       var options = {};
@@ -142,13 +138,16 @@
 
       options.dialogOptions.buttons[Drupal.t('Discard changes')] = this.remove;
 
-      $(options.content).find('form').submit(this.saveRoom);
-
       // Call the parent initialize once we're done customising.
       Opeka.DialogView.prototype.initialize.call(this, options);
 
-
       return this;
+    },
+
+    render: function () {
+      Opeka.DialogView.prototype.render.call(this);
+
+      this.$el.find('form').submit(this.saveRoom);
     },
 
     // When the save room button is clicked.
@@ -171,9 +170,6 @@
       if (event) {
         event.preventDefault();
       }
-
-      debugger;
-      return false;
     }
   });
 
