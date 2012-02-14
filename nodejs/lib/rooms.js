@@ -158,10 +158,25 @@ var Room = function (options) {
   return self.construct();
 };
 
-/**
- * Remove a room from the system.
- */
-function remove(roomId, callback) {
+// Provide a list of rooms for the client.
+var clientData = function (includePrivateRooms) {
+  var rooms = _.map(roomList, function (room) {
+        return room.clientData();
+      });
+
+  rooms = _.sortBy(rooms, function (room) {
+    return room.name;
+  });
+
+  if (!includePrivateRooms) {
+    return rooms;
+  }
+
+  return rooms;
+};
+
+// Remove a room from the system.
+var remove = function (roomId, callback) {
   var room = roomList[roomId];
   if (room) {
     room.removeAllUsers();
@@ -173,11 +188,12 @@ function remove(roomId, callback) {
       callback();
     }
   }
-}
+};
 
 module.exports = {
-  remove: remove,
   Room: Room,
-  list: roomList
+  clientData: clientData,
+  list: roomList,
+  remove: remove
 };
 

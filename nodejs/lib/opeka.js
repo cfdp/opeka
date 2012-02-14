@@ -100,17 +100,19 @@ function Server(settings) {
       // This is important, since it governs what methods he has access
       // to, so only councellors can create rooms, etc.
       if (clientUser.statusOnly) {
-        //In this case the user that is connected is only interested in the status of the chat.
+        // In this case the user that is connected is only interested in the status of the chat.
         // This is 0 if not active, 1 if busy and 2 if open.
         client.now.receiveStatus(self.getCurrentStatus());
 
       } else if (account.isAdmin) {
         self.councellors.addUser(client.user.clientId);
+
+        client.now.receiveRoomList(opeka.rooms.clientData(true));
       }
       else {
         self.guests.addUser(client.user.clientId);
-        //The following is done in order to put each user in a single group.
-        //In this way we are able to give to the counselors the ability to whisper
+        // The following is done in order to put each user in a single group.
+        // In this way we are able to give to the counselors the ability to whisper
         nowjs.getGroup(client.user.clientId).addUser(client.user.clientId);
 
 
@@ -120,10 +122,9 @@ function Server(settings) {
           client.user.city = add[0];
           client.user.state = add[1];
         }
-      }
 
-      // Send the rooms to the newly connected client.
-      client.now.receiveRoomList();
+        client.now.receiveRoomList(opeka.rooms.clientData());
+      }
 
       // Store the account and nickname for later use.
       client.user.account = account;
@@ -295,6 +296,7 @@ function Server(settings) {
 
   // Called by the Counsellors in order to create a new room.
   self.councellors.now.createRoom = function (attributes, callback) {
+    console.log('createRoom', attributes);
     if (attributes.name.length > 0) {
       var room = new opeka.rooms.Room(attributes);
 
@@ -303,7 +305,7 @@ function Server(settings) {
       }
 
       // Send the new complete room list to councellors.
-      self.councellors.now.receiveRoomList(opeka.rooms.clientData());
+      self.councellors.now.receiveRoomList(opeka.rooms.clientData(true));
     } else {
       callback("Error creating room: room name too short.");
     }
@@ -478,10 +480,10 @@ function Server(settings) {
    */
   self.updateRoomList = function (clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder, priv) {
     if (self.councellors && self.councellors.count && self.councellors.count !== 0) {
-      self.councellors.now.receiveRooms(clientSideList_all, all_roomOrder);
+      self.councellors.now.receiveRoomList(opeka.rooms.clientData(true));
     }
     if (!priv && self.guests && self.guests.count && self.guests.count !== 0) {
-      self.guests.now.receiveRooms(clientSideList_public, public_roomOrder);
+      self.guests.now.receiveRoomList(opeka.rooms.clientData());
     }
     self.everyone.now.updateActiveRoom();
   };
