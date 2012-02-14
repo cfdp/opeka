@@ -34,9 +34,20 @@ var Opeka = { status: {} },
 
   // For when the server updates the status attributes.
   now.updateStatus = function (attributes) {
-    Opeka.status.set(attributes);
+    // Update the status model and view if available.
+    // It might not be loaded the first time this function is called.
+    if (_.isFunction(Opeka.status.set)) {
+      Opeka.status.set(attributes);
 
-    Opeka.statusViewInstance.render();
+      Opeka.statusViewInstance.render();
+    }
+  };
+
+  // For when the server has an updated room list for us.
+  now.receiveRoomList = function (rooms) {
+    // This triggers a reset even on the RoomList instance, so any views
+    // that use this list can listen to that for updates.
+    Opeka.roomList.reset(rooms);
   };
 
 /*
@@ -165,6 +176,14 @@ var Opeka = { status: {} },
     event.preventDefault();
   });
 */
+  // Sign in to the chat app.
+  Opeka.signIn = function (user, callback) {
+    now.signIn(user, function () {
+      callback();
+      Opeka.router.navigate("rooms", {trigger: true});
+    });
+  };
+
   // Load templates from the page.
   Opeka.compileTemplates = function () {
     $('script[type="application/template"]').each(function () {
@@ -180,6 +199,7 @@ var Opeka = { status: {} },
     Opeka.compileTemplates();
 
     Opeka.status = new Opeka.ChatStatus();
+    Opeka.roomList = new Opeka.RoomList();
 
     Opeka.appViewInstance = new Opeka.AppView();
     Opeka.statusViewInstance = new Opeka.OnlineStatusView({
@@ -187,7 +207,6 @@ var Opeka = { status: {} },
     });
 
     Opeka.appViewInstance.on('render', function(view) {
-      console.log('statusview', Opeka.statusViewInstance);
       view.$el.find('.footer').append(Opeka.statusViewInstance.render().el);
     });
 

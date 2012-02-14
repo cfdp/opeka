@@ -1,11 +1,47 @@
+<script id="opeka_chat_sidebar_tmpl" type="application/template">
+  <div class="header"></div>
+  <div class="content"><%= content %></div>
+  <div class="sidebar"></div>
+  <div class="footer"></div>
+</script>
+
+<script id="opeka_room_edit_tmpl" type="application/template">
+  <form action="#" class="room-edit-form">
+    <div class="form-item">
+      <label for="name">Name</label>
+      <input class="form-text name required" name="name" type="textfield" />
+    </div>
+
+    <div class="form-item">
+      <label for="max-size">Size limit</label>
+      <select class="max-size" name="max-size">
+        <option value="2" selected="selected">2 users</option>
+        <option value="5">5 users</option>
+        <option value="10">10 users</option>
+        <option value="20">20 users</option>
+        <option value="30">30 users</option>
+      </select>
+    </div>
+
+    <div class="form-item">
+      <label for="ip-location">IP location</label>
+      <select class="ip-location"  name="ip-location">
+        <option value="Any" selected="selected">Any</option>
+        <option value="Denmark">Denmark</option>
+        <option value="Scandinavia">Outside Denmark/Scandinavia</option>
+      </select>
+    </div>
+
+    <div class="form-item">
+      <label for="private">Private room?</label>
+      <input class="private" name="private" type="checkbox" value="true" />
+    </div>
+
+  </form>
+</script>
+
 <script id="opeka_backend_tmpl" type="x-jquery-tmpl">
   <div id="opeka-backend">
-    <form action="#" class="connect-interface">
-      <label for="nickname">Kaldenavn</label>
-      <input id="nickname" type="text" placeholder="Anonym" value="${user.name}" /><br />
-      <button class="connect">Klar til chat…</button> 
-    </form>
-	
     <form id="opeka-chat" class="element-hidden">
 	  <table>
 	    <thead><th id="th-room" colspan="2"></th></thead>
@@ -32,7 +68,7 @@
       	    <button id="opeka-send-message">Send besked</button>
 		</tbody>
 	  </table>
-	
+
       <label for="bookmark-list">Send a bookmarked link</label>
 	  <select id="bookmark-list"  name="bookmark-list">
 	        <option value="www.au.dk" selected="selected">www.au.dk</option>
@@ -47,7 +83,7 @@
       <label for="opeka-unmute-clientId">Unmute an user</label>
       <input id="opeka-unmute-clientId" placeholder="User ID" type="text" />
       <button id="opeka-unmute">Unmute user</button>
-	  
+
 	  <h3>Pause</h3>
       <button id="opeka-pause">Pause chatroom</button>
       <button id="opeka-unpause">Unpause chatroom</button>
@@ -76,49 +112,6 @@
 
 	<div id="errors" title="Error"></div>
 
-    <form action="#" class="online-interface element-hidden">
-      <h3>Vælg et eksisterende rum</h3>
-
-      <h3>Public chatrooms</h3>
-      <ul id="opeka-room-list">
-        <li class="placeholder">Ingen rum aktive.</li>
-      </ul>
-
-      <h3>Private chatrooms</h3>
-      <ul id="opeka-trial-room-list">
-        <li class="placeholder">Ingen rum aktive.</li>
-      </ul>
-
-      <h3>Opret et nyt chatrum</h3>
-      <label for="room-name">Create Room</label>
-      <input id="room-name" placeholder="Room Name" type="text" />
-	  Size:
-	  <select id="room-size"  name="room-size">
-	        <option value="2" selected="selected">2</option>
-	        <option value="5">5</option>
-	        <option value="10">10</option>
-	        <option value="20">20</option>
-	        <option value="30">30</option>
-	   </select>
-	  Ip location:
-	  <select id="room-location"  name="room-location">
-	        <option value="Any" selected="selected">Any</option>
-	        <option value="Denmark">Denmark</option>
-	        <option value="Scandinavia">Outside Denmark/Scandinavia</option>
-	   </select>
-	
-	  Private:
-      <input id="room_private_id" type="checkbox" name="room-private" value="Y"/>
-
-      <button class="create-room">Opret rum</button> 
-
-      <label for="del-room">Delete Room:</label>
-      <input id="del-room" type="text" placeholder="Room ID" />
-      <input id="del-room-final-message" type="text" placeholder="Final Message" />
-      <button class="delete-room">Delete</button>
-
-    </form>
-
 
   </div>
 </script>
@@ -134,13 +127,13 @@
     <li class="system-message">${message.message}</li>
   {{else message.whisper}}
     <li class="whisper-message">
-      <span class="sender-name">[${message.name} - WHISPER]:</span> 
+      <span class="sender-name">[${message.name} - WHISPER]:</span>
       <span class="message">${message.message}</span>
 	</li>
   {{else}}
   <div id="${message.messageId}" class="${message.senderId}">
 	  <li class="chat-message">
-		    <span class="sender-name">[${message.name}]:</span> 
+		    <span class="sender-name">[${message.name}]:</span>
 		    <span class="message">${message.message}</span>
 		    <span class="message-id">Message ID = ${message.messageId}</span>
 	  </li>

@@ -4,25 +4,41 @@
  */
 /*global now, Opeka */
 
-(function (Backbone) {
+(function ($) {
   "use strict";
 
   Opeka.BackendRouter = Backbone.Router.extend({
     routes: {
-      '': 'overview'
+      '': 'signIn',
+      'rooms': 'roomList'
     },
 
-    // Main overview page.
-    overview: function () {
-      console.log('savsmuld');
+    // Check that the user is signed in, and if not, redirect to the
+    // signIn page.
+    checkSignIn: function () {
+      // All admin users are supposed to have the createRoom method when
+      // logged in to Now.
+      if (!_.isFunction(now.createRoom)) {
+        this.navigate("", {trigger: true});
+      }
+    },
+
+    // Chat sign in page.
+    signIn: function () {
+      var view = new Opeka.SignInFormView({});
+
+      Opeka.appViewInstance.replaceContent(view.render().el);
+    },
+
+    roomList: function () {
+      this.checkSignIn();
+
+      var view = new Opeka.RoomListView({});
+
+      Opeka.appViewInstance.replaceContent(view.render().el);
     }
   });
 
-}(Backbone));
-
-
-(function ($) {
-  "use strict";
 
   // Recieve the user list from the server.
   now.receiveUserList = function (userlist){
@@ -289,12 +305,10 @@ now.ready(function() {
 
   $(function () {
     // Once the page is loaded, start our app.
-    var nf = new Opeka.NotFoundRouter(),
-        br = new Opeka.BackendRouter();
+    var nf = new Opeka.NotFoundRouter();
+    Opeka.router = new Opeka.BackendRouter();
 
     Backbone.history.start();
-
-    console.log('pnsa', 'admin/opeka');
   });
 
 }(jQuery));

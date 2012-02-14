@@ -4,134 +4,56 @@
  */
 "use strict";
 
-var nowjs = require("now"),
+var _ = require('underscore'),
+    nowjs = require("now"),
     uuid = require('node-uuid'),
     util = require("util"),
-    rooms = {},
-    public_roomOrder = [], //list of only the public rooms
-    all_roomOrder = []; //list of all the rooms
+    roomList = {};
 
-
-/**
- * Create a new room.
- *
- * We don't expose the Room object itself to the rest of Node, so we are
- * sure all new rooms are created through this function, and thus,
- * properly registered.
- */
-function create(name, maxSize, priv, nat, callback) {
-  var roomId = uuid(),
-      room = new Room(roomId, name, maxSize, priv, nat);
-
-  rooms[roomId] = room;
-
-  if (priv) {
-    all_roomOrder.push(roomId);
-  }
-  else {
-    all_roomOrder.push(roomId);
-    public_roomOrder.push(roomId);
-  }
-
-  // Update room list.
-  if (callback) {
-    callback(this.clientSideList_all(), this.all_roomOrder, this.clientSideList_public(), this.public_roomOrder);
-  }
-
-  return room;
-}
-
-/**
- * Get a room from the list.
- */
-function get(roomId) {
-  return rooms[roomId];
-}
-
-/**
- * Remove a room from the system.
- */
-function remove(roomId, callback) {
-  var room = rooms[roomId];
-  if (room) {
-    room.removeAllUsers();
-    all_roomOrder.splice(all_roomOrder.indexOf(roomId), 1);
-
-    //If the room is not private we have to delete it also from the public room list
-    if (!room.private) {
-      public_roomOrder.splice(public_roomOrder.indexOf(roomId), 1);
-    }
-
-    rooms[roomId] = null;
-
-    //update room list
-    if (callback) {
-      callback(this.clientSideList_all(), this.all_roomOrder, this.clientSideList_public(), this.public_roomOrder);
-    }
-  }
-}
-
-/**
- * Get a list of public rooms, containing room metadata safe to send to the client.
- */
-function clientSideList_public() {
-  var roomList = {};
-  public_roomOrder.forEach(function (roomId, index) {
-    roomList[roomId] = rooms[roomId].getInfo();
-  });
-
-  return roomList;
-}
-
-/**
- * Get a list of all rooms, containing room metadata safe to send to the client.
- */
-function clientSideList_all() {
-  var roomList = {};
-  all_roomOrder.forEach(function (roomId, index) {
-    roomList[roomId] = rooms[roomId].getInfo();
-  });
-
-  return roomList;
-}
-
-/**
- * The room manager keeps track of a chatroom and who's in it.
- *
- * It also protects the room's group-object from prying eyes.
- */
-function Room(roomId, name, maxSize, priv, nat) {
+// The main chatroom object.
+var Room = function (options) {
   var self = this;
-  self.id = roomId; //id of the room
-  self.name = name; //name of the room
-  self.maxSize = maxSize; //max size of the room
-  self.group = nowjs.getGroup(roomId); //nowjs group for the room
-  self.counsellorGroup = nowjs.getGroup("counsellors-"+roomId); //group populated with all the cousellors in the room
-  self.private = priv; //flag that indicates if the room is private
-  self.users = []; //list of users currently chatting
-  self.usersIdx = {}; //mapping ClientID = Index of the user in self.users
-  self.queue = []; //user in queue waiting for chat
 
-  //The following is setted in order to let the counsellor define from which part of the world the user can join the chat
-  if (nat) {
-    self.nationality = nat;
-  }
+  self.construct = function () {
+    // Core attributes of a room.
+    self.id = options.id || uuid();
+    self.name = options.name;
+    self.maxSize = options.maxSize;
+    self.private = options.private;
+    self.ipLocation = options.ipLocation;
 
-  /* Function used in order to see if a room is full */
+    // Create Now.js groups for connected users and councellors.
+    self.group = nowjs.getGroup(self.id);
+    self.counsellorGroup = nowjs.getGroup("counsellors-" + self.id);
+
+    // A hash of the users currently in the room.
+    self.users = {};
+
+    // A list of users waiting to join the chat.
+    self.queue = [];
+
+    // Add our new room to the room list.
+    roomList[self.id] = self;
+
+    console.log('Room created:' + self.id);
+
+    return self;
+  };
+
+  // Method used in order to check if the room is full
   self.isFull = function() {
-    if (self.maxSize && self.group.count >= self.maxSize) {
+    if (self.maxSize > 0 && self.group.count >= self.maxSize) {
       return true;
     }
     else {
       return false;
     }
-  }
+  };
 
-  /**
-   * Add an user to the group.
-   * Returns: 'OK' if the user has been added to the chat, an integer that is stating
-   * the user place in the queue if the chat is busy, or a negative integer if the user cannot join the chat
-   */
+  // Add an user to the group.
+  // Returns: 'OK' if the user has been added to the chat, an integer that is stating
+  // the user place in the queue if the chat is busy, or a negative
+  // integer if the user cannot join the chat.
   self.addUser = function (user, callback) {
     // If we have both rooms and groups, check that we don't exceed the
     // room size (if set) before adding the person to the room.
@@ -166,8 +88,7 @@ function Room(roomId, name, maxSize, priv, nat) {
       // The chat is free, we return 'OK'.
       return 'OK';
     } else if(!user.account.isAdmin) {
-      var index = self.queue.push(user) - 1;
-      return index;
+      return self.queue.push(user) - 1;
     } else {
       return -1;
     }
@@ -212,11 +133,9 @@ function Room(roomId, name, maxSize, priv, nat) {
     }
   };
 
-  /**
-   * Return the current group metadata in an object that is safe to send
-   * to the client side.
-   */
-  self.getInfo = function () {
+  // Return the current group metadata in an object that is safe to send
+  // to the client side.
+  self.clientData = function () {
     return {
       id: self.id,
       name: self.name,
@@ -229,22 +148,36 @@ function Room(roomId, name, maxSize, priv, nat) {
    * Remove all users from the room.
    */
   self.removeAllUsers = function() {
-    for (var user in self.users)
+    _.each(self.users, function (user) {
       self.removeUser(user.clientId);
-    self.users = [];
+    });
+    self.users = {};
     self.queue = [];
   };
 
-  return self;
+  return self.construct();
+};
+
+/**
+ * Remove a room from the system.
+ */
+function remove(roomId, callback) {
+  var room = roomList[roomId];
+  if (room) {
+    room.removeAllUsers();
+
+    roomList[roomId] = null;
+
+    //update room list
+    if (callback) {
+      callback();
+    }
+  }
 }
 
 module.exports = {
-  create: create,
   remove: remove,
-  get: get,
-  public_roomOrder: public_roomOrder,
-  all_roomOrder: all_roomOrder,
-  clientSideList_public: clientSideList_public,
-  clientSideList_all: clientSideList_all
+  Room: Room,
+  list: roomList
 };
 

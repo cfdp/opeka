@@ -11,3 +11,24 @@
   Der er <span class="guests"><%- guests %></span> gæster og
   <span class="councellors"><%- councellors %></span> rådgivere online.
 </script>
+
+<script id="opeka_connect_form_tmpl" type="application/template">
+  <form action="#" class="connect-interface">
+    <label for="nickname"><%= nick %></label>
+    <input class="form-text" id="nickname" type="text" placeholder="<%= placeholder %>" value="<%= name %>" /><br />
+    <input class="connect form-submit" type="submit" value="<%= action %>" />
+  </form>
+</script>
+
+<script id="opeka_room_list_tmpl" type="application/template">
+  <ul class="room-list">
+  <% if (placeholder) { %>
+    <li class="placeholder"><%= placeholder %></li>
+  <% } %>
+  <% rooms.each(function (room) { %>
+    <li><a href="#rooms/<%= room.id %>"><%- room.get('name') %></a></li>
+  <% }); %>
+  </ul>
+
+  <button class="create-room">Opret rum</button> 
+</script>
