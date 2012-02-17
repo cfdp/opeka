@@ -40,28 +40,3 @@
   </div>
 </script>
 
-<script id="opeka_room_list_item_tmpl" type="x-jquery-tmpl">
-  <li class="room">
-    <a href="#${roomUrl}">${roomName}</a>
-  </li>
-</script>
-
-<script id="opeka_chat_message_tmpl" type="x-jquery-tmpl">
-  {{if message.system}}
-    <li class="system-message">${message.message}</li>
-
-  {{else message.whisper}}
-    <li class="whisper-message">
-      <span class="sender-name">[${message.name} - WHISPER]:</span> 
-      <span class="message">${message.message}</span>
-	</li>
-  {{else}}
-  <div id="${message.messageId}" class="${message.senderId}">
-	  <li class="chat-message">
-	      <span class="sender-name">[${message.name}]:</span> 
-	      <span class="message">${message.message}</span>
-	  </li>
-  </div>
-  {{/if}}
-</script>
-
