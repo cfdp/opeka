@@ -10,6 +10,7 @@
   Opeka.BackendRouter = Backbone.Router.extend({
     routes: {
       '': 'signIn',
+      'rooms/:roomId': 'room',
       'rooms': 'roomList'
     },
 
@@ -21,6 +22,9 @@
       if (!_.isFunction(now.createRoom)) {
         this.navigate("", {trigger: true});
       }
+      else {
+        return true;
+      }
     },
 
     // Chat sign in page.
@@ -31,11 +35,28 @@
     },
 
     roomList: function () {
-      this.checkSignIn();
+      if (this.checkSignIn()) {
+        var view = new Opeka.RoomListView({});
 
-      var view = new Opeka.RoomListView({});
+        Opeka.appViewInstance.replaceContent(view.render().el);
+      }
+    },
 
-      Opeka.appViewInstance.replaceContent(view.render().el);
+    // The actual chatroom page.
+    room: function (roomId) {
+      if (this.checkSignIn()) {
+        Opeka.chatView = new Opeka.ChatView({
+          admin: true,
+          roomId: roomId
+        });
+
+
+        // Render the view when the server has confirmed our room change.
+        now.changeRoom(roomId, function (response) {
+          console.log('changeRoom response', response);
+          Opeka.appViewInstance.replaceContent(Opeka.chatView.render().el);
+        });
+      }
     }
   });
 

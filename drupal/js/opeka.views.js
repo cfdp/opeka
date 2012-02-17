@@ -36,6 +36,50 @@
     }
   });
 
+
+  // The actual chat window.
+  Opeka.ChatView = Backbone.View.extend({
+    events: {
+      "submit .message-form": "sendMessage"
+    },
+
+    initialize: function (options) {
+      _.bindAll(this);
+
+      this.admin = options.admin;
+      this.roomId = options.roomId;
+      this.messages = [];
+
+      return this;
+    },
+
+    render: function () {
+      if (!this.messages) { return this; }
+
+      this.$el.html(JST.opeka_chat_tmpl({
+        messages: this.messages
+      }));
+
+      return this;
+    },
+
+    receiveMessage: function (message) {
+      this.messages.push(message);
+      this.render();
+    },
+
+    sendMessage: function (event) {
+      var message = this.$el.find('input.message').val();
+
+      console.log('Sending message', message);
+
+      now.sendMessageToRoom(this.roomId, message);
+
+      if (event) {
+        event.preventDefault();
+      }
+    }
+  });
   Opeka.DialogView = Backbone.View.extend({
     className: "dialog-view",
 
@@ -231,10 +275,6 @@
 
       this.$el.html(form);
 
-      this.$el.find('form').submit(function () {
-        console.log('aadfass ');
-      });
-
       return this;
     },
 
@@ -244,7 +284,7 @@
         .text(Drupal.t('Starting chat…'));
     },
 
-    signIn: function () {
+    signIn: function (event) {
       var user = Drupal.settings.opeka.user,
           view = this;
 
@@ -254,7 +294,9 @@
         view.$el.fadeOut();
       });
 
-      return false;
+      if (event) {
+        event.preventDefault();
+      }
     }
 
   });

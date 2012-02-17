@@ -59,13 +59,12 @@ var Room = function (options) {
     // room size (if set) before adding the person to the room.
 
     //nationality check:
-    if (!user.account.isAdmin && self.nationality && user.state && (self.nationality.indexOf(user.state) < 0)) {
-      return -1;
-    }
+    //if (!user.account.isAdmin && self.nationality && user.state && (self.nationality.indexOf(user.state) < 0)) {
+      //return -1;
+    //}
 
-    if ((!self.maxSize || self.group.count < self.maxSize) && user) {
-      var index = self.users.push(user) - 1;
-      self.usersIdx[user.clientId] = index;
+    if ((!self.maxSize || true || self.group.count < self.maxSize) && user) {
+      self.users[user.clientId] = user;
       self.group.addUser(user.clientId);
 
       // Start the timer in order to retrieve at the end the duration of the chat
@@ -76,7 +75,7 @@ var Room = function (options) {
         self.chatDurationStart_Min = Math.round((new Date()).getTime() / 60000);
       }
 
-      //Update user list for the admins
+      // Update user list for the admins.
       if (callback) {
         try{
           callback(self.users);

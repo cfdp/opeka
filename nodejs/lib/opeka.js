@@ -206,10 +206,10 @@ function Server(settings) {
     room.users[idx].muted = false;
     self.sendSystemMessage('[Mute]: You have unmuted user: '+room.users[idx].nickname, admin);
     self.sendSystemMessage('Warning: You have been unmuted.', group);
-    };
+  };
 
-    /* Function used in order to mute a single user */
-    self.councellors.now.mute = function (userId) {
+  /* Function used in order to mute a single user */
+  self.councellors.now.mute = function (userId) {
     var admin = this;
     var group = nowjs.getGroup(userId);
 
@@ -237,10 +237,10 @@ function Server(settings) {
     room.users[idx].muted = true;
     self.sendSystemMessage('[Mute]: You have muted user: '+room.users[idx].nickname, admin);
     self.sendSystemMessage('Warning: You have been muted.', group);
-    };
+  };
 
-    /* Function used by the counselors in order to kick an user out his room */
-    self.councellors.now.kick = function (userId, messageText) {
+  /* Function used by the counselors in order to kick an user out his room */
+  self.councellors.now.kick = function (userId, messageText) {
     var group = nowjs.getGroup(userId);
 
     //checking if the user exists
@@ -315,7 +315,7 @@ function Server(settings) {
    * This function is called by the Counsellors in order to delete a room from the system
    */
   self.councellors.now.deleteRoom = function (roomId, finalMessage) {
-    var room = opeka.rooms.get(roomId);
+    var room = opeka.rooms.list[roomId];
     if (room !== null) {
       // Send finalMessage
       if (room.group && room.group.count !== 0) {
@@ -365,46 +365,45 @@ function Server(settings) {
     * This function is used by the clients in order to change rooms
     */
     self.everyone.now.changeRoom = function (roomId, callback, quit) {
-    var client = this;
-    var serv = self;
+      var client = this,
+          serv = self,
+          newRoom = opeka.rooms.list[roomId];
 
-      var newRoom = opeka.rooms.get(roomId);
+      //if an user has been muted it has to be unmuted
+      if (client.user.muted) {
+        client.user.muted = false;
+        client.now.localUnmute();
+      }
 
-    //if an user has been muted it has to be unmuted
-    if (client.user.muted) {
-      client.user.muted = false;
-      client.now.localUnmute();
-    }
-
-    //check if the room is full, if yes put the user in queue
-    //     if (newRoom && newRoom.isFull() && callback) {
-    //       return callback(true);
-    // }
+      //check if the room is full, if yes put the user in queue
+      //if (newRoom && newRoom.isFull() && callback) {
+      //  return callback(true);
+      //}
 
       // If user is already in a different room, leave it.
-      if (opeka.rooms.get(client.user.activeRoomId)) {
+      if (opeka.rooms.list[client.user.activeRoomId]) {
         var oldRoom = opeka.rooms.get(client.user.activeRoomId);
         oldRoom.removeUser(client.user.clientId, function(users) {
-        oldRoom.counsellorGroup.now.receiveUserList(users);
+          oldRoom.counsellorGroup.now.receiveUserList(users);
         });
 
-      serv.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.group);
+        serv.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.group);
 
-      if (quit) {
-        client.now.quitRoom(callback);
+        if (quit) {
+          client.now.quitRoom(callback);
         }
       }
 
     //trying to add the user, if this returns false the room is full or does not exists
     var addedUser;
     if (newRoom) {
-        addedUser = newRoom.addUser(client.user, function(users) {
+      addedUser = newRoom.addUser(client.user, function(users) {
         newRoom.counsellorGroup.now.receiveUserList(users);
-        });
+      });
     }
 
-      if (addedUser === 'OK') {
-        client.user.activeRoomId = roomId;
+    if (addedUser === 'OK') {
+      client.user.activeRoomId = roomId;
       serv.sendSystemMessage(client.user.nickname + " joined the room “" + newRoom.name + "”.", newRoom.group);
 
       if (newRoom.paused && !client.user.account.isAdmin) {
@@ -414,7 +413,7 @@ function Server(settings) {
         serv.sendSystemMessage("[Warning] The room is paused.", client);
         });
       }
-      }
+    }
 
     if (callback) {
       callback(addedUser);
@@ -422,17 +421,24 @@ function Server(settings) {
   };
 
   self.everyone.now.sendMessageToRoom = function (roomId, messageText) {
-    var room = opeka.rooms.get(roomId),
+    var room = opeka.rooms.list[roomId],
+        user = this.user,
         messageObj = {
           date: new Date(),
           message: messageText,
-          name: this.user.nickname,
-      messageId: uuid(),
-      senderId: this.user.clientId
+          name: user.nickname,
+          messageId: uuid(),
+          senderId: user.clientId
         };
-    if (room && room.group.count && this.user.activeRoomId === roomId && !this.user.muted) {
-      room.group.now.receiveMessage(messageObj);
-    }
+
+    room.group.hasClient(this.user.clientId, function (inRoom) {
+      console.log('inroom', messageObj);
+      console.log('inRoom', inRoom);
+      if (inRoom && !user.muted) {
+        console.log('sen2012-02-15');
+        room.group.now.receiveMessage(messageObj);
+      }
+    });
   };
 
   /**
@@ -471,7 +477,6 @@ function Server(settings) {
       self.updateUserStatus(self.everyone.now);
     });
   });
-
 
 // -------- HELPERS -----------
 

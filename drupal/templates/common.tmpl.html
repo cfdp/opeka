@@ -15,7 +15,7 @@
 <script id="opeka_connect_form_tmpl" type="application/template">
   <form action="#" class="connect-interface">
     <label for="nickname"><%= nick %></label>
-    <input class="form-text" id="nickname" type="text" placeholder="<%= placeholder %>" value="<%= name %>" /><br />
+    <input autofocus="autofocus" class="form-text" id="nickname" type="text" placeholder="<%= placeholder %>" value="<%= name %>" /><br />
     <input class="connect form-submit" type="submit" value="<%= action %>" />
   </form>
 </script>
@@ -32,3 +32,29 @@
 
   <button class="create-room">Opret rum</button> 
 </script>
+
+<script id="opeka_chat_tmpl" type="application/template">
+  <ul class="chat-message-list">
+  <% _.each(messages, function (message) { %>
+    <% if (message.system) { %>
+      <li class="system-message"><%- message.message %></li>
+    <% } else if (message.whisper) { %>
+      <li class="whisper-message">
+        <span class="sender-name">[<%- message.name %> - WHISPER]:</span>
+        <span class="message"><%- message.message %></span>
+      </li>
+    <% } else { %>
+    <li class="chat-message" id="<%= message.messageId %>">
+        <span class="sender-name">[<%- message.name %>]:</span>
+        <span class="message"><%- message.message %></span>
+    </li>
+    <% } %>
+  <% }); %>
+  </ul>
+
+  <form action="#" class="message-form">
+    <input autofocus="autofocus" class="form-text message" placeholder="Type message here…" size="50" type="text" />
+    <input class="form-submit send" type="submit" value="Send besked" />
+  </form>
+</script>
+

@@ -50,6 +50,13 @@ var Opeka = { status: {} },
     Opeka.roomList.reset(rooms);
   };
 
+  // Receive message from the server.
+  now.receiveMessage = function (message) {
+    if (Opeka.chatView) {
+      Opeka.chatView.receiveMessage(message);
+    }
+  };
+
 /*
   // Method used in order to print the final message when the chat room
   // has been closed.
@@ -100,13 +107,6 @@ var Opeka = { status: {} },
         opeka.activeRoomId = null;
         opeka.closeChat();
   }
-  };
-
-  // Receive message from the server.
-  now.receiveMessage = function (message) {
-    $('#opeka_chat_message_tmpl')
-      .tmpl({message: message})
-      .prependTo('#chat-message-list');
   };
 
   // Open the chat interface, if not open already.
