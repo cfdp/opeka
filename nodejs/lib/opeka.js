@@ -38,6 +38,7 @@ function Server(settings) {
     // Create groups for councellors and guests.
     self.councellors = nowjs.getGroup('councellors');
     self.guests = nowjs.getGroup("guests");
+    self.signedIn = nowjs.getGroup("signedIn");
   };
 
   /**
@@ -95,6 +96,9 @@ function Server(settings) {
       if (err) {
         throw err;
       }
+
+      // Add the user to the signedIn group.
+      self.signedIn.addUser(client.user.clientId);
 
       // Add the user to the overall group he belongs in.
       // This is important, since it governs what methods he has access
@@ -361,10 +365,8 @@ function Server(settings) {
       }
     };
 
-    /**
-    * This function is used by the clients in order to change rooms
-    */
-    self.everyone.now.changeRoom = function (roomId, callback, quit) {
+    // This function is used by the clients in order to change rooms
+    self.signedIn.now.changeRoom = function (roomId, callback, quit) {
       var client = this,
           serv = self,
           newRoom = opeka.rooms.list[roomId];

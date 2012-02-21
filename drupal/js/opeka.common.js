@@ -32,6 +32,56 @@ var Opeka = { status: {} },
     }
   });
 
+  Opeka.MainRouter = Backbone.Router.extend({
+    routes: {
+      '': 'signIn',
+      'rooms/:roomId': 'room',
+      'rooms': 'roomList'
+    },
+
+    // Check that the user is signed in, and if not, redirect to the
+    // signIn page.
+    checkSignIn: function () {
+      // All signed in users are supposed to have the changeRoom method.
+      if (!_.isFunction(now.changeRoom)) {
+        this.navigate("", {trigger: true});
+      }
+      else {
+        return true;
+      }
+    },
+
+    // Chat sign in page.
+    signIn: function () {
+      var view = new Opeka.SignInFormView({});
+
+      Opeka.appViewInstance.replaceContent(view.render().el);
+    },
+
+    roomList: function () {
+      if (this.checkSignIn()) {
+        var view = new Opeka.RoomListView({});
+
+        Opeka.appViewInstance.replaceContent(view.render().el);
+      }
+    },
+
+    // The actual chatroom page.
+    room: function (roomId) {
+      if (this.checkSignIn()) {
+        Opeka.chatView = new Opeka.ChatView({
+          admin: true,
+          roomId: roomId
+        });
+
+        // Render the view when the server has confirmed our room change.
+        now.changeRoom(roomId, function (response) {
+          Opeka.appViewInstance.replaceContent(Opeka.chatView.render().el);
+        });
+      }
+    }
+  });
+
   // For when the server updates the status attributes.
   now.updateStatus = function (attributes) {
     // Update the status model and view if available.
@@ -211,6 +261,15 @@ var Opeka = { status: {} },
     });
 
     $('#opeka-app').html(Opeka.appViewInstance.render().el);
+
+  });
+
+  $(function () {
+    // Once the page is loaded, start our app.
+    var nf = new Opeka.NotFoundRouter();
+    Opeka.router = new Opeka.MainRouter();
+
+    Backbone.history.start();
   });
 
 }(jQuery));

@@ -237,6 +237,7 @@
 
     render: function () {
       this.$el.html(JST.opeka_room_list_tmpl({
+        createRoom:_.isFunction(now.createRoom),
         rooms: Opeka.roomList,
         placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : ''
       }));
@@ -266,11 +267,24 @@
     },
 
     render: function () {
+      var name = '';
+
+      if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.name) {
+        name = Drupal.settings.opeka.user.name;
+      }
+
+
       var form = JST.opeka_connect_form_tmpl({
-        nick: Drupal.t('Nickname'),
-        placeholder: Drupal.t('Anonymous'),
-        name: Drupal.settings.opeka.user.name || '',
-        action: Drupal.t('Ready for chat…')
+        labels: {
+          action: Drupal.t('Ready for chat…'),
+          age: Drupal.t('Age'),
+          gender: Drupal.t('Gender'),
+          female: Drupal.t('Female'),
+          male: Drupal.t('Male'),
+          nick: Drupal.t('Nickname'),
+          placeholder: Drupal.t('Anonymous')
+        },
+        name: name
       });
 
       this.$el.html(form);
@@ -285,10 +299,12 @@
     },
 
     signIn: function (event) {
-      var user = Drupal.settings.opeka.user,
+      var user = Drupal.settings.opeka.user || {},
           view = this;
 
-      user.nickname = this.$el.find('#nickname').val();
+      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous');
+      user.age = this.$el.find('.age').val();
+      user.gender = this.$el.find('.gender').val();
 
       Opeka.signIn(user, function () {
         view.$el.fadeOut();

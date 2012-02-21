@@ -14,9 +14,30 @@
 
 <script id="opeka_connect_form_tmpl" type="application/template">
   <form action="#" class="connect-interface">
-    <label for="nickname"><%= nick %></label>
-    <input autofocus="autofocus" class="form-text" id="nickname" type="text" placeholder="<%= placeholder %>" value="<%= name %>" /><br />
-    <input class="connect form-submit" type="submit" value="<%= action %>" />
+    <label class="form-item">
+      <%= labels.nick %>
+      <input autofocus="autofocus" class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" />
+    </label>
+
+    <% if (!name) { %>
+
+    <label class="form-item">
+      <%= labels.age %>
+      <input class="form-text age" type="text" />
+    </label>
+
+    <label>
+      <%= labels.gender %>
+      <select class="form-select gender">
+        <option value="" selected="selected"></option>
+        <option value="m"><%= labels.male %></option>
+        <option value="f"><%= labels.female %></option>
+      </select>
+    </label>
+
+    <% } %>
+
+    <input class="connect form-submit" type="submit" value="<%= labels.action %>" />
   </form>
 </script>
 
@@ -30,7 +51,9 @@
   <% }); %>
   </ul>
 
+  <% if (createRoom) { %>
   <button class="create-room">Opret rum</button> 
+  <% } %>
 </script>
 
 <script id="opeka_chat_tmpl" type="application/template">

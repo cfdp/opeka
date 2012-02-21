@@ -2,7 +2,7 @@
  * @file
  * Opeka nowjs integration code for the frontend.
  */
-/*global iplocate, now, opeka */
+/*global iplocate, now, Opeka */
 
 (function ($) {
   "use strict";
@@ -60,34 +60,6 @@ now.receiveRooms = function (rooms, roomOrder) {
 
 // Prepare the client, load templates, etc.
 opeka.prepare = function () {
-  // Load the template file for rendering data from the server.
-  $.get(Drupal.settings.opeka.path + '/templates/frontend.tmpl.html', function(templates) {
-    // Inject all the loaded templates at the end of the document.
-    $('body').append(templates);
-
-    // Replace the placeholder with the frontend status interface.
-    $("#opeka-placeholder").replaceWith($("#opeka_frontend_tmpl").tmpl());
-
-    // Set up the admin interface.
-    var frontendWrapper = $("#opeka-frontend"),
-        connectForm = frontendWrapper.find('.connect-interface'),
-        roomForm = frontendWrapper.find('.online-interface'),
-        infoDiv = frontendWrapper.find('.contents-not-chatting');
-
-  infoDiv.load("/Cyberhus.dk.html .hours", function(response, status, xhr) {
-    if (status === "error") {
-      var msg = "Sorry but there was an error retrieving opening hours: ";
-      infoDiv.html(msg + xhr.status + " " + xhr.statusText);
-    }
-  });
-
-
-    // Configure the connect button click event to make os ready to chat.
-    connectForm.find('.connect').click(function (event) {
-
-      // Disable the button to prevent multiple presses.
-      $(this).attr("disabled", true);
-
     iplocate({
         ip: '',
         ipinfodbKey: '656fa6b8c899bdf780648c6a13696d07dbbbab8c37681428a5b6e489985493e9',
@@ -133,4 +105,3 @@ now.ready(function() {
 });
 */
 }(jQuery));
-
