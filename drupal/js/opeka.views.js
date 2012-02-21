@@ -206,9 +206,7 @@
           view = this;
 
       this.options.room.save(values, {
-        success: function () {
-          this.remove();
-        }
+        success: function () { view.remove(); }
       });
 
       if (event) {

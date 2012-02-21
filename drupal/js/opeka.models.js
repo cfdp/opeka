@@ -21,6 +21,8 @@
             });
 
             errMsg.render();
+          } else if (_.isFunction(options.success)) {
+            options.success();
           }
         });
       // Read and update not supported yet.
