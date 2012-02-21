@@ -300,7 +300,6 @@ function Server(settings) {
 
   // Called by the Counsellors in order to create a new room.
   self.councellors.now.createRoom = function (attributes, callback) {
-    console.log('createRoom', attributes);
     if (attributes.name.length > 0) {
       var room = new opeka.rooms.Room(attributes);
 
@@ -308,8 +307,9 @@ function Server(settings) {
         callback(null, room.clientData());
       }
 
-      // Send the new complete room list to councellors.
+      // Send the new complete room list to connected users.
       self.councellors.now.receiveRoomList(opeka.rooms.clientData(true));
+      self.guests.now.receiveRoomList(opeka.rooms.clientData());
     } else {
       callback("Error creating room: room name too short.");
     }
