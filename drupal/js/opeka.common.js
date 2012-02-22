@@ -248,7 +248,10 @@ var Opeka = { status: {} },
   $(function () {
     Opeka.compileTemplates();
 
-    Opeka.status = new Opeka.ChatStatus();
+    // We use a bare Backbone model for containing server status.
+    // Helpful for Backbone views integration.
+    Opeka.status = new Backbone.Model();
+
     Opeka.roomList = new Opeka.RoomList();
 
     Opeka.appViewInstance = new Opeka.AppView();

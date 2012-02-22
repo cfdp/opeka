@@ -34,8 +34,6 @@
     }
   };
 
-  Opeka.ChatStatus = Backbone.Model.extend({});
-
   Opeka.Room = Backbone.Model.extend({
     sync: Opeka.Sync
   });
