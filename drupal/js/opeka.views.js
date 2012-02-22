@@ -47,7 +47,6 @@
       _.bindAll(this);
 
       this.admin = options.admin;
-      this.roomId = options.roomId;
       this.messages = [];
 
       return this;
@@ -73,7 +72,7 @@
 
       console.log('Sending message', message);
 
-      now.sendMessageToRoom(this.roomId, message);
+      now.sendMessageToRoom(this.model.id, message);
 
       if (event) {
         event.preventDefault();

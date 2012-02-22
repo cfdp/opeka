@@ -76,8 +76,8 @@ var Opeka = { status: {} },
         }
 
         Opeka.chatView = new Opeka.ChatView({
-          admin: true,
-          roomId: roomId
+          admin: admin,
+          model: room
         });
 
         // Render the view when the server has confirmed our room change.
