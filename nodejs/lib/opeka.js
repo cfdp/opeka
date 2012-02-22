@@ -371,13 +371,13 @@ function Server(settings) {
           serv = self,
           newRoom = opeka.rooms.list[roomId];
 
-      //if an user has been muted it has to be unmuted
+      // If the user was muted, unmute it.
       if (client.user.muted) {
         client.user.muted = false;
         client.now.localUnmute();
       }
 
-      //check if the room is full, if yes put the user in queue
+      // Check if the room is full, if so, put the user on queue.
       //if (newRoom && newRoom.isFull() && callback) {
       //  return callback(true);
       //}
@@ -385,6 +385,7 @@ function Server(settings) {
       // If user is already in a different room, leave it.
       if (opeka.rooms.list[client.user.activeRoomId]) {
         var oldRoom = opeka.rooms.get(client.user.activeRoomId);
+
         oldRoom.removeUser(client.user.clientId, function(users) {
           oldRoom.counsellorGroup.now.receiveUserList(users);
         });
