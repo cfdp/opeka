@@ -68,6 +68,12 @@ var Opeka = { status: {} },
 
     // The actual chatroom page.
     room: function (roomId) {
+      var room = Opeka.roomList.get(roomId);
+
+      if (!room) {
+        this.navigate('404', { trigger: true });
+      }
+
       if (this.checkSignIn()) {
         Opeka.chatView = new Opeka.ChatView({
           admin: true,
