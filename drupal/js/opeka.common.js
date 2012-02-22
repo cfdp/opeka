@@ -280,15 +280,11 @@ var Opeka = { status: {} },
       }, 5000);
     });
 
-  });
-
-  $(function () {
     // Once the page is loaded, start our app.
     var nf = new Opeka.NotFoundRouter();
     Opeka.router = new Opeka.MainRouter();
 
     Backbone.history.start();
   });
-
 }(jQuery));
 
