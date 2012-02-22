@@ -130,6 +130,30 @@
     }
   });
 
+  // Message dialog that forces the user to reload the page to continue.
+  Opeka.FatalErrorDialogView = Opeka.DialogView.extend({
+    initialize: function (options) {
+      // Reload the page when the dialog is closed.
+      options.dialogOptions = {
+        close: function () {
+          window.location.reload();
+        }
+      };
+
+      options.content = this.make('p', { 'class': "message" }, options.message);
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      // Add a reload button that does the same.
+      this.addButton(Drupal.t('Reload'), function () {
+        window.location.reload();
+      });
+
+      return this;
+    }
+  });
+
   // Simple view displayed in the footer containing status for the chat.
   Opeka.OnlineStatusView = Backbone.View.extend({
     tagName: 'p',
