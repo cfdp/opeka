@@ -5,16 +5,8 @@
 
 var drupal = require("drupal");
 
-/**
- * Validate that the user sesion is valid and matches the uid provided.
- */
-function validate_session(uid, sid, callback) {
-}
-
-/**
- * Authenticate a user logging on to the chat server.
- */
-function authenticate(clientUser, callback) {
+// Authenticate a user logging on to the chat server.
+module.exports.authenticate = function (clientUser, callback) {
   // If the client claims he's logged in, validate that assertion.
   if (clientUser.sid && clientUser.uid) {
     // Validate the user's session.
@@ -42,9 +34,5 @@ function authenticate(clientUser, callback) {
 
     callback(null, account);
   }
-}
-
-module.exports = {
-  authenticate: authenticate
 };
 
