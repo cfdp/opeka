@@ -70,11 +70,11 @@ var Opeka = { status: {} },
     room: function (roomId) {
       var room = Opeka.roomList.get(roomId);
 
-      if (!room) {
-        this.navigate('404', { trigger: true });
-      }
-
       if (this.checkSignIn()) {
+        if (!room) {
+          this.navigate('404', { trigger: true });
+        }
+
         Opeka.chatView = new Opeka.ChatView({
           admin: true,
           roomId: roomId
