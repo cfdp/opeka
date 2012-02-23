@@ -385,8 +385,8 @@ function Server(settings) {
       if (opeka.rooms.list[client.user.activeRoomId]) {
         var oldRoom = opeka.rooms.get(client.user.activeRoomId);
 
-        oldRoom.removeUser(client.user.clientId, function(users) {
-          oldRoom.counsellorGroup.now.receiveUserList(users);
+        oldRoom.removeUser(client.user.clientId, function (users) {
+          opeka.user.sendUserList(oldRoom.counsellorGroup, oldRoom.id, users);
         });
 
         serv.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.group);
@@ -400,7 +400,7 @@ function Server(settings) {
     var addedUser;
     if (newRoom) {
       addedUser = newRoom.addUser(client.user, function(users) {
-        newRoom.counsellorGroup.now.receiveUserList(users);
+        opeka.user.sendUserList(newRoom.counsellorGroup, newRoom.id, users);
       });
     }
 
@@ -470,7 +470,7 @@ function Server(settings) {
 
         oldRoom.removeUser(client.user.clientId, function(users) {
           self.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.name);
-          oldRoom.counsellorGroup.now.receiveUserList(oldRoom.users);
+          opeka.user.sendUserList(oldRoom.counsellorGroup, oldRoom.id, users);
         });
 
         client.user.activeRoomId = null;

@@ -8,19 +8,11 @@
   "use strict";
 
   // Recieve the user list from the server.
-  now.receiveUserList = function (userlist){
-    var userList = $("#chat-user-list");
-    userList.find('.user').remove();
+  now.receiveUserList = function (roomId, userList) {
+    var room = Opeka.roomList.get(roomId);
 
-    if (userlist.length > 0) {
-      userList.find('.placeholder').hide();
-      $.each(userlist, function () {
-        userList.append($("#opeka_user_list_item_tmpl").tmpl({
-          user: this
-        }));
-      });
-    } else {
-      userList.find('.placeholder').show();
+    if (room) {
+      room.set('userList', userList);
     }
   };
 
@@ -32,88 +24,8 @@ now.admin_finalMessage = function(finalMessage){
 };
 
 
-// Recieve the room list from the server.
-now.receiveRooms = function (rooms, roomOrder) {
-  var public_roomList = $("#opeka-room-list");
-  var private_roomList = $("#opeka-trial-room-list");
-  var priv = false;
-  var pub = false;
-  opeka.rooms = rooms;
-
-  public_roomList.find('.room').remove();
-  private_roomList.find('.room').remove();
-
-  if (roomOrder.length > 0) {
-    public_roomList.find('.placeholder').hide();
-    private_roomList.find('.placeholder').hide();
-    $.each(roomOrder, function () {
-      var roomId = this.toString();
-      // Generate a list item with a link for each room.
-      if (rooms[roomId].private) {
-        if (!priv) {
-          priv = true;
-          private_roomList.append($("#opeka_room_list_item_tmpl").tmpl({
-            roomUrl: $.param({room: roomId}),
-            roomName: rooms[roomId].name
-          }));
-        } else if (!pub) {
-          pub = true;
-          public_roomList.append($("#opeka_room_list_item_tmpl").tmpl({
-            roomUrl: $.param({room: roomId}),
-            roomName: rooms[roomId].name
-          }));
-        }
-      }
-    });
-  }
-  else {
-    public_roomList.find('.placeholder').show();
-    private_roomList.find('.placeholder').show();
-  }
-
-  if (!priv) {
-    private_roomList.find('.placeholder').show();
-  }
-
-  if (!pub) {
-    public_roomList.find('.placeholder').show();
-  }
-};
-
-
 // Prepare the client, load templates, etc.
 opeka.prepare = function () {
-  // Load the template file for rendering data from the server.
-  $.get(Drupal.settings.opeka.path + '/templates/backend.tmpl.html', function(templates) {
-    // Inject all the loaded templates at the end of the document.
-    $('body').append(templates);
-
-    // Replace the placeholder with the backend interface.
-    $("#opeka-placeholder").replaceWith($("#opeka_backend_tmpl").tmpl({
-      user: Drupal.settings.opeka.user
-    }));
-
-    // Set up the admin interface.
-    var backendWrapper = $("#opeka-backend"),
-        connectForm = backendWrapper.find('.connect-interface'),
-        roomForm = backendWrapper.find('.online-interface');
-
-    // Configure the connect button click event to make os ready to chat.
-    connectForm.find('.connect').click(function (event) {
-      var user = Drupal.settings.opeka.user;
-
-      // Disable the button to prevent multiple presses.
-      $(this).attr("disabled", true);
-
-      // Pass along the nickname the user entered.
-      user.nickname = connectForm.find('#nickname').val().trim() || 'Anonym';
-
-      // When the connect button is pressed, mark the client as ready.
-      // When we're done setting up, let the server know.
-      now.clientReady(user, function () {
-        // Hide the connect interface.
-        connectForm.fadeOut();
-
         // Show the chat interface.
         roomForm.fadeIn();
     roomForm.find('.delete-room').click(function (event) {

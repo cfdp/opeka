@@ -3,7 +3,8 @@
  */
 "use strict";
 
-var drupal = require("drupal");
+var _ = require("underscore"),
+    drupal = require("drupal");
 
 // Authenticate a user logging on to the chat server.
 module.exports.authenticate = function (clientUser, callback) {
@@ -36,3 +37,20 @@ module.exports.authenticate = function (clientUser, callback) {
   }
 };
 
+// Sanitise/prepare a user object for client-side use.
+var clientUserData = function (user) {
+  var data = {
+    clientId: user.clientId,
+    isAdmin: user.isAdmin,
+    name: user.nickname || user.account.name
+  };
+
+  return data;
+};
+
+// Sanitise/prepare a user object for client-side use.
+module.exports.sendUserList = function (context, roomId, users) {
+  var list = _.map(users, clientUserData);
+
+  context.now.receiveUserList(roomId, list);
+};
