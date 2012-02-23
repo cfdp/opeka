@@ -75,6 +75,12 @@ var Opeka = { status: {} },
           this.navigate('404', { trigger: true });
         }
 
+        var admin = _.isFunction(now.changeRoom),
+            sidebar = new Opeka.ChatSidebarView({
+              admin: admin,
+              model: room
+            });
+
         Opeka.chatView = new Opeka.ChatView({
           admin: admin,
           model: room
@@ -83,6 +89,8 @@ var Opeka = { status: {} },
         // Render the view when the server has confirmed our room change.
         now.changeRoom(roomId, function (response) {
           Opeka.appViewInstance.replaceContent(Opeka.chatView.render().el);
+
+          Opeka.appViewInstance.$el.find('.sidebar').html(sidebar.render().el);
         });
       }
     }

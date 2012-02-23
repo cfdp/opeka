@@ -79,6 +79,33 @@
       }
     }
   });
+
+  // Sidebar for the chat with user lists and admin options.
+  Opeka.ChatSidebarView = Backbone.View.extend({
+    events: {
+      //"submit .message-form": "sendMessage"
+    },
+
+    initialize: function (options) {
+      _.bindAll(this);
+
+      this.model.on('change:userList', this.render, this);
+    },
+
+    render: function () {
+      this.$el.html(JST.opeka_chat_sidebar_tmpl({
+        labels: {
+          placeholder: Drupal.t('No users'),
+          pauseToggle: Drupal.t('Pause chat')
+        },
+        room: this.model,
+        users: this.model.get('userList')
+      }));
+
+      return this;
+    }
+  });
+
   Opeka.DialogView = Backbone.View.extend({
     className: "dialog-view",
 

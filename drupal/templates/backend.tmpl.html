@@ -1,8 +1,14 @@
 <script id="opeka_chat_sidebar_tmpl" type="application/template">
-  <div class="header"></div>
-  <div class="content"><%= content %></div>
-  <div class="sidebar"></div>
-  <div class="footer"></div>
+  <ul class="user-list">
+  <% if (!users) { %>
+    <li class="placeholder"><%= labels.placeholder %></li>
+  <% } %>
+  <% _.each(users, function (user) { %>
+    <li><%- user.name %></a></li>
+  <% }); %>
+  </ul>
+
+  <button class="pause-toggle"><%= labels.pauseToggle %></button>
 </script>
 
 <script id="opeka_room_edit_tmpl" type="application/template">
