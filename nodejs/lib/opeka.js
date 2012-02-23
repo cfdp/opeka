@@ -433,11 +433,9 @@ function Server(settings) {
           senderId: user.clientId
         };
 
+    // Send the message if the sender is in the room.
     room.group.hasClient(this.user.clientId, function (inRoom) {
-      console.log('inroom', messageObj);
-      console.log('inRoom', inRoom);
       if (inRoom && !user.muted) {
-        console.log('sen2012-02-15');
         room.group.now.receiveMessage(messageObj);
       }
     });
