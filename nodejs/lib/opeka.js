@@ -308,8 +308,7 @@ function Server(settings) {
       }
 
       // Send the new complete room list to connected users.
-      self.councellors.now.receiveRoomList(opeka.rooms.clientData(true));
-      self.guests.now.receiveRoomList(opeka.rooms.clientData());
+      self.sendRoomList();
     } else {
       callback("Error creating room: room name too short.");
     }
@@ -341,7 +340,7 @@ function Server(settings) {
 
         //remove room from the system
       opeka.rooms.remove(roomId, function(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder) {
-      self.updateRoomList(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder, priv);
+      self.sendRoomList();
       });
 
     }else{
@@ -483,16 +482,12 @@ function Server(settings) {
 
 // -------- HELPERS -----------
 
-  /**
-   * Function used in order to update the room list on both client and admin side.
-   */
-  self.updateRoomList = function (clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder, priv) {
-    if (self.councellors && self.councellors.count && self.councellors.count !== 0) {
-      self.councellors.now.receiveRoomList(opeka.rooms.clientData(true));
-    }
-    if (!priv && self.guests && self.guests.count && self.guests.count !== 0) {
-      self.guests.now.receiveRoomList(opeka.rooms.clientData());
-    }
+
+  // Send an updated room list to all clients.
+  self.sendRoomList = function () {
+    self.councellors.now.receiveRoomList(opeka.rooms.clientData(true));
+    self.guests.now.receiveRoomList(opeka.rooms.clientData());
+
     self.everyone.now.updateActiveRoom();
   };
 
