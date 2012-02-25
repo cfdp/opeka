@@ -75,9 +75,11 @@
   <% }); %>
   </ul>
 
+  <% if (!room.get('paused')) { %>
   <form action="#" class="message-form">
     <input autofocus="autofocus" class="form-text message" placeholder="Type message here…" size="50" type="text" />
     <input class="form-submit send" type="submit" value="Send besked" />
   </form>
+  <% } %>
 </script>
 

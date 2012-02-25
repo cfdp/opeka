@@ -49,6 +49,8 @@
       this.admin = options.admin;
       this.messages = [];
 
+      this.model.on('change', this.render, this);
+
       return this;
     },
 
@@ -56,7 +58,8 @@
       if (!this.messages) { return this; }
 
       this.$el.html(JST.opeka_chat_tmpl({
-        messages: this.messages
+        messages: this.messages,
+        room: this.model
       }));
 
       return this;
