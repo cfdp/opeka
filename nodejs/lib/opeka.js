@@ -308,7 +308,12 @@ function Server(settings) {
       }
 
       // Send the new complete room list to connected users.
-      self.sendRoomList();
+      if (room.private) {
+        self.councellors.now.roomCreated(room.clientData());
+      } else {
+        self.everyone.now.roomCreated(room.clientData());
+      }
+
     } else {
       callback("Error creating room: room name too short.");
     }
@@ -338,10 +343,9 @@ function Server(settings) {
 
       var priv = room.private;
 
-        //remove room from the system
-      opeka.rooms.remove(roomId, function(clientSideList_all, all_roomOrder, clientSideList_public, public_roomOrder) {
-      self.sendRoomList();
-      });
+      opeka.rooms.remove(roomId);
+
+      self.everyone.now.roomDeleted(roomId, finalMessage);
 
     }else{
       this.now.displayError("Error deleting room: a room with the specified ID does not exist.");
@@ -479,15 +483,6 @@ function Server(settings) {
   });
 
 // -------- HELPERS -----------
-
-
-  // Send an updated room list to all clients.
-  self.sendRoomList = function () {
-    self.councellors.now.receiveRoomList(opeka.rooms.clientData(true));
-    self.guests.now.receiveRoomList(opeka.rooms.clientData());
-
-    self.everyone.now.updateActiveRoom();
-  };
 
   /**
    * Function used in order to send a system message.

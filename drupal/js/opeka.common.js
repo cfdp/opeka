@@ -114,6 +114,30 @@ var Opeka = { status: {} },
     Opeka.roomList.reset(rooms);
   };
 
+  // Add the new room to our local room list.
+  now.roomCreated = function (room) {
+    Opeka.roomList.add(room);
+  };
+
+  // Update the room with the changed attributes.
+  now.roomUpdated = function (roomId, attributes) {
+    var room = Opeka.roomList.get(roomId);
+
+    if (room) {
+      room.set(attributes);
+    }
+  };
+
+  // Remove the room from the room list and show the final message to
+  // any participants in that room.
+  now.roomDeleted = function (roomId, finalMessage) {
+    var room = Opeka.roomList.get(roomId);
+
+    if (room) {
+      Opeka.roomList.remove(room);
+    }
+  };
+
   // Receive message from the server.
   now.receiveMessage = function (message) {
     if (Opeka.chatView) {
