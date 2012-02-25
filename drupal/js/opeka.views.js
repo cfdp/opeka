@@ -83,26 +83,45 @@
   // Sidebar for the chat with user lists and admin options.
   Opeka.ChatSidebarView = Backbone.View.extend({
     events: {
-      //"submit .message-form": "sendMessage"
+      "click .pause-toggle": "pauseToggle"
     },
 
     initialize: function (options) {
       _.bindAll(this);
 
       this.model.on('change:userList', this.render, this);
+      this.model.on('change:paused', this.render, this);
     },
 
     render: function () {
+      var pauseLabel = Drupal.t('Pause chat');
+      if (this.model.get('paused')) {
+        pauseLabel = Drupal.t('Unpause chat');
+      }
+
       this.$el.html(JST.opeka_chat_sidebar_tmpl({
         labels: {
           placeholder: Drupal.t('No users'),
-          pauseToggle: Drupal.t('Pause chat')
+          pauseToggle: pauseLabel
         },
         room: this.model,
         users: this.model.get('userList')
       }));
 
       return this;
+    },
+
+    // For when the pause/unpause button is pressed.
+    pauseToggle: function (event) {
+      if (!this.model.get('paused')) {
+        now.pauseRoom(this.model.id, function (err) {});
+      } else {
+        now.unpauseRoom(this.model.id, function (err) {});
+      }
+
+      if (event) {
+        event.preventDefault();
+      }
     }
   });
 

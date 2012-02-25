@@ -136,18 +136,6 @@ opeka.prepare = function () {
     event.preventDefault();
   });
 
-  //configure the pause interface
-  $("#opeka-pause").live('click', function (event) {
-    now.pause();
-    event.preventDefault();
-  });
-
-  //configure the unpause interface
-  $("#opeka-unpause").live('click', function (event) {
-    now.unpause();
-    event.preventDefault();
-  });
-
   //configure the mute interface
   $("#opeka-mute").live('click', function (event) {
     var clientid = $('#opeka-mute-clientId').val().trim();

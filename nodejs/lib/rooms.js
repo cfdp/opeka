@@ -139,6 +139,7 @@ var Room = function (options) {
       id: self.id,
       name: self.name,
       maxSize: self.maxSize,
+      paused: this.paused || false,
       private: self.private
     };
   };

@@ -143,41 +143,37 @@ function Server(settings) {
     });
   };
 
-  /* Function used in order to pause a room */
-  self.councellors.now.pause = function () {
-    var admin = this;
-    var room = opeka.rooms.get(admin.user.activeRoomId);
+  // Allow the councellors to pause a room.
+  self.councellors.now.pauseRoom = function (roomId, callback) {
+    var context = this;
+    var room = opeka.rooms.list[roomId];
 
-    //check that the room is not paused
     if (room.paused) {
-      admin.now.displayError("Error Pause: the room has already been paused.");
+      console.log('User ' + this.user.clientId + ' tried to pause room ' + roomId + ' that was already paused.');
+      callback("Error Pause: the room has already been paused.");
       return;
-    }
-
-    if (room && room.users.length > 1) {
-      room.group.now.localMute();
-      room.paused = true;
-      self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
     } else {
-      admin.now.displayError("Error Pause: the pause function is available only for group chat.");
+      room.paused = true;
+      self.everyone.now.roomUpdated(roomId, { paused: true });
+      self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+      callback();
     }
   };
 
-  /* Function used in order to unpause a room */
-  self.councellors.now.unpause = function () {
-    var admin = this;
-    var room = opeka.rooms.get(admin.user.activeRoomId);
+  // Allow the councellors to unpause a room.
+  self.councellors.now.unpauseRoom = function (roomId, callback) {
+    var context = this;
+    var room = opeka.rooms.list[roomId];
 
-    //check that the room is paused
     if (!room.paused) {
-      admin.now.displayError("Error Unpause: the room has not been paused.");
+      console.log('User ' + this.user.clientId + ' tried to unpause room ' + roomId + ' that was not paused.');
+      callback("Error Unpause: the room has not been paused.");
       return;
-    }
-
-    if(room && room.paused) {
-      room.group.now.localUnmute();
+    } else {
       room.paused = false;
+      self.everyone.now.roomUpdated(roomId, { paused: false });
       self.sendSystemMessage('[Pause]: Chat is available again.', room.group);
+      callback();
     }
   };
 
