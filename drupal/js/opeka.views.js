@@ -85,6 +85,8 @@
 
   // Sidebar for the chat with user lists and admin options.
   Opeka.ChatSidebarView = Backbone.View.extend({
+    className: 'opeka-chat-sidebar',
+
     events: {
       "click .pause-toggle": "pauseToggle"
     },

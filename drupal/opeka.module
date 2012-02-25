@@ -58,13 +58,25 @@ function opeka_menu() {
 /**
  * Load the JavaScript and CSS code required for the Opeka chat.
  *
- * @param array $filenames
+ * @param array $stylesheets
+ *   Additional JavaScript files to load from our JS folder.
+ * @param array $scripts
  *   Additional JavaScript files to load from our JS folder.
  * @param array $settings
  *   Additional settings to be exposed to JavaScript via the
  *   Drupal.settings.object.
  */
-function opeka_add_assets($filenames = array(), $settings = array()) {
+function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings = array()) {
+  $path = drupal_get_path('module', 'opeka');
+
+  $stylesheets = array_merge(array(
+    'opeka.base.css',
+    'opeka.theme.css',
+  ), $stylesheets);
+  foreach ($stylesheets as $filename) {
+    drupal_add_css($path . '/css/' . $filename);
+  }
+
   $js_url = variable_get('opeka_nowjs_url', 'https://localhost:3000/nowjs/now.js');
 
   if (!$js_url) {
@@ -85,17 +97,15 @@ function opeka_add_assets($filenames = array(), $settings = array()) {
   drupal_add_library('system', 'ui.dialog');
 
   // Add our default JavaScript files to the array.
-  $filenames = array_merge(array(
+  $scripts = array_merge(array(
     'underscore.js',
     'backbone.js',
     'opeka.common.js',
     'opeka.models.js',
     'opeka.views.js',
-  ), $filenames);
+  ), $scripts);
 
-  // Load the required JavaScript files.
-  $path = drupal_get_path('module', 'opeka');
-  foreach ($filenames as $filename) {
+  foreach ($scripts as $filename) {
     drupal_add_js($path . '/js/' . $filename);
   }
 }

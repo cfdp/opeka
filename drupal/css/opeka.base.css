@@ -1,0 +1,10 @@
+#opeka-app .header,
+#opeka-app .footer {
+  clear: both;
+}
+
+#opeka-app .content,
+#opeka-app .sidebar {
+  float: left;
+}
+

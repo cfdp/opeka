@@ -11,6 +11,8 @@ function opeka_admin_page() {
   global $user;
 
   opeka_add_assets(array(
+    'opeka.admin.css',
+  ), array(
     'opeka.backend.js',
   ), array(
     'user' => array(

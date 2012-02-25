@@ -8,7 +8,7 @@
  * The main, user-facing, chat-page.
  */
 function opeka_main_page() {
-  opeka_add_assets(array('opeka.frontend.js', 'jquery.geowidget-1.0.js'));
+  opeka_add_assets(array(), array('opeka.frontend.js', 'jquery.geowidget-1.0.js'));
 
   $output = array();
 
