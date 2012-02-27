@@ -73,8 +73,6 @@
     sendMessage: function (event) {
       var message = this.$el.find('input.message').val();
 
-      console.log('Sending message', message);
-
       now.sendMessageToRoom(this.model.id, message);
 
       if (event) {
