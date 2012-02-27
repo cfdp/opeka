@@ -151,6 +151,7 @@
       }
 
       this.options = options;
+      this.dialogElement = $(this.make('div', this.className));
     },
 
     addButton: function (title, callback) {
@@ -163,18 +164,18 @@
     remove: function () {
       $(this.el).remove();
 
-      if (this.dialogInstance){
-        this.dialogInstance.dialog("destroy").remove();
-        this.dialogInstance = null;
+      if (this.dialogElement){
+        this.dialogElement.dialog("destroy").remove();
+        this.dialogElement = null;
       }
 
       return this;
     },
 
     render: function () {
-      this.dialogInstance = $(this.make('div', this.className, this.options.content));
-      this.dialogInstance.appendTo(this.$el);
-      this.dialogInstance.dialog(this.dialogOptions);
+      this.dialogElement.html(this.options.content);
+      this.dialogElement.appendTo(this.$el);
+      this.dialogElement.dialog(this.dialogOptions);
 
       return this;
     }
@@ -270,7 +271,7 @@
 
     // When the save room button is clicked.
     saveRoom: function (event) {
-      var form = $(this.dialogInstance).find('form'),
+      var form = $(this.dialogElement).find('form'),
           values = {
             name: form.find('input.name').val(),
             maxSize: form.find('select.max-size').val(),
