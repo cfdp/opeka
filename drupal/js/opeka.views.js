@@ -266,7 +266,7 @@
     render: function () {
       Opeka.DialogView.prototype.render.call(this);
 
-      this.$el.find('form').submit(this.saveRoom);
+      this.dialogElement.find('form').submit(this.saveRoom);
     },
 
     // When the save room button is clicked.
