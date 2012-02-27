@@ -339,6 +339,15 @@ var Opeka = { status: {} },
     var nf = new Opeka.NotFoundRouter();
     Opeka.router = new Opeka.MainRouter();
 
+    if (!now) {
+      var view = new Opeka.FatalErrorDialogView({
+        message: Drupal.t('The chat server seems to be offline. Please reload the page to try connecting again or contact support if the problem persists.'),
+        title: Drupal.t('No connection server')
+      });
+
+      view.render();
+    }
+
     Backbone.history.start();
   });
 }(jQuery));
