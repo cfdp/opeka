@@ -96,12 +96,6 @@ opeka.prepare = function () {
         event.preventDefault();
       });
 
-
-        // Trigger the hashChange event, so if the user came to the page
-        // with a room in the URL, it opens now.
-        $(window).trigger('hashchange');
-      });
-
       event.preventDefault();
     });
 
@@ -161,12 +155,6 @@ opeka.prepare = function () {
   });
 
 
-  });
-};
-
-// When the connection to Now.js is set up, prepare ourselves.
-now.ready(function() {
-  opeka.prepare();
 });
 */
 }(jQuery));

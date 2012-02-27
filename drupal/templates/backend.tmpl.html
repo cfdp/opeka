@@ -59,32 +59,6 @@
 <script id="opeka_backend_tmpl" type="x-jquery-tmpl">
   <div id="opeka-backend">
     <form id="opeka-chat" class="element-hidden">
-	  <table>
-	    <thead><th id="th-room" colspan="2"></th></thead>
-	    <tbody>
-		  <tr>
-		    <td></td>
-		    <td style="border-bottom: 1px dashed; border-left: 1px dashed;"> Users </td>
-		  </tr>
-		  <tr>
-		    <td>
-        	  <ul id="chat-message-list">
-                <li class="placeholder">Ingen beskeder modtaget.</li>
-              </ul>
-            </td>
-		    <td style="border-left: 1px dashed;">
-			  <ul id="chat-user-list">
-                <li class="placeholder">No users.</li>
-              </ul>
-			</td>
-		  </tr>
-		  <tr><td colspan="2" style="border-top: 1px dashed;">
-            <label for="opeka-chat-message">Skriv en besked</label>
-      	    <input size="50" id="opeka-chat-message" placeholder="Message" type="text" />
-      	    <button id="opeka-send-message">Send besked</button>
-		</tbody>
-	  </table>
-
       <label for="bookmark-list">Send a bookmarked link</label>
 	  <select id="bookmark-list"  name="bookmark-list">
 	        <option value="www.au.dk" selected="selected">www.au.dk</option>
@@ -99,10 +73,6 @@
       <label for="opeka-unmute-clientId">Unmute an user</label>
       <input id="opeka-unmute-clientId" placeholder="User ID" type="text" />
       <button id="opeka-unmute">Unmute user</button>
-
-	  <h3>Pause</h3>
-      <button id="opeka-pause">Pause chatroom</button>
-      <button id="opeka-unpause">Unpause chatroom</button>
 
       <label for="opeka-whisper-message">Whisper to an user</label>
       <input id="opeka-whisper-message-user" placeholder="User ID" type="text" />
