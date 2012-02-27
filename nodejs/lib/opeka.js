@@ -315,38 +315,17 @@ function Server(settings) {
     }
   };
 
-  /**
-   * This function is called by the Counsellors in order to delete a room from the system
-   */
+  // This function is called by the Counsellors in order to delete a room from the system
   self.councellors.now.deleteRoom = function (roomId, finalMessage) {
     var room = opeka.rooms.list[roomId];
-    if (room !== null) {
-      // Send finalMessage
-      if (room.group && room.group.count !== 0) {
-        // If there is more than 1 user, we assume that one is not an
-        // admin, so we have to send the final message.
-        if (room.group.count > 1) {
-          room.group.now.client_finalMessage(this.user.nickname, finalMessage);
-        }
-        //if chatDurationStart_Min is defined means that the room has been actually used by at least one user
-        if (room.chatDurationStart_Min) {
-          var duration = Math.round((new Date()).getTime() / 60000) - room.chatDurationStart_Min;
-          room.counsellorGroup.now.admin_finalMessage("Your Final Message has been:"+finalMessage+"\n The chat lasted for "+duration+" minute/s.");
-        }else{
-          room.counsellorGroup.now.admin_finalMessage("Room deleted. It has not been used.");
-        }
-      }
 
-      var priv = room.private;
-
+    if (room) {
       opeka.rooms.remove(roomId);
-
       self.everyone.now.roomDeleted(roomId, finalMessage);
-
-    }else{
+    } else {
       this.now.displayError("Error deleting room: a room with the specified ID does not exist.");
     }
-    };
+  };
 
     /* Function used in order to delete all messages of a single user */
     self.councellors.now.deleteAllMsg = function (clientId) {

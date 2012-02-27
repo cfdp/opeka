@@ -9,6 +9,7 @@
   </ul>
 
   <button class="pause-toggle"><%= labels.pauseToggle %></button>
+  <button class="delete-room"><%= labels.deleteRoom %></button>
 </script>
 
 <script id="opeka_room_edit_tmpl" type="application/template">
@@ -43,6 +44,15 @@
       <input class="private" name="private" type="checkbox" value="true" />
     </div>
 
+  </form>
+</script>
+
+<script id="opeka_room_delete_tmpl" type="application/template">
+  <form action="#" class="room-delete-form">
+    <label>
+      <%= labels.finalMessage %>
+      <input class="form-text final-message" name="name" type="textfield" />
+    </label>
   </form>
 </script>
 

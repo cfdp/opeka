@@ -131,9 +131,22 @@ var Opeka = { status: {} },
   // Remove the room from the room list and show the final message to
   // any participants in that room.
   now.roomDeleted = function (roomId, finalMessage) {
-    var room = Opeka.roomList.get(roomId);
+    var room = Opeka.roomList.get(roomId), view;
 
     if (room) {
+      // If we're in the room that's being deleted, show the final
+      // message and go back to the room list.
+      if (Opeka.chatView && Opeka.chatView.model.id === roomId) {
+        view = new Opeka.DialogView({
+          content: Backbone.View.prototype.make('p', 'message', finalMessage),
+          title: Drupal.t('Chat ended')
+        });
+
+        view.render();
+
+        Opeka.router.navigate("rooms", {trigger: true});
+      }
+
       Opeka.roomList.remove(room);
     }
   };

@@ -88,6 +88,7 @@
     className: 'opeka-chat-sidebar',
 
     events: {
+      "click .delete-room": "deleteRoom",
       "click .pause-toggle": "pauseToggle"
     },
 
@@ -106,6 +107,7 @@
 
       this.$el.html(JST.opeka_chat_sidebar_tmpl({
         labels: {
+          deleteRoom: Drupal.t('Delete room'),
           placeholder: Drupal.t('No users'),
           pauseToggle: pauseLabel
         },
@@ -114,6 +116,18 @@
       }));
 
       return this;
+    },
+
+    deleteRoom: function (event) {
+      var view = new Opeka.RoomDeletionView({
+        model: this.model
+      });
+
+      view.render();
+
+      if (event) {
+        event.preventDefault();
+      }
     },
 
     // For when the pause/unpause button is pressed.
@@ -231,6 +245,52 @@
       }
 
       return this;
+    }
+  });
+
+  // Dialog to edit/create rooms with.
+  Opeka.RoomDeletionView = Opeka.DialogView.extend({
+    initialize: function () {
+      // Options passed to DialogView.
+      var options = {};
+
+      _.bindAll(this);
+
+      // For when creating new room.
+      if (!options.room) {
+        options.content = JST.opeka_room_delete_tmpl({
+          labels: {
+            explanation: Drupal.t('Please confirm the deletion of this room. You can provide a final message that will be shown to all participants when the room is closed.'),
+            finalMessage: Drupal.t('Final message')
+          }
+        });
+        options.dialogOptions = {
+          buttons: {},
+          title: Drupal.t('Confirm deletion')
+        };
+
+        options.dialogOptions.buttons[Drupal.t('Delete room')] = this.deleteRoom;
+      }
+
+      options.dialogOptions.buttons[Drupal.t('Cancel')] = this.remove;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      this.dialogElement.delegate('form', 'submit', this.deleteRoom);
+
+      return this;
+    },
+
+    deleteRoom: function (event) {
+      var finalMessage = this.dialogElement.find('.final-message').val();
+
+      now.deleteRoom(this.model.id, finalMessage);
+      this.remove();
+
+      if (event) {
+        event.preventDefault();
+      }
     }
   });
 

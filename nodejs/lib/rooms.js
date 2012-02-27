@@ -181,9 +181,8 @@ var remove = function (roomId, callback) {
   if (room) {
     room.removeAllUsers();
 
-    roomList[roomId] = null;
+    delete roomList[roomId];
 
-    //update room list
     if (callback) {
       callback();
     }
