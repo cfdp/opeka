@@ -39,13 +39,13 @@ module.exports.authenticate = function (clientUser, callback) {
 
 // Sanitise/prepare a user object for client-side use.
 var clientUserData = function (user) {
-  var data = {
+  return {
+    age: user.age,
     clientId: user.clientId,
+    gender: user.gender,
     isAdmin: user.isAdmin,
     name: user.nickname || user.account.name
   };
-
-  return data;
 };
 
 // Sanitise/prepare a user object for client-side use.

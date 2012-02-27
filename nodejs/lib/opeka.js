@@ -133,6 +133,8 @@ function Server(settings) {
       // Store the account and nickname for later use.
       client.user.account = account;
       client.user.nickname = clientUser.nickname;
+      client.user.gender = clientUser.gender;
+      client.user.age = clientUser.age;
 
       // Update online users count for all clients.
       self.updateUserStatus(self.everyone.now);

@@ -106,6 +106,7 @@
       this.$el.html(JST.opeka_chat_sidebar_tmpl({
         labels: {
           deleteRoom: Drupal.t('Delete room'),
+          gender: { f: Drupal.t('woman'), m: Drupal.t('man') },
           placeholder: Drupal.t('No users'),
           pauseToggle: pauseLabel
         },

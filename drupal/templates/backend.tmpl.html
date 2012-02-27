@@ -4,7 +4,18 @@
     <li class="placeholder"><%= labels.placeholder %></li>
   <% } %>
   <% _.each(users, function (user) { %>
-    <li><%- user.name %></a></li>
+    <li>
+      <%- user.name %>
+      <% if (user.age || user.gender) { %>
+        <span class="meta">
+          (
+          <span class="age"><%- user.age %></span>
+          /
+          <span class="gender"><%= labels.gender[user.gender] %></span>
+          )
+        </span>
+      <% } %>
+    </li>
   <% }); %>
   </ul>
 
