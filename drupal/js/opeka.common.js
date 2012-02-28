@@ -111,6 +111,13 @@ var Opeka = { status: {} },
     }
   };
 
+  // Called by the server when the admin deletes a message.
+  now.messageDeleted = function (roomId, messageId) {
+    if (Opeka.chatView) {
+      Opeka.chatView.messageDeleted(messageId);
+    }
+  };
+
   // For when the server has an updated room list for us.
   now.receiveRoomList = function (rooms) {
     // This triggers a reset even on the RoomList instance, so any views
@@ -209,11 +216,6 @@ var Opeka = { status: {} },
   // of a single user.
   now.localDeleteAllMsg = function (clientId) {
     $('#chat-message-list').find("."+clientId).html('');
-  };
-
-  // Method used in order to effect a local removal of a single message.
-  now.localDeleteMsg = function (msgId) {
-    $('#chat-message-list').find("#" + msgId).html('');
   };
 
   //This method is used in order to leave a room

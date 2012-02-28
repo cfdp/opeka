@@ -40,6 +40,7 @@
   // The actual chat window.
   Opeka.ChatView = Backbone.View.extend({
     events: {
+      "click .delete-message": "deleteMessage",
       "submit .message-form": "sendMessage"
     },
 
@@ -58,11 +59,35 @@
       if (!this.messages) { return this; }
 
       this.$el.html(JST.opeka_chat_tmpl({
+        admin: this.admin,
+        labels: {
+          deleteMessage: Drupal.t('Delete'),
+        },
         messages: this.messages,
         room: this.model
       }));
 
       return this;
+    },
+
+    // For when the delete button next to a message is pressed.
+    deleteMessage: function (event) {
+      var messageId = $(event.currentTarget).closest('li').attr('data-message-id');
+
+      now.roomDeleteMessage(this.model.id, messageId);
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    // Called externally when a message is to be removed.
+    messageDeleted: function (messageId) {
+      this.messages = _.reject(this.messages, function (message) {
+        return (message.messageId === messageId);
+      });
+
+      this.render();
     },
 
     receiveMessage: function (message) {

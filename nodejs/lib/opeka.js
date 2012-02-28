@@ -307,10 +307,11 @@ function Server(settings) {
     };
 
     /* Function used in order to delete a single message */
-    self.councellors.now.deleteMsg = function (msgId) {
-      var room = opeka.rooms.get(this.user.activeRoomId);
+    self.councellors.now.roomDeleteMessage = function (roomId, messageId) {
+      var room = opeka.rooms.list[roomId];
+
       if (room) {
-        room.group.now.localDeleteMsg(msgId);
+        room.group.now.messageDeleted(roomId, messageId);
       }
     };
 
