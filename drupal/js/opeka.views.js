@@ -103,16 +103,21 @@
         pauseLabel = Drupal.t('Unpause chat');
       }
 
-      this.$el.html(JST.opeka_chat_sidebar_tmpl({
-        labels: {
-          deleteRoom: Drupal.t('Delete room'),
-          gender: { f: Drupal.t('woman'), m: Drupal.t('man') },
-          placeholder: Drupal.t('No users'),
-          pauseToggle: pauseLabel
-        },
-        room: this.model,
-        users: this.model.get('userList')
-      }));
+
+
+      if (JST.opeka_chat_sidebar_tmpl) {
+        this.$el.html(JST.opeka_chat_sidebar_tmpl({
+          labels: {
+            deleteRoom: Drupal.t('Delete room'),
+            kickUser: Drupal.t('Kick user'),
+            gender: { f: Drupal.t('woman'), m: Drupal.t('man') },
+            placeholder: Drupal.t('No users'),
+            pauseToggle: pauseLabel
+          },
+          room: this.model,
+          users: this.model.get('userList')
+        }));
+      }
 
       return this;
     },
