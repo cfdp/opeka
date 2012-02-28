@@ -155,6 +155,19 @@ var Opeka = { status: {} },
     }
   };
 
+  // Receive the whisper form an user.
+  now.roomRecieveWhisper = function (clientId, messageText, nickname, receiver) {
+    if (now.core.clientId === clientId) {
+      // A user receiving the whisper.
+      var messageObj = {
+        message: messageText,
+        whisper: true,
+        name: nickname
+      };
+      Opeka.chatView.receiveMessage(messageObj);
+    }
+  };
+
   // Response to a user being kicked.
   now.roomUserKicked = function (roomId, clientId, message, user) {
 

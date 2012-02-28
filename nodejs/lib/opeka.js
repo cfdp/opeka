@@ -255,34 +255,14 @@ function Server(settings) {
   };
 
   /* Function used by the counselors in order to whisper to an user */
-  self.councellors.now.whisper = function (userId, messageText) {
-    var group = nowjs.getGroup(userId);
-
-    //checking if the user exists
-    if (group.count === 0) {
-      this.now.displayError("Error whispering: an user with the specified ID does not exists.");
-      return;
-    }
-
-    //checking if the user is in the same room as the counsellor
-    var room = opeka.rooms.get(this.user.activeRoomId);
-    var idx = room.usersIdx[userId];
-    if (!idx) {
-      this.now.displayError("Error whispering: the specified user is not in the same room as yours.");
-      return;
-    }
-
-    var messageObj = {
-        date: new Date(),
-        message: messageText,
-      whisper: true,
-        name: this.user.nickname
-      };
-
-    //send whisper to both the user and the counsellor
-      group.now.receiveMessage(messageObj);
-    this.now.receiveMessage(messageObj);
-
+  self.councellors.now.whisper = function (clientId, messageText) {
+    var whisperClientId = this.user.clientId,
+        whisperName = this.user.nickname,
+        recieverName = self.everyone.users[clientId].user.nickname;
+    // Send to user being whispered.
+    self.everyone.users[clientId].now.roomRecieveWhisper(clientId, messageText, whisperName, true);
+    // Send to counselor who did the whispering.
+    this.now.roomRecieveWhisper(whisperClientId, messageText, recieverName, false);
   };
 
   // Called by the Counsellors in order to create a new room.

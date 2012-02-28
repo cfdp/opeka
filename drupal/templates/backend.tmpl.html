@@ -5,7 +5,7 @@
   <% } %>
   <% _.each(users, function (user) { %>
     <li data-client-id="<%= user.clientId %>">
-      <%- user.name %>
+      <span class="name"><%- user.name %></span>
       <% if (user.age || user.gender) { %>
         <span class="meta">
           (
@@ -16,6 +16,7 @@
         </span>
       <% } %>
       <span class="actions">
+        <button class="whisper"><%= labels.whisper %></button>
         <button class="kick-user"><%= labels.kickUser %></button>
       </span>
     </li>
@@ -34,7 +35,6 @@
     </label>
   </form>
 </script>
-
 
 <script id="opeka_room_edit_tmpl" type="application/template">
   <form action="#" class="room-edit-form">
@@ -80,6 +80,16 @@
   </form>
 </script>
 
+<script id="opeka_whisper_tmpl" type="application/template">
+  <form action="#" class="whisper-form">
+    <label>
+      <%= labels.whisper %>
+      <input class="form-text whisper-message" name="name" type="textfield" />
+    </label>
+  </form>
+</script>
+
+
 <script id="opeka_backend_tmpl" type="x-jquery-tmpl">
   <div id="opeka-backend">
     <form id="opeka-chat" class="element-hidden">
@@ -97,11 +107,6 @@
       <label for="opeka-unmute-clientId">Unmute an user</label>
       <input id="opeka-unmute-clientId" placeholder="User ID" type="text" />
       <button id="opeka-unmute">Unmute user</button>
-
-      <label for="opeka-whisper-message">Whisper to an user</label>
-      <input id="opeka-whisper-message-user" placeholder="User ID" type="text" />
-      <input id="opeka-whisper-message" placeholder="Message" type="text" />
-      <button id="opeka-send-whisper-message">Send whisper</button>
 
       <label for="opeka-delete-message">Delete Message</label>
       <input id="opeka-delete-message" placeholder="Message ID" type="text" />

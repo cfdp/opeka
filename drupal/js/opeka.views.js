@@ -89,6 +89,7 @@
       "click .delete-room": "deleteRoom",
       "click .pause-toggle": "pauseToggle",
       "click .kick-user": "kickUser",
+      "click .whisper": "whisper",
     },
 
     initialize: function (options) {
@@ -113,7 +114,8 @@
             kickUser: Drupal.t('Kick user'),
             gender: { f: Drupal.t('woman'), m: Drupal.t('man') },
             placeholder: Drupal.t('No users'),
-            pauseToggle: pauseLabel
+            pauseToggle: pauseLabel,
+            whisper: Drupal.t('Whisper')
           },
           room: this.model,
           users: this.model.get('userList')
@@ -148,7 +150,7 @@
       }
     },
 
-    //
+    // For when a user needs to be kicked.
     kickUser: function (event) {
       var view = new Opeka.RoomKickUserView({
         clientId: $(event.currentTarget).closest('li').attr('data-client-id'),
@@ -160,7 +162,23 @@
       if (event) {
         event.preventDefault();
       }
+    },
+
+    // Open dialog to whisper to an user.
+    whisper: function (event) {
+      var view = new Opeka.RoomWhisperView({
+        clientId: $(event.currentTarget).closest('li').attr('data-client-id'),
+        model: this.model,
+        name: $(event.currentTarget).closest('li').find('.name').text()
+      });
+
+      view.render();
+
+      if (event) {
+        event.preventDefault();
+      }
     }
+
   });
 
   Opeka.DialogView = Backbone.View.extend({
@@ -442,6 +460,51 @@
 
       // Kick the user.
       now.kick(this.clientId, message, this.model.id);
+      this.remove();
+      // Prevent event if needed.
+      if (event) {
+        event.preventDefault();
+      }
+    }
+
+  });
+
+  Opeka.RoomWhisperView = Opeka.DialogView.extend({
+    initialize: function (options) {
+      this.clientId = options.clientId;
+
+      _.bindAll(this);
+
+      options.content = JST.opeka_whisper_tmpl({
+        labels: {
+          whisperMessage: Drupal.t('Whisper message')
+        }
+      });
+
+      options.dialogOptions = {
+        buttons: {},
+        title: Drupal.t('Whisper @name', {'@name': options.name})
+      };
+
+      options.dialogOptions.buttons[Drupal.t('Whisper')] = this.whisper;
+
+      options.dialogOptions.buttons[Drupal.t('Cancel')] = this.remove;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      this.dialogElement.delegate('form', 'submit', this.whisper);
+
+      return this;
+    },
+
+    // Utility function for kicking the user.
+    whisper: function (event) {
+      var form = $(this.dialogElement).find('form'),
+          message = form.find('input.whisper-message').val();
+
+      // Whisper the user.
+      now.whisper(this.clientId, message);
       this.remove();
       // Prevent event if needed.
       if (event) {
