@@ -89,7 +89,7 @@
       "click .delete-room": "deleteRoom",
       "click .pause-toggle": "pauseToggle",
       "click .kick-user": "kickUser",
-      "click .whisper": "whisper",
+      "click .whisper": "whisper"
     },
 
     initialize: function (options) {
