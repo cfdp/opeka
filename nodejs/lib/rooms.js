@@ -93,40 +93,38 @@ var Room = function (options) {
     }
   };
 
-  /**
-   * Remove user from group.
-   *
-   * if somebody is in queue return the user object of the first in queue for this chat room
-   */
+  // Remove user from the room.
+  // If somebody is in queue return the user object of the first in queue for this chat room
   self.removeUser = function (clientId, callback) {
-    var idx = self.usersIdx[clientId];
-    if (idx) {
-      try {
-        self.users[idx].now.activeRoomId = null;
-      } catch(ignored) {
-      //if we have an exception here means that the user is disconnected, thus we do not mind about the activeRoomId
-      } finally{
-        self.users.splice(idx, 1);
-        self.group.removeUser(clientId);
-        self.usersIdx[clientId] = null;
-        self.counsellorGroup.removeUser(clientId);
-        var found = false;
-        while (self.queue.length > 0 && !found) {
-          var user = self.queue.shift();
-          var group = nowjs.getGroup(user.clientId);
-          //the user has to be connected and has not to be in other rooms
-          if (group.count > 0 && !user.activeRoomId) {
-            found = true;
-            group.now.changeRoom(self.id);
-            group.now.joinRoom(self.id);
-          }
+    try {
+      self.users[clientId].now.activeRoomId = null;
+    } catch(ignored) {
+      // If we get an exception here, it means that the user is
+      // disconnected. We let that pass silently.
+    } finally {
+      delete self.users[clientId];
+
+      // Remove clientId from either group.
+      self.group.removeUser(clientId);
+      self.counsellorGroup.removeUser(clientId);
+
+      var found = false;
+      while (self.queue.length > 0 && !found) {
+        var user = self.queue.shift();
+        var group = nowjs.getGroup(user.clientId);
+        //the user has to be connected and has not to be in other rooms
+        if (group.count > 0 && !user.activeRoomId) {
+          found = true;
+          group.now.changeRoom(self.id);
+          group.now.joinRoom(self.id);
         }
-        if (callback) {
-          try {
-            callback(self.users);
-          } catch(ignored) {
-            //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
-          }
+      }
+
+      if (callback) {
+        try {
+          callback(self.users);
+        } catch(ignored) {
+          //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
         }
       }
     }
