@@ -170,9 +170,11 @@ var Opeka = { status: {} },
 
   // Response to a user being kicked.
   now.roomUserKicked = function (roomId, clientId, message, user) {
-
+    // If this client is being kicked, navigate to a different page and
+    // use a FatalErrorDialog to force them to reload the page.
     if (now.core.clientId === clientId) {
-      // Kill the connection with a fetal error dialog.
+      Opeka.router.navigate("rooms", {trigger: true});
+
       var view = new Opeka.FatalErrorDialogView({
         message: Drupal.t('You have been kicked from the chat with the following reason: @reason.', {'@reason': message}),
         title: Drupal.t('Kicked')
@@ -185,8 +187,8 @@ var Opeka = { status: {} },
         system: true
       };
       Opeka.chatView.receiveMessage(messageObj);
-   }
- };
+    }
+  };
 
   // Receive message from the server.
   now.receiveMessage = function (message) {
