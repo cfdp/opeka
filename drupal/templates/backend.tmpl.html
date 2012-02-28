@@ -4,7 +4,7 @@
     <li class="placeholder"><%= labels.placeholder %></li>
   <% } %>
   <% _.each(users, function (user) { %>
-    <li>
+    <li data-client-id="<%= user.clientId %>">
       <%- user.name %>
       <% if (user.age || user.gender) { %>
         <span class="meta">
@@ -15,6 +15,9 @@
           )
         </span>
       <% } %>
+      <span class="actions">
+        <button class="kick-user"><%= labels.kickUser %></button>
+      </span>
     </li>
   <% }); %>
   </ul>
@@ -22,6 +25,16 @@
   <button class="pause-toggle"><%= labels.pauseToggle %></button>
   <button class="delete-room"><%= labels.deleteRoom %></button>
 </script>
+
+<script id="opeka_kick_user_tmpl" type="application/template">
+  <form action="#" class="kick-user-form">
+    <label>
+      <%= labels.kickMessage %>
+      <input class="form-text kick-message" name="name" type="textfield" />
+    </label>
+  </form>
+</script>
+
 
 <script id="opeka_room_edit_tmpl" type="application/template">
   <form action="#" class="room-edit-form">
@@ -97,11 +110,6 @@
       <label for="opeka-deleteall-messages">Delete All Messages from an User</label>
       <input id="opeka-deleteall-messages" placeholder="Client ID" type="text" />
       <button id="opeka-deleteall">Delete All Messages</button>
-
-      <label for="opeka-kick-user">Kick an User</label>
-      <input id="opeka-kick-user" placeholder="Client ID" type="text" />
-      <input id="opeka-kick-message" placeholder="Message" type="text" />
-      <button id="opeka-kick">Kick</button>
 
     </form>
 

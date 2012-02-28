@@ -155,6 +155,26 @@ var Opeka = { status: {} },
     }
   };
 
+  // Response to a user being kicked.
+  now.roomUserKicked = function (roomId, clientId, message, user) {
+
+    if (now.core.clientId === clientId) {
+      // Kill the connection with a fetal error dialog.
+      var view = new Opeka.FatalErrorDialogView({
+        message: Drupal.t('You have been kicked from the chat with the following reason: @reason.', {'@reason': message}),
+        title: Drupal.t('Kicked')
+      });
+      view.render();
+    }
+    else if (Opeka.chatView.model.id === roomId) {
+      var messageObj = {
+        message: Drupal.t('User @user was kicked from the chat.', { '@user': user }),
+        system: true
+      };
+      Opeka.chatView.receiveMessage(messageObj);
+   }
+ };
+
   // Receive message from the server.
   now.receiveMessage = function (message) {
     if (Opeka.chatView) {

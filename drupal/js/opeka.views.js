@@ -87,7 +87,8 @@
 
     events: {
       "click .delete-room": "deleteRoom",
-      "click .pause-toggle": "pauseToggle"
+      "click .pause-toggle": "pauseToggle",
+      "click .kick-user": "kickUser",
     },
 
     initialize: function (options) {
@@ -141,6 +142,20 @@
       } else {
         now.unpauseRoom(this.model.id, function (err) {});
       }
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    //
+    kickUser: function (event) {
+      var view = new Opeka.RoomKickUserView({
+        clientId: $(event.currentTarget).closest('li').attr('data-client-id'),
+        model: this.model
+      });
+
+      view.render();
 
       if (event) {
         event.preventDefault();
@@ -390,6 +405,52 @@
     }
   });
 
+  // Dialog for confirming that user should be kicked.
+  Opeka.RoomKickUserView = Opeka.DialogView.extend({
+    initialize: function (options) {
+      this.clientId = options.clientId;
+
+      _.bindAll(this);
+
+      options.content = JST.opeka_kick_user_tmpl({
+        labels: {
+          kickMessage: Drupal.t('Kick message')
+        }
+      });
+
+      options.dialogOptions = {
+        buttons: {},
+        title: Drupal.t('Confirm kick')
+      };
+
+      options.dialogOptions.buttons[Drupal.t('Kick user')] = this.kickUser;
+
+      options.dialogOptions.buttons[Drupal.t('Cancel')] = this.remove;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      this.dialogElement.delegate('form', 'submit', this.kickUser);
+
+      return this;
+    },
+
+    // Utility function for kicking the user.
+    kickUser: function (event) {
+      var form = $(this.dialogElement).find('form'),
+          message = form.find('input.kick-message').val();
+
+      // Kick the user.
+      now.kick(this.clientId, message, this.model.id);
+      this.remove();
+      // Prevent event if needed.
+      if (event) {
+        event.preventDefault();
+      }
+    }
+
+  });
+
   // Sign-in form to get the chat started.
   Opeka.SignInFormView = Backbone.View.extend({
     events: {
@@ -409,7 +470,6 @@
       if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.name) {
         name = Drupal.settings.opeka.user.name;
       }
-
 
       var form = JST.opeka_connect_form_tmpl({
         labels: {

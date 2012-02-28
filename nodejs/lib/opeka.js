@@ -242,31 +242,20 @@ function Server(settings) {
   };
 
   /* Function used by the counselors in order to kick an user out his room */
-  self.councellors.now.kick = function (userId, messageText) {
-    var group = nowjs.getGroup(userId);
+  self.councellors.now.kick = function (clientId, messageText, roomId) {
+    // Get room.
+    var room = opeka.rooms.list[roomId],
+        roomGroup = nowjs.getGroup(roomId);
+    // Tell that the user is being removed.
+    roomGroup.now.roomUserKicked(roomId, clientId, messageText, self.everyone.users[clientId].user.nickname);
+    // Remove the user.
+    room.removeUser(clientId, function (users) {
+      opeka.user.sendUserList(room.counsellorGroup, room.id, users);
+    });
+  };
 
-    //checking if the user exists
-    if (group.count === 0) {
-      this.now.displayError("Error kicking: an user with the specified ID does not exists.");
-      return;
-    }
-
-    //checking if the user is in the same room as the counsellor
-    var room = opeka.rooms.get(this.user.activeRoomId);
-    var idx = room.usersIdx[userId];
-    if (!idx) {
-      this.now.displayError("Error kicking: the specified user is not in the same room as yours.");
-      return;
-    }
-
-    var nickname = this.user.nickname;
-      group.now.changeRoom(null, null, true);
-    group.now.displayWarning("You have been kicked out the room by "+nickname+" for the following reason: "+messageText);
-
-    };
-
-    /* Function used by the counselors in order to whisper to an user */
-    self.councellors.now.whisper = function (userId, messageText) {
+  /* Function used by the counselors in order to whisper to an user */
+  self.councellors.now.whisper = function (userId, messageText) {
     var group = nowjs.getGroup(userId);
 
     //checking if the user exists
