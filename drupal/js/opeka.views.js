@@ -81,6 +81,13 @@
       }
     },
 
+    // Delete all messages in a room.
+    deleteAllMessages: function (event) {
+      // Delete messages by setting them to an empty array.
+      this.messages = [];
+      this.render();
+    },
+
     // Called externally when a message is to be removed.
     messageDeleted: function (messageId) {
       this.messages = _.reject(this.messages, function (message) {
@@ -111,9 +118,10 @@
     className: 'opeka-chat-sidebar',
 
     events: {
+      "click .clear-messages": "clearMessages",
       "click .delete-room": "deleteRoom",
-      "click .pause-toggle": "pauseToggle",
       "click .kick-user": "kickUser",
+      "click .pause-toggle": "pauseToggle",
       "click .whisper": "whisper"
     },
 
@@ -135,6 +143,7 @@
       if (JST.opeka_chat_sidebar_tmpl) {
         this.$el.html(JST.opeka_chat_sidebar_tmpl({
           labels: {
+            clearMessages: Drupal.t("Clear messages"),
             deleteRoom: Drupal.t('Delete room'),
             kickUser: Drupal.t('Kick user'),
             gender: { f: Drupal.t('woman'), m: Drupal.t('man') },
@@ -148,6 +157,18 @@
       }
 
       return this;
+    },
+
+    clearMessages: function (event) {
+      var view = new Opeka.RoomClearView({
+        model: this.model
+      });
+
+      view.render();
+
+      if (event) {
+        event.preventDefault();
+      }
     },
 
     deleteRoom: function (event) {
@@ -307,6 +328,49 @@
       }
 
       return this;
+    }
+  });
+
+  // Dialog to confirm the deletion of all messages.
+  Opeka.RoomClearView = Opeka.DialogView.extend({
+    initialize: function () {
+      // Options passed to DialogView.
+      var options = {};
+
+      _.bindAll(this);
+
+      // For when creating new room.
+      if (!options.room) {
+        options.content = JST.opeka_room_clear_tmpl({
+          labels: {
+            explanation: Drupal.t('Please confirm that all messages in this room should be deleted.'),
+          }
+        });
+        options.dialogOptions = {
+          buttons: {},
+          title: Drupal.t('Confirm clear messages')
+        };
+
+        options.dialogOptions.buttons[Drupal.t('Delete messages')] = this.clearMessages;
+      }
+
+      options.dialogOptions.buttons[Drupal.t('Cancel')] = this.remove;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      this.dialogElement.delegate('form', 'submit', this.clearMessages);
+
+      return this;
+    },
+
+    clearMessages: function (event) {
+      now.deleteAllMessages(this.model.id);
+      this.remove();
+
+      if (event) {
+        event.preventDefault();
+      }
     }
   });
 

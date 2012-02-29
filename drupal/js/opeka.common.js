@@ -118,6 +118,13 @@ var Opeka = { status: {} },
     }
   };
 
+  // Called by the server when an admin deletes all the messages.
+  now.deleteAllMessages = function (roomId) {
+    if (Opeka.chatView) {
+      Opeka.chatView.deleteAllMessages();
+    }
+  };
+
   // For when the server has an updated room list for us.
   now.receiveRoomList = function (rooms) {
     // This triggers a reset even on the RoomList instance, so any views

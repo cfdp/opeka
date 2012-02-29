@@ -24,8 +24,15 @@
   </ul>
 
   <button class="pause-toggle"><%= labels.pauseToggle %></button>
+  <button class="clear-messages"><%= labels.clearMessages %></button>
   <button class="delete-room"><%= labels.deleteRoom %></button>
 </script>
+
+
+<script id="opeka_room_clear_tmpl" type="application/template">
+  <p><%= labels.explanation %></p>
+</script>
+
 
 <script id="opeka_kick_user_tmpl" type="application/template">
   <form action="#" class="kick-user-form">
