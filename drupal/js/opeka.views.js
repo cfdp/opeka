@@ -398,7 +398,7 @@
             name: form.find('input.name').val(),
             maxSize: form.find('select.max-size').val(),
             ipLocation: form.find('select.ip-location').val(),
-            private: form.find('input.private').val(),
+            private: form.find('input.private').attr('checked'),
           },
           view = this;
 
