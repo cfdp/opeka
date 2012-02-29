@@ -138,10 +138,9 @@
         pauseLabel = Drupal.t('Unpause chat');
       }
 
-
-
       if (JST.opeka_chat_sidebar_tmpl) {
         this.$el.html(JST.opeka_chat_sidebar_tmpl({
+          clientId: now.core.clientId,
           labels: {
             clearMessages: Drupal.t("Clear messages"),
             deleteRoom: Drupal.t('Delete room'),

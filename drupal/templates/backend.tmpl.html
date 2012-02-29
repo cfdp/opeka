@@ -15,10 +15,12 @@
           )
         </span>
       <% } %>
-      <span class="actions">
-        <button class="whisper"><%= labels.whisper %></button>
-        <button class="kick-user"><%= labels.kickUser %></button>
-      </span>
+      <% if (user.clientId !== clientId) { %>
+        <span class="actions">
+          <button class="whisper"><%= labels.whisper %></button>
+          <button class="kick-user"><%= labels.kickUser %></button>
+        </span>
+      <% } %>
     </li>
   <% }); %>
   </ul>
