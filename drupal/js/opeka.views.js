@@ -534,7 +534,7 @@
     render: function () {
       this.$el.html(JST.opeka_room_list_tmpl({
         createRoom:_.isFunction(now.createRoom),
-        isAdmin: Opeka.nowUser.account.isAdmin,
+        admin: _.isFunction(now.receiveUserList),
         rooms: Opeka.roomList,
         placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : ''
       }));

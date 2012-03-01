@@ -9,7 +9,7 @@
  */
 /*global now */
 
-var Opeka = { status: {}, nowUser: {account: {isAdmin: false}} },
+var Opeka = { status: {}},
     // Initialise window.JST if it does not exist.
     JST = JST || {};
 
@@ -99,14 +99,6 @@ var Opeka = { status: {}, nowUser: {account: {isAdmin: false}} },
       }
     }
   });
-
-  // Receive the active user
-  now.receiveNowUser = function (user) {
-    if (!user.account) {
-      user.account = {isAdmin: false};
-    }
-    Opeka.nowUser = user;
-  }
 
   // For when the server updates the status attributes.
   now.updateStatus = function (attributes) {
@@ -410,10 +402,6 @@ var Opeka = { status: {}, nowUser: {account: {isAdmin: false}} },
       }
     });
   };
-
-  now.ready(function() {
-    now.getNowUser();
-  })
 
 
   // Basic setup for the app when the DOM is loaded.
