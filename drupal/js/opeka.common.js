@@ -68,7 +68,7 @@ var Opeka = { status: {}, nowUser: {account: {isAdmin: false}} },
 
     // The actual chatroom page.
     room: function (roomId) {
-      var admin = _.isFunction(now.changeRoom),
+      var admin = _.isFunction(now.receiveUserList),
           room = Opeka.roomList.get(roomId), sidebar;
 
       if (this.checkSignIn()) {
