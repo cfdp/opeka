@@ -42,7 +42,8 @@ var Room = function (options) {
 
   // Method used in order to check if the room is full
   self.isFull = function() {
-    if (self.maxSize > 0 && self.group.count >= self.maxSize) {
+    var count = _.size(self.users);
+    if (self.maxSize > 0 && count >= self.maxSize) {
       return true;
     }
     else {
@@ -54,18 +55,13 @@ var Room = function (options) {
   // Returns: 'OK' if the user has been added to the chat, an integer that is stating
   // the user place in the queue if the chat is busy, or a negative
   // integer if the user cannot join the chat.
-  self.addUser = function (user, callback) {
+  self.addUser = function (user, callback, count) {
+    var count = _.size(self.users);
     // When a user enters a room, he is never muted.
     user.muted = false;
     // If we have both rooms and groups, check that we don't exceed the
     // room size (if set) before adding the person to the room.
-
-    //nationality check:
-    //if (!user.account.isAdmin && self.nationality && user.state && (self.nationality.indexOf(user.state) < 0)) {
-      //return -1;
-    //}
-
-    if ((!self.maxSize || true || self.group.count < self.maxSize) && user) {
+    if ((user.account.isAdmin || (!self.maxSize || count < self.maxSize)) && user) {
       self.users[user.clientId] = filterUserData(user);
       self.group.addUser(user.clientId);
 
@@ -88,10 +84,9 @@ var Room = function (options) {
 
       // The chat is free, we return 'OK'.
       return 'OK';
-    } else if(!user.account.isAdmin) {
-      return self.queue.push(user) - 1;
     } else {
-      return -1;
+      // Put in queue and return queue number.
+      return self.queue.push(user) - 1;
     }
   };
 
@@ -113,24 +108,45 @@ var Room = function (options) {
       var found = false;
       while (self.queue.length > 0 && !found) {
         var user = self.queue.shift();
-        var group = nowjs.getGroup(user.clientId);
-        //the user has to be connected and has not to be in other rooms
-        if (group.count > 0 && !user.activeRoomId) {
-          found = true;
-          group.now.changeRoom(self.id);
-          group.now.joinRoom(self.id);
+        // The user has not to be in other rooms.
+        if (!user.activeRoomId) {
+          found = user.clientId;
         }
       }
 
       if (callback) {
         try {
-          callback(self.users);
+          callback(self.users, found);
         } catch(ignored) {
           //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
         }
       }
     }
   };
+
+  // Remove a user from the queue.
+  self.removeUserFromQueue = function (clientId) {
+    var userIndex = null;
+    _.each(this.queue, function (user, index) {
+      if (user.clientId === clientId) {
+        userIndex = index;
+      }
+    });
+    // We found the user - remove him.
+    if (userIndex !== null) {
+      this.queue.splice(userIndex, 1);
+    }
+  }
+
+  self.getUserQueueNumber = function (clientId) {
+    var userIndex = null;
+    _.each(this.queue, function (user, index) {
+      if (user.clientId === clientId) {
+        userIndex = index;
+      }
+    });
+    return userIndex;
+  }
 
   // Return the current group metadata in an object that is safe to send
   // to the client side.

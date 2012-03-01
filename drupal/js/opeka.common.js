@@ -78,6 +78,7 @@ var Opeka = { status: {}},
 
         Opeka.chatView = new Opeka.ChatView({
           admin: admin,
+          inQueue: false,
           model: room
         });
 
@@ -90,6 +91,9 @@ var Opeka = { status: {}},
 
         // Render the view when the server has confirmed our room change.
         now.changeRoom(roomId, function (response) {
+          if (response !== 'OK') {
+            Opeka.chatView.inQueue = response;
+          }
           Opeka.appViewInstance.replaceContent(Opeka.chatView.render().el);
 
           if (admin) {
@@ -99,6 +103,26 @@ var Opeka = { status: {}},
       }
     }
   });
+
+  now.updateQueueStatus = function(roomId) {
+    if (Opeka.chatView && Opeka.chatView.model.id === roomId && Opeka.chatView.inQueue !== false) {
+      now.roomGetQueueNumber(roomId, function(index) {
+        // Error, user is no longer in the queue, maybe he just joined the
+        // room or an error happened.
+        if (index === null) {
+          var view = new Opeka.FatalErrorDialogView({
+            message: Drupal.t('An error happened and you have lost the queue status, you can reload and join the queue again.'),
+            title: Drupal.t('Error')
+          });
+          //view.render();
+        }
+        else {
+          Opeka.chatView.inQueue = index;
+          Opeka.chatView.render();
+        }
+      });
+    }
+  }
 
   // For when the server updates the status attributes.
   now.updateStatus = function (attributes) {
@@ -151,6 +175,14 @@ var Opeka = { status: {}},
   now.roomCreated = function (room) {
     Opeka.roomList.add(room);
   };
+
+  // Reaction for when joining the room.
+  now.roomJoinFromQueue = function (roomId) {
+    if (Opeka.chatView && Opeka.chatView.model.id === roomId) {
+      Opeka.chatView.inQueue = false;
+      Opeka.chatView.render();
+    }
+  }
 
   // Update the room with the changed attributes.
   now.roomUpdated = function (roomId, attributes) {

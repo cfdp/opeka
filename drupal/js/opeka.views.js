@@ -41,7 +41,8 @@
   Opeka.ChatView = Backbone.View.extend({
     events: {
       "click .delete-message": "deleteMessage",
-      "submit .message-form": "sendMessage"
+      "submit .message-form": "sendMessage",
+      "submit .leave-queue-form": "leaveQueue"
     },
 
     initialize: function (options) {
@@ -49,6 +50,7 @@
 
       this.admin = options.admin;
       this.messages = [];
+      this.inQueue = options.inQueue;
 
       this.model.on('change', this.render, this);
 
@@ -58,9 +60,13 @@
     render: function () {
       if (!this.messages) { return this; }
 
-      var activeUser = this.model.get('activeUser');
+      var activeUser = this.model.get('activeUser'),
+          inQueueMessage = '';
       if (!activeUser) {
         activeUser = {muted:false};
+      }
+      if (this.inQueue !== false) {
+        inQueueMessage = Drupal.t('Chat room is full, you are currently in queue as number: @number. You can stay and wait until you can enter or leave the queue.', {'@number': this.inQueue + 1});
       }
       this.$el.html(JST.opeka_chat_tmpl({
         activeUser: activeUser,
@@ -68,7 +74,10 @@
         clientId: now.core.clientId,
         labels: {
           deleteMessage: Drupal.t('Delete'),
+          inQueueMessage: inQueueMessage,
+          leaveQueueButton: Drupal.t('Leave queue')
         },
+        inQueue: this.inQueue,
         messages: this.messages,
         room: this.model,
       }));
@@ -92,6 +101,16 @@
       // Delete messages by setting them to an empty array.
       this.messages = [];
       this.render();
+    },
+
+    leaveQueue: function (event) {
+      // Remove the user from the Queue.
+      now.removeUserFromQueue(this.model.id, now.core.clientId);
+      Opeka.router.navigate("rooms", {trigger: true});
+
+      if (event) {
+        event.preventDefault();
+      }
     },
 
     // Called externally when a message is to be removed.

@@ -187,7 +187,7 @@ function Server(settings) {
     // Tell that the user is being removed.
     roomGroup.now.roomUserKicked(roomId, clientId, messageText, self.everyone.users[clientId].user.nickname);
     // Remove the user.
-    room.removeUser(clientId, function (users) {
+    roomRemoveUser(this, room, clientId, function (users) {
       opeka.user.sendUserList(room.counsellorGroup, room.id, users);
     });
   };
@@ -298,7 +298,7 @@ function Server(settings) {
       if (opeka.rooms.list[client.user.activeRoomId]) {
         var oldRoom = opeka.rooms.get(client.user.activeRoomId);
 
-        oldRoom.removeUser(client.user.clientId, function (users) {
+        roomRemoveUser(client, oldRoom.client.user.clientId, function (users) {
           opeka.user.sendUserList(oldRoom.counsellorGroup, oldRoom.id, users);
         });
 
@@ -320,6 +320,7 @@ function Server(settings) {
 
     if (addedUser === 'OK') {
       client.user.activeRoomId = roomId;
+      client.user.activeQueueRoomId = null;
       serv.sendSystemMessage(client.user.nickname + " joined the room “" + newRoom.name + "”.", newRoom.group);
 
       if (newRoom.paused && !client.user.account.isAdmin) {
@@ -330,9 +331,29 @@ function Server(settings) {
         });
       }
     }
+    else {
+      client.user.activeRoomId = null;
+      client.user.activeQueueRoomId = roomId;
+    }
 
     if (callback) {
       callback(addedUser);
+    }
+  };
+
+  // Get the number you have in the queue.
+  self.everyone.now.roomGetQueueNumber = function (roomId, callback) {
+    var room = opeka.rooms.list[roomId],
+        index = room.getUserQueueNumber(this.user.clientId);
+    callback(index);
+  }
+
+  // Remove the user from queue - can only remove yourself.
+  self.everyone.now.removeUserFromQueue = function (roomId, clientId) {
+    if (this.user.clientId === clientId) {
+      var oldRoom = opeka.rooms.list[roomId];
+      oldRoom.removeUserFromQueue(clientId);
+      self.everyone.now.updateQueueStatus(roomId);
     }
   };
 
@@ -380,12 +401,17 @@ function Server(settings) {
       if (opeka.rooms.list[client.user.activeRoomId]) {
         var oldRoom = opeka.rooms.list[client.user.activeRoomId];
 
-        oldRoom.removeUser(client.user.clientId, function(users) {
-          self.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.name);
+        roomRemoveUser(self, oldRoom, client.user.clientId, function(users) {
+          // self.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.name);
           opeka.user.sendUserList(oldRoom.counsellorGroup, oldRoom.id, users);
         });
 
         client.user.activeRoomId = null;
+      }
+      if (opeka.rooms.list[client.user.activeQueueRoomId]) {
+        var oldRoom = opeka.rooms.list[client.user.activeQueueRoomId];
+        oldRoom.removeUserFromQueue(client.user.clientId);
+        self.everyone.now.updateQueueStatus(oldRoom.id);
       }
 
       self.updateUserStatus(self.everyone.now);
@@ -434,6 +460,22 @@ function Server(settings) {
   };
 
   return self;
+}
+
+/**
+ * Utility function to remove a user from a room.
+ */
+var roomRemoveUser = function(server, room, clientId, callback) {
+  room.removeUser(clientId, function (users, queueClientId) {
+    // The user has been removed from the queue and should join the chat.
+    if (queueClientId) {
+      server.everyone.users[queueClientId].now.changeRoom(room.id);
+      server.everyone.users[queueClientId].now.roomJoinFromQueue(room.id);
+      server.everyone.now.updateQueueStatus(room.id);
+    }
+    // Call the callback.
+    callback(users);
+  });
 }
 
 module.exports = opeka;
