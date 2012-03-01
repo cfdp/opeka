@@ -125,6 +125,21 @@ var Opeka = { status: {} },
     }
   };
 
+  // Recieve the active user from the server.
+  now.receiveActiveUser = function (roomId, user) {
+    var room = Opeka.roomList.get(roomId);
+    if (room) {
+      room.set('activeUser', user);
+    }
+  };
+
+  // Receive message from the server.
+  now.receiveMessage = function (message) {
+    if (Opeka.chatView) {
+      Opeka.chatView.receiveMessage(message);
+    }
+  };
+
   // For when the server has an updated room list for us.
   now.receiveRoomList = function (rooms) {
     // This triggers a reset even on the RoomList instance, so any views
@@ -204,12 +219,58 @@ var Opeka = { status: {} },
     }
   };
 
-  // Receive message from the server.
-  now.receiveMessage = function (message) {
-    if (Opeka.chatView) {
-      Opeka.chatView.receiveMessage(message);
+  // Repsonse to a user being muted.
+  now.roomUserMuted = function (roomId, clientId, user, nickname, messageText) {
+    var room = Opeka.roomList.get(roomId),
+        messageObj = {};
+    // Make sure we only mute the correct user and we got the room.
+    if (now.core.clientId === clientId && room) {
+      room.set('activeUser', user);
+      if (Opeka.chatView.model.id === roomId) {
+        messageObj = {
+          message: Drupal.t('You have been muted by @user with the following reason: @messageText.', { '@user': nickname, '@messageText': messageText }),
+          system: true,
+          name: nickname
+        };
+        Opeka.chatView.receiveMessage(messageObj);
+      }
+    }
+    else if (room && Opeka.chatView.model.id === roomId) {
+      messageObj = {
+        message: Drupal.t('@user have been muted', { '@user': user.nickname }),
+        system: true,
+        name: nickname
+      };
+      Opeka.chatView.receiveMessage(messageObj);
     }
   };
+
+  // Repsonse to a user being muted.
+  now.roomUserUnmuted = function (roomId, clientId, user, nickname, messageText) {
+    var room = Opeka.roomList.get(roomId),
+        messageObj = {};
+    // Make sure we only mute the correct user and we got the room.
+    if (now.core.clientId === clientId && room) {
+      room.set('activeUser', user);
+      if (Opeka.chatView.model.id === roomId) {
+        messageObj = {
+          message: Drupal.t('You have been unmuted by @user with the following reason: @messageText.', { '@user': nickname, '@messageText': messageText }),
+          system: true,
+          name: nickname
+        };
+        Opeka.chatView.receiveMessage(messageObj);
+      }
+    }
+    else if (room && Opeka.chatView.model.id === roomId) {
+      messageObj = {
+        message: Drupal.t('@user have been unmuted', { '@user': user.nickname }),
+        system: true,
+        name: nickname
+      };
+      Opeka.chatView.receiveMessage(messageObj);
+    }
+  };
+
 
 /*
   // Method used in order to print the final message when the chat room

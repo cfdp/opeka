@@ -37,20 +37,13 @@ module.exports.authenticate = function (clientUser, callback) {
   }
 };
 
-// Sanitise/prepare a user object for client-side use.
-var clientUserData = function (user) {
-  return {
-    age: user.age,
-    clientId: user.clientId,
-    gender: user.gender,
-    isAdmin: user.isAdmin,
-    name: user.nickname || user.account.name
-  };
-};
-
-// Sanitise/prepare a user object for client-side use.
+// Send the user list of a room to client-side.
 module.exports.sendUserList = function (context, roomId, users) {
-  var list = _.map(users, clientUserData);
-
-  context.now.receiveUserList(roomId, list);
+  context.now.receiveUserList(roomId, users);
 };
+
+// Send the active user object to a room.
+module.exports.sendActiveUser = function (context, roomId, user) {
+  context.now.receiveActiveUser(roomId, user);
+};
+

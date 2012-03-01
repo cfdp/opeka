@@ -58,13 +58,19 @@
     render: function () {
       if (!this.messages) { return this; }
 
+      var activeUser = this.model.get('activeUser');
+      if (!activeUser) {
+        activeUser = {muted:false};
+      }
       this.$el.html(JST.opeka_chat_tmpl({
+        activeUser: activeUser,
         admin: this.admin,
+        clientId: now.core.clientId,
         labels: {
           deleteMessage: Drupal.t('Delete'),
         },
         messages: this.messages,
-        room: this.model
+        room: this.model,
       }));
 
       return this;
@@ -121,7 +127,9 @@
       "click .clear-messages": "clearMessages",
       "click .delete-room": "deleteRoom",
       "click .kick-user": "kickUser",
+      "click .mute-user": "muteUser",
       "click .pause-toggle": "pauseToggle",
+      "click .unmute-user": "unmuteUser",
       "click .whisper": "whisper"
     },
 
@@ -144,10 +152,12 @@
           labels: {
             clearMessages: Drupal.t("Clear messages"),
             deleteRoom: Drupal.t('Delete room'),
-            kickUser: Drupal.t('Kick user'),
             gender: { f: Drupal.t('woman'), m: Drupal.t('man') },
-            placeholder: Drupal.t('No users'),
+            kickUser: Drupal.t('Kick user'),
+            muteUser: Drupal.t('Mute user'),
             pauseToggle: pauseLabel,
+            placeholder: Drupal.t('No users'),
+            unmuteUser: Drupal.t('Unmute user'),
             whisper: Drupal.t('Whisper')
           },
           room: this.model,
@@ -198,6 +208,34 @@
     // For when a user needs to be kicked.
     kickUser: function (event) {
       var view = new Opeka.RoomKickUserView({
+        clientId: $(event.currentTarget).closest('li').attr('data-client-id'),
+        model: this.model
+      });
+
+      view.render();
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    // For when you need to mute a user.
+    muteUser: function (event) {
+      var view = new Opeka.RoomMuteUserView({
+        clientId: $(event.currentTarget).closest('li').attr('data-client-id'),
+        model: this.model
+      });
+
+      view.render();
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    // For when you need to unmute a user.
+    unmuteUser: function (event) {
+      var view = new Opeka.RoomUnmuteUserView({
         clientId: $(event.currentTarget).closest('li').attr('data-client-id'),
         model: this.model
       });
@@ -548,6 +586,96 @@
 
       // Kick the user.
       now.kick(this.clientId, message, this.model.id);
+      this.remove();
+      // Prevent event if needed.
+      if (event) {
+        event.preventDefault();
+      }
+    }
+
+  });
+
+  Opeka.RoomMuteUserView = Opeka.DialogView.extend({
+    initialize: function (options) {
+      this.clientId = options.clientId;
+
+      _.bindAll(this);
+
+      options.content = JST.opeka_mute_user_tmpl({
+        labels: {
+          muteMessage: Drupal.t('Mute message')
+        }
+      });
+
+      options.dialogOptions = {
+        buttons: {},
+        title: Drupal.t('Confirm mute')
+      };
+
+      options.dialogOptions.buttons[Drupal.t('Mute user')] = this.muteUser;
+
+      options.dialogOptions.buttons[Drupal.t('Cancel')] = this.remove;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      this.dialogElement.delegate('form', 'submit', this.muteUser);
+
+      return this;
+    },
+
+    // Utility function for muting the user.
+    muteUser: function (event) {
+      var form = $(this.dialogElement).find('form'),
+          message = form.find('input.mute-message').val();
+
+      // Mute the user.
+      now.mute(this.model.id, this.clientId, message);
+      this.remove();
+      // Prevent event if needed.
+      if (event) {
+        event.preventDefault();
+      }
+    }
+
+  });
+
+  Opeka.RoomUnmuteUserView = Opeka.DialogView.extend({
+    initialize: function (options) {
+      this.clientId = options.clientId;
+
+      _.bindAll(this);
+
+      options.content = JST.opeka_unmute_user_tmpl({
+        labels: {
+          muteMessage: Drupal.t('Unmute message')
+        }
+      });
+
+      options.dialogOptions = {
+        buttons: {},
+        title: Drupal.t('Confirm unmute')
+      };
+
+      options.dialogOptions.buttons[Drupal.t('Unmute user')] = this.unmuteUser;
+
+      options.dialogOptions.buttons[Drupal.t('Cancel')] = this.remove;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      this.dialogElement.delegate('form', 'submit', this.unmuteUser);
+
+      return this;
+    },
+
+    // Utility function for muting the user.
+    unmuteUser: function (event) {
+      var form = $(this.dialogElement).find('form'),
+          message = form.find('input.unmute-message').val();
+
+      // Mute the user.
+      now.unmute(this.model.id, this.clientId, message);
       this.remove();
       // Prevent event if needed.
       if (event) {

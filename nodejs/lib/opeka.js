@@ -179,68 +179,6 @@ function Server(settings) {
     }
   };
 
-  /* Function used in order to unmute a single user */
-  self.councellors.now.unmute = function (userId) {
-    var admin = this;
-    var group = nowjs.getGroup(userId);
-
-    //checking if the user exists
-    if (group.count === 0) {
-      admin.now.displayError("Error Unmuting: an user with the specified ID does not exists.");
-      return;
-    }
-
-    //checking if the user is in the same room as the counsellor
-    var room = opeka.rooms.get(admin.user.activeRoomId);
-    var idx = room.usersIdx[userId];
-    if (!idx) {
-      admin.now.displayError("Error Unmuting: the specified user is not in the same room as yours.");
-      return;
-    }
-
-    //Checking if the user has been already muted
-    if (!room.users[idx].muted) {
-      admin.now.displayError("Error Unmuting: the specified user is not muted.");
-      return;
-    }
-
-    group.now.localUnmute();
-    room.users[idx].muted = false;
-    self.sendSystemMessage('[Mute]: You have unmuted user: '+room.users[idx].nickname, admin);
-    self.sendSystemMessage('Warning: You have been unmuted.', group);
-  };
-
-  /* Function used in order to mute a single user */
-  self.councellors.now.mute = function (userId) {
-    var admin = this;
-    var group = nowjs.getGroup(userId);
-
-    //checking if the user exists
-    if (group.count === 0) {
-      admin.now.displayError("Error Muting: an user with the specified ID does not exists.");
-      return;
-    }
-
-    //checking if the user is in the same room as the counsellor
-    var room = opeka.rooms.get(admin.user.activeRoomId);
-    var idx = room.usersIdx[userId];
-    if (!idx) {
-      admin.now.displayError("Error Muting: the specified user is not in the same room as yours.");
-      return;
-    }
-
-    //Checking if the user has been already muted
-    if (room.users[idx].muted) {
-      admin.now.displayError("Error Muting: the specified user has already been muted.");
-      return;
-    }
-
-    group.now.localMute();
-    room.users[idx].muted = true;
-    self.sendSystemMessage('[Mute]: You have muted user: '+room.users[idx].nickname, admin);
-    self.sendSystemMessage('Warning: You have been muted.', group);
-  };
-
   /* Function used by the counselors in order to kick an user out his room */
   self.councellors.now.kick = function (clientId, messageText, roomId) {
     // Get room.
@@ -252,6 +190,30 @@ function Server(settings) {
     room.removeUser(clientId, function (users) {
       opeka.user.sendUserList(room.counsellorGroup, room.id, users);
     });
+  };
+
+  /* Function used in order to mute a single user */
+  self.councellors.now.mute = function (roomId, clientId, messageText) {
+    var room = opeka.rooms.list[roomId],
+        roomGroup = nowjs.getGroup(roomId);
+    // Mute the user.
+    room.users[clientId].muted = true;
+    // Tell the councellors about the muted user.
+    opeka.user.sendUserList(room.counsellorGroup, room.id, room.users);
+    // Tell the user that he was muted.
+    roomGroup.now.roomUserMuted(roomId, clientId, room.users[clientId], this.user.nickname, messageText);
+  };
+
+  /* Function used in order to unmute a single user */
+  self.councellors.now.unmute = function (roomId, clientId, messageText) {
+    var room = opeka.rooms.list[roomId],
+        roomGroup = nowjs.getGroup(roomId);
+    // Mute the user.
+    room.users[clientId].muted = false;
+    // Tell the councellors about the muted user.
+    opeka.user.sendUserList(room.counsellorGroup, room.id, room.users);
+    // Tell the user that he was muted.
+    roomGroup.now.roomUserUnmuted(roomId, clientId, room.users[clientId], this.user.nickname, messageText);
   };
 
   /* Function used by the counselors in order to whisper to an user */
@@ -352,6 +314,7 @@ function Server(settings) {
     if (newRoom) {
       addedUser = newRoom.addUser(client.user, function(users) {
         opeka.user.sendUserList(newRoom.counsellorGroup, newRoom.id, users);
+        opeka.user.sendActiveUser(client, newRoom.id, users[client.user.clientId]);
       });
     }
 

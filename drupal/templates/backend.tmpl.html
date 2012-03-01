@@ -18,6 +18,12 @@
       <% if (user.clientId !== clientId) { %>
         <span class="actions">
           <button class="whisper"><%= labels.whisper %></button>
+          <% if (user.muted) { %>
+            <button class="unmute-user"><%= labels.unmuteUser %></button>
+          <% }
+             else { %>
+            <button class="mute-user"><%= labels.muteUser %></button>
+          <% } %>
           <button class="kick-user"><%= labels.kickUser %></button>
         </span>
       <% } %>
@@ -44,6 +50,25 @@
     </label>
   </form>
 </script>
+
+<script id="opeka_mute_user_tmpl" type="application/template">
+  <form action="#" class="mute-user-form">
+    <label>
+      <%= labels.muteMessage %>
+      <input class="form-text mute-message" name="name" type="textfield" />
+    </label>
+  </form>
+</script>
+
+<script id="opeka_unmute_user_tmpl" type="application/template">
+  <form action="#" class="unmute-user-form">
+    <label>
+      <%= labels.unmuteMessage %>
+      <input class="form-text unmute-message" name="name" type="textfield" />
+    </label>
+  </form>
+</script>
+
 
 <script id="opeka_room_edit_tmpl" type="application/template">
   <form action="#" class="room-edit-form">

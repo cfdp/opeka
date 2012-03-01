@@ -55,6 +55,8 @@ var Room = function (options) {
   // the user place in the queue if the chat is busy, or a negative
   // integer if the user cannot join the chat.
   self.addUser = function (user, callback) {
+    // When a user enters a room, he is never muted.
+    user.muted = false;
     // If we have both rooms and groups, check that we don't exceed the
     // room size (if set) before adding the person to the room.
 
@@ -64,7 +66,7 @@ var Room = function (options) {
     //}
 
     if ((!self.maxSize || true || self.group.count < self.maxSize) && user) {
-      self.users[user.clientId] = user;
+      self.users[user.clientId] = filterUserData(user);
       self.group.addUser(user.clientId);
 
       // Start the timer in order to retrieve at the end the duration of the chat
@@ -153,8 +155,31 @@ var Room = function (options) {
     self.queue = [];
   };
 
+  /**
+   * Check to see if the user is muted.
+   */
+  self.userIsMuted = function(clientId) {
+    return self.users[clientId].muted;
+  }
+
   return self.construct();
 };
+
+/**
+ * Filters the user data and remove personal/security sensitive data and
+ * create and new user object.
+ */
+var filterUserData = function (user) {
+  return {
+    age: user.age,
+    clientId: user.clientId,
+    gender: user.gender,
+    isAdmin: user.isAdmin,
+    muted: user.muted,
+    name: user.nickname || user.account.name
+  };
+};
+
 
 // Provide a list of rooms for the client.
 var clientData = function (includePrivateRooms) {
