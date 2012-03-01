@@ -47,7 +47,9 @@
     <li class="placeholder"><%= placeholder %></li>
   <% } %>
   <% rooms.each(function (room) { %>
-    <li><a href="#rooms/<%= room.id %>"><%- room.get('name') %></a></li>
+    <% if (!room.attributes.private || isAdmin) { %>
+      <li><a href="#rooms/<%= room.id %>"><%- room.get('name') %></a></li>
+    <% } %>
   <% }); %>
   </ul>
 

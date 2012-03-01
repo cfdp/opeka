@@ -138,6 +138,7 @@ function Server(settings) {
 
       // Update online users count for all clients.
       self.updateUserStatus(self.everyone.now);
+      client.now.receiveNowUser(client.user);
 
       if (callback) {
         callback(account);
@@ -335,6 +336,10 @@ function Server(settings) {
       callback(addedUser);
     }
   };
+
+  self.everyone.now.getNowUser = function () {
+    this.now.receiveNowUser(this.user);
+  }
 
   self.everyone.now.sendMessageToRoom = function (roomId, messageText) {
     var room = opeka.rooms.list[roomId],
