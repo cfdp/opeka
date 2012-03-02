@@ -8,8 +8,7 @@
 </script>
 
 <script id="opeka_online_status_tmpl" type="application/template">
-  Der er <span class="guests"><%- guests %></span> gæster og
-  <span class="councellors"><%- councellors %></span> rådgivere online.
+  <%= content %>
 </script>
 
 <script id="opeka_connect_form_tmpl" type="application/template">
@@ -43,7 +42,7 @@
 
 <script id="opeka_room_list_tmpl" type="application/template">
   <ul class="room-list">
-  <% if (placeholder) { %>
+  <% if (labels.placeholder) { %>
     <li class="placeholder"><%= placeholder %></li>
   <% } %>
   <% rooms.each(function (room) { %>
@@ -54,7 +53,7 @@
   </ul>
 
   <% if (createRoom) { %>
-  <button class="create-room">Opret rum</button>
+  <button class="create-room"><%= labels.createRoom %></button>
   <% } %>
 </script>
 
@@ -84,8 +83,8 @@
 
   <% if (!room.get('paused') && !activeUser.muted && inQueue === false) { %>
   <form action="#" class="message-form">
-    <input autofocus="autofocus" class="form-text message" placeholder="Type message here…" size="50" type="text" />
-    <input class="form-submit send" type="submit" value="Send besked" />
+    <input autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" size="50" type="text" />
+    <input class="form-submit send" type="submit" value="<%= labels.messageButton %>" />
   </form>
   <% } %>
   <% if (inQueue !== false) { %>

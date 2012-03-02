@@ -77,7 +77,9 @@
           deleteMessage: Drupal.t('Delete'),
           inQueueMessage: inQueueMessage,
           leaveQueueButton: Drupal.t('Leave queue'),
-          leaveRoomButton: Drupal.t('Leave chat room')
+          leaveRoomButton: Drupal.t('Leave chat room'),
+          placeholder: Drupal.t('Type message here…'),
+          messageButton: Drupal.t('Send message')
         },
         inQueue: this.inQueue,
         messages: this.messages,
@@ -392,8 +394,10 @@
       // Don’t render if we don’t have a status.
       if (this.model.has('councellors') && this.model.has('guests')) {
         this.$el.html(JST.opeka_online_status_tmpl({
-          councellors: this.model.get('councellors'),
-          guests: this.model.get('guests')
+          content: Drupal.t('There are !guests guests and !councellors councellors online', {
+              '!guests': '<span class="guests">' + this.model.get('guests') + '</span>',
+              '!councellors': '<span class="councellors">' + this.model.get('councellors') + '</span>'
+          })
         }));
       }
 
@@ -579,8 +583,11 @@
       this.$el.html(JST.opeka_room_list_tmpl({
         createRoom:_.isFunction(now.createRoom),
         admin: _.isFunction(now.receiveUserList),
+        labels: {
+          createRoom: Drupal.t('Create room'),
+          placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : ''
+        },
         rooms: Opeka.roomList,
-        placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : ''
       }));
 
       return this;
