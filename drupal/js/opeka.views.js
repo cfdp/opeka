@@ -42,7 +42,8 @@
     events: {
       "click .delete-message": "deleteMessage",
       "submit .message-form": "sendMessage",
-      "submit .leave-queue-form": "leaveQueue"
+      "submit .leave-queue-form": "leaveQueue",
+      "submit .leave-room-form": "leaveRoom"
     },
 
     initialize: function (options) {
@@ -75,7 +76,8 @@
         labels: {
           deleteMessage: Drupal.t('Delete'),
           inQueueMessage: inQueueMessage,
-          leaveQueueButton: Drupal.t('Leave queue')
+          leaveQueueButton: Drupal.t('Leave queue'),
+          leaveRoomButton: Drupal.t('Leave chat room')
         },
         inQueue: this.inQueue,
         messages: this.messages,
@@ -103,9 +105,21 @@
       this.render();
     },
 
+    // Make the user leave the queue for a chat room.
     leaveQueue: function (event) {
       // Remove the user from the Queue.
       now.removeUserFromQueue(this.model.id, now.core.clientId);
+      Opeka.router.navigate("rooms", {trigger: true});
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    // Make the user leave the chat room.
+    leaveRoom: function (event) {
+      // Remove the user from the room.
+      now.removeUserFromRoom(this.model.id, now.core.clientId);
       Opeka.router.navigate("rooms", {trigger: true});
 
       if (event) {

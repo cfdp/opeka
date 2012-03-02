@@ -93,6 +93,10 @@
     <form action="#" class="leave-queue-form">
       <input class="form-submit send" type="submit" value="<%= labels.leaveQueueButton %>" />
     </form>
+  <% } else { %>
+    <form action="#" class="leave-room-form">
+      <input class="form-submit send" type="submit" value="<%= labels.leaveRoomButton %>" />
+    </form>
   <% } %>
 </script>
 

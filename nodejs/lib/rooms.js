@@ -93,33 +93,26 @@ var Room = function (options) {
   // Remove user from the room.
   // If somebody is in queue return the user object of the first in queue for this chat room
   self.removeUser = function (clientId, callback) {
-    try {
-      self.users[clientId].now.activeRoomId = null;
-    } catch(ignored) {
-      // If we get an exception here, it means that the user is
-      // disconnected. We let that pass silently.
-    } finally {
-      delete self.users[clientId];
+    delete self.users[clientId];
 
-      // Remove clientId from either group.
-      self.group.removeUser(clientId);
-      self.counsellorGroup.removeUser(clientId);
+    // Remove clientId from either group.
+    self.group.removeUser(clientId);
+    self.counsellorGroup.removeUser(clientId);
 
-      var found = false;
-      while (self.queue.length > 0 && !found) {
-        var user = self.queue.shift();
-        // The user has not to be in other rooms.
-        if (!user.activeRoomId) {
-          found = user.clientId;
-        }
+    var found = false;
+    while (self.queue.length > 0 && !found) {
+      var user = self.queue.shift();
+      // The user has not to be in other rooms.
+      if (!user.activeRoomId) {
+        found = user.clientId;
       }
+    }
 
-      if (callback) {
-        try {
-          callback(self.users, found);
-        } catch(ignored) {
-          //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
-        }
+    if (callback) {
+      try {
+        callback(self.users, found);
+      } catch(ignored) {
+        //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
       }
     }
   };

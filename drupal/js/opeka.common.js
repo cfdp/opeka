@@ -229,6 +229,17 @@ var Opeka = { status: {}},
     }
   };
 
+  // Response to a user joining the room.
+  now.roomUserJoined = function (roomId, nickname) {
+    if (Opeka.chatView.model.id === roomId) {
+      var messageObj = {
+        message: Drupal.t('@user has joined the room.', { '@user': nickname }),
+        system: true
+      };
+      Opeka.chatView.receiveMessage(messageObj);
+    }
+  };
+
   // Response to a user being kicked.
   now.roomUserKicked = function (roomId, clientId, message, user) {
     // If this client is being kicked, navigate to a different page and
@@ -245,6 +256,17 @@ var Opeka = { status: {}},
     else if (Opeka.chatView.model.id === roomId) {
       var messageObj = {
         message: Drupal.t('User @user was kicked from the chat.', { '@user': user }),
+        system: true
+      };
+      Opeka.chatView.receiveMessage(messageObj);
+    }
+  };
+
+  // Response to a user leaving the room.
+  now.roomUserLeft = function (roomId, nickname) {
+    if (Opeka.chatView.model.id === roomId) {
+      var messageObj = {
+        message: Drupal.t('@user has joined the room.', { '@user': nickname }),
         system: true
       };
       Opeka.chatView.receiveMessage(messageObj);

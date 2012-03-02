@@ -289,27 +289,20 @@ function Server(settings) {
         client.now.localUnmute();
       }
 
-      // Check if the room is full, if so, put the user on queue.
-      //if (newRoom && newRoom.isFull() && callback) {
-      //  return callback(true);
-      //}
-
       // If user is already in a different room, leave it.
       if (opeka.rooms.list[client.user.activeRoomId]) {
-        var oldRoom = opeka.rooms.get(client.user.activeRoomId);
+        var oldRoom = opeka.rooms.list[client.user.activeRoomId];
 
         roomRemoveUser(client, oldRoom.client.user.clientId, function (users) {
           opeka.user.sendUserList(oldRoom.counsellorGroup, oldRoom.id, users);
         });
-
-        serv.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.group);
 
         if (quit) {
           client.now.quitRoom(callback);
         }
       }
 
-    //trying to add the user, if this returns false the room is full or does not exists
+    // Trying to add the user, if this returns false the room is full or does not exists
     var addedUser;
     if (newRoom) {
       addedUser = newRoom.addUser(client.user, function(users) {
@@ -321,7 +314,7 @@ function Server(settings) {
     if (addedUser === 'OK') {
       client.user.activeRoomId = roomId;
       client.user.activeQueueRoomId = null;
-      serv.sendSystemMessage(client.user.nickname + " joined the room “" + newRoom.name + "”.", newRoom.group);
+      newRoom.group.now.roomUserLeft(newRoom.id, client.user.nickname);
 
       if (newRoom.paused && !client.user.account.isAdmin) {
       client.now.localMute();
@@ -354,6 +347,17 @@ function Server(settings) {
       var oldRoom = opeka.rooms.list[roomId];
       oldRoom.removeUserFromQueue(clientId);
       self.everyone.now.updateQueueStatus(roomId);
+    }
+  };
+
+  // Remove the user from room - can only remove yourself.
+  self.everyone.now.removeUserFromRoom = function (roomId, clientId) {
+    if (this.user.clientId === clientId) {
+      var room = opeka.rooms.list[roomId];
+      // Remove the user.
+      roomRemoveUser(self, room, clientId, function (users) {
+        opeka.user.sendUserList(room.counsellorGroup, room.id, users);
+      });
     }
   };
 
@@ -466,12 +470,21 @@ function Server(settings) {
  * Utility function to remove a user from a room.
  */
 var roomRemoveUser = function(server, room, clientId, callback) {
+  var userLeft = server.everyone.users[clientId];
+  if (userLeft) {
+    server.everyone.users[clientId].user.activeRoomId = null;
+  }
   room.removeUser(clientId, function (users, queueClientId) {
+    var userLeft = server.everyone.users[clientId];
     // The user has been removed from the queue and should join the chat.
     if (queueClientId) {
       server.everyone.users[queueClientId].now.changeRoom(room.id);
       server.everyone.users[queueClientId].now.roomJoinFromQueue(room.id);
       server.everyone.now.updateQueueStatus(room.id);
+    }
+    // Notify the chat room if we know who left.
+    if (userLeft) {
+      room.group.now.roomUserLeft(room.id, userLeft.user.nickname);
     }
     // Call the callback.
     callback(users);
