@@ -73,32 +73,32 @@
 <script id="opeka_room_edit_tmpl" type="application/template">
   <form action="#" class="room-edit-form">
     <div class="form-item">
-      <label for="name">Name</label>
+      <label for="name"><%- labels.name %></label>
       <input class="form-text name required" name="name" type="textfield" />
     </div>
 
     <div class="form-item">
-      <label for="max-size">Size limit</label>
+      <label for="max-size"><%- labels.size %></label>
       <select class="max-size" name="max-size">
-        <option value="2" selected="selected">2 users</option>
-        <option value="5">5 users</option>
-        <option value="10">10 users</option>
-        <option value="20">20 users</option>
-        <option value="30">30 users</option>
+        <option value="2" selected="selected">2 <%- labels.users %></option>
+        <option value="5">5 <%- labels.users %></option>
+        <option value="10">10 <%- labels.users %></option>
+        <option value="20">20 <%- labels.users %></option>
+        <option value="30">30 <%- labels.users %></option>
       </select>
     </div>
 
     <div class="form-item">
-      <label for="ip-location">IP location</label>
+      <label for="ip-location"><%- labels.iPLocation %></label>
       <select class="ip-location"  name="ip-location">
-        <option value="Any" selected="selected">Any</option>
-        <option value="Denmark">Denmark</option>
-        <option value="Scandinavia">Outside Denmark/Scandinavia</option>
+        <option value="Any" selected="selected"><%- labels.any %></option>
+        <option value="Denmark"><%- labels.dk %></option>
+        <option value="Scandinavia"><%- labels.outDk %></option>
       </select>
     </div>
 
     <div class="form-item">
-      <label for="private">Private room?</label>
+      <label for="private"><%- labels.privateRoom %></label>
       <input class="private" name="private" type="checkbox" value="true" />
     </div>
 
@@ -128,27 +128,11 @@
   <div id="opeka-backend">
     <form id="opeka-chat" class="element-hidden">
       <label for="bookmark-list">Send a bookmarked link</label>
-	  <select id="bookmark-list"  name="bookmark-list">
-	        <option value="www.au.dk" selected="selected">www.au.dk</option>
-	        <option value="www.cyberhus.dk">www.cyberhus.dk</option>
-	   </select>
+      <select id="bookmark-list"  name="bookmark-list">
+        <option value="www.au.dk" selected="selected">www.au.dk</option>
+        <option value="www.cyberhus.dk">www.cyberhus.dk</option>
+      </select>
       <button id="opeka-send-bookmark">Send bookmark</button>
-
-      <label for="opeka-mute-clientId">Mute an user</label>
-      <input id="opeka-mute-clientId" placeholder="User ID" type="text" />
-      <button id="opeka-mute">Mute user</button>
-
-      <label for="opeka-unmute-clientId">Unmute an user</label>
-      <input id="opeka-unmute-clientId" placeholder="User ID" type="text" />
-      <button id="opeka-unmute">Unmute user</button>
-
-      <label for="opeka-delete-message">Delete Message</label>
-      <input id="opeka-delete-message" placeholder="Message ID" type="text" />
-      <button id="opeka-delete">Delete Message</button>
-
-      <label for="opeka-deleteall-messages">Delete All Messages from an User</label>
-      <input id="opeka-deleteall-messages" placeholder="Client ID" type="text" />
-      <button id="opeka-deleteall">Delete All Messages</button>
 
     </form>
 
@@ -159,17 +143,3 @@
 
   </div>
 </script>
-
-<script id="opeka_user_list_item_tmpl" type="x-jquery-tmpl">
-  {{if user.muted }}
-	  <li class="user">
-	    [Muted] ${user.nickname} - ${user.clientId}
-	  </li>
-  {{else}}
-	  <li class="user">
-	    ${user.nickname} - ${user.clientId}
-	  </li>
-  {{/if}}
-
-</script>
-

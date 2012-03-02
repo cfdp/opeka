@@ -500,7 +500,18 @@
 
       // For when creating new room.
       if (!options.room) {
-        options.content = JST.opeka_room_edit_tmpl();
+        options.content = JST.opeka_room_edit_tmpl({
+          labels: {
+            any: Drupal.t('Any'),
+            dk: Drupal.t('Denmark'),
+            name: Drupal.t('Name'),
+            iPLocation: Drupal.t('IP location'),
+            outDk: Drupal.t('Outside Denmark/Scandinavia'),
+            privateRoom: Drupal.t('Private room?'),
+            size: Drupal.t('Size limit'),
+            users: Drupal.t('users')
+          }
+        });
         options.room = new Opeka.Room({});
         options.dialogOptions = {
           buttons: {},
