@@ -43,7 +43,7 @@
 <script id="opeka_room_list_tmpl" type="application/template">
   <ul class="room-list">
   <% if (labels.placeholder) { %>
-    <li class="placeholder"><%= placeholder %></li>
+    <li class="placeholder"><%= labels.placeholder %></li>
   <% } %>
   <% rooms.each(function (room) { %>
     <% if (!room.attributes.private || admin) { %>
