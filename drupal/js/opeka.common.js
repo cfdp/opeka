@@ -122,7 +122,7 @@ var Opeka = { status: {}},
         }
       });
     }
-  }
+  };
 
   // For when the server updates the status attributes.
   now.updateStatus = function (attributes) {
@@ -182,7 +182,7 @@ var Opeka = { status: {}},
       Opeka.chatView.inQueue = false;
       Opeka.chatView.render();
     }
-  }
+  };
 
   // Update the room with the changed attributes.
   now.roomUpdated = function (roomId, attributes) {

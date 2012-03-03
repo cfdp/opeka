@@ -83,7 +83,7 @@
         },
         inQueue: this.inQueue,
         messages: this.messages,
-        room: this.model,
+        room: this.model
       }));
 
       return this;
