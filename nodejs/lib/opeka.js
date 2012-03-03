@@ -193,7 +193,7 @@ function Server(settings) {
   };
 
   /* Function used in order to mute a single user */
-  self.councellors.now.mute = function (roomId, clientId, messageText) {
+  self.councellors.now.mute = function (roomId, clientId) {
     var room = opeka.rooms.list[roomId],
         roomGroup = nowjs.getGroup(roomId);
     // Mute the user.
@@ -201,11 +201,11 @@ function Server(settings) {
     // Tell the councellors about the muted user.
     opeka.user.sendUserList(room.counsellorGroup, room.id, room.users);
     // Tell the user that he was muted.
-    roomGroup.now.roomUserMuted(roomId, clientId, room.users[clientId], this.user.nickname, messageText);
+    roomGroup.now.roomUserMuted(roomId, clientId, room.users[clientId], this.user.nickname);
   };
 
   /* Function used in order to unmute a single user */
-  self.councellors.now.unmute = function (roomId, clientId, messageText) {
+  self.councellors.now.unmute = function (roomId, clientId) {
     var room = opeka.rooms.list[roomId],
         roomGroup = nowjs.getGroup(roomId);
     // Mute the user.
@@ -213,7 +213,7 @@ function Server(settings) {
     // Tell the councellors about the muted user.
     opeka.user.sendUserList(room.counsellorGroup, room.id, room.users);
     // Tell the user that he was muted.
-    roomGroup.now.roomUserUnmuted(roomId, clientId, room.users[clientId], this.user.nickname, messageText);
+    roomGroup.now.roomUserUnmuted(roomId, clientId, room.users[clientId], this.user.nickname);
   };
 
   /* Function used by the counselors in order to whisper to an user */

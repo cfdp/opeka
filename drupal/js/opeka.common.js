@@ -274,7 +274,7 @@ var Opeka = { status: {}},
   };
 
   // Repsonse to a user being muted.
-  now.roomUserMuted = function (roomId, clientId, user, nickname, messageText) {
+  now.roomUserMuted = function (roomId, clientId, user, nickname) {
     var room = Opeka.roomList.get(roomId),
         messageObj = {};
     // Make sure we only mute the correct user and we got the room.
@@ -282,7 +282,7 @@ var Opeka = { status: {}},
       room.set('activeUser', user);
       if (Opeka.chatView.model.id === roomId) {
         messageObj = {
-          message: Drupal.t('You have been muted by @user with the following reason: @messageText.', { '@user': nickname, '@messageText': messageText }),
+          message: Drupal.t('You have been muted by @user.', { '@user': nickname }),
           system: true,
           name: nickname
         };
@@ -291,7 +291,7 @@ var Opeka = { status: {}},
     }
     else if (room && Opeka.chatView.model.id === roomId) {
       messageObj = {
-        message: Drupal.t('@user have been muted', { '@user': user.nickname }),
+        message: Drupal.t('@user have been muted.', { '@user': user.name }),
         system: true,
         name: nickname
       };
@@ -308,7 +308,7 @@ var Opeka = { status: {}},
       room.set('activeUser', user);
       if (Opeka.chatView.model.id === roomId) {
         messageObj = {
-          message: Drupal.t('You have been unmuted by @user with the following reason: @messageText.', { '@user': nickname, '@messageText': messageText }),
+          message: Drupal.t('You have been unmuted by @user.', { '@user': nickname }),
           system: true,
           name: nickname
         };
@@ -317,7 +317,7 @@ var Opeka = { status: {}},
     }
     else if (room && Opeka.chatView.model.id === roomId) {
       messageObj = {
-        message: Drupal.t('@user have been unmuted', { '@user': user.nickname }),
+        message: Drupal.t('@user have been unmuted.', { '@user': user.name }),
         system: true,
         name: nickname
       };
