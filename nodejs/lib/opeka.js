@@ -339,7 +339,7 @@ function Server(settings) {
     var room = opeka.rooms.list[roomId],
         index = room.getUserQueueNumber(this.user.clientId);
     callback(index);
-  }
+  };
 
   // Remove the user from queue - can only remove yourself.
   self.everyone.now.removeUserFromQueue = function (roomId, clientId) {
@@ -396,14 +396,14 @@ function Server(settings) {
    * disconnected, etc.
    */
   self.everyone.on("disconnect", function () {
-    var client = this;
+    var client = this, oldRoom;
     // We need to wait a single tick before updating the online counts,
     // since there's a bit of delay before they are accurate.
     process.nextTick(function () {
 
       // Leave the active room, if it is defined and it still exists.
       if (opeka.rooms.list[client.user.activeRoomId]) {
-        var oldRoom = opeka.rooms.list[client.user.activeRoomId];
+        oldRoom = opeka.rooms.list[client.user.activeRoomId];
 
         roomRemoveUser(self, oldRoom, client.user.clientId, function(users) {
           // self.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.name);
@@ -412,8 +412,10 @@ function Server(settings) {
 
         client.user.activeRoomId = null;
       }
+
+      // TODO: What is this?
       if (opeka.rooms.list[client.user.activeQueueRoomId]) {
-        var oldRoom = opeka.rooms.list[client.user.activeQueueRoomId];
+        oldRoom = opeka.rooms.list[client.user.activeQueueRoomId];
         oldRoom.removeUserFromQueue(client.user.clientId);
         self.everyone.now.updateQueueStatus(oldRoom.id);
       }
@@ -489,7 +491,7 @@ var roomRemoveUser = function(server, room, clientId, callback) {
     // Call the callback.
     callback(users);
   });
-}
+};
 
 module.exports = opeka;
 module.exports.Server = Server;
