@@ -266,7 +266,7 @@ var Opeka = { status: {}},
   now.roomUserLeft = function (roomId, nickname) {
     if (Opeka.chatView.model.id === roomId) {
       var messageObj = {
-        message: Drupal.t('@user has joined the room.', { '@user': nickname }),
+        message: Drupal.t('@user has left the room.', { '@user': nickname }),
         system: true
       };
       Opeka.chatView.receiveMessage(messageObj);
