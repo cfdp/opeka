@@ -129,7 +129,7 @@ var Room = function (options) {
     if (userIndex !== null) {
       this.queue.splice(userIndex, 1);
     }
-  }
+  };
 
   self.getUserQueueNumber = function (clientId) {
     var userIndex = null;
@@ -139,7 +139,7 @@ var Room = function (options) {
       }
     });
     return userIndex;
-  }
+  };
 
   // Return the current group metadata in an object that is safe to send
   // to the client side.
@@ -169,15 +169,14 @@ var Room = function (options) {
    */
   self.userIsMuted = function(clientId) {
     return self.users[clientId].muted;
-  }
+  };
 
   return self.construct();
 };
 
-/**
- * Filters the user data and remove personal/security sensitive data and
- * create and new user object.
- */
+
+// Filters the user data and remove personal/security sensitive data and
+// create and new user object.
 var filterUserData = function (user) {
   return {
     age: user.age,
