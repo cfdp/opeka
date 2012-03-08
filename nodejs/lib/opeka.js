@@ -69,8 +69,6 @@ function Server(settings) {
         });
       }
     }, function (err, results) {
-      console.log('counted', results);
-
       if (results && _.isFunction(context.updateStatus)) {
         context.updateStatus(results);
       }
