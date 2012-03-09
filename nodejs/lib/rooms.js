@@ -55,7 +55,7 @@ var Room = function (options) {
   // Returns: 'OK' if the user has been added to the chat, an integer that is stating
   // the user place in the queue if the chat is busy, or a negative
   // integer if the user cannot join the chat.
-  self.addUser = function (user, callback, count) {
+  self.addUser = function (user, callback) {
     var count = _.size(self.users);
     // When a user enters a room, he is never muted.
     user.muted = false;
