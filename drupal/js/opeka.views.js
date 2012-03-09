@@ -165,8 +165,9 @@
       var message = this.$el.find('input.message').val();
       // Remove the message sent.
       this.$el.find('input.message').val('');
-
-      now.sendMessageToRoom(this.model.id, message);
+      if (message !== '') {
+        now.sendMessageToRoom(this.model.id, message);
+      }
 
       if (event) {
         event.preventDefault();
