@@ -431,7 +431,7 @@
     },
 
     clearMessages: function (event) {
-      now.deleteAllMessages(this.model.id);
+      now.triggerDeleteAllMessages(this.model.id);
       this.remove();
 
       if (event) {

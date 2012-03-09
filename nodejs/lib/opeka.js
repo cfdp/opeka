@@ -277,6 +277,14 @@ function Server(settings) {
       }
     };
 
+    // Get the number you have in the queue.
+    self.councellors.now.triggerDeleteAllMessages = function (roomId) {
+      var room = opeka.rooms.list[roomId];
+      if (room) {
+        room.group.now.deleteAllMessages(roomId);
+      }
+    }
+
     // This function is used by the clients in order to change rooms
     self.signedIn.now.changeRoom = function (roomId, callback, quit) {
       var client = this,
