@@ -122,6 +122,7 @@
     leaveRoom: function (event) {
       // Remove the user from the room.
       now.removeUserFromRoom(this.model.id, now.core.clientId);
+      $(window).trigger('leaveRoom');
       Opeka.router.navigate("rooms", {trigger: true});
 
       if (event) {
@@ -169,10 +170,14 @@
     },
 
     initialize: function (options) {
+      var self = this;
       _.bindAll(this);
 
       this.model.on('change:userList', this.render, this);
       this.model.on('change:paused', this.render, this);
+      $(window).bind('leaveRoom', function(){
+        self.remove();
+      });
     },
 
     render: function () {
