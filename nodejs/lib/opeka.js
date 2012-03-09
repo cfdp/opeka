@@ -189,7 +189,7 @@ function Server(settings) {
       roomGroup.now.roomUserKicked(roomId, clientId, messageText, self.everyone.users[clientId].user.nickname);
     }
     // Remove the user.
-    roomRemoveUser(this, room, clientId, function (users) {
+    roomRemoveUser(self, room, clientId, function (users) {
       opeka.user.sendUserList(room.counsellorGroup, room.id, users);
     });
   };
