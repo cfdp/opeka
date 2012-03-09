@@ -80,7 +80,9 @@
     <% } %>
   <% }); %>
   </ul>
+</script>
 
+<script id="opeka_chat_form_tmpl" type="application/template">
   <% if (!room.get('paused') && !activeUser.muted && inQueue === false) { %>
   <form action="#" class="message-form">
     <input autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" size="50" type="text" />
@@ -98,4 +100,3 @@
     </form>
   <% } %>
 </script>
-

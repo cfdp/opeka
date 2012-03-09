@@ -62,29 +62,43 @@
       if (!this.messages) { return this; }
 
       var activeUser = this.model.get('activeUser'),
-          inQueueMessage = '';
+          inQueueMessage = '',
+          hideForm = false,
+          formPresent = true;
       if (!activeUser) {
         activeUser = {muted:false};
       }
       if (this.inQueue !== false) {
         inQueueMessage = Drupal.t('Chat room is full, you are currently in queue as number: @number. You can stay and wait until you can enter or leave the queue.', {'@number': this.inQueue + 1});
       }
-      this.$el.html(JST.opeka_chat_tmpl({
-        activeUser: activeUser,
+      if (this.$el.find('.chat-view-window').length === 0) {
+        this.$el.html('<div class="chat-view-window"></div><div class="chat-view-form"</div>');
+      }
+      // Always render the chat window.
+      this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
-        clientId: now.core.clientId,
         labels: {
-          deleteMessage: Drupal.t('Delete'),
-          inQueueMessage: inQueueMessage,
-          leaveQueueButton: Drupal.t('Leave queue'),
-          leaveRoomButton: Drupal.t('Leave chat room'),
-          placeholder: Drupal.t('Type message here…'),
-          messageButton: Drupal.t('Send message')
+          deleteMessage: Drupal.t('Delete')
         },
-        inQueue: this.inQueue,
         messages: this.messages,
-        room: this.model
       }));
+      hideForm = !this.model.get('paused') && !activeUser.muted && this.inQueue === false;
+      formPresent = this.$el.find(".message-form").length > 0;
+      if (hideForm !== formPresent) {
+        this.$el.find('.chat-view-form').html(JST.opeka_chat_form_tmpl({
+          activeUser: activeUser,
+          admin: this.admin,
+          labels: {
+            inQueueMessage: inQueueMessage,
+            leaveQueueButton: Drupal.t('Leave queue'),
+            leaveRoomButton: Drupal.t('Leave chat room'),
+            placeholder: Drupal.t('Type message here…'),
+            messageButton: Drupal.t('Send message')
+          },
+          inQueue: this.inQueue,
+          room: this.model
+        }));
+      }
 
       return this;
     },
@@ -146,6 +160,8 @@
 
     sendMessage: function (event) {
       var message = this.$el.find('input.message').val();
+      // Remove the message sent.
+      this.$el.find('input.message').val('');
 
       now.sendMessageToRoom(this.model.id, message);
 

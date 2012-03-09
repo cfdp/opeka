@@ -185,7 +185,9 @@ function Server(settings) {
     var room = opeka.rooms.list[roomId],
         roomGroup = nowjs.getGroup(roomId);
     // Tell that the user is being removed.
-    roomGroup.now.roomUserKicked(roomId, clientId, messageText, self.everyone.users[clientId].user.nickname);
+    if (self.everyone.users[clientId]) {
+      roomGroup.now.roomUserKicked(roomId, clientId, messageText, self.everyone.users[clientId].user.nickname);
+    }
     // Remove the user.
     roomRemoveUser(this, room, clientId, function (users) {
       opeka.user.sendUserList(room.counsellorGroup, room.id, users);
