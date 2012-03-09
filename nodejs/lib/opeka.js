@@ -323,14 +323,6 @@ function Server(settings) {
       client.user.activeRoomId = roomId;
       client.user.activeQueueRoomId = null;
       newRoom.group.now.roomUserLeft(newRoom.id, client.user.nickname);
-
-      if (newRoom.paused && !client.user.account.isAdmin) {
-      client.now.localMute();
-
-      process.nextTick(function () {
-        serv.sendSystemMessage("[Warning] The room is paused.", client);
-        });
-      }
     }
     else {
       client.user.activeRoomId = null;
