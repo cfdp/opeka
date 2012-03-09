@@ -71,7 +71,10 @@
       if (this.inQueue !== false) {
         inQueueMessage = Drupal.t('Chat room is full, you are currently in queue as number: @number. You can stay and wait until you can enter or leave the queue.', {'@number': this.inQueue + 1});
       }
+      hideForm = !this.model.get('paused') && !activeUser.muted && this.inQueue === false;
+      formPresent = this.$el.find(".message-form").length > 0;
       if (this.$el.find('.chat-view-window').length === 0) {
+        hideForm = 'show';
         this.$el.html('<div class="chat-view-window"></div><div class="chat-view-form"</div>');
       }
       // Always render the chat window.
@@ -82,8 +85,6 @@
         },
         messages: this.messages,
       }));
-      hideForm = !this.model.get('paused') && !activeUser.muted && this.inQueue === false;
-      formPresent = this.$el.find(".message-form").length > 0;
       if (hideForm !== formPresent) {
         this.$el.find('.chat-view-form').html(JST.opeka_chat_form_tmpl({
           activeUser: activeUser,
@@ -154,8 +155,10 @@
     },
 
     receiveMessage: function (message) {
-      this.messages.push(message);
-      this.render();
+      if (!this.inQueue) {
+        this.messages.push(message);
+        this.render();
+      }
     },
 
     sendMessage: function (event) {
