@@ -409,6 +409,11 @@ function Server(settings) {
     // since there's a bit of delay before they are accurate.
     process.nextTick(function () {
 
+      // Remove the user from any rooms he might be in.
+      _.map(opeka.rooms.list, function (room) {
+        self.removeUserFromRoom(room, client.user.clientId);
+      });
+
       // Leave the active room, if it is defined and it still exists.
       if (opeka.rooms.list[client.user.activeRoomId]) {
         oldRoom = opeka.rooms.list[client.user.activeRoomId];
