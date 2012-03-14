@@ -486,8 +486,7 @@ function Server(settings) {
       self.everyone.users[clientId].user.activeRoomId = null;
     }
 
-    room.removeUser(clientId, function (users, queueClientId) {
-      removedUser = self.everyone.users[clientId];
+    room.removeUser(clientId, function (users, queueClientId, removedUserNickname) {
       // The user has been removed from the queue and should join the chat.
       if (queueClientId) {
         self.everyone.users[queueClientId].now.changeRoom(room.id);
@@ -496,12 +495,14 @@ function Server(settings) {
       }
 
       // Notify the chat room if we know who left.
-      if (removedUser) {
-        room.group.now.roomUserLeft(room.id, removedUser.user.nickname);
+      if (removedUserNickname) {
+        room.group.now.roomUserLeft(room.id, removedUserNickname);
       }
 
       // Call the callback.
-      callback(users);
+      if (callback) {
+        callback(users);
+      }
     });
   };
 

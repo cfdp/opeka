@@ -93,17 +93,15 @@ var Room = function (options) {
   // Remove user from the room.
   // If somebody is in queue return the user object of the first in queue for this chat room
   self.removeUser = function (clientId, callback) {
-    var queueUserID;
+    var queueUserID, removedUserNickname;
 
-    if (!self.users[clientId]) {
-      callback('Not found');
-      return;
+    if (self.users[clientId]) {
+      removedUserNickname = self.users[clientId].name;
+      // Remove clientId from either group as well as the user list.
+      self.group.removeUser(clientId);
+      self.counsellorGroup.removeUser(clientId);
+      delete self.users[clientId];
     }
-
-    // Remove clientId from either group as well as the user list.
-    self.group.removeUser(clientId);
-    self.counsellorGroup.removeUser(clientId);
-    delete self.users[clientId];
 
     // Iterate over the queue to find the first user that is not in a
     // different room.
@@ -117,7 +115,7 @@ var Room = function (options) {
 
     if (callback) {
       try {
-        callback(self.users, queueUserID);
+        callback(self.users, queueUserID, removedUserNickname);
       } catch(ignored) {
         //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
       }
