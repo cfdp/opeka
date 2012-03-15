@@ -173,7 +173,10 @@ var Opeka = { status: {}},
 
   // Add the new room to our local room list.
   now.roomCreated = function (room) {
-    Opeka.roomList.add(room);
+    var roomIsAdded = Opeka.roomList.get(room.id);
+    if (!roomIsAdded) {
+      Opeka.roomList.add(room);
+    }
   };
 
   // Reaction for when joining the room.

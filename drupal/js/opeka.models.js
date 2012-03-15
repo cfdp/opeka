@@ -22,7 +22,7 @@
 
             errMsg.render();
           } else if (_.isFunction(options.success)) {
-            options.success();
+            options.success(success);
           }
         });
       // Read and update not supported yet.

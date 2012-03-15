@@ -569,7 +569,11 @@
           view = this;
 
       this.options.room.save(values, {
-        success: function () { view.remove(); }
+        success: function (self, newRoom) {
+          view.remove();
+          Opeka.roomList.add(newRoom);
+          Opeka.router.navigate("rooms/" + newRoom.id, {trigger: true});
+        }
       });
 
       if (event) {
