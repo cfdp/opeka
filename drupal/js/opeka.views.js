@@ -85,7 +85,7 @@
         },
         messages: this.messages,
       }));
-      if (hideForm !== formPresent) {
+      if (hideForm !== formPresent || this.inQueue !== false) {
         this.$el.find('.chat-view-form').html(JST.opeka_chat_form_tmpl({
           activeUser: activeUser,
           admin: this.admin,
