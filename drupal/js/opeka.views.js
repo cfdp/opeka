@@ -94,6 +94,7 @@
             leaveQueueButton: Drupal.t('Leave queue'),
             leaveRoomButton: Drupal.t('Leave chat room'),
             placeholder: Drupal.t('Type message here…'),
+            roomPaused: '[' + Drupal.t('The room is paused') + ']',
             messageButton: Drupal.t('Send message')
           },
           inQueue: this.inQueue,
