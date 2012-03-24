@@ -18,19 +18,19 @@ var _ = require("underscore"),
     };
 
 
-function Server(settings) {
+function Server(config) {
   var self = this;
 
   self.construct = function () {
-    self.settings = settings;
+    self.config = config;
 
     // Configure the main web server.
-    self.server = self.createServer(self.settings, function (req, res) {
+    self.server = self.createServer(self.config, function (req, res) {
       res.writeHead(200);
       res.write('Welcome to Opeka.');
       res.end();
     });
-    self.server.listen(self.settings.httpPort);
+    self.server.listen(self.config.get('http:port'));
 
     // Initialise Now.js on our server object.
     self.everyone = nowjs.initialize(self.server);
@@ -42,11 +42,11 @@ function Server(settings) {
   };
 
   /**
-   * Create a server instance, HTTP or HTTPS depending on settings.
+   * Create a server instance, HTTP or HTTPS depending on config.
    */
-  self.createServer = function (settings, callback) {
-    if (settings.https) {
-      return require('https').createServer(settings.https, callback);
+  self.createServer = function (config, callback) {
+    if (config.get('https:enabled')) {
+      return require('https').createServer(config.get('https'), callback);
     }
     else {
       return require('http').createServer(callback);
@@ -283,7 +283,7 @@ function Server(settings) {
       if (room) {
         room.group.now.deleteAllMessages(roomId);
       }
-    }
+    };
 
     // This function is used by the clients in order to change rooms
     self.signedIn.now.changeRoom = function (roomId, callback, quit) {

@@ -1,0 +1,17 @@
+{
+  "database": {
+    "host": "localhost",
+    "port": 3306,
+    "user": "doejohn",
+    "password": "asdfsecret",
+    "database": "john_doe"
+  },
+  "http": {
+    "port": 3000
+  },
+  "https": {
+    "enabled": false,
+    "key": "certs/server-key.pem",
+    "cert": "certs/server-cert.pem"
+  }
+}
