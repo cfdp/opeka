@@ -31,7 +31,9 @@ function Server(config, logger) {
       res.write('Welcome to Opeka.');
       res.end();
     });
-    self.server.listen(self.config.get('http:port'));
+    self.server.listen(self.config.get('http:port'), function () {
+      logger.info('Opeka chat server listening on port '  + self.config.get('http:port'));
+    });
 
     // Initialise Now.js on our server object.
     self.everyone = nowjs.initialize(self.server);

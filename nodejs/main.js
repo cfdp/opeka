@@ -48,7 +48,5 @@ if (!client) {
   logger.error('FAIL: Could not connect to database. Exiting.');
 }
 
-logger.info('Starting Opeka chat server on port '  + nconf.get('http:port'));
-
 server = new opeka.Server(nconf, logger);
 
