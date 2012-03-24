@@ -112,6 +112,8 @@ function Server(config, logger) {
       } else if (account.isAdmin) {
         self.councellors.addUser(client.user.clientId);
 
+        self.logger.info('Admin user signed in.', client.user.clientId);
+
         client.now.receiveRoomList(opeka.rooms.clientData(true));
       }
       else {
@@ -120,6 +122,7 @@ function Server(config, logger) {
         // In this way we are able to give to the counselors the ability to whisper
         nowjs.getGroup(client.user.clientId).addUser(client.user.clientId);
 
+        self.logger.info('User signed in.', client.user.clientId);
 
         // Store the location information for later use, if they have been defined.
         if (clientUser.address) {
@@ -401,6 +404,9 @@ function Server(config, logger) {
    */
   self.everyone.on("disconnect", function () {
     var client = this, oldRoom;
+
+    self.logger.info('User disconnected.', client.user.clientId);
+
     // We need to wait a single tick before updating the online counts,
     // since there's a bit of delay before they are accurate.
     process.nextTick(function () {
