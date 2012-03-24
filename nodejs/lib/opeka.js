@@ -91,7 +91,6 @@ function Server(config, logger) {
    */
   self.everyone.now.signIn = function (clientUser, callback) {
     var client = this;
-    util.log(clientUser.nickname + ' connected.');
 
     opeka.user.authenticate(clientUser, function (err, account) {
       if (err) {
@@ -249,6 +248,8 @@ function Server(config, logger) {
         self.everyone.now.roomCreated(room.clientData());
       }
 
+      self.logger.info('Room ' + room.name + ' (' + room.id + ') created.');
+
     } else {
       callback("Error creating room: room name too short.");
     }
@@ -259,6 +260,8 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId];
 
     if (room) {
+      self.logger.info('Room ' + room.name + ' (' + roomId + ') deleted.');
+
       opeka.rooms.remove(roomId);
       self.everyone.now.roomDeleted(roomId, finalMessage);
     } else {
