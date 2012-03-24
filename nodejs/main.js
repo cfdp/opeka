@@ -1,5 +1,6 @@
 var drupal = require("drupal"),
     nconf = require("nconf"),
+    winston = require("winston"),
     opeka = require("./lib/opeka"),
     util = require("util");
 
@@ -20,18 +21,34 @@ nconf.defaults({
   },
   "https": {
     "enabled": false,
+  },
+  "logging": {
+    "level": "debug"
   }
 });
 
+// Configure logging to use the console, but with timestamps (off by default).
+var logger = new (winston.Logger)({
+  transports: [
+    new (winston.transports.Console)({
+      colorize: true,
+      level: nconf.get("logging:level"),
+      timestamp: true
+    }),
+  ]
+});
+
+logger.setLevels(winston.config.syslog.levels);
+
 // Set up the database connection as our first order of business.
-util.log('Connecting to database...');
+logger.info('Connecting to database...');
 var client = drupal.db.connect(nconf.get('database')), server;
 
 if (!client) {
-  util.log('FAIL: Could not connect to database. Exiting.');
+  logger.error('FAIL: Could not connect to database. Exiting.');
 }
 
-util.log('Starting Opeka chat server on port '  + nconf.get('http:port'));
+logger.info('Starting Opeka chat server on port '  + nconf.get('http:port'));
 
-server = new opeka.Server(nconf);
+server = new opeka.Server(nconf, logger);
 

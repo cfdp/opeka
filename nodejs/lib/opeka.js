@@ -18,11 +18,12 @@ var _ = require("underscore"),
     };
 
 
-function Server(config) {
+function Server(config, logger) {
   var self = this;
 
   self.construct = function () {
     self.config = config;
+    self.logger = logger;
 
     // Configure the main web server.
     self.server = self.createServer(self.config, function (req, res) {
