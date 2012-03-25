@@ -12,6 +12,80 @@ var _ = require('underscore'),
       user: require("./user"),
     },
     roomList = {};
+    roomCounts = {
+      group: {
+        empty: 0,
+        active: 0,
+        full: 0
+      },
+      pair: {
+        empty: 0,
+        active: 0,
+        full: 0
+      },
+      total: {
+        empty: 0,
+        active: 0,
+        full: 0
+      }
+    };
+
+// Sums together a room list into empty, active and full rooms.
+var sumRoomList = function (rooms) {
+  var empty = 0,
+      active = 0,
+      full = 0;
+
+  _.each(rooms, function (room) {
+    console.log('room', room);
+    var userCount = Object.keys(room.users).length;
+
+    if (userCount > 0) {
+      if (room.isFull()) {
+        full = full + 1;
+      }
+      else {
+        active = active + 1;
+      }
+    }
+    else {
+      empty = empty + 1;
+    }
+  });
+
+  return {
+    empty: empty,
+    active: active,
+    full: full,
+  };
+};
+
+// Count the rooms and update the roomCounts object with the result.
+var updateRoomCounts = function () {
+  var pairRooms = [],
+      groupRooms = [],
+      allRooms = [];
+
+  _.each(roomList, function (room) {
+    // Private rooms aren't counted.
+    if (room.private) {
+      return;
+    }
+
+    if (room.maxSize === 2) {
+      pairRooms.push(room);
+    }
+    else {
+      groupRooms.push(room);
+    }
+
+    allRooms.push(room);
+  });
+
+  roomCounts.pair = sumRoomList(pairRooms);
+  roomCounts.group = sumRoomList(groupRooms);
+  roomCounts.total = sumRoomList(allRooms);
+};
 
 // The main chatroom object.
 var Room = function (options) {
@@ -21,7 +95,7 @@ var Room = function (options) {
     // Core attributes of a room.
     self.id = options.id || uuid();
     self.name = options.name;
-    self.maxSize = options.maxSize;
+    self.maxSize = parseInt(options.maxSize, 10);
     self.private = options.private;
     self.ipLocation = options.ipLocation;
 
@@ -38,7 +112,9 @@ var Room = function (options) {
     // Add our new room to the room list.
     roomList[self.id] = self;
 
-    console.log('Room created:' + self.id);
+    util.log('Room created:' + self.id);
+
+    updateRoomCounts();
 
     return self;
   };
@@ -76,9 +152,11 @@ var Room = function (options) {
         self.chatDurationStart_Min = Math.round((new Date()).getTime() / 60000);
       }
 
+      updateRoomCounts();
+
       // Update user list for the admins.
       if (callback) {
-        try{
+        try {
           callback(self.users);
         } catch(ignore) {
           //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
@@ -104,6 +182,8 @@ var Room = function (options) {
       self.group.removeUser(clientId);
       self.counsellorGroup.removeUser(clientId);
       delete self.users[clientId];
+
+      updateRoomCounts();
     }
 
     // Iterate over the queue to find the first user that is not in a
@@ -170,6 +250,8 @@ var Room = function (options) {
     });
     self.users = {};
     self.queue = [];
+
+    updateRoomCounts();
   };
 
   /**
@@ -210,12 +292,15 @@ var remove = function (roomId, callback) {
     if (callback) {
       callback();
     }
+
+    updateRoomCounts();
   }
 };
 
 module.exports = {
   Room: Room,
   clientData: clientData,
+  counts: roomCounts,
   list: roomList,
   remove: remove
 };
