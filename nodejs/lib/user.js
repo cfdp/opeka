@@ -37,6 +37,19 @@ module.exports.authenticate = function (clientUser, callback) {
   }
 };
 
+// Filters the user data and remove personal/security sensitive data and
+// create and new user object.
+module.exports.filterData = function (user) {
+  return {
+    age: user.age,
+    clientId: user.clientId,
+    gender: user.gender,
+    isAdmin: user.isAdmin,
+    muted: user.muted,
+    name: user.nickname || user.account.name
+  };
+};
+
 // Send the user list of a room to client-side.
 module.exports.sendUserList = function (context, roomId, users) {
   context.now.receiveUserList(roomId, users);

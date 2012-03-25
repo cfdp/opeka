@@ -8,6 +8,9 @@ var _ = require('underscore'),
     nowjs = require("now"),
     uuid = require('node-uuid'),
     util = require("util"),
+    opeka = {
+      user: require("./user"),
+    },
     roomList = {};
 
 // The main chatroom object.
@@ -62,7 +65,7 @@ var Room = function (options) {
     // If we have both rooms and groups, check that we don't exceed the
     // room size (if set) before adding the person to the room.
     if ((user.account.isAdmin || (!self.maxSize || count < self.maxSize)) && user) {
-      self.users[user.clientId] = filterUserData(user);
+      self.users[user.clientId] = opeka.user.filterData(user);
       self.group.addUser(user.clientId);
 
       // Start the timer in order to retrieve at the end the duration of the chat
@@ -178,21 +181,6 @@ var Room = function (options) {
 
   return self.construct();
 };
-
-
-// Filters the user data and remove personal/security sensitive data and
-// create and new user object.
-var filterUserData = function (user) {
-  return {
-    age: user.age,
-    clientId: user.clientId,
-    gender: user.gender,
-    isAdmin: user.isAdmin,
-    muted: user.muted,
-    name: user.nickname || user.account.name
-  };
-};
-
 
 // Provide a list of rooms for the client.
 var clientData = function (includePrivateRooms) {
