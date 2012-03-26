@@ -11,7 +11,7 @@ var _ = require('underscore'),
     opeka = {
       user: require("./user"),
     },
-    roomList = {};
+    roomList = {},
     roomCounts = {
       group: {
         empty: 0,

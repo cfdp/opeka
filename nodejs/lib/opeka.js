@@ -103,15 +103,7 @@ function Server(config, logger) {
       // Add the user to the signedIn group.
       self.signedIn.addUser(client.user.clientId);
 
-      // Add the user to the overall group he belongs in.
-      // This is important, since it governs what methods he has access
-      // to, so only councellors can create rooms, etc.
-      if (clientUser.statusOnly) {
-        // In this case the user that is connected is only interested in the status of the chat.
-        // This is 0 if not active, 1 if busy and 2 if open.
-        client.now.receiveStatus(self.getCurrentStatus());
-
-      } else if (account.isAdmin) {
+      if (account.isAdmin) {
         self.councellors.addUser(client.user.clientId);
 
         self.logger.info('Admin user signed in.', client.user.clientId);
@@ -464,33 +456,6 @@ function Server(config, logger) {
       system: true
     };
     to.now.receiveMessage(messageObj);
-  };
-
-  /* Function used in order to retrieve the status of the chat system*/
-  self.getCurrentStatus = function() {
-    var found;
-    if (opeka.rooms.public_roomOrder.length === 0) {
-      //No public room is active, the chat is not active
-      return 0;
-    } else {
-      //check if any public room is not full
-      found = false;
-
-      opeka.rooms.public_roomOrder.forEach(function (roomId, index) {
-        var room = opeka.rooms.get(roomId);
-
-        if (room && !room.isFull()) {
-          //there are room that are not full, then the chat is available
-          found = true;
-          return;
-        }
-      });
-
-      if (found) {
-        return 2;
-      }
-      return 1;
-    }
   };
 
   // Utility function to remove a user from a room.
