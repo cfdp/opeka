@@ -149,7 +149,7 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId];
 
     if (room.paused) {
-      console.log('User ' + this.user.clientId + ' tried to pause room ' + roomId + ' that was already paused.');
+      self.logger.error('User ' + this.user.clientId + ' tried to pause room ' + roomId + ' that was already paused.');
       callback("Error Pause: the room has already been paused.");
       return;
     } else {
@@ -166,7 +166,7 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId];
 
     if (!room.paused) {
-      console.log('User ' + this.user.clientId + ' tried to unpause room ' + roomId + ' that was not paused.');
+      self.logger.error('User ' + this.user.clientId + ' tried to unpause room ' + roomId + ' that was not paused.');
       callback("Error Unpause: the room has not been paused.");
       return;
     } else {
