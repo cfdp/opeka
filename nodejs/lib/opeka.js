@@ -70,6 +70,9 @@ function Server(config, logger) {
         self.guests.count(function (count) {
           callback(null, count);
         });
+      },
+      rooms: function (callback) {
+        callback(null, opeka.rooms.counts);
       }
     }, function (err, results) {
       if (results && _.isFunction(context.updateStatus)) {
@@ -195,6 +198,8 @@ function Server(config, logger) {
     self.removeUserFromRoom(room, clientId, function (users) {
       opeka.user.sendUserList(room.counsellorGroup, room.id, users);
     });
+
+    self.updateUserStatus(self.everyone.now);
   };
 
   /* Function used in order to mute a single user */
@@ -250,6 +255,7 @@ function Server(config, logger) {
 
       self.logger.info('Room ' + room.name + ' (' + room.id + ') created.');
 
+      self.updateUserStatus(self.everyone.now);
     } else {
       callback("Error creating room: room name too short.");
     }
@@ -264,60 +270,62 @@ function Server(config, logger) {
 
       opeka.rooms.remove(roomId);
       self.everyone.now.roomDeleted(roomId, finalMessage);
+
+      self.updateUserStatus(self.everyone.now);
     } else {
       this.now.displayError("Error deleting room: a room with the specified ID does not exist.");
     }
   };
 
-    /* Function used in order to delete all messages of a single user */
-    self.councellors.now.deleteAllMsg = function (clientId) {
-      var room = opeka.rooms.get(this.user.activeRoomId);
-      if (room) {
-        room.group.now.localDeleteAllMsg(clientId);
+  /* Function used in order to delete all messages of a single user */
+  self.councellors.now.deleteAllMsg = function (clientId) {
+    var room = opeka.rooms.get(this.user.activeRoomId);
+    if (room) {
+      room.group.now.localDeleteAllMsg(clientId);
+    }
+  };
+
+  /* Function used in order to delete a single message */
+  self.councellors.now.roomDeleteMessage = function (roomId, messageId) {
+    var room = opeka.rooms.list[roomId];
+
+    if (room) {
+      room.group.now.messageDeleted(roomId, messageId);
+    }
+  };
+
+  // Get the number you have in the queue.
+  self.councellors.now.triggerDeleteAllMessages = function (roomId) {
+    var room = opeka.rooms.list[roomId];
+    if (room) {
+      room.group.now.deleteAllMessages(roomId);
+    }
+  };
+
+  // This function is used by the clients in order to change rooms
+  self.signedIn.now.changeRoom = function (roomId, callback, quit) {
+    var client = this,
+        serv = self,
+        newRoom = opeka.rooms.list[roomId];
+
+    // If the user was muted, unmute it.
+    if (client.user.muted) {
+      client.user.muted = false;
+      client.now.localUnmute();
+    }
+
+    // If user is already in a different room, leave it.
+    if (opeka.rooms.list[client.user.activeRoomId]) {
+      var oldRoom = opeka.rooms.list[client.user.activeRoomId];
+
+      self.roomRemoveUser(oldRoom.client.user.clientId, function (users) {
+        opeka.user.sendUserList(oldRoom.counsellorGroup, oldRoom.id, users);
+      });
+
+      if (quit) {
+        client.now.quitRoom(callback);
       }
-    };
-
-    /* Function used in order to delete a single message */
-    self.councellors.now.roomDeleteMessage = function (roomId, messageId) {
-      var room = opeka.rooms.list[roomId];
-
-      if (room) {
-        room.group.now.messageDeleted(roomId, messageId);
-      }
-    };
-
-    // Get the number you have in the queue.
-    self.councellors.now.triggerDeleteAllMessages = function (roomId) {
-      var room = opeka.rooms.list[roomId];
-      if (room) {
-        room.group.now.deleteAllMessages(roomId);
-      }
-    };
-
-    // This function is used by the clients in order to change rooms
-    self.signedIn.now.changeRoom = function (roomId, callback, quit) {
-      var client = this,
-          serv = self,
-          newRoom = opeka.rooms.list[roomId];
-
-      // If the user was muted, unmute it.
-      if (client.user.muted) {
-        client.user.muted = false;
-        client.now.localUnmute();
-      }
-
-      // If user is already in a different room, leave it.
-      if (opeka.rooms.list[client.user.activeRoomId]) {
-        var oldRoom = opeka.rooms.list[client.user.activeRoomId];
-
-        self.roomRemoveUser(oldRoom.client.user.clientId, function (users) {
-          opeka.user.sendUserList(oldRoom.counsellorGroup, oldRoom.id, users);
-        });
-
-        if (quit) {
-          client.now.quitRoom(callback);
-        }
-      }
+    }
 
     // Trying to add the user, if this returns false the room is full or does not exists
     var addedUser;
@@ -342,6 +350,8 @@ function Server(config, logger) {
     if (callback) {
       callback(addedUser);
     }
+
+    self.updateUserStatus(self.everyone.now);
   };
 
   // Get the number you have in the queue.

@@ -104,7 +104,7 @@ var Opeka = { status: {}},
     }
   });
 
-  now.updateQueueStatus = function(roomId) {
+  now.updateQueueStatus = function (roomId) {
     if (Opeka.chatView && Opeka.chatView.model.id === roomId && Opeka.chatView.inQueue !== false) {
       now.roomGetQueueNumber(roomId, function(index) {
         // Error, user is no longer in the queue, maybe he just joined the
