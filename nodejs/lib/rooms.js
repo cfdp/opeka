@@ -37,7 +37,6 @@ var sumRoomList = function (rooms) {
       full = 0;
 
   _.each(rooms, function (room) {
-    console.log('room', room);
     var userCount = Object.keys(room.users).length;
 
     if (userCount > 0) {
