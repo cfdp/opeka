@@ -369,6 +369,7 @@ function Server(config, logger) {
       // Remove the user.
       self.removeUserFromRoom(room, clientId, function (users) {
         opeka.user.sendUserList(room.counsellorGroup, room.id, users);
+        self.updateUserStatus(self.everyone.now);
       });
     }
   };
