@@ -143,6 +143,10 @@ function Server(config, logger) {
     });
   };
 
+  self.everyone.now.getFeatures = function (callback) {
+    callback(self.config.get('features'));
+  };
+
   // Allow the councellors to pause a room.
   self.councellors.now.pauseRoom = function (roomId, callback) {
     var context = this;

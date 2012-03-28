@@ -602,6 +602,12 @@
     },
 
     render: function () {
+      var roomList = Opeka.roomList,
+          hidePairRooms = false;
+      // Hide rooms with only two slots.
+      if (Opeka.features && Opeka.features.hidePairRoomsOnRoomList) {
+        hidePairRooms = true;
+      }
       this.$el.html(JST.opeka_room_list_tmpl({
         createRoom:_.isFunction(now.createRoom),
         admin: _.isFunction(now.receiveUserList),
@@ -609,7 +615,8 @@
           createRoom: Drupal.t('Create room'),
           placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : ''
         },
-        rooms: Opeka.roomList,
+        hidePairRooms: hidePairRooms,
+        rooms: roomList
       }));
 
       return this;
