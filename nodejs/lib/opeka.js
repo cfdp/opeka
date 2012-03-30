@@ -336,7 +336,6 @@ function Server(config, logger) {
       client.user.activeRoomId = roomId;
       client.user.activeQueueRoomId = null;
       newRoom.group.now.roomUserJoined(newRoom.id, client.user.nickname);
-
     }
     else {
       client.user.activeRoomId = null;

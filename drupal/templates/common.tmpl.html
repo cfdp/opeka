@@ -64,11 +64,13 @@
       <li class="system-message"><%- message.message %></li>
     <% } else if (message.whisper) { %>
       <li class="whisper-message" data-message-id="<%= message.messageId %>">
+        <span class="timestamp"><%= formatTimestamp(message.date) %></span>
         <span class="sender-name">[<%- message.sender.name %> - WHISPER]:</span>
         <span class="message"><%- message.message %></span>
       </li>
     <% } else { %>
       <li class="chat-message" data-message-id="<%= message.messageId %>">
+        <span class="timestamp"><%= formatTimestamp(message.date) %></span>
         <span class="sender-name">[<%- message.sender.name %>]:</span>
         <span class="message"><%- message.message %></span>
         <% if (admin) { %>

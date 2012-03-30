@@ -58,6 +58,15 @@
       return this;
     },
 
+    formatTimestamp: function (date) {
+      // Convert to date object if it is not one already.
+      if (!_.isDate(date)) {
+        date = new Date(date);
+      }
+
+      return date.toLocaleTimeString();
+    },
+
     render: function () {
       if (!this.messages) { return this; }
 
@@ -87,6 +96,7 @@
       // Always render the chat window.
       this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
+        formatTimestamp: this.formatTimestamp,
         labels: {
           deleteMessage: Drupal.t('Delete')
         },
