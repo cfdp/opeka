@@ -380,20 +380,28 @@ function Server(config, logger) {
 
   self.everyone.now.sendMessageToRoom = function (roomId, messageText) {
     var room = opeka.rooms.list[roomId],
-        user = this.user,
-        messageObj = {
-          date: new Date(),
-          message: messageText,
-          name: user.nickname,
-          messageId: uuid(),
-          senderId: user.clientId
-        };
+        user = this.user;
 
-    // Send the message if the sender is in the room.
-    room.group.hasClient(this.user.clientId, function (inRoom) {
-      if (inRoom && !user.muted) {
-        room.group.now.receiveMessage(messageObj);
-      }
+    // Verify that whether the user is a councellor, so we can set a
+    // flag on the message.
+    self.councellors.hasClient(user.clientId, function (isCouncellor) {
+      var messageObj = {
+        date: new Date(),
+        message: messageText,
+        messageId: uuid(),
+        sender: {
+          clientId: user.clientId,
+          isCouncellor: isCouncellor,
+          name: user.nickname,
+        }
+      };
+
+      // Send the message if the sender is in the room.
+      room.group.hasClient(user.clientId, function (inRoom) {
+        if (inRoom && !user.muted) {
+          room.group.now.receiveMessage(messageObj);
+        }
+      });
     });
   };
 
