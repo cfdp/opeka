@@ -15,28 +15,35 @@
   now.updateStatus = function (attributes) {
     chatStatus = attributes;
     
-    console.log('updateStatus', JSON.stringify(attributes));
-
     $(window).trigger('opekaChatStatusUpdate', [attributes]);
 
   };
 
-  // Updates the actual status text.
-  var updateDisplay = function (attributes) {
-    // If there are any active one-to-one rooms.
-    if (chatStatus.rooms.pair.active > 0) {
-      $(document).find("#status").html("Chat active");
-    // If not, check if there are any active group rooms.
-    } else if (chatStatus.rooms.pair.full > 0) {
-      $(document).find("#status").html("Chat busy");
-    } else {
-      $(document).find("#status").html("Chat not active");
-    };
-  };
+  // When the DOM is ready, set up the widget.
+  $(function () {
+    var statusText = $('#status');
 
-  // When the document is ready, update the status, and bind the event
-  // to have it update automatically later.
-  $(window).bind('opekaChatStatusUpdate', updateDisplay);
+    // Updates the actual status text.
+    var updateDisplay = function (attributes) {
+      // If there are any active one-to-one rooms.
+      if (chatStatus.rooms.pair.active > 0) {
+        statusText.text("Chat active");
+      // If not, check if there are any active group rooms.
+      } else if (chatStatus.rooms.pair.full > 0) {
+        statusText.text("Chat busy");
+      } else {
+        statusText.text("Chat not active");
+      };
+    };
+
+    // When the document is ready, update the status, and bind the event
+    // to have it update automatically later.
+    $(window).bind('opekaChatStatusUpdate', updateDisplay);
+    
+    // Run updateDisplay once manually so we have the initial text
+    // nailed down.
+    updateDisplay();
+  });
 }(jQuery));
 
 </script>
