@@ -61,22 +61,29 @@
     render: function () {
       if (!this.messages) { return this; }
 
-      var activeUser = this.model.get('activeUser'),
+      var activeUser = this.model.get('activeUser') || { muted: false },
           inQueueMessage = '',
           hideForm = false,
           formPresent = true;
-      if (!activeUser) {
-        activeUser = {muted:false};
-      }
+
+      // If user is in the queue, show it to him.
       if (this.inQueue !== false) {
         inQueueMessage = Drupal.t('Chat room is full, you are currently in queue as number: @number. You can stay and wait until you can enter or leave the queue.', {'@number': this.inQueue + 1});
       }
+
+      // Hide the send message form if room is paused, user is muted or
+      // in queue.
       hideForm = !this.model.get('paused') && !activeUser.muted && this.inQueue === false;
+
+      // Figure out if the message form is currently present.
       formPresent = this.$el.find(".message-form").length > 0;
+
+      // For the first time the view is rendered, create some wrapper divs.
       if (this.$el.find('.chat-view-window').length === 0) {
         hideForm = 'show';
         this.$el.html('<div class="chat-view-window"></div><div class="chat-view-form"</div>');
       }
+
       // Always render the chat window.
       this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
@@ -85,6 +92,8 @@
         },
         messages: this.messages,
       }));
+
+      // Conditionally render the message form.
       if (hideForm !== formPresent || this.inQueue !== false) {
         this.$el.find('.chat-view-form').html(JST.opeka_chat_form_tmpl({
           activeUser: activeUser,
