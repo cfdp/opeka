@@ -396,12 +396,5 @@ var Opeka = { status: {}},
 
     Backbone.history.start();
   });
-
-  // The now object is ready.
-  now.ready(function() {
-    now.getFeatures(function(features) {
-      Opeka.features = features;
-    });
-  });
 }(jQuery));
 

@@ -42,6 +42,7 @@
     events: {
       "click .delete-message": "deleteMessage",
       "submit .message-form": "sendMessage",
+      "keyup .form-text": "sendMessageonEnter",
       "submit .leave-queue-form": "leaveQueue",
       "submit .leave-room-form": "leaveRoom"
     },
@@ -54,56 +55,53 @@
       this.inQueue = options.inQueue;
 
       this.model.on('change', this.render, this);
-
+      
       return this;
     },
 
     formatTimestamp: function (date) {
+ 
       // Convert to date object if it is not one already.
+   
       if (!_.isDate(date)) {
         date = new Date(date);
+   
       }
-
+   
       return date.toLocaleTimeString();
+   
     },
 
     render: function () {
       if (!this.messages) { return this; }
 
-      var activeUser = this.model.get('activeUser') || { muted: false },
+      var activeUser = this.model.get('activeUser'),
           inQueueMessage = '',
           hideForm = false,
           formPresent = true;
-
-      // If user is in the queue, show it to him.
+      if (!activeUser) {
+        activeUser = {muted:false};
+      }
+      
       if (this.inQueue !== false) {
         inQueueMessage = Drupal.t('Chat room is full, you are currently in queue as number: @number. You can stay and wait until you can enter or leave the queue.', {'@number': this.inQueue + 1});
       }
-
-      // Hide the send message form if room is paused, user is muted or
-      // in queue.
       hideForm = !this.model.get('paused') && !activeUser.muted && this.inQueue === false;
-
-      // Figure out if the message form is currently present.
       formPresent = this.$el.find(".message-form").length > 0;
-
-      // For the first time the view is rendered, create some wrapper divs.
       if (this.$el.find('.chat-view-window').length === 0) {
         hideForm = 'show';
-        this.$el.html('<div class="chat-view-window"></div><div class="chat-view-form"</div>');
+        this.$el.html('<div class="chat-view-window"></div><div class="chat-view-form"></div>');
       }
-
       // Always render the chat window.
       this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
         formatTimestamp: this.formatTimestamp,
         labels: {
-          deleteMessage: Drupal.t('Delete')
+          deleteMessage: Drupal.t('')
         },
         messages: this.messages,
       }));
 
-      // Conditionally render the message form.
       if (hideForm !== formPresent || this.inQueue !== false) {
         this.$el.find('.chat-view-form').html(JST.opeka_chat_form_tmpl({
           activeUser: activeUser,
@@ -113,13 +111,18 @@
             leaveQueueButton: Drupal.t('Leave queue'),
             leaveRoomButton: Drupal.t('Leave chat room'),
             placeholder: Drupal.t('Type message here…'),
-            roomPaused: '[' + Drupal.t('The room is paused') + ']',
-            messageButton: Drupal.t('Send message')
+            roomPaused: Drupal.t('The room is paused'),
+            messageButton: Drupal.t('Send')
           },
           inQueue: this.inQueue,
           room: this.model
         }));
       }
+
+      // @daniel
+      // Keep the scrollbar at the bottom of the .chat-message-list
+      var message_list = this.$el.find('.chat-message-list');
+      message_list.attr({scrollTop: message_list.attr("scrollHeight")});
 
       return this;
     },
@@ -176,15 +179,25 @@
 
     receiveMessage: function (message) {
       if (!this.inQueue) {
+
         this.messages.push(message);
         this.render();
+
+        // @daniel
+        // Keep the scrollbar at the bottom of the .chat-message-list
+        var message_list = this.$el.find('.chat-message-list');
+        message_list.attr({scrollTop: message_list.attr("scrollHeight")});
       }
     },
 
     sendMessage: function (event) {
-      var message = this.$el.find('input.message').val();
-      // Remove the message sent.
-      this.$el.find('input.message').val('');
+
+      // @daniel
+      // Replaced the input with a textarea to have multiple writing lines available
+      var message = this.$el.find('textarea.message').val();
+      // Remove the message sent and regain focus
+      this.$el.find('textarea.message').val('').focus();
+      
       if (message !== '') {
         now.sendMessageToRoom(this.model.id, message);
       }
@@ -192,6 +205,28 @@
       if (event) {
         event.preventDefault();
       }
+    },
+
+    // @daniel
+    // Enable sending messages when pressing the ENTER(return) key
+    sendMessageonEnter: function(event) {
+      var message = this.$el.find('textarea.message').val();
+      var code = (event.keyCode || event.which);
+      
+      // Listen for the key code
+      if(code == 13) {
+        
+        // On pressing ENTER there is a new line element inserted in the textarea,
+        // that we have to ignore and clear the value of the textarea
+        if (message.length == 1) {
+          this.$el.find('textarea.message').val('');
+        }
+
+        if (message !== '') {
+          this.$el.find('.message-form').submit();
+        }
+      }
+
     }
   });
 
@@ -206,6 +241,7 @@
       "click .mute-user": "muteUser",
       "click .pause-toggle": "pauseToggle",
       "click .unmute-user": "unmuteUser",
+      "click .sidebar-block-heading": "sidebarBlocktoggle",
       "click .whisper": "whisper"
     },
 
@@ -233,11 +269,11 @@
             clearMessages: Drupal.t("Clear messages"),
             deleteRoom: Drupal.t('Delete room'),
             gender: { f: Drupal.t('woman'), m: Drupal.t('man') },
-            kickUser: Drupal.t('Kick user'),
-            muteUser: Drupal.t('Mute user'),
+            kickUser: Drupal.t('Kick'),
+            muteUser: Drupal.t('Mute'),
             pauseToggle: pauseLabel,
             placeholder: Drupal.t('No users'),
-            unmuteUser: Drupal.t('Unmute user'),
+            unmuteUser: Drupal.t('Unmute'),
             whisper: Drupal.t('Whisper')
           },
           room: this.model,
@@ -314,6 +350,26 @@
       var clientId = $(event.currentTarget).closest('li').attr('data-client-id');
       now.unmute(this.model.id, clientId);
 
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    // @daniel
+    // For when you need to unmute a user.
+    sidebarBlocktoggle: function (event) {
+      var head = $(event.currentTarget),
+          body = head.next('.sidebar-block-content'),
+          arrow = head.children('.arrow');
+      
+      body.toggle();
+
+      if(arrow.hasClass('down')){
+        arrow.removeClass('down').addClass('up');
+      }else{
+        arrow.removeClass('up').addClass('down');
+      }
+      
       if (event) {
         event.preventDefault();
       }
@@ -611,6 +667,11 @@
     initialize: function (options) {
       _.bindAll(this);
 
+      // Bind to the global status model.
+      if (Opeka.status) {
+        this.model = Opeka.status;
+      }
+
       // Re-render our list whenever the roomList changes.
       Opeka.roomList.on('add', this.render);
       Opeka.roomList.on('change', this.render);
@@ -621,12 +682,6 @@
     },
 
     render: function () {
-      var roomList = Opeka.roomList,
-          hidePairRooms = false;
-      // Hide rooms with only two slots.
-      if (Opeka.features && Opeka.features.hidePairRoomsOnRoomList) {
-        hidePairRooms = true;
-      }
       this.$el.html(JST.opeka_room_list_tmpl({
         createRoom:_.isFunction(now.createRoom),
         admin: _.isFunction(now.receiveUserList),
@@ -634,8 +689,7 @@
           createRoom: Drupal.t('Create room'),
           placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : ''
         },
-        hidePairRooms: hidePairRooms,
-        rooms: roomList
+        rooms: Opeka.roomList,      
       }));
 
       return this;
@@ -727,8 +781,10 @@
     // Utility function for kicking the user.
     whisper: function (event) {
       var form = $(this.dialogElement).find('form'),
-          message = form.find('input.whisper-message').val();
-
+          //@daniel
+          //replacing the input for the whisper dialog overlay with a textarea
+          message = form.find('textarea.whisper-message').val();
+          
       // Whisper the user.
       now.whisper(this.clientId, message);
       this.remove();
@@ -768,7 +824,7 @@
           female: Drupal.t('Female'),
           male: Drupal.t('Male'),
           nick: Drupal.t('Nickname'),
-          placeholder: Drupal.t('Anonymous')
+          placeholder: Drupal.t('Anonymous'),
         },
         name: name
       });
@@ -788,9 +844,10 @@
       var user = Drupal.settings.opeka.user || {},
           view = this;
 
-      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous');
+      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous');""
       user.age = this.$el.find('.age').val();
       user.gender = this.$el.find('.gender').val();
+
 
       Opeka.signIn(user, function () {
         view.$el.fadeOut();

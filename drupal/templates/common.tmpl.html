@@ -15,14 +15,14 @@
   <form action="#" class="connect-interface">
     <label class="form-item">
       <%= labels.nick %>
-      <input autofocus="autofocus" class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" />
+      <input autofocus="autofocus" class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
     </label>
 
     <% if (!name) { %>
 
     <label class="form-item">
       <%= labels.age %>
-      <input class="form-text age" type="text" />
+      <input class="form-text age" type="text" maxlength="2" />
     </label>
 
     <label>
@@ -46,10 +46,24 @@
     <li class="placeholder"><%= labels.placeholder %></li>
   <% } %>
   <% rooms.each(function (room) { %>
-    <% if ((!room.attributes.private && (room.attributes.maxSize !== 2 || hidePairRooms == false)) || admin) { %>
-      <li><a href="#rooms/<%= room.id %>"><%- room.get('name') %></a></li>
+    <% if (!room.attributes.private || admin) { %>
+      <li class="room">
+        <div class="room-details">
+          <span class="room-status">Åbnet</span>
+          <span class="room-size">~/<%- room.get('maxSize') %></span>
+        </div>
+        <p class="room-description"><%- room.get('name') %></p><a href="#rooms/<%= room.id %>" class="room-enter">enter</a>
+      </li>
     <% } %>
   <% }); %>
+    <!--style for closed room
+    <li class="room closed">
+      <div class="room-details">
+        <span class="room-status">Lukket</span>
+        <span class="room-size">5/5</span>
+      </div>
+      <p class="room-description">What a nice day outside</p><a href="#rooms/4325hjg234lkjh234523j4h52k34jh52k" class="room-enter">enter</a>
+    </li>-->
   </ul>
 
   <% if (createRoom) { %>
@@ -61,18 +75,18 @@
   <ul class="chat-message-list">
   <% _.each(messages, function (message) { %>
     <% if (message.system) { %>
-      <li class="system-message"><%- message.message %></li>
+      <li class="system-message"><span>system:</span><%- message.message %></li>
     <% } else if (message.whisper) { %>
       <li class="whisper-message" data-message-id="<%= message.messageId %>">
-        <span class="timestamp"><%= formatTimestamp(message.date) %></span>
-        <span class="sender-name">[<%- message.sender.name %> - WHISPER]:</span>
+        <span class="sender-name"><%- message.name %> - [WHISPER]:</span>
         <span class="message"><%- message.message %></span>
+        <span class="timestamp"><%= formatTimestamp(message.date) %></span>
       </li>
     <% } else { %>
-      <li class="chat-message" data-message-id="<%= message.messageId %>">
-        <span class="timestamp"><%= formatTimestamp(message.date) %></span>
-        <span class="sender-name">[<%- message.sender.name %>]:</span>
+      <li class="chat-message <% if(message.sender.isCouncellor) { %>counselor<% }else{%>user<% } %>" data-message-id="<%= message.messageId %>">
+        <span class="sender-name"><%- message.sender.name %></span>
         <span class="message"><%- message.message %></span>
+        <span class="timestamp"><%= formatTimestamp(message.date) %></span>
         <% if (admin) { %>
         <span class="actions">
           <button class="delete-message"><%= labels.deleteMessage %></button>
@@ -87,11 +101,14 @@
 <script id="opeka_chat_form_tmpl" type="application/template">
   <% if (!room.get('paused') && !activeUser.muted && inQueue === false) { %>
   <form action="#" class="message-form">
-    <input autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" size="50" type="text" />
-    <input class="form-submit send" type="submit" value="<%= labels.messageButton %>" />
+    <!--<input autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" size="50" type="text" />-->
+    <div class="form-text-container">
+      <textarea autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" cols=37 rows=3></textarea>
+    </div>
+      <input class="form-submit send" type="submit" value="<%= labels.messageButton %>" />
   </form>
   <% } else { %>
-    <p><%= labels.roomPaused %></p>
+    <p class="paused-nowriting"><%= labels.roomPaused %></p>
   <% } %>
   <% if (inQueue !== false) { %>
     <p><%= labels.inQueueMessage %></p>
