@@ -41,6 +41,22 @@ html body
 
 #opeka-app .chat-view-window,
 #opeka-app .chat-view-form				 		{background: rgb(255,255,255); border-radius: 4px;}
+
+/*Client Login Form*/
+
+#opeka-app .connect-interface	{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49);overflow: hidden; padding: 30px 30px 20px; width: 240px;}
+
+#opeka-app .connect-interface .form-item 	{display: inline-block; font-weight: normal; margin-bottom: 0; text-align: right; width: 60px;}
+#opeka-app .connect-interface .form-text 	{border-radius: 2px; float: right; margin-top: 6px; padding: 5px; width: 162px;}
+#opeka-app .connect-interface .form-select	{border-radius: 2px; float: right; margin-top: 4px; padding: 5px; width: 174px; }
+#opeka-app .connect-interface .form-submit	{font-size: 1em; float: right; margin: 25px 0 10px 0;}
+
+
+/*-----------------*/
+
+/*FOOTER*/
+#opeka-app .footer p 		{background: rgb(229, 255, 200); border: 1px solid rgb(129, 155, 49); display: inline-block; margin: 5px 0; padding: 5px 0; text-align: center; width: 300px;}
+/**/
 /*MESSAGE-LIST*/
 
 #opeka-app .chat-message-list					{border: 1px solid rgb(175,175,175); border-radius: 4px; height: 400px; list-style: none; margin: 0; overflow-y: auto; padding: 10px;}
@@ -74,7 +90,7 @@ html body
 #opeka-app .chat-message-list .chat-message.counselor .sender-name 	{background: rgb(255,241,184); border-bottom: 1px solid rgb(235,221,164);}
 
 #opeka-app .chat-message-list .chat-message .timestamp,
- #opeka-app .chat-message-list .whisper-message .timestamp		{font-size: 10px; position: absolute; right: 5px; top: 3px;}
+#opeka-app .chat-message-list .whisper-message .timestamp		{font-size: 10px; position: absolute; right: 5px; top: 0;}
 
 #opeka-app .chat-message-list .chat-message.counselor + .chat-message.counselor	{}
 
@@ -113,6 +129,15 @@ html body
 .leave-room-form .form-submit 		{position: absolute; right: 10px; top: 10px;}
 /*-----------------*/
 
+/*.BTN*/
+
+#opeka-app .btn 		{background: rgb(17,202,3); border: 1px solid rgb(3,115,0); border-radius: 2px; color: rgb(255,255,255); font-weight: bold; margin: 0; padding: 10px 15px; text-transform: uppercase;}
+
+#opeka-app .btn:hover 	{background: rgb(37,222,23);}
+
+#opeka-app .btn:active	{background: rgb(37,192,3);}
+
+/*---*/
 .room-list 		{list-style: none; margin: 0; padding: 0;}
 
 .room 			{background: rgb(255,255,255); border: 1px solid rgb(107,156,66); border-radius: 4px; margin-bottom: 10px; overflow: hidden; padding: 5px;}

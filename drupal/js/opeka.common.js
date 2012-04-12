@@ -36,7 +36,8 @@ var Opeka = { status: {}},
     routes: {
       '': 'signIn',
       'rooms/:roomId': 'room',
-      'rooms': 'roomList'
+      'rooms': 'roomList',
+      'feedback': 'feedbackPage'
     },
 
     // Check that the user is signed in, and if not, redirect to the
@@ -61,6 +62,16 @@ var Opeka = { status: {}},
     roomList: function () {
       if (this.checkSignIn()) {
         var view = new Opeka.RoomListView({});
+
+        Opeka.appViewInstance.replaceContent(view.render().el);
+      }
+    },
+
+    //@daniel
+    //The feedback page
+    feedbackPage: function () {
+      if (this.checkSignIn()) {
+        var view = new Opeka.UserFeedback({});
 
         Opeka.appViewInstance.replaceContent(view.render().el);
       }

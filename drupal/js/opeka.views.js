@@ -161,7 +161,11 @@
       // Remove the user from the room.
       now.removeUserFromRoom(this.model.id, now.core.clientId);
       $(window).trigger('leaveRoom');
-      Opeka.router.navigate("rooms", {trigger: true});
+
+      //Opeka.router.navigate("rooms", {trigger: true});
+      //@daniel
+      //reroute the user to the feedback page
+      Opeka.router.navigate("feedback", {trigger: true});
 
       if (event) {
         event.preventDefault();
@@ -689,7 +693,7 @@
           createRoom: Drupal.t('Create room'),
           placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : ''
         },
-        rooms: Opeka.roomList,      
+        rooms: Opeka.roomList,
       }));
 
       return this;
@@ -702,6 +706,39 @@
       dialog.render();
     }
   });
+
+  //@daniel
+  //Page to place the link for user feedback  
+  Opeka.UserFeedback = Backbone.View.extend({
+    events: {
+      "click .goto-feedback": "gotoFeedback"
+    },
+
+    initialize: function (options) {
+      _.bindAll(this);
+
+      return this;
+    },
+    render: function () {
+      this.$el.html(JST.opeka_goto_feedback_tmpl({
+        
+        admin: _.isFunction(now.receiveUserList),
+        labels: {
+          giveFeedback: Drupal.t('Leave feedback'),
+          
+          feedbackInvitation: Drupal.t('Please fill in this form'),
+        },
+        
+      }));
+      
+      return this;
+    },
+    gotoFeedback: function () {
+      
+      console.log('feedback');
+      
+    }
+  })
 
   // Dialog for confirming that user should be kicked.
   Opeka.RoomKickUserView = Opeka.DialogView.extend({
@@ -818,7 +855,7 @@
 
       var form = JST.opeka_connect_form_tmpl({
         labels: {
-          action: Drupal.t('Ready for chat…'),
+          action: Drupal.t('Ready for chat'),
           age: Drupal.t('Age'),
           gender: Drupal.t('Gender'),
           female: Drupal.t('Female'),

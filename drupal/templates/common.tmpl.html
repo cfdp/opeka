@@ -15,28 +15,29 @@
   <form action="#" class="connect-interface">
     <label class="form-item">
       <%= labels.nick %>
-      <input autofocus="autofocus" class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
     </label>
+    <input autofocus="autofocus" class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
 
     <% if (!name) { %>
 
     <label class="form-item">
       <%= labels.age %>
-      <input class="form-text age" type="text" maxlength="2" />
     </label>
-
-    <label>
+    <input class="form-text age" type="text" maxlength="2" />
+    
+    <label class="form-item">
       <%= labels.gender %>
-      <select class="form-select gender">
-        <option value="" selected="selected"></option>
-        <option value="m"><%= labels.male %></option>
-        <option value="f"><%= labels.female %></option>
-      </select>
     </label>
+      <select class="form-select gender">
+      <option value="" selected="selected"></option>
+      <option value="m"><%= labels.male %></option>
+      <option value="f"><%= labels.female %></option>
+    </select>
+    
 
     <% } %>
 
-    <input class="connect form-submit" type="submit" value="<%= labels.action %>" />
+    <input class="connect form-submit btn" type="submit" value="<%= labels.action %>" />
   </form>
 </script>
 
@@ -49,7 +50,7 @@
     <% if (!room.attributes.private || admin) { %>
       <li class="room">
         <div class="room-details">
-          <span class="room-status">Åbnet</span>
+          <span class="room-status"></span>
           <span class="room-size">~/<%- room.get('maxSize') %></span>
         </div>
         <p class="room-description"><%- room.get('name') %></p><a href="#rooms/<%= room.id %>" class="room-enter">enter</a>
@@ -120,4 +121,13 @@
       <input class="form-submit send" type="submit" value="<%= labels.leaveRoomButton %>" />
     </form>
   <% } %>
+</script>
+
+<script id="opeka_goto_feedback_tmpl" type="application/template">
+<% if(admin) { %>
+  <p>Thank you!</p>
+<% }else{ %>
+  <h3><%= labels.feedbackInvitation %></h3>
+  <iframe src="http://cyberhus.dk/din-mening-gruppechat" frameborder="0" ></iframe>
+<% } %>
 </script>
