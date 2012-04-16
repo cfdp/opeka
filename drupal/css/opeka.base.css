@@ -1,11 +1,13 @@
 /*STRIPPER*/
 #branding	{display: none;}
-#opeka-app 	{margin: -25px 0 -40px;}
+#opeka-app 	{margin: -25px 0 -40px; position: relative;}
 
-/**/
+#opeka-app .connect-interface .cyberhus-logo	{background: #E5FFC8 url('../img/cyberhuslogo_hus_46.png') no-repeat; bottom: 29px; display: inline-block; height: 46px; left: 30px; position: absolute; width: 46px; opacity: 0.6;}
+/*--------*/
 
 /*LAYOUT*/
-#opeka-app				{padding: 60px 10px; position: relative;}
+#opeka-app	{padding: 60px 10px; position: relative;}
+
 #opeka-app,
 html body
 {
@@ -44,7 +46,7 @@ html body
 
 /*Client Login Form*/
 
-#opeka-app .connect-interface	{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49);overflow: hidden; padding: 30px 30px 20px; width: 240px;}
+#opeka-app .connect-interface	{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49);overflow: hidden; padding: 30px 30px 20px; position: relative; width: 240px;}
 
 #opeka-app .connect-interface .form-item 	{display: inline-block; font-weight: normal; margin-bottom: 0; text-align: right; width: 60px;}
 #opeka-app .connect-interface .form-text 	{border-radius: 2px; float: right; margin-top: 6px; padding: 5px; width: 162px;}
@@ -110,7 +112,7 @@ html body
 
 .message-form .form-text-container 	{border: 1px solid rgb(205,205,205); border-radius: 4px; height: 61px; padding: 5px 0 5px 5px;}
 
-.message-form .form-text 	 		{border: 0 solid transparent; height: 60px; resize: none;}
+.message-form .form-text 	 		{border: 0 solid transparent; height: 60px; resize: none; width: 75%;}
 .message-form .form-text:focus 		{outline: 0 solid transparent;}
 
 .message-form .form-submit			{position: absolute; right: 11px; top: 16px;}
@@ -161,3 +163,9 @@ html body
 .room-enter			{background: rgb(157,206,116); border: 1px solid rgb(107,156,66); color: rgb(255,255,255); display: inline-block; float: right; font-weight: bold; margin: 0 0 0 5px; padding: 12px 11px; text-transform: capitalize;}
 
 .room-enter:hover	{background: rgb(37,222,23); text-decoration: none;}
+
+/*FEEDBACK IFRAME*/
+
+#opeka-app iframe	{background: rgb(255,255,255); min-height: 2670px; padding: 20px;}
+
+/*---------------*/

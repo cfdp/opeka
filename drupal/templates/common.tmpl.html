@@ -16,7 +16,7 @@
     <label class="form-item">
       <%= labels.nick %>
     </label>
-    <input autofocus="autofocus" class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
+    <input class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
 
     <% if (!name) { %>
 
@@ -38,10 +38,14 @@
     <% } %>
 
     <input class="connect form-submit btn" type="submit" value="<%= labels.action %>" />
+    <span class="cyberhus-logo"></span>
   </form>
 </script>
 
 <script id="opeka_room_list_tmpl" type="application/template">
+  <% if (createRoom) { %>
+    <button class="create-room btn"><%= labels.createRoom %></button>
+  <% } %>
   <ul class="room-list">
   <% if (labels.placeholder) { %>
     <li class="placeholder"><%= labels.placeholder %></li>
@@ -53,23 +57,11 @@
           <span class="room-status"></span>
           <span class="room-size">~/<%- room.get('maxSize') %></span>
         </div>
-        <p class="room-description"><%- room.get('name') %></p><a href="#rooms/<%= room.id %>" class="room-enter">enter</a>
+        <p class="room-description"><%- room.get('name') %></p><a href="#rooms/<%= room.id %>" class="room-enter"><%= labels.enterRoom %></a>
       </li>
     <% } %>
   <% }); %>
-    <!--style for closed room
-    <li class="room closed">
-      <div class="room-details">
-        <span class="room-status">Lukket</span>
-        <span class="room-size">5/5</span>
-      </div>
-      <p class="room-description">What a nice day outside</p><a href="#rooms/4325hjg234lkjh234523j4h52k34jh52k" class="room-enter">enter</a>
-    </li>-->
   </ul>
-
-  <% if (createRoom) { %>
-  <button class="create-room"><%= labels.createRoom %></button>
-  <% } %>
 </script>
 
 <script id="opeka_chat_tmpl" type="application/template">
@@ -104,7 +96,7 @@
   <form action="#" class="message-form">
     <!--<input autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" size="50" type="text" />-->
     <div class="form-text-container">
-      <textarea autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" cols=37 rows=3></textarea>
+      <textarea autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" ></textarea>
     </div>
       <input class="form-submit send" type="submit" value="<%= labels.messageButton %>" />
   </form>
@@ -124,10 +116,13 @@
 </script>
 
 <script id="opeka_goto_feedback_tmpl" type="application/template">
-<% if(admin) { %>
-  <p>Thank you!</p>
-<% }else{ %>
-  <h3><%= labels.feedbackInvitation %></h3>
-  <iframe src="http://cyberhus.dk/din-mening-gruppechat" frameborder="0" ></iframe>
-<% } %>
+  <% if(admin) { %>
+    <p>Thank you!</p>
+  <% }else{ %>
+    
+    <a href="/?q=feedback">feedback</a>
+
+    <iframe height="2800" frameborder="0" width="618" onLoad="window.scrollTo(0,0);" src="https://docs.google.com/a/cyberhus.dk/spreadsheet/embeddedform?formkey=dFBPMklBOU5RZEFuVktUVTlRNmNtYnc6MQ" marginwidth="0" marginheight="0">Indlæser ...</iframe>
+  <% } %>
+
 </script>

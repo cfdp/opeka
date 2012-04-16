@@ -691,7 +691,8 @@
         admin: _.isFunction(now.receiveUserList),
         labels: {
           createRoom: Drupal.t('Create room'),
-          placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : ''
+          placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : '',
+          enterRoom: Drupal.t('Enter')
         },
         rooms: Opeka.roomList,
       }));

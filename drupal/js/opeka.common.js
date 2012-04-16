@@ -70,11 +70,11 @@ var Opeka = { status: {}},
     //@daniel
     //The feedback page
     feedbackPage: function () {
-      if (this.checkSignIn()) {
+      //if (this.checkSignIn()) {
         var view = new Opeka.UserFeedback({});
 
         Opeka.appViewInstance.replaceContent(view.render().el);
-      }
+      //}
     },
 
     // The actual chatroom page.
