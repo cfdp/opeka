@@ -17,7 +17,7 @@
       <%= labels.nick %>
     </label>
     <input class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
-
+    <span class="label-helper">e.g. <%= labels.placeholder %></span>
     <% if (!name) { %>
 
     <label class="form-item">
@@ -73,7 +73,7 @@
       <li class="whisper-message" data-message-id="<%= message.messageId %>">
         <span class="sender-name"><%- message.name %> - [WHISPER]:</span>
         <span class="message"><%- message.message %></span>
-        <span class="timestamp"><%= formatTimestamp(message.date) %></span>
+        <span class="timestamp"></span>
       </li>
     <% } else { %>
       <li class="chat-message <% if(message.sender.isCouncellor) { %>counselor<% }else{%>user<% } %>" data-message-id="<%= message.messageId %>">
@@ -119,9 +119,6 @@
   <% if(admin) { %>
     <p>Thank you!</p>
   <% }else{ %>
-    
-    <a href="/?q=feedback">feedback</a>
-
     <iframe height="2800" frameborder="0" width="618" onLoad="window.scrollTo(0,0);" src="https://docs.google.com/a/cyberhus.dk/spreadsheet/embeddedform?formkey=dFBPMklBOU5RZEFuVktUVTlRNmNtYnc6MQ" marginwidth="0" marginheight="0">Indlæser ...</iframe>
   <% } %>
 

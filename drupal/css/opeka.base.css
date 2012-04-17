@@ -1,6 +1,6 @@
 /*STRIPPER*/
 #branding	{display: none;}
-#opeka-app 	{margin: -25px 0 -40px; position: relative;}
+#opeka-app 	{margin: -25px 0 -40px;}
 
 #opeka-app .connect-interface .cyberhus-logo	{background: #E5FFC8 url('../img/cyberhuslogo_hus_46.png') no-repeat; bottom: 29px; display: inline-block; height: 46px; left: 30px; position: absolute; width: 46px; opacity: 0.6;}
 /*--------*/
@@ -34,7 +34,7 @@ html body
 
 #opeka-app .content 	{width: 55%; min-width: 320px;}
 
-#opeka-app .sidebar 	{min-width: 260px; width: 35%;}
+#opeka-app .sidebar 	{min-width: 260px; width: 37%;}
 
 /*------*/
 
@@ -48,9 +48,14 @@ html body
 
 #opeka-app .connect-interface	{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49);overflow: hidden; padding: 30px 30px 20px; position: relative; width: 240px;}
 
-#opeka-app .connect-interface .form-item 	{display: inline-block; font-weight: normal; margin-bottom: 0; text-align: right; width: 60px;}
-#opeka-app .connect-interface .form-text 	{border-radius: 2px; float: right; margin-top: 6px; padding: 5px; width: 162px;}
-#opeka-app .connect-interface .form-select	{border-radius: 2px; float: right; margin-top: 4px; padding: 5px; width: 174px; }
+#opeka-app .connect-interface .form-item 	{display: inline-block; font-weight: normal; margin-bottom: 0; padding: 13px 0; text-align: right; width: 70px;}
+
+#opeka-app .connect-interface .form-text 	{border-radius: 2px; float: right; margin-top: 10px; padding: 5px; width: 152px;}
+
+#opeka-app .connect-interface .label-helper {color: rgb(152,152,152); display: inline-block; float: right; font-size: 10px; font-style: italic; margin: -5px 5px 0; text-align: right; width: 240px;}
+
+#opeka-app .connect-interface .form-select	{border-radius: 2px; float: right; margin-top: 10px; padding: 5px; width: 164px; }
+
 #opeka-app .connect-interface .form-submit	{font-size: 1em; float: right; margin: 25px 0 10px 0;}
 
 
@@ -154,13 +159,13 @@ html body
 .room-details		{background: rgb(37,222,23); border: 1px solid rgb(7,192,3); font-size: 12px; padding: 2px; width: 50px;}
 
 .room-status,
-.room-size			{color: rgb(255,255,255); display: inline-block; font-weight: bold; text-align: center; text-transform: uppercase; width: 50px;}
+.room-size			{color: rgb(255,255,255); display: inline-block; font-size: 14px; font-weight: bold; padding: 10px 0; text-align: center; text-transform: uppercase; width: 50px;}
 
-.room-status		{border-bottom: 2px solid white; height: 16px;}
+.room-status		{border-bottom: 2px solid white; display: none; height: 16px;}
 
 .room-description 	{background: rgb(255,255,255); color: #000; display: inline-block; margin: 0 0 0 5px; padding: 12px 5px;}
 
-.room-enter			{background: rgb(157,206,116); border: 1px solid rgb(107,156,66); color: rgb(255,255,255); display: inline-block; float: right; font-weight: bold; margin: 0 0 0 5px; padding: 12px 11px; text-transform: capitalize;}
+.room-enter			{background: rgb(157,206,116); border: 1px solid rgb(107,156,66); color: rgb(255,255,255); display: inline-block; float: right; font-weight: bold; margin: 0 0 0 5px; padding: 12px 11px;}
 
 .room-enter:hover	{background: rgb(37,222,23); text-decoration: none;}
 

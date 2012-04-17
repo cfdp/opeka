@@ -851,7 +851,11 @@
       var name = '';
 
       if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.name) {
-        name = Drupal.settings.opeka.user.name;
+        
+        //@daniel
+        //Replace the Drupal username with rådgiver(counselor), not using the actual user name
+        //name = Drupal.settings.opeka.user.name;
+        name = 'Rådgiver';
       }
 
       var form = JST.opeka_connect_form_tmpl({

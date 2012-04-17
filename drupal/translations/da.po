@@ -314,8 +314,8 @@ msgid "Whisper @name"
 msgstr "Hvisk til @name"
 
 #: js/opeka.views.js:0
-msgid "Ready for chat…"
-msgstr "Klar til at chatte..."
+msgid "Ready for chat"
+msgstr "Klar til at chatte"
 
 #: js/opeka.views.js:0
 msgid "Age"
@@ -344,4 +344,8 @@ msgstr "Anonym"
 #: js/opeka.views.js:0
 msgid "Starting chat…"
 msgstr "Chatten starter op..."
+
+#: js/opeka.views.js:0
+msgid "Enter"
+msgstr "Indgang"
 
