@@ -866,7 +866,8 @@
           female: Drupal.t('Female'),
           male: Drupal.t('Male'),
           nick: Drupal.t('Nickname'),
-          placeholder: Drupal.t('Anonymous'),
+          nick_tooltip: Drupal.t('Det er vigtigt at du skriver et navn i feltet for at I kan kende forskel på hinanden når I chatter. Hvis flere logger ind som "Anonym" vil man ikke kunne kende forskel.'),
+          placeholder: Drupal.t('Type the name you want to have'),
         },
         name: name
       });

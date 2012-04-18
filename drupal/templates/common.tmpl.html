@@ -17,7 +17,8 @@
       <%= labels.nick %>
     </label>
     <input class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
-    <span class="label-helper">e.g. <%= labels.placeholder %></span>
+    <span class="label-helper">?</span>
+    <span class="label-tooltip"><%= labels.nick_tooltip %></span>
     <% if (!name) { %>
 
     <label class="form-item">

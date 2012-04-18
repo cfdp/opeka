@@ -347,5 +347,13 @@ msgstr "Chatten starter op..."
 
 #: js/opeka.views.js:0
 msgid "Enter"
-msgstr "Indgang"
+msgstr "Log på"
+
+#: js/opeka.views.js:0
+msgid "Type the name you want to have"
+msgstr "Det navn du vil kaldes"
+
+#: js/opeka.views.js:0
+msgid "It is important that you write a name in the box so you can distinguish each other when chatting. If there are more "Anonymous" users, you will not be able to know the difference."
+msgstr "Det er vigtigt at du skriver et navn i feltet for at I kan kende forskel på hinanden når I chatter. Hvis flere logger ind som "Anonym" vil man ikke kunne kende forskel."
 

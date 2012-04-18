@@ -9,23 +9,8 @@
 #opeka-app	{padding: 60px 10px; position: relative;}
 
 #opeka-app,
-html body
-{
-	/*background-image: linear-gradient(bottom, rgb(157,206,116) 25%, rgb(184,220,131) 50%);
-	background-image: -o-linear-gradient(bottom, rgb(157,206,116) 25%, rgb(184,220,131) 50%);
-	background-image: -moz-linear-gradient(bottom, rgb(157,206,116) 25%, rgb(184,220,131) 50%);
-	background-image: -webkit-linear-gradient(bottom, rgb(157,206,116) 25%, rgb(184,220,131) 50%);
-	background-image: -ms-linear-gradient(bottom, rgb(157,206,116) 25%, rgb(184,220,131) 50%);
+html body	{background: rgb(157,206,116);}
 
-	background-image: -webkit-gradient(
-		linear,
-		left bottom,
-		left top,
-		color-stop(0.25, rgb(157,206,116)),
-		color-stop(0.5, rgb(184,220,131))
-	);*/
-	background: rgb(157,206,116);
-}
 #opeka-app .header,
 #opeka-app .footer 		{clear: both;}
 
@@ -46,17 +31,21 @@ html body
 
 /*Client Login Form*/
 
-#opeka-app .connect-interface	{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49);overflow: hidden; padding: 30px 30px 20px; position: relative; width: 240px;}
+#opeka-app .connect-interface	{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49); padding: 30px 30px 20px; position: relative; width: 240px;}
 
 #opeka-app .connect-interface .form-item 	{display: inline-block; font-weight: normal; margin-bottom: 0; padding: 13px 0; text-align: right; width: 70px;}
 
-#opeka-app .connect-interface .form-text 	{border-radius: 2px; float: right; margin-top: 10px; padding: 5px; width: 152px;}
+#opeka-app .connect-interface .form-text 	{border-radius: 2px; display: block; float: right; margin-top: 10px; padding: 5px; width: 152px;}
 
-#opeka-app .connect-interface .label-helper {color: rgb(152,152,152); display: inline-block; float: right; font-size: 10px; font-style: italic; margin: -5px 5px 0; text-align: right; width: 240px;}
+#opeka-app .connect-interface .label-helper {background: rgb(255,255,255); border: 1px solid rgb(129, 155, 49); border-radius: 2px; display: none; font-weight: bold; height: 15px; padding-bottom: 2px; position: absolute; right: 8px; text-align: center; top: 44px; width: 16px;}
+
+#opeka-app .connect-interface .label-tooltip {background: rgb(255,255,255); border: 1px solid rgb(129, 155, 49); display: none; font-size: 10px; line-height: 1.2em; padding: 5px; position: absolute; right: -190px; top: 18px; width: 202px;}
+
+#opeka-app .connect-interface:hover .label-tooltip {display: inline-block;}
 
 #opeka-app .connect-interface .form-select	{border-radius: 2px; float: right; margin-top: 10px; padding: 5px; width: 164px; }
 
-#opeka-app .connect-interface .form-submit	{font-size: 1em; float: right; margin: 25px 0 10px 0;}
+#opeka-app .connect-interface .form-submit	{font-size: 1em; margin: 25px 0 10px 72px;}
 
 
 /*-----------------*/
