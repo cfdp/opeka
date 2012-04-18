@@ -18,7 +18,9 @@
     </label>
     <input class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
     <span class="label-helper">?</span>
+    <% if (name != 'Rådgiver') { %>
     <span class="label-tooltip"><%= labels.nick_tooltip %></span>
+    <% } %>
     <% if (!name) { %>
 
     <label class="form-item">
