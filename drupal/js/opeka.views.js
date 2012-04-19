@@ -711,33 +711,20 @@
   //@daniel
   //Page to place the link for user feedback  
   Opeka.UserFeedback = Backbone.View.extend({
-    events: {
-      "click .goto-feedback": "gotoFeedback"
-    },
-
+    
     initialize: function (options) {
       _.bindAll(this);
 
       return this;
     },
     render: function () {
-      this.$el.html(JST.opeka_goto_feedback_tmpl({
+      this.$el.html(JST.opeka_user_feedback_tmpl({
         
         admin: _.isFunction(now.receiveUserList),
-        labels: {
-          giveFeedback: Drupal.t('Leave feedback'),
-          
-          feedbackInvitation: Drupal.t('Please fill in this form'),
-        },
-        
+                
       }));
       
       return this;
-    },
-    gotoFeedback: function () {
-      
-      console.log('feedback');
-      
     }
   })
 

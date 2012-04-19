@@ -44,13 +44,21 @@ function opeka_menu() {
   );
 
   $items['admin/config/services/opeka'] = array(
-    'title' => 'Opeka chat system',
+    'title' => 'Opeka - Chat system',
     'description' => 'Provides settings for the chat service.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('opeka_admin_settings_form'),
     'access arguments' => array('administer site configuration'),
     'file' => 'opeka.admin.inc',
   );
+
+  // $items['admin/config/services/opeka/schedule'] = array(
+  //   'title' => 'Schedule sessions and opening hours',
+  //   'description' => 'Here you can list the upcoming group chat sessions and the schedule',
+  //   'page callback' => 'drupal_get_form',
+  //   'page arguments' => array('opeka_admin_settings_form'),
+  //   'access arguments' => array('administer site configuration'),
+  // );
 
   return $items;
 }

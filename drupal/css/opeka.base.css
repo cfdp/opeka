@@ -51,7 +51,7 @@ html body	{background: rgb(157,206,116);}
 /*-----------------*/
 
 /*FOOTER*/
-#opeka-app .footer p 		{background: rgb(229, 255, 200); border: 1px solid rgb(129, 155, 49); display: inline-block; margin: 5px 0; padding: 5px 0; text-align: center; width: 300px;}
+#opeka-app .footer .online-status-view 		{background: rgb(229, 255, 200); border: 1px solid rgb(129, 155, 49); display: inline-block; margin: 5px 0; padding: 5px 0; text-align: center; width: 300px;}
 /**/
 /*MESSAGE-LIST*/
 
