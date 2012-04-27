@@ -74,3 +74,25 @@
 #opeka-app .create-room 		{margin-bottom: 20px;}
 
 /*---------*/
+
+/*ROOM ACTIONS TEST*/
+
+.remove-room 		{border: 1px solid rgb(89,89,89); border-radius: 4px; color: rgb(30,30,30); display: inline-block; font-size: 1.5em; font-weight: bold; padding: 4px 0; text-align: center; width: 24px;}
+
+.remove-room:hover 	{background: rgb(210,26,36); cursor: pointer;}
+
+.pause-btn-wr		{border: 1px solid rgb(89,89,89); border-radius: 4px; display: inline-block; padding: 6px 6px 0;}
+
+.pause-btn-wr:hover,
+.play-btn-wr:hover	{background: rgb(240,240,240); cursor: pointer;}
+
+.pause-btn 			{border-left: 4px solid rgb(89,89,89); border-right: 4px solid rgb(89,89,89); display: inline-block; height: 16px; width: 4px;}
+
+.pause-btn-wr:hover .pause-btn 		{border-color: rgb(30,30,30);}
+
+.play-btn-wr		{background: rgb(210,26,36); border: 1px solid rgb(30,30,30); border-radius: 4px; display: inline-block; padding: 6px 7px 0 9px;}
+.play-btn 			{border-left: 8px solid rgb(30,30,30); border-top: 8px solid transparent; border-bottom: 8px solid transparent; display: inline-block;}
+
+.play-btn-wr:hover .play-btn		{border-left-color: rgb(30,30,30);}
+
+/*------------------*/
