@@ -278,7 +278,8 @@
             pauseToggle: pauseLabel,
             placeholder: Drupal.t('No users'),
             unmuteUser: Drupal.t('Unmute'),
-            whisper: Drupal.t('Whisper')
+            whisper: Drupal.t('Whisper'),
+            registrationform: Drupal.t('Registration form')
           },
           room: this.model,
           users: this.model.get('userList')

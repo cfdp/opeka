@@ -54,7 +54,7 @@
 .opeka-chat-sidebar .unmute-user,
 .opeka-chat-sidebar .mute-user,
 .opeka-chat-sidebar .kick-user,
-.opeka-chat-sidebar .whisper				{background: rgb(255,255,255); border: 1px solid rgb(174, 174, 174); float: right; font-family: calibri, sans-serif; font-size: 0.8em; font-weight: bold; margin: 0 1px; padding: 3px 3px 1px 4px;}
+.opeka-chat-sidebar .whisper				{background: rgb(245,245,245); border: 1px solid rgb(174, 174, 174); float: right; font-family: calibri, sans-serif; font-size: 0.8em; font-weight: bold; margin: 0 1px; padding: 3px 3px 1px 4px;}
 
 .opeka-chat-sidebar .delete-room,
 .opeka-chat-sidebar .clear-messages,
@@ -96,3 +96,9 @@
 .play-btn-wr:hover .play-btn		{border-left-color: rgb(30,30,30);}
 
 /*------------------*/
+/*REGISTRATION FORM*/
+
+.registrationform		{background: rgb(245,245,245); border: 1px solid rgb(174,174,174); color: rgb(89,89,89); display: inline-block; font-size: 0.9em; font-weight: bold; padding: 0 3px;}
+.registrationform:hover	{background: rgb(33,177,251); border: 1px solid rgb(1,78,118);  color: rgb(255,255,255); text-decoration: none;}
+
+/*-----------------*/
