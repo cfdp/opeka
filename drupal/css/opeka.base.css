@@ -123,6 +123,14 @@ html body	{background: rgb(157,206,116);}
 .paused-nowriting					{background-color: rgb(175,175,175); border: 1px solid rgb(126,126,126); border-radius: 4px; padding: 10px;}
 
 .leave-room-form .form-submit 		{position: absolute; right: 10px; top: 10px;}
+
+#opeka-app .leave-queue-form 		{overflow: hidden;}
+
+#opeka-app .chat-view-form .paused-nowriting+p	{padding: 0 4px;}
+
+#opeka-app .leave-queue-form .form-submit 		{border-radius: 2px; cursor: pointer; float: right; text-shadow: none;}
+
+#opeka-app .leave-queue-form .form-submit:hover {background: rgb(210,26,36); border: 1px solid rgb(125,1,8); color: rgb(255,255,255);}
 /*-----------------*/
 
 /*.BTN*/

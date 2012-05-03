@@ -76,7 +76,7 @@
       <li class="whisper-message" data-message-id="<%= message.messageId %>">
         <span class="sender-name"><%- message.name %> - [WHISPER]:</span>
         <span class="message"><%- message.message %></span>
-        <span class="timestamp"></span>
+        <span class="timestamp"><%= formatTimestamp(message.date) %></span>
       </li>
     <% } else { %>
       <li class="chat-message <% if(message.sender.isCouncellor) { %>counselor<% }else{%>user<% } %>" data-message-id="<%= message.messageId %>">

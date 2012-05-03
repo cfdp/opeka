@@ -877,7 +877,8 @@
 
       //@daniel
       //add a random number to each anonymous user to help in distinguishing them
-      var x = Math.floor((Math.random()*Math.floor((Math.random()*50)+1)));
+      
+      var x = Math.floor((Math.random()*50)+1);
 
       user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous'+x);""
       user.age = this.$el.find('.age').val();
