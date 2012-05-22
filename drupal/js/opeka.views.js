@@ -34,7 +34,7 @@
     replaceContent: function (newContent) {
       this.$el.children('.content').html(newContent);
     }
-  });
+  });//END AppView
 
 
   // The actual chat window.
@@ -232,7 +232,7 @@
       }
 
     }
-  });
+  });// END ChatView
 
   // Sidebar for the chat with user lists and admin options.
   Opeka.ChatSidebarView = Backbone.View.extend({
@@ -395,7 +395,7 @@
       }
     }
 
-  });
+  });// END ChatSidebarView
 
   Opeka.DialogView = Backbone.View.extend({
     className: "dialog-view",
@@ -446,7 +446,7 @@
 
       return this;
     }
-  });
+  });// END DialogView
 
   // Message dialog that forces the user to reload the page to continue.
   Opeka.FatalErrorDialogView = Opeka.DialogView.extend({
@@ -470,7 +470,7 @@
 
       return this;
     }
-  });
+  });// END FatalErrorDialogView
 
   // Simple view displayed in the footer containing status for the chat.
   Opeka.OnlineStatusView = Backbone.View.extend({
@@ -501,7 +501,7 @@
 
       return this;
     }
-  });
+  });// END OnlineStatusView
 
   // Dialog to confirm the deletion of all messages.
   Opeka.RoomClearView = Opeka.DialogView.extend({
@@ -544,7 +544,7 @@
         event.preventDefault();
       }
     }
-  });
+  });// END RoomClearView
 
   // Dialog to edit/create rooms with.
   Opeka.RoomDeletionView = Opeka.DialogView.extend({
@@ -590,7 +590,7 @@
         event.preventDefault();
       }
     }
-  });
+  });// END RoomDeletionView
 
   // Dialog to edit/create rooms with.
   Opeka.RoomEditView = Opeka.DialogView.extend({
@@ -661,7 +661,7 @@
         event.preventDefault();
       }
     }
-  });
+  });// END RoomEditView
 
   // List of rooms the user can enter.
   Opeka.RoomListView = Backbone.View.extend({
@@ -707,7 +707,7 @@
 
       dialog.render();
     }
-  });
+  });// END RoomListView
 
   //@daniel
   //Page to place the link for user feedback  
@@ -727,7 +727,7 @@
       
       return this;
     }
-  })
+  });// END UserFeedback
 
   // Dialog for confirming that user should be kicked.
   Opeka.RoomKickUserView = Opeka.DialogView.extend({
@@ -773,7 +773,7 @@
       }
     }
 
-  });
+  });// END RoomKickUserView
 
   Opeka.RoomWhisperView = Opeka.DialogView.extend({
     initialize: function (options) {
@@ -820,7 +820,7 @@
       }
     }
 
-  });
+  });// END RoomWhisperView
 
   // Sign-in form to get the chat started.
   Opeka.SignInFormView = Backbone.View.extend({
@@ -894,6 +894,6 @@
       }
     }
 
-  });
+  });// END SignInFormView
 
 }(jQuery));

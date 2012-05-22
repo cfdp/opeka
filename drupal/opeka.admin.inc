@@ -52,7 +52,7 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#title' => t('Group chat schedule'),
     '#description' => t('The schedule for the upcoming group chat sessions'),
     '#required' => TRUE,
-    '#default_value' => variable_get('opeka_schedule', 'Test text'),
+    '#default_value' => variable_get('opeka_schedule', ''),
   );
 
   return system_settings_form($form);

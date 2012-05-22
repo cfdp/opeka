@@ -1,7 +1,8 @@
 /*STRIPPER*/
 #branding	{display: none;}
-#opeka-app 	{margin: -25px 0 -40px;}
-
+.page-opeka #page {background: rgb(157, 206, 116);}
+#help .region-help {background: rgb(157, 206, 116); height: 110px;}
+#opeka-app 	{margin: 0 0 -40px;}
 #opeka-app .connect-interface .cyberhus-logo	{background: #E5FFC8 url('../img/cyberhuslogo_hus_46.png') no-repeat; bottom: 29px; display: inline-block; height: 46px; left: 30px; position: absolute; width: 46px; opacity: 0.6;}
 /*--------*/
 
