@@ -15,7 +15,8 @@ var _ = require("underscore"),
     opeka = {
       rooms: require('./rooms'),
       user: require('./user')
-    };
+    },
+    fs = require('fs');
 
 
 function Server(config, logger) {
@@ -49,7 +50,14 @@ function Server(config, logger) {
    */
   self.createServer = function (config, callback) {
     if (config.get('https:enabled')) {
-      return require('https').createServer(config.get('https'), callback);
+      //@daniel
+
+      var options = {
+        key: fs.readFileSync(config.get('https:key')),
+        cert: fs.readFileSync(config.get('https:cert'))
+      };
+      //
+      return require('https').createServer(options, callback);
     }
     else {
       return require('http').createServer(callback);

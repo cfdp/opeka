@@ -2,3 +2,4 @@
 /nodejs/.monitor
 /nodejs/config.json
 /nodejs/node_modules
+/nodejs/certs
