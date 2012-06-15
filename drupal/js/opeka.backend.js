@@ -8,7 +8,7 @@
   "use strict";
 
   // Used to check if is admin.
-  now.isAdmind = function () {}
+  now.isAdmin = function () {}
 
 /*
 // Method used in order to print the final message when the chat room has been closed.
