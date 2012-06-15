@@ -192,7 +192,7 @@ function Server(config, logger) {
     }
     // Remove the user.
     self.removeUserFromRoom(room, clientId, function (users) {
-      opeka.user.sendUserList(room.counsellorGroup, room.id, users);
+      opeka.user.sendUserList(room.group, room.id, users);
     });
 
     self.updateUserStatus(self.everyone.now);
@@ -205,7 +205,7 @@ function Server(config, logger) {
     // Mute the user.
     room.users[clientId].muted = true;
     // Tell the councellors about the muted user.
-    opeka.user.sendUserList(room.counsellorGroup, room.id, room.users);
+    opeka.user.sendUserList(room.group, room.id, room.users);
     // Tell the user that he was muted.
     roomGroup.now.roomUserMuted(roomId, clientId, room.users[clientId], this.user.nickname);
   };
@@ -217,7 +217,7 @@ function Server(config, logger) {
     // Mute the user.
     room.users[clientId].muted = false;
     // Tell the councellors about the muted user.
-    opeka.user.sendUserList(room.counsellorGroup, room.id, room.users);
+    opeka.user.sendUserList(room.group, room.id, room.users);
     // Tell the user that he was muted.
     roomGroup.now.roomUserUnmuted(roomId, clientId, room.users[clientId], this.user.nickname);
   };
@@ -316,7 +316,7 @@ function Server(config, logger) {
       var oldRoom = opeka.rooms.list[client.user.activeRoomId];
 
       self.roomRemoveUser(oldRoom.client.user.clientId, function (users) {
-        opeka.user.sendUserList(oldRoom.counsellorGroup, oldRoom.id, users);
+        opeka.user.sendUserList(oldRoom.group, oldRoom.id, users);
       });
 
       if (quit) {
@@ -328,7 +328,7 @@ function Server(config, logger) {
     var addedUser;
     if (newRoom) {
       addedUser = newRoom.addUser(client.user, function(users) {
-        opeka.user.sendUserList(newRoom.counsellorGroup, newRoom.id, users);
+        opeka.user.sendUserList(newRoom.group, newRoom.id, users);
         opeka.user.sendActiveUser(client, newRoom.id, users[client.user.clientId]);
       });
     }
@@ -372,7 +372,7 @@ function Server(config, logger) {
       var room = opeka.rooms.list[roomId];
       // Remove the user.
       self.removeUserFromRoom(room, clientId, function (users) {
-        opeka.user.sendUserList(room.counsellorGroup, room.id, users);
+        opeka.user.sendUserList(room.group, room.id, users);
         self.updateUserStatus(self.everyone.now);
       });
     }
@@ -440,7 +440,7 @@ function Server(config, logger) {
 
         self.removeUserFromRoom(oldRoom, client.user.clientId, function(users) {
           // self.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.name);
-          opeka.user.sendUserList(oldRoom.counsellorGroup, oldRoom.id, users);
+          opeka.user.sendUserList(oldRoom.group, oldRoom.id, users);
         });
 
         client.user.activeRoomId = null;

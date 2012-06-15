@@ -68,7 +68,7 @@ var Opeka = { status: {}},
 
     // The actual chatroom page.
     room: function (roomId) {
-      var admin = _.isFunction(now.receiveUserList),
+      var admin = _.isFunction(now.isAdmin),
           room = Opeka.roomList.get(roomId), sidebar;
 
       if (this.checkSignIn()) {
@@ -82,7 +82,7 @@ var Opeka = { status: {}},
           model: room
         });
 
-        if (admin) {
+        if (Opeka) {
           sidebar = new Opeka.ChatSidebarView({
             admin: admin,
             model: room
@@ -96,13 +96,22 @@ var Opeka = { status: {}},
           }
           Opeka.appViewInstance.replaceContent(Opeka.chatView.render().el);
 
-          if (admin) {
+          if (sidebar) {
             Opeka.appViewInstance.$el.find('.sidebar').html(sidebar.render().el);
           }
         });
       }
     }
   });
+
+  // Recieve the user list from the server.
+  now.receiveUserList = function (roomId, userList) {
+    var room = Opeka.roomList.get(roomId);
+
+    if (room) {
+      room.set('userList', userList);
+    }
+  };
 
   now.updateQueueStatus = function (roomId) {
     if (Opeka.chatView && Opeka.chatView.model.id === roomId && Opeka.chatView.inQueue !== false) {

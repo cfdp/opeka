@@ -214,6 +214,7 @@
 
     initialize: function (options) {
       var self = this;
+      this.admin = options.admin;
       _.bindAll(this);
 
       this.model.on('change:userList', this.render, this);
@@ -231,6 +232,7 @@
 
       if (JST.opeka_chat_sidebar_tmpl) {
         this.$el.html(JST.opeka_chat_sidebar_tmpl({
+          admin: this.admin,
           clientId: now.core.clientId,
           labels: {
             clearMessages: Drupal.t("Clear messages"),
@@ -632,7 +634,7 @@
       }
       this.$el.html(JST.opeka_room_list_tmpl({
         createRoom:_.isFunction(now.createRoom),
-        admin: _.isFunction(now.receiveUserList),
+        admin: _.isFunction(now.isAdmin),
         labels: {
           createRoom: Drupal.t('Create room'),
           placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : ''

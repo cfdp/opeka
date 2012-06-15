@@ -8,3 +8,17 @@
   float: left;
 }
 
+.opeka-chat-sidebar {
+  background-color: #eee;
+  border: 1px solid #aaa;
+  padding: 1em;
+}
+
+#opeka-app .content {
+  width: 66%;
+}
+
+#opeka-app .sidebar {
+  width: 33%;
+}
+

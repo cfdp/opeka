@@ -1,5 +1,46 @@
 <div id="opeka-app"></div>
 
+<script id="opeka_chat_sidebar_tmpl" type="application/template">
+  <ul class="user-list">
+  <% if (!users) { %>
+    <li class="placeholder"><%= labels.placeholder %></li>
+  <% } %>
+  <% _.each(users, function (user) { %>
+    <li data-client-id="<%= user.clientId %>">
+      <span class="name"><%- user.name %></span>
+      <% if (user.age || user.gender) { %>
+        <span class="meta">
+          (
+          <span class="age"><%- user.age %></span>
+          /
+          <span class="gender"><%= labels.gender[user.gender] %></span>
+          )
+        </span>
+      <% } %>
+      <% if (user.clientId !== clientId && admin) { %>
+        <span class="actions">
+          <button class="whisper"><%= labels.whisper %></button>
+          <% if (user.muted) { %>
+            <button class="unmute-user"><%= labels.unmuteUser %></button>
+          <% }
+             else { %>
+            <button class="mute-user"><%= labels.muteUser %></button>
+          <% } %>
+          <button class="kick-user"><%= labels.kickUser %></button>
+        </span>
+      <% } %>
+    </li>
+  <% }); %>
+  </ul>
+
+  <% if (admin) { %>
+  <button class="pause-toggle"><%= labels.pauseToggle %></button>
+  <button class="clear-messages"><%= labels.clearMessages %></button>
+  <button class="delete-room"><%= labels.deleteRoom %></button>
+  <% } %>
+</script>
+
+
 <script id="opeka_app_tmpl" type="application/template">
   <div class="header"></div>
   <div class="content"><%= content %></div>
