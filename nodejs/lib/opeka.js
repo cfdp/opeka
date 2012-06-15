@@ -237,6 +237,7 @@ function Server(config, logger) {
 
   // Called by the Counsellors in order to create a new room.
   self.councellors.now.createRoom = function (attributes, callback) {
+    attributes.uid = this.user.account.uid;
     if (attributes.name.length > 0) {
       var room = new opeka.rooms.Room(attributes);
 

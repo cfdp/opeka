@@ -627,13 +627,14 @@
 
     render: function () {
       var roomList = Opeka.roomList,
-          hidePairRooms = false;
+          hidePairRooms = false,
+          html = '';
       // Hide rooms with only two slots.
       if (Opeka.features && Opeka.features.hidePairRoomsOnRoomList) {
         hidePairRooms = true;
       }
-      this.$el.html(JST.opeka_room_list_tmpl({
-        createRoom:_.isFunction(now.createRoom),
+
+      html = JST.opeka_room_list_tmpl({
         admin: _.isFunction(now.isAdmin),
         labels: {
           createRoom: Drupal.t('Create room'),
@@ -641,7 +642,28 @@
         },
         hidePairRooms: hidePairRooms,
         rooms: roomList
-      }));
+      });
+
+      if (hidePairRooms) {
+        html += JST.opeka_pair_room_list_tmpl({
+          admin: _.isFunction(now.isAdmin),
+          labels: {
+            placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : ''
+          },
+          hidePairRooms: hidePairRooms,
+          rooms: roomList
+        });
+      }
+
+      if (_.isFunction(now.isAdmin)) {
+        html += JST.opeka_room_list_create_room_tmpl({
+          labels: {
+            createRoom: Drupal.t('Create room')
+          }
+        });
+      }
+
+      this.$el.html(html);
 
       return this;
     },

@@ -97,6 +97,7 @@ var Room = function (options) {
     self.maxSize = parseInt(options.maxSize, 10);
     self.private = options.private;
     self.ipLocation = options.ipLocation;
+    self.uid = options.uid;
     // When a room is created, the creator will join setting the member count to init value to 1.
     self.memberCount = 1;
 
@@ -235,6 +236,7 @@ var Room = function (options) {
   self.clientData = function () {
     return {
       id: self.id,
+      uid: self.uid,
       name: self.name,
       maxSize: self.maxSize,
       memberCount: self.memberCount,
