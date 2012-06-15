@@ -98,7 +98,9 @@
         admin: this.admin,
         formatTimestamp: this.formatTimestamp,
         labels: {
-          deleteMessage: Drupal.t('Delete')
+          deleteMessage: Drupal.t('Delete'),
+          whispered: Drupal.t('WHISPERED'),
+          whisperedTo: Drupal.t('WHISPERED TO'),
         },
         messages: this.messages,
       }));

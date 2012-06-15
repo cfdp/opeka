@@ -226,11 +226,12 @@ function Server(config, logger) {
   self.councellors.now.whisper = function (clientId, messageText) {
     var whisperClientId = this.user.clientId,
         whisperName = this.user.nickname,
-        recieverName = self.everyone.users[clientId].user.nickname;
+        recieverName = self.everyone.users[clientId].user.nickname,
+        date = new Date();
     // Send to user being whispered.
-    self.everyone.users[clientId].now.roomRecieveWhisper(clientId, messageText, whisperName, true);
+    self.everyone.users[clientId].now.roomRecieveWhisper(clientId, messageText, whisperName, true, date);
     // Send to counselor who did the whispering.
-    this.now.roomRecieveWhisper(whisperClientId, messageText, recieverName, false);
+    this.now.roomRecieveWhisper(whisperClientId, messageText, recieverName, false, date);
   };
 
   // Called by the Counsellors in order to create a new room.

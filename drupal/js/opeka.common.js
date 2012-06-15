@@ -222,13 +222,17 @@ var Opeka = { status: {}},
   };
 
   // Receive the whisper form an user.
-  now.roomRecieveWhisper = function (clientId, messageText, nickname, receiver) {
+  now.roomRecieveWhisper = function (clientId, messageText, nickname, receiver, date) {
     if (now.core.clientId === clientId) {
       // A user receiving the whisper.
       var messageObj = {
+        receiver: receiver,
         message: messageText,
         whisper: true,
-        name: nickname
+        sender: {
+          name: nickname
+        },
+        date: date
       };
       Opeka.chatView.receiveMessage(messageObj);
     }
