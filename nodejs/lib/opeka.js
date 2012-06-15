@@ -517,6 +517,7 @@ function Server(config, logger) {
     if (room) {
       room.group.count(function (count) {
         self.everyone.now.updateRoomMemberCount(roomId, count);
+        opeka.rooms.list[roomId].memberCount = count;
       });
     }
   }
