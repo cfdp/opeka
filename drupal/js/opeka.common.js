@@ -216,6 +216,8 @@ var Opeka = { status: {}},
       }
 
       Opeka.roomList.remove(room);
+      // Remove the sidebar.
+      Opeka.appViewInstance.$el.find('.sidebar').html('');
     }
   };
 
