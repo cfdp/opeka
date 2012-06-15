@@ -159,7 +159,7 @@
     // Make the user leave the chat room.
     leaveRoom: function (event) {
       // Special case for owner leaving the room.
-      if (this.model.get('maxSize') == 2 && this.model.get('uid') == Drupal.settings.opeka.user.uid) {
+      if (this.model.get('maxSize') == 2 && (Drupal.settings.opeka.user && this.model.get('uid') == Drupal.settings.opeka.user.uid)) {
         var dialog = new Opeka.RoomLeaveOwnPairRoomDialogView({
           roomId: this.model.id
         });

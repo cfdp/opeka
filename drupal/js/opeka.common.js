@@ -90,9 +90,16 @@ var Opeka = { status: {}},
         }
 
         // Render the view when the server has confirmed our room change.
-        now.changeRoom(roomId, function (response) {
+        now.changeRoom(roomId, function (response, url) {
           if (response !== 'OK') {
-            Opeka.chatView.inQueue = response;
+            // response is false if no queue is used and room is full, redirect to url.
+            if (response === false) {
+              window.location = url;
+              return;
+            }
+            else {
+              Opeka.chatView.inQueue = response;
+            }
           }
           Opeka.appViewInstance.replaceContent(Opeka.chatView.render().el);
 

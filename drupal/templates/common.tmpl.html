@@ -99,7 +99,7 @@
 <script id="opeka_pair_room_list_tmpl" type="application/template">
   <ul class="room-list pair-room-list">
   <% rooms.each(function (room) { %>
-    <% if (!room.attributes.private && room.attributes.maxSize === 2 && Drupal.settings.opeka.user.uid == room.attributes.uid) { %>
+    <% if (!room.attributes.private && room.attributes.maxSize === 2 && (Drupal.settings.opeka.user && Drupal.settings.opeka.user.uid == room.attributes.uid)) { %>
       <li><a href="#rooms/<%= room.id %>"><%- room.get('name') %></a> (<%- room.get('memberCount') %> / <%- room.get('maxSize') %>)</li>
     <% } %>
   <% }); %>
@@ -150,7 +150,7 @@
   </form>
   <% } else if (activeUser.muted) { %>
   <p><%= labels.userMuted %></p>
-  <% } else { %>
+  <% } else if (inQueue === false) { %>
     <p><%= labels.roomPaused %></p>
   <% } %>
   <% if (inQueue !== false) { %>

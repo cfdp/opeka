@@ -305,7 +305,9 @@ function Server(config, logger) {
   self.signedIn.now.changeRoom = function (roomId, callback, quit) {
     var client = this,
         serv = self,
-        newRoom = opeka.rooms.list[roomId];
+        newRoom = opeka.rooms.list[roomId],
+        queueSystem = self.config.get('features').queueSystem,
+        queueFullUrl = self.config.get('features').queueFullUrl;
 
     // If the user was muted, unmute it.
     if (client.user.muted) {
@@ -342,12 +344,18 @@ function Server(config, logger) {
       newRoom.group.now.roomUserJoined(newRoom.id, client.user.nickname);
     }
     else {
-      client.user.activeRoomId = null;
-      client.user.activeQueueRoomId = roomId;
+      if (queueSystem) {
+        client.user.activeRoomId = null;
+        client.user.activeQueueRoomId = roomId;
+      }
+      else {
+        newRoom.queue.splice(addedUser, 1);
+        addedUser = false;
+      }
     }
 
     if (callback) {
-      callback(addedUser);
+      callback(addedUser, queueFullUrl);
     }
 
     self.updateUserStatus(self.everyone.now);
