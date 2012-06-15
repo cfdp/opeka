@@ -158,10 +158,19 @@
 
     // Make the user leave the chat room.
     leaveRoom: function (event) {
-      // Remove the user from the room.
-      now.removeUserFromRoom(this.model.id, now.core.clientId);
-      $(window).trigger('leaveRoom');
-      Opeka.router.navigate("rooms", {trigger: true});
+      // Special case for owner leaving the room.
+      if (this.model.get('maxSize') == 2 && this.model.get('uid') == Drupal.settings.opeka.user.uid) {
+        var dialog = new Opeka.RoomLeaveOwnPairRoomDialogView({
+          roomId: this.model.id
+        });
+        dialog.render();
+      }
+      else {
+        // Remove the user from the room.
+        now.removeUserFromRoom(this.model.id, now.core.clientId);
+        $(window).trigger('leaveRoom');
+        Opeka.router.navigate("rooms", {trigger: true});
+      }
 
       if (event) {
         event.preventDefault();
@@ -600,6 +609,57 @@
           Opeka.router.navigate("rooms/" + newRoom.id, {trigger: true});
         }
       });
+
+      if (event) {
+        event.preventDefault();
+      }
+    }
+  });
+
+  Opeka.RoomLeaveOwnPairRoomDialogView =  Opeka.DialogView.extend({
+    initialize: function (options) {
+      // Options passed to DialogView.
+      var options = {
+        roomId: options.roomId
+      };
+
+      _.bindAll(this);
+
+      // For when creating new room.
+      options.content = JST.opeka_room_own_pair_room_tmpl({
+        labels: {
+          explanation: Drupal.t('You are about to leave a pair room that you created - are you sure you want to do this?'),
+        }
+      });
+      options.dialogOptions = {
+        buttons: {},
+        title: Drupal.t('Comfirm: leave room'),
+        width: 400
+      };
+      options.dialogOptions.buttons[Drupal.t('Leave room')] = this.leaveRoom;
+      options.dialogOptions.buttons[Drupal.t('Cancel')] = this.cancel;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      return this;
+    },
+
+    cancel: function (event) {
+      this.remove();
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+
+    leaveRoom: function (event) {
+      // Remove the user from the room.
+      now.removeUserFromRoom(this.options.roomId, now.core.clientId);
+      $(window).trigger('leaveRoom');
+      Opeka.router.navigate("rooms", {trigger: true});
+      this.remove();
 
       if (event) {
         event.preventDefault();
