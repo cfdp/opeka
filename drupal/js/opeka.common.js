@@ -173,6 +173,14 @@ var Opeka = { status: {}},
     }
   };
 
+  // Set the member count for a room.
+  now.updateRoomMemberCount = function (roomId, count) {
+    var room = Opeka.roomList.get(roomId);
+    if (room) {
+      room.set('memberCount', count);
+    }
+  };
+
   // For when the server has an updated room list for us.
   now.receiveRoomList = function (rooms) {
     // This triggers a reset even on the RoomList instance, so any views

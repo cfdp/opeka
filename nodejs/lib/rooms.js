@@ -97,6 +97,8 @@ var Room = function (options) {
     self.maxSize = parseInt(options.maxSize, 10);
     self.private = options.private;
     self.ipLocation = options.ipLocation;
+    // When a room is created, the creator will join setting the member count to init value to 1.
+    self.memberCount = 1;
 
     // Create Now.js groups for connected users and councellors.
     self.group = nowjs.getGroup(self.id);
@@ -235,6 +237,7 @@ var Room = function (options) {
       id: self.id,
       name: self.name,
       maxSize: self.maxSize,
+      memberCount: self.memberCount,
       paused: this.paused || false,
       private: self.private
     };

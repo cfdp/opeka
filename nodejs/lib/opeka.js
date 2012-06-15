@@ -196,6 +196,7 @@ function Server(config, logger) {
     });
 
     self.updateUserStatus(self.everyone.now);
+    self.helperUpdateRoomCount(roomId);
   };
 
   /* Function used in order to mute a single user */
@@ -205,7 +206,7 @@ function Server(config, logger) {
     // Mute the user.
     room.users[clientId].muted = true;
     // Tell the councellors about the muted user.
-    opeka.user.sendUserList(room.group, room.id, room.users);
+    opeka.user.sendUserList(room.counsellorGroup, room.id, room.users);
     // Tell the user that he was muted.
     roomGroup.now.roomUserMuted(roomId, clientId, room.users[clientId], this.user.nickname);
   };
@@ -217,7 +218,7 @@ function Server(config, logger) {
     // Mute the user.
     room.users[clientId].muted = false;
     // Tell the councellors about the muted user.
-    opeka.user.sendUserList(room.group, room.id, room.users);
+    opeka.user.sendUserList(room.counsellorGroup, room.id, room.users);
     // Tell the user that he was muted.
     roomGroup.now.roomUserUnmuted(roomId, clientId, room.users[clientId], this.user.nickname);
   };
@@ -322,6 +323,7 @@ function Server(config, logger) {
       if (quit) {
         client.now.quitRoom(callback);
       }
+      self.helperUpdateRoomCount(oldRoom.id);
     }
 
     // Trying to add the user, if this returns false the room is full or does not exists
@@ -348,6 +350,7 @@ function Server(config, logger) {
     }
 
     self.updateUserStatus(self.everyone.now);
+    self.helperUpdateRoomCount(roomId);
   };
 
   // Get the number you have in the queue.
@@ -375,6 +378,7 @@ function Server(config, logger) {
         opeka.user.sendUserList(room.group, room.id, users);
         self.updateUserStatus(self.everyone.now);
       });
+      self.helperUpdateRoomCount(roomId);
     }
   };
 
@@ -498,6 +502,15 @@ function Server(config, logger) {
       }
     });
   };
+
+  self.helperUpdateRoomCount = function(roomId) {
+    var room = opeka.rooms.list[roomId];
+    if (room) {
+      room.group.count(function (count) {
+        self.everyone.now.updateRoomMemberCount(roomId, count);
+      });
+    }
+  }
 
   return self;
 }

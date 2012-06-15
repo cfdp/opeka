@@ -88,7 +88,7 @@
   <% } %>
   <% rooms.each(function (room) { %>
     <% if ((!room.attributes.private && (room.attributes.maxSize !== 2 || hidePairRooms == false)) || admin) { %>
-      <li><a href="#rooms/<%= room.id %>"><%- room.get('name') %></a></li>
+      <li><a href="#rooms/<%= room.id %>"><%- room.get('name') %></a> (<%- room.get('memberCount') %> / <%- room.get('maxSize') %>)</li>
     <% } %>
   <% }); %>
   </ul>
