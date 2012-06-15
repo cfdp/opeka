@@ -90,6 +90,8 @@
     <input autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" size="50" type="text" />
     <input class="form-submit send" type="submit" value="<%= labels.messageButton %>" />
   </form>
+  <% } else if (activeUser.muted) { %>
+  <p><%= labels.userMuted %></p>
   <% } else { %>
     <p><%= labels.roomPaused %></p>
   <% } %>
