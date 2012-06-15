@@ -83,25 +83,23 @@
 
 <script id="opeka_room_list_tmpl" type="application/template">
   <ul class="room-list">
-  <% if (labels.placeholder) { %>
-    <li class="placeholder"><%= labels.placeholder %></li>
-  <% } %>
   <% rooms.each(function (room) { %>
     <% if (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms == false))) { %>
+      <% labels.placeholder = ''; %>
       <li><a href="#rooms/<%= room.id %>"><%- room.get('name') %></a> (<%- room.get('memberCount') %> / <%- room.get('maxSize') %>)</li>
     <% } %>
   <% }); %>
+  <% if (labels.placeholder) { %>
+    <li class="placeholder"><%= labels.placeholder %></li>
+  <% } %>
   </ul>
 
 </script>
 
 <script id="opeka_pair_room_list_tmpl" type="application/template">
   <ul class="room-list pair-room-list">
-  <% if (labels.placeholder) { %>
-    <li class="placeholder"><%= labels.placeholder %></li>
-  <% } %>
   <% rooms.each(function (room) { %>
-    <% if (!room.attributes.private && room.attributes.maxSize === 2 && hidePairRooms == true && Drupal.settings.opeka.user.uid == room.attributes.uid) { %>
+    <% if (!room.attributes.private && room.attributes.maxSize === 2 && Drupal.settings.opeka.user.uid == room.attributes.uid) { %>
       <li><a href="#rooms/<%= room.id %>"><%- room.get('name') %></a> (<%- room.get('memberCount') %> / <%- room.get('maxSize') %>)</li>
     <% } %>
   <% }); %>

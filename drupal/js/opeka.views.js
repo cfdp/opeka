@@ -638,7 +638,7 @@
         admin: _.isFunction(now.isAdmin),
         labels: {
           createRoom: Drupal.t('Create room'),
-          placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : ''
+          placeholder: Drupal.t('No rooms created'),
         },
         hidePairRooms: hidePairRooms,
         rooms: roomList
@@ -647,10 +647,6 @@
       if (hidePairRooms) {
         html += JST.opeka_pair_room_list_tmpl({
           admin: _.isFunction(now.isAdmin),
-          labels: {
-            placeholder: (Opeka.roomList.size() < 1) ? Drupal.t('No rooms created') : ''
-          },
-          hidePairRooms: hidePairRooms,
           rooms: roomList
         });
       }
