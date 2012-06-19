@@ -9,6 +9,8 @@
   width: 25em;
 }*/
 
+#opeka-app .connect-interface .form-submit {font-size: 0.9em; width: 164px;}
+
 #opeka-app .chat-message-list .chat-message .actions .delete-message {background: url('../img/delete.png') 0 0 no-repeat; border-radius: 2px; border: 1px solid transparent; display: none; height: 19px; margin: 0; padding: 0; position: absolute; right: 55px; top: 0; width: 18px;}
 
 #opeka-app .chat-message-list .chat-message .actions .delete-message:hover	{background: url('../img/delete.png') 0 100% no-repeat; border: 1px solid rgb(125,1,8); cursor: pointer;}
@@ -71,7 +73,7 @@
 
 /*ROOM LIST*/
 
-#opeka-app .create-room 		{margin-bottom: 20px;}
+#opeka-app .create-room 		{float: right; margin-top: 20px;}
 
 /*---------*/
 

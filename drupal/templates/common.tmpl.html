@@ -13,45 +13,44 @@
 
 <script id="opeka_connect_form_tmpl" type="application/template">
   <form action="#" class="connect-interface">
-    <label class="form-item">
-      <%= labels.nick %>
-    </label>
-    <input class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
-    <span class="label-helper">?</span>
-    <% if (name != 'Rådgiver') { %>
-    <span class="label-tooltip"><%= labels.nick_tooltip %></span>
-    <% } %>
-    <% if (!name) { %>
+    <p class="welcome-message"><%= labels.welcome_message %></p>
+    <fieldset>
+      <label class="form-item nickname-label">
+        <%= labels.nick %>
+      </label>
+      <input class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
+      <% if (name != 'Rådgiver') { %>
+      <span class="label-tooltip"><%= labels.nick_tooltip %></span>
+      <% } %>
+      <% if (!name) { %>
 
-    <label class="form-item">
-      <%= labels.age %>
-    </label>
-    <input class="form-text age" type="text" maxlength="2" />
-    
-    <label class="form-item">
-      <%= labels.gender %>
-    </label>
-      <select class="form-select gender">
-      <option value="" selected="selected"></option>
-      <option value="m"><%= labels.male %></option>
-      <option value="f"><%= labels.female %></option>
-    </select>
-    
+      <label class="form-item age-label">
+        <%= labels.age %>
+      </label>
+      <input class="form-text age" type="text" maxlength="2" />
+      
+      <label class="form-item gender-label">
+        <%= labels.gender %>
+      </label>
+        <select class="form-select gender">
+        <option value="" selected="selected"></option>
+        <option value="m"><%= labels.male %></option>
+        <option value="f"><%= labels.female %></option>
+      </select>
+      
 
-    <% } %>
+      <% } %>
 
-    <input class="connect form-submit btn" type="submit" value="<%= labels.action %>" />
-    <span class="cyberhus-logo"></span>
+      <input class="connect form-submit btn" type="submit" value="<%= labels.action %>" />
+      <span class="cyberhus-logo"></span>
+    </fieldset>
   </form>
 </script>
 
 <script id="opeka_room_list_tmpl" type="application/template">
-  <% if (createRoom) { %>
-    <button class="create-room btn"><%= labels.createRoom %></button>
-  <% } %>
   <ul class="room-list">
   <% if (labels.placeholder) { %>
-    <li class="placeholder"><%= labels.placeholder %></li>
+    <li class="placeholder norooms"><%= labels.placeholder %></li>
   <% } %>
   <% rooms.each(function (room) { %>
     <% if (!room.attributes.private || admin) { %>
@@ -65,6 +64,9 @@
     <% } %>
   <% }); %>
   </ul>
+  <% if (createRoom) { %>
+    <button class="create-room btn"><%= labels.createRoom %></button>
+  <% } %>
 </script>
 
 <script id="opeka_chat_tmpl" type="application/template">

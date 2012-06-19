@@ -314,6 +314,10 @@ msgid "Whisper @name"
 msgstr "Hvisk til @name"
 
 #: js/opeka.views.js:0
+msgid "Welcome to the chat"
+msgstr "Velkommen til chatten"
+
+#: js/opeka.views.js:0
 msgid "Ready for chat"
 msgstr "Klar til at chatte"
 

@@ -1,9 +1,10 @@
 /*STRIPPER*/
-#branding	{display: none;}
-.page-opeka #page {background: rgb(157, 206, 116);}
-#help .region-help {background: rgb(157, 206, 116); height: 110px;}
-#opeka-app 	{margin: 0 0 -40px;}
-#opeka-app .connect-interface .cyberhus-logo	{background: #E5FFC8 url('../img/cyberhuslogo_hus_46.png') no-repeat; bottom: 29px; display: inline-block; height: 46px; left: 30px; position: absolute; width: 46px; opacity: 0.6;}
+#branding,
+.page-opeka #page .tabs-secondary	{display: none;}
+/*.page-opeka #page {background: rgb(157, 206, 116);}*/
+/*#help .region-help {background: rgb(157, 206, 116); height: 110px;}*/
+/*#opeka-app 	{margin: 0 0 -40px;}*/
+#opeka-app .connect-interface .cyberhus-logo	{background: #E5FFC8 url('../img/cyberhuslogo_hus_46.png') no-repeat; bottom: 39px; display: inline-block; height: 46px; left: 30px; position: absolute; width: 46px; opacity: 0.6;}
 /*--------*/
 
 /*LAYOUT*/
@@ -18,7 +19,7 @@ html body	{background: rgb(157,206,116);}
 #opeka-app .content		{float: left;}
 #opeka-app .sidebar 	{float: right;}
 
-#opeka-app .content 	{width: 55%; min-width: 320px;}
+#opeka-app .content 	{min-height: 300px; width: 55%; min-width: 320px;}
 
 #opeka-app .sidebar 	{min-width: 260px; width: 37%;}
 
@@ -32,7 +33,11 @@ html body	{background: rgb(157,206,116);}
 
 /*Client Login Form*/
 
-#opeka-app .connect-interface	{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49); padding: 30px 30px 20px; position: relative; width: 240px;}
+#opeka-app .connect-interface	{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49); width: 300px;}
+
+#opeka-app .connect-interface .welcome-message{background: rgb(157,206,116); border-style: solid; border-color: rgb(129,155,49); border-width: 1px 0;  color: rgb(255,255,255); font-size: 1.3em; font-weight: bold; margin: 15px 0 0; padding: 5px 0; text-align: center;}
+
+#opeka-app .connect-interface fieldset		{border:0px solid transparent; margin: 0; padding: 15px 30px 15px; position: relative; width: 240px;}
 
 #opeka-app .connect-interface .form-item 	{display: inline-block; font-weight: normal; margin-bottom: 0; padding: 13px 0; text-align: right; width: 70px;}
 
@@ -40,13 +45,21 @@ html body	{background: rgb(157,206,116);}
 
 #opeka-app .connect-interface .label-helper {background: rgb(255,255,255); border: 1px solid rgb(129, 155, 49); border-radius: 2px; display: none; font-weight: bold; height: 15px; padding-bottom: 2px; position: absolute; right: 8px; text-align: center; top: 44px; width: 16px;}
 
+#opeka-app .connect-interface .form-item.age-label{float: left;}
+
+#opeka-app .connect-interface .form-text.age{float: left; height: 17px; margin-left: 6px; text-align: center; width: 40px;}
+
 #opeka-app .connect-interface .label-tooltip {background: rgb(255,255,255); border: 1px solid rgb(129, 155, 49); display: none; font-size: 10px; line-height: 1.2em; padding: 5px; position: absolute; right: -190px; top: 18px; width: 202px;}
 
 #opeka-app .connect-interface:hover .label-tooltip {display: inline-block;}
 
-#opeka-app .connect-interface .form-select	{border-radius: 2px; float: right; margin-top: 10px; padding: 5px; width: 164px; }
+#opeka-app .connect-interface .form-item.gender-label {width: 35px;}
 
-#opeka-app .connect-interface .form-submit	{font-size: 1em; margin: 25px 0 10px 72px;}
+#opeka-app .connect-interface .form-select	{border-radius: 2px; float: right; margin-top: 10px; padding: 5px; width: 164px;}
+
+#opeka-app .connect-interface .form-select.gender {height: 29px; width: 70px;}
+
+#opeka-app .connect-interface .form-submit	{font-size: 1em; float: right; margin: 25px 0; padding: 10px 13px; width: 164px;}
 
 
 /*-----------------*/
@@ -143,13 +156,15 @@ html body	{background: rgb(157,206,116);}
 #opeka-app .btn:active	{background: rgb(37,192,3);}
 
 /*---*/
-.room-list 		{list-style: none; margin: 0; padding: 0;}
+#opeka-app .room-list 		{list-style: none; margin: 0; padding: 0;}
 
-.room 			{background: rgb(255,255,255); border: 1px solid rgb(107,156,66); border-radius: 4px; margin-bottom: 10px; overflow: hidden; padding: 5px;}
+#opeka-app .room 			{background: rgb(255,255,255); border: 1px solid rgb(107,156,66); border-radius: 4px; margin: 0 0 10px 0; overflow: hidden; padding: 5px;}
 
-.room.closed .room-details 	{background-color: rgb(220,2,2); border-color: rgb(200,0,0);}
+#opeka-app .norooms			{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49); padding: 5px 0; text-align: center;}
 
-.room.closed .room-enter 	{display: none;}
+#opeka-app .room.closed .room-details 	{background-color: rgb(220,2,2); border-color: rgb(200,0,0);}
+
+#opeka-app .room.closed .room-enter 	{display: none;}
 
 .room-details,
 .room-description	{float: left;}
