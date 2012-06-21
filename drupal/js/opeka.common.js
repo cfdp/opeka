@@ -35,6 +35,7 @@ var Opeka = { status: {}},
   Opeka.MainRouter = Backbone.Router.extend({
     routes: {
       '': 'signIn',
+      'signIn/:nonce': 'signIn',
       'rooms/:roomId': 'room',
       'rooms': 'roomList'
     },
@@ -52,8 +53,19 @@ var Opeka = { status: {}},
     },
 
     // Chat sign in page.
-    signIn: function () {
-      var view = new Opeka.SignInFormView({});
+    signIn: function (nonce) {
+      var view = new Opeka.SignInFormView({
+        nonce: nonce
+      });
+
+      if (nonce) {
+        // Reserve our spot as soon as the Now server is able.
+        now.ready(function () {
+          now.reserveRoomSpot(nonce, function (roomId) {
+            view.roomId = roomId;
+          });
+        });
+      }
 
       Opeka.appViewInstance.replaceContent(view.render().el);
     },
@@ -361,8 +373,14 @@ var Opeka = { status: {}},
   // Sign in to the chat app.
   Opeka.signIn = function (user, callback) {
     now.signIn(user, function () {
+      var destination = 'rooms';
+
+      if (user.roomId) {
+        destination = destination + '/' + user.roomId;
+      }
+
       callback();
-      Opeka.router.navigate("rooms", {trigger: true});
+      Opeka.router.navigate(destination, {trigger: true});
     });
   };
 

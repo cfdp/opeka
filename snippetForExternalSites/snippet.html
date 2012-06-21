@@ -3,7 +3,7 @@
 <head>
 <title>External Customer Site</title>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
-<script src="http://127.0.0.1:3000/nowjs/now.js"></script>
+<script src="http://opeka.d7.dev.revealit.dk:3000/nowjs/now.js"></script>
 
 <script>
 
@@ -16,29 +16,41 @@
     chatStatus = attributes;
     
     $(window).trigger('opekaChatStatusUpdate', [attributes]);
-
   };
 
   // When the DOM is ready, set up the widget.
   $(function () {
-    var statusText = $('#status');
+    var statusText = $('#status'),
+        pairButton = $('#join-pair-chat');
 
     // Updates the actual status text.
     var updateDisplay = function (attributes) {
       // If there are any active one-to-one rooms.
-      if (chatStatus.rooms.pair.active > 0) {
+      if (chatStatus.rooms && chatStatus.rooms.pair.active > 0) {
         statusText.text("Chat active");
+
+        pairButton.show();
+
       // If not, check if there are any active group rooms.
-      } else if (chatStatus.rooms.pair.full > 0) {
+      } else if (chatStatus.rooms && chatStatus.rooms.pair.full > 0) {
         statusText.text("Chat busy");
+        pairButton.hide();
       } else {
         statusText.text("Chat not active");
+        pairButton.hide();
       };
     };
 
     // When the document is ready, update the status, and bind the event
     // to have it update automatically later.
     $(window).bind('opekaChatStatusUpdate', updateDisplay);
+
+    // When the user clicks the button, ask the chat server to join a room.
+    pairButton.click(function () {
+      now.getDirectSignInURL('pair', function (signInURL) {
+        window.location = signInURL;
+      });
+    });
     
     // Run updateDisplay once manually so we have the initial text
     // nailed down.
@@ -50,5 +62,6 @@
 </head>
 <body>
   <div id="status">Chat not active</div>
+  <input id="join-pair-chat" type="button" style="display:none" value="Join chat" />
 </body>
 </html>

@@ -9,6 +9,7 @@
 // Load all our dependencies.
 var _ = require("underscore"),
     async = require("async"),
+    crypto = require('crypto'),
     nowjs = require("now"),
     util = require("util"),
     uuid = require('node-uuid'),
@@ -34,6 +35,9 @@ function Server(config, logger) {
     self.server.listen(self.config.get('http:port'), function () {
       logger.info('Opeka chat server listening on port '  + self.config.get('http:port'));
     });
+
+    // Keep track of valid sign in nonces.
+    self.signInNonces = {};
 
     // Initialise Now.js on our server object.
     self.everyone = nowjs.initialize(self.server);
@@ -141,6 +145,38 @@ function Server(config, logger) {
         callback(account);
       }
     });
+  };
+
+  // Give the client a URL where he can sign in and go directly to a
+  // room of the requested type.
+  self.everyone.now.getDirectSignInURL = function (roomType, callback) {
+    var rightNow = new Date(),
+        nonce = crypto.createHash('sha256').update(this.user.clientId + rightNow.getTime()).digest('hex'),
+        signInURL = self.config.get('chatPage');
+
+    self.signInNonces[nonce] = {
+      date: rightNow,
+      roomType: roomType
+    };
+
+    callback(signInURL + '#signIn/' + nonce);
+  };
+
+  // Once the user has a direct sign in nonce, he has the ability to
+  // reserve his spot in a room.
+  self.everyone.now.reserveRoomSpot = function (nonce, callback) {
+    var room, roomType;
+
+    if (self.signInNonces[nonce]) {
+      roomType = self.signInNonces[nonce].roomType;
+
+      room = opeka.rooms.getOpenRoom(roomType);
+
+      if (room) {
+        room.reserveSpot(this.user.clientId);
+        callback(room.id);
+      }
+    }
   };
 
   self.everyone.now.getFeatures = function (callback) {

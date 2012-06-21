@@ -30,6 +30,17 @@ var _ = require('underscore'),
       }
     };
 
+// Get an open room of a specific type - pair or group.
+var getOpenRoom = function (roomType) {
+  return _.find(roomList, function (room) {
+    var userCount = Object.keys(room.users).length;
+
+    if (roomType === 'pair') {
+      return (room.maxSize === 2 && userCount < 2);
+    }
+  });
+};
+
 // Sums together a room list into empty, active and full rooms.
 var sumRoomList = function (rooms) {
   var empty = 0,
@@ -231,6 +242,10 @@ var Room = function (options) {
     return userIndex;
   };
 
+  // Reserve spot in room.
+  self.reserveSpot = function (clientId) {
+  };
+
   // Return the current group metadata in an object that is safe to send
   // to the client side.
   self.clientData = function () {
@@ -305,6 +320,7 @@ module.exports = {
   Room: Room,
   clientData: clientData,
   counts: roomCounts,
+  getOpenRoom: getOpenRoom,
   list: roomList,
   remove: remove
 };

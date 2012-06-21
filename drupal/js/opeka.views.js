@@ -831,6 +831,8 @@
     },
 
     initialize: function (options) {
+      this.nonce = options.nonce;
+
       _.bindAll(this);
 
       return this;
@@ -874,6 +876,7 @@
       user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous');
       user.age = this.$el.find('.age').val();
       user.gender = this.$el.find('.gender').val();
+      user.roomId = this.roomId;
 
       Opeka.signIn(user, function () {
         view.$el.fadeOut();
@@ -883,7 +886,6 @@
         event.preventDefault();
       }
     }
-
   });
 
 }(jQuery));

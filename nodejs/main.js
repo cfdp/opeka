@@ -17,6 +17,7 @@ nconf.defaults({
     "port": 3306,
   },
   "http": {
+    "hostname": "localhost",
     "port": 3000
   },
   "https": {
