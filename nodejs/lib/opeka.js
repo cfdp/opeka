@@ -77,9 +77,27 @@ function Server(config, logger) {
       },
       rooms: function (callback) {
         callback(null, opeka.rooms.counts);
+      },
+      roomsList: function (callback) {
+        callback(null, opeka.rooms);
       }
     }, function (err, results) {
       if (results && _.isFunction(context.updateStatus)) {
+        var features = config.get('features'),
+            roomList = [];
+        _.each(results.roomsList.list, function (room) {
+          if (room.maxSize > 2 && !room.private) {
+            var roomData = {
+              maxSize: room.maxSize,
+              memberCount: room.memberCount,
+              name: room.name
+            };
+            roomList.push(roomData);
+          }
+        });
+        results.roomsList = roomList;
+        results.queueSystem = features.queueSystem;
+        results.chatPageURL = self.config.get('chatPage');
         context.updateStatus(results);
       }
     });
