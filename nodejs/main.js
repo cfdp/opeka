@@ -25,6 +25,10 @@ nconf.defaults({
   },
   "logging": {
     "level": "debug"
+  },
+  "features": {
+    "hidePairRoomsOnRoomList": false,
+    "queueSystem" : true
   }
 });
 
