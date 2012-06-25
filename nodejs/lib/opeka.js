@@ -56,9 +56,8 @@ function Server(config, logger) {
     if (config.get('https:enabled')) {
       return require('https').createServer(config.get('https'), callback);
     }
-    else {
-      return require('http').createServer(callback);
-    }
+
+    return require('http').createServer(callback);
   };
 
   // Update the client side guest/councellor counts.
@@ -212,12 +211,12 @@ function Server(config, logger) {
       self.logger.error('User ' + this.user.clientId + ' tried to pause room ' + roomId + ' that was already paused.');
       callback("Error Pause: the room has already been paused.");
       return;
-    } else {
-      room.paused = true;
-      self.everyone.now.roomUpdated(roomId, { paused: true });
-      self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
-      callback();
     }
+
+    room.paused = true;
+    self.everyone.now.roomUpdated(roomId, { paused: true });
+    self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+    callback();
   };
 
   // Allow the councellors to unpause a room.
@@ -229,15 +228,15 @@ function Server(config, logger) {
       self.logger.error('User ' + this.user.clientId + ' tried to unpause room ' + roomId + ' that was not paused.');
       callback("Error Unpause: the room has not been paused.");
       return;
-    } else {
-      room.paused = false;
-      self.everyone.now.roomUpdated(roomId, { paused: false });
-      self.sendSystemMessage('[Pause]: Chat is available again.', room.group);
-      callback();
     }
+
+    room.paused = false;
+    self.everyone.now.roomUpdated(roomId, { paused: false });
+    self.sendSystemMessage('[Pause]: Chat is available again.', room.group);
+    callback();
   };
 
-  /* Function used by the counselors in order to kick an user out his room */
+  // Function used by the counselors to kick an user out of a room.
   self.councellors.now.kick = function (clientId, messageText, roomId) {
     // Get room.
     var room = opeka.rooms.list[roomId],
