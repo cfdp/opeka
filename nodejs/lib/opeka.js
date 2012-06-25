@@ -83,8 +83,8 @@ function Server(config, logger) {
       }
     }, function (err, results) {
       if (results && _.isFunction(context.updateStatus)) {
-        var features = config.get('features'),
-            roomList = [];
+        var roomList = [];
+
         _.each(results.roomsList.list, function (room) {
           if (room.maxSize > 2 && !room.private) {
             var roomData = {
@@ -95,8 +95,9 @@ function Server(config, logger) {
             roomList.push(roomData);
           }
         });
+
         results.roomsList = roomList;
-        results.queueSystem = features.queueSystem;
+        results.queueSystem = self.config.get('features:queueSystem');
         results.chatPageURL = self.config.get('chatPage');
         context.updateStatus(results);
       }
@@ -360,8 +361,8 @@ function Server(config, logger) {
     var client = this,
         serv = self,
         newRoom = opeka.rooms.list[roomId],
-        queueSystem = self.config.get('features').queueSystem,
-        queueFullUrl = self.config.get('features').queueFullUrl;
+        queueSystem = self.config.get('features:queueSystem'),
+        queueFullUrl = self.config.get('features:queueFullUrl');
 
     // If the user was muted, unmute it.
     if (client.user.muted) {
