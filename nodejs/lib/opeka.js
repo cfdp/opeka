@@ -14,6 +14,7 @@ var _ = require("underscore"),
     util = require("util"),
     uuid = require('node-uuid'),
     opeka = {
+      ban: require('./ban'),
       rooms: require('./rooms'),
       user: require('./user')
     };
@@ -479,6 +480,19 @@ function Server(config, logger) {
    * The client not counted as online until it calls clientReady.
    */
   self.everyone.on("connect", function () {
+    var socket = this.socket,
+        banInfo = opeka.ban.checkIP(socket.handshake.address.address, self.config.get('ban:salt'));
+
+    if (banInfo.isBanned) {
+      self.logger.warning('User ' + this.user.clientId + ' tried to connect with banned address ' + banInfo.digest);
+      this.now.isBanned = true;
+
+      // Close the socket after now.js has had its chance to synch.
+      setTimeout(function () {
+        socket.disconnect();
+      }, 500);
+    }
+
     self.updateUserStatus(this.now);
   });
 

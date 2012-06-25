@@ -59,4 +59,3 @@ module.exports.sendUserList = function (context, roomId, users) {
 module.exports.sendActiveUser = function (context, roomId, user) {
   context.now.receiveActiveUser(roomId, user);
 };
-

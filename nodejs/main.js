@@ -12,6 +12,9 @@ nconf.file({ file: 'config.json' });
 
 // Provide some default settings.
 nconf.defaults({
+  "ban": {
+    "salt": ""
+  },
   "database": {
     "host": "localhost",
     "port": 3306,
@@ -53,5 +56,7 @@ if (!client) {
   logger.error('FAIL: Could not connect to database. Exiting.');
 }
 
-server = new opeka.Server(nconf, logger);
+// Load bans from the database before starting the server.
+opeka.ban.loadAll();
 
+server = new opeka.Server(nconf, logger);

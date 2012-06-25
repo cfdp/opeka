@@ -350,6 +350,7 @@
 
   });
 
+  // Basic view for showing a jQuery UI dialog.
   Opeka.DialogView = Backbone.View.extend({
     className: "dialog-view",
 
@@ -398,6 +399,32 @@
       this.dialogElement.dialog(this.dialogOptions);
 
       return this;
+    }
+  });
+
+  // Message dialog lets the user know he's banned from the system.
+  Opeka.BannedDialogView = Opeka.DialogView.extend({
+    initialize: function (options) {
+      // Make sure options is an object.
+      options = options || {};
+
+      // Leave the page when the dialog is closed.
+      options.dialogOptions = {
+        close: function () {
+          window.location = '/';
+        }
+      };
+
+      // Provide a default title.
+      options.title = options.title || Drupal.t('You are banned.');
+
+      // Provide a default message.
+      options.message = options.message || Drupal.t('The IP address you are currently visiting the site from is banned from the chat system. You will not be able to participate in the chat.');
+
+      options.content = this.make('p', { 'class': "message" }, options.message);
+
+      // Call the parent initialize once we're done customising.
+      return Opeka.DialogView.prototype.initialize.call(this, options);
     }
   });
 

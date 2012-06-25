@@ -159,7 +159,8 @@ var Opeka = { status: {}},
     if (_.isFunction(Opeka.status.set)) {
       Opeka.status.set(attributes);
 
-      Opeka.statusViewInstance.render();
+      // Update the status view if present.
+      Opeka.statusViewInstance && Opeka.statusViewInstance.render();
     }
   };
 
@@ -414,18 +415,22 @@ var Opeka = { status: {}},
 
     $('#opeka-app').html(Opeka.appViewInstance.render().el);
 
-    // If the connection is dropped, advise the user that he has to
-    // reload the page.
+    // Handle disconnects.
     now.core.on('disconnect', function() {
+
+      // If the user is banned, tell him to go away.
+      if (now.isBanned) {
+        view = new Opeka.BannedDialogView().render();
+        return;
+      }
+
       // Wait five seconds before showing the dialog, in case the
       // disconnect was caused by the user reloading the page.
       window.setTimeout(function () {
         var view = new Opeka.FatalErrorDialogView({
           message: Drupal.t('Your connection to the chat server was lost. Please reconnect. Contact support if problem persists.'),
           title: Drupal.t('Disconnected')
-        });
-
-        view.render();
+        }).render();
       }, 5000);
     });
 
@@ -452,4 +457,3 @@ var Opeka = { status: {}},
     });
   });
 }(jQuery));
-
