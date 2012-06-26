@@ -1019,7 +1019,7 @@
               content: view.make('p', { 'class': "message" }, err)
             });
 
-            dialog.addButton('Ok', function () { dialog.remove(); } )
+            dialog.addButton('Ok', function () { dialog.remove(); } );
             dialog.render();
           }
         });
