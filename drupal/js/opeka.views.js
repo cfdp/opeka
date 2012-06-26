@@ -645,11 +645,6 @@
 
   Opeka.RoomLeaveOwnPairRoomDialogView =  Opeka.DialogView.extend({
     initialize: function (options) {
-      // Options passed to DialogView.
-      var options = {
-        roomId: options.roomId
-      };
-
       _.bindAll(this);
 
       // For when creating new room.
