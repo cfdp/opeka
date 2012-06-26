@@ -763,6 +763,8 @@
 
       options.content = JST.opeka_kick_user_tmpl({
         labels: {
+          banCode: Drupal.t('Ban code'),
+          banCodeDescription: Drupal.t('If a valid ban code is entered, user will be banned from the chat system.'),
           kickMessage: Drupal.t('Kick message')
         }
       });
@@ -787,15 +789,32 @@
     // Utility function for kicking the user.
     kickUser: function (event) {
       var form = $(this.dialogElement).find('form'),
-          message = form.find('input.kick-message').val();
+          banCode = $.trim(form.find('input.ban-code').val()),
+          message = $.trim(form.find('input.kick-message').val()),
+          view = this;
 
-      // Kick the user.
-      now.kick(this.clientId, message, this.model.id);
-      this.remove();
+      // If a ban code was provided, try banning the user.
+      if (banCode) {
+        now.banUser(this.clientId, banCode, function (err) {
+          if (err) {
+            var dialog = new Opeka.DialogView({
+              title: Drupal.t('Ban failed'),
+              content: view.make('p', { 'class': "message" }, err)
+            });
+
+            dialog.addButton('Ok', function () { dialog.remove(); } )
+            dialog.render();
+          }
+        });
+      }
+
       // Prevent event if needed.
       if (event) {
         event.preventDefault();
       }
+
+      // Remove the view when we're done.
+      this.remove();
     }
 
   });

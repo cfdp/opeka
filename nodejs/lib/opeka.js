@@ -236,6 +236,44 @@ function Server(config, logger) {
     callback();
   };
 
+  // Function used by the counselors to ban a user from the chat.
+  self.councellors.now.banUser = function (clientId, banCode, callback) {
+    if (opeka.ban.validCode(banCode)) {
+      nowjs.getClient(clientId, function () {
+        var socket = this.socket,
+            ip = socket.handshake.address.address;
+
+        if (!ip) { return; }
+
+        // Register the ban.
+        opeka.ban.create(ip, self.config.get('ban:salt'));
+
+        // Mark banned user's session as banned.
+        this.now.isBanned = true;
+
+        // Close the socket so the banned user is disconnected, after
+        // now.js has had its chance to synch.
+        setTimeout(function () {
+          socket.disconnect();
+        }, 500);
+
+        // Invalidate the ban code so it can't be used again.
+        opeka.ban.invalidateCode(banCode);
+
+        // Let the calling user know we've successfully banned someone.
+        callback();
+      });
+    }
+    else {
+      callback('Invalid ban code.');
+    }
+  };
+
+  // Function used by admins to get a ban code.
+  self.councellors.now.getBanCode = function (callback) {
+    callback(opeka.ban.getCode());
+  };
+
   // Function used by the counselors to kick an user out of a room.
   self.councellors.now.kick = function (clientId, messageText, roomId) {
     // Get room.
