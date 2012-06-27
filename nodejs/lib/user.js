@@ -23,7 +23,10 @@ module.exports.authenticate = function (clientUser, callback) {
         if (err) { callback(err); }
         drupal.user.access('administer opeka chat', account, function (err, isAdmin) {
           account.isAdmin = isAdmin;
-          callback(null, account);
+          drupal.user.access('generate opeka chat ban codes', account, function (err, canGenerateCanCode) {
+            account.canGenerateCanCode = canGenerateCanCode;
+            callback(null, account);
+          });
         });
       });
     });

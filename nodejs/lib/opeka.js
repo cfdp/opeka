@@ -45,8 +45,9 @@ function Server(config, logger) {
 
     // Create groups for councellors and guests.
     self.councellors = nowjs.getGroup('councellors');
-    self.guests = nowjs.getGroup("guests");
-    self.signedIn = nowjs.getGroup("signedIn");
+    self.guests = nowjs.getGroup('guests');
+    self.signedIn = nowjs.getGroup('signedIn');
+    self.banCodeGenerator = nowjs.getGroup('banCodeGenerator');
   };
 
   /**
@@ -126,6 +127,10 @@ function Server(config, logger) {
       // Add the user to the signedIn group.
       self.signedIn.addUser(client.user.clientId);
 
+      if (account.canGenerateCanCode) {
+        self.banCodeGenerator.addUser(client.user.clientId);
+        self.logger.info('User that can generate ban codes signed in.', client.user.clientId);
+      }
       if (account.isAdmin) {
         self.councellors.addUser(client.user.clientId);
 
@@ -270,7 +275,7 @@ function Server(config, logger) {
   };
 
   // Function used by admins to get a ban code.
-  self.councellors.now.getBanCode = function (callback) {
+  self.banCodeGenerator.now.getBanCode = function (callback) {
     callback(opeka.ban.getCode());
   };
 

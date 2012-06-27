@@ -350,6 +350,47 @@
 
   });
 
+  // Footer for the chat with generate ban code button.
+  Opeka.ChatFooterView = Backbone.View.extend({
+    className: 'opeka-chat-footer',
+
+    events: {
+      "click .generate-ban-code": "generateBanCode",
+    },
+
+    initialize: function (options) {
+      var self = this;
+      this.banCodeGenerator = options.banCodeGenerator;
+      _.bindAll(this);
+
+    },
+
+    render: function () {
+      if (JST.opeka_chat_footer_tmpl) {
+        this.$el.html(JST.opeka_chat_footer_tmpl({
+          banCodeGenerator: this.banCodeGenerator,
+          labels: {
+            banCode: Drupal.t('Generate new ban code')
+          }
+        }));
+      }
+
+      return this;
+    },
+
+    generateBanCode : function (event) {
+      now.getBanCode(function(banCode) {
+        var dialog = new Opeka.BanCodeDialogView({banCode: banCode});
+
+        dialog.render();
+      });
+
+      if (event) {
+        event.preventDefault();
+      }
+    }
+  });
+
   // Basic view for showing a jQuery UI dialog.
   Opeka.DialogView = Backbone.View.extend({
     className: "dialog-view",
@@ -399,6 +440,34 @@
       this.dialogElement.dialog(this.dialogOptions);
 
       return this;
+    }
+  });
+
+  Opeka.BanCodeDialogView =  Opeka.DialogView.extend({
+    initialize: function (options) {
+      _.bindAll(this);
+
+      options.dialogOptions = {
+        buttons: {},
+        title: Drupal.t('Ban code generated'),
+        width: 400,
+      };
+      // Add the actual ban code.
+      options.content = options.banCode;
+      options.dialogOptions.buttons[Drupal.t('Close')] = this.close;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      return this;
+    },
+
+    close: function (event) {
+      this.remove();
+
+      if (event) {
+        event.preventDefault();
+      }
     }
   });
 

@@ -374,7 +374,8 @@ var Opeka = { status: {}},
   // Sign in to the chat app.
   Opeka.signIn = function (user, callback) {
     now.signIn(user, function () {
-      var destination = 'rooms';
+      var destination = 'rooms',
+          footer;
 
       if (user.roomId) {
         destination = destination + '/' + user.roomId;
@@ -382,6 +383,11 @@ var Opeka = { status: {}},
 
       callback();
       Opeka.router.navigate(destination, {trigger: true});
+
+      footer = new Opeka.ChatFooterView({
+        banCodeGenerator: _.isFunction(now.getBanCode)
+      });
+      $('#opeka-app').find('.footer').append(footer.render().el);
     });
   };
 

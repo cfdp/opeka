@@ -40,6 +40,11 @@
   <% } %>
 </script>
 
+<script id="opeka_chat_footer_tmpl" type="application/template">
+  <% if (banCodeGenerator) { %>
+    <button class="generate-ban-code"><%- labels.banCode %></button>
+  <% } %>
+</script>
 
 <script id="opeka_app_tmpl" type="application/template">
   <div class="header"></div>
