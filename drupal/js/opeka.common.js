@@ -268,7 +268,11 @@ var Opeka = { status: {}},
 
   // Reaction for when joining the room.
   now.roomJoinFromQueue = function (roomId) {
-    if (Opeka.chatView && Opeka.chatView.model.id === roomId) {
+    var room = Opeka.roomList.get(roomId);
+    if (room && room.get('queueSystem') !== 'private') {
+      Opeka.router.navigate("rooms/" + roomId, {trigger: true});
+    }
+    else if (Opeka.chatView && Opeka.chatView.model.id === roomId) {
       Opeka.chatView.inQueue = false;
       Opeka.chatView.render();
     }

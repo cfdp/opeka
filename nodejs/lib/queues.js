@@ -62,6 +62,15 @@ var Queue = function (options) {
     return position;
   }
 
+  // Get the next user from the queue and return the cient id.
+  self.getUserFromQueue = function() {
+    var user = self.queue.shift();
+    if (user) {
+      return user.clientId;
+    }
+    return false;
+  }
+
   return self.construct();
 };
 

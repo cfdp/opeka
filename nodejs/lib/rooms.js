@@ -189,7 +189,7 @@ var Room = function (options) {
   // Remove user from the room.
   // If somebody is in queue return the user object of the first in queue for this chat room
   self.removeUser = function (clientId, callback) {
-    var queueUserID, removedUserNickname;
+    var queueUserID, removedUserNickname, queue;
 
     if (self.users[clientId]) {
       removedUserNickname = self.users[clientId].name;
@@ -201,14 +201,22 @@ var Room = function (options) {
       updateRoomCounts();
     }
 
-    // Iterate over the queue to find the first user that is not in a
-    // different room.
-    while (self.queue.length > 0 && !queueUserID) {
-      var user = self.queue.shift();
-      // The user has not to be in other rooms.
-      if (!user.activeRoomId) {
-        queueUserID = user.clientId;
+    // Check which queue to get the next user from.
+    if (self.queueSystem === 'private') {
+      // Iterate over the queue to find the first user that is not in a
+      // different room.
+      while (self.queue.length > 0) {
+        var user = self.queue.shift();
+        // The user has not to be in other rooms.
+        if (!user.activeRoomId) {
+          queueUserID = user.clientId;
+        }
       }
+    }
+    else {
+      // Get the next user from the global queue system.
+      queue = opeka.queues.list[self.queueSystem];
+      queueUserID = queue.getUserFromQueue();
     }
 
     if (callback) {

@@ -465,6 +465,15 @@ function Server(config, logger) {
         queueSystem = self.config.get('features:queueSystem'),
         queueFullUrl = self.config.get('features:queueFullUrl');
 
+    // Special case when joining from the global Queue.
+    // Use is already in the room, so fake an OK response.
+    if (client.user.activeRoomId === roomId) {
+      if (callback) {
+        callback('OK', false, false);
+      }
+      return ;
+    }
+
     // If the user was muted, unmute it.
     if (client.user.muted) {
       client.user.muted = false;
