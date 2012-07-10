@@ -391,6 +391,31 @@
     }
   });
 
+  Opeka.QueueView = Backbone.View.extend({
+    initialize: function (options) {
+      _.bindAll(this);
+
+      this.model.on('change', this.render, this);
+
+      return this;
+    },
+
+    render: function () {
+      var html;
+
+      html = JST.opeka_queue_page_tmpl({
+        labels: {
+          placeholder: Drupal.t('You are currently numer @position in the queue. Number of rooms you can join from this queue: @rooms.', {'@position': this.position, '@rooms': this.rooms}),
+        }
+      });
+
+      this.$el.html(html);
+
+      return this;
+
+    }
+  });
+
   // Basic view for showing a jQuery UI dialog.
   Opeka.DialogView = Backbone.View.extend({
     className: "dialog-view",

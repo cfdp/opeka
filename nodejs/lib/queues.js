@@ -41,9 +41,26 @@ var Queue = function (options) {
     return {
       id: self.id,
       name: self.name,
-      active: self.active
+      active: self.active,
     };
   };
+
+  // Add a user to the queue.
+  self.addToQueue = function (user) {
+    return self.queue.push(user) - 1;
+  }
+
+  // Get the position of the user in the queue
+  self.getPosition = function (clientId) {
+    var position = 0;
+    _.forEach(self.queue, function (user, index) {
+      if (user.clientId === clientId) {
+        // Zero indexes count, so + 1.
+        position = index + 1;
+      }
+    });
+    return position;
+  }
 
   return self.construct();
 };

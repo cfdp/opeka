@@ -149,7 +149,6 @@ function Server(config, logger) {
         self.logger.info('Admin user signed in.', client.user.clientId);
 
         client.now.receiveRoomList(opeka.rooms.clientData(true));
-        client.now.receiveQueueList(opeka.queues.clientData());
       }
       else {
         self.guests.addUser(client.user.clientId);
@@ -168,6 +167,8 @@ function Server(config, logger) {
 
         client.now.receiveRoomList(opeka.rooms.clientData());
       }
+
+      client.now.receiveQueueList(opeka.queues.clientData());
 
       // Store the account and nickname for later use.
       client.user.account = account;
@@ -222,6 +223,23 @@ function Server(config, logger) {
       callback("Error creating room: room name too short.");
     }
   };
+
+  self.everyone.now.getGlobalQueuePosition = function(queueId, callback) {
+    var queue = opeka.queues.list[queueId],
+        position,
+        rooms = 0;
+    if (queue) {
+      position = queue.getPosition(this.user.clientId);
+    }
+    _.forEach(opeka.rooms.list, function(room) {
+      if (room.queueSystem === queueId) {
+        rooms += 1;
+      }
+    })
+    if (callback) {
+      callback(position, rooms);
+    }
+  }
 
 // -------- GLOBAL QUEUE FUNCTIONS END -----------
 
@@ -483,17 +501,22 @@ function Server(config, logger) {
     }
     else {
       if (queueSystem) {
-        client.user.activeRoomId = null;
-        client.user.activeQueueRoomId = roomId;
+        if (newRoom.queueSystem === 'private') {
+          client.user.activeRoomId = null;
+          client.user.activeQueueRoomId = roomId;
+        }
       }
       else {
-        newRoom.queue.splice(addedUser, 1);
-        addedUser = false;
+        // Remove the user from the queue again.
+        if (newRoom.queueSystem === 'private') {
+          newRoom.queue.splice(addedUser, 1);
+          addedUser = false;
+        }
       }
     }
 
     if (callback) {
-      callback(addedUser, queueFullUrl);
+      callback(addedUser, queueFullUrl, newRoom.queueSystem);
     }
 
     self.updateUserStatus(self.everyone.now);
@@ -610,12 +633,21 @@ function Server(config, logger) {
         client.user.activeRoomId = null;
       }
 
-      // TODO: What is this?
+      // Remove user from queue on disconnect.
       if (opeka.rooms.list[client.user.activeQueueRoomId]) {
         oldRoom = opeka.rooms.list[client.user.activeQueueRoomId];
         oldRoom.removeUserFromQueue(client.user.clientId);
         self.everyone.now.updateQueueStatus(oldRoom.id);
       }
+
+      // Loop through all the global queues and remove user from them if present.
+      _.forEach(opeka.queues.list, function (queue) {
+        _.forEach(queue.queue, function (user, index) {
+          if (user.clientId === client.user.clientId) {
+            queue.queue.splice(index, 1);
+          }
+        });
+      });
 
       self.updateUserStatus(self.everyone.now);
     });

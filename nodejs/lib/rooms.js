@@ -10,6 +10,7 @@ var _ = require('underscore'),
     util = require("util"),
     opeka = {
       user: require("./user"),
+      queues: require("./queues"),
     },
     roomList = {},
     roomCounts = {
@@ -181,7 +182,7 @@ var Room = function (options) {
       return 'OK';
     } else {
       // Put in queue and return queue number.
-      return self.queue.push(user) - 1;
+      return self.addToQueue(user);
     }
   };
 
@@ -246,6 +247,19 @@ var Room = function (options) {
   // Reserve spot in room.
   self.reserveSpot = function (clientId) {
   };
+
+  self.addToQueue = function (user) {
+    // Private queue system - add to the private queue.
+    if (self.queueSystem === 'private') {
+      return self.queue.push(user) - 1;
+    }
+    // Global queue.
+    var queue = opeka.queues.list[self.queueSystem];
+    if (queue) {
+      return queue.addToQueue(user);
+    }
+    return false;
+  }
 
   // Return the current group metadata in an object that is safe to send
   // to the client side.

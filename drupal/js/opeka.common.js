@@ -38,6 +38,7 @@ var Opeka = { status: {}},
       'signIn/:nonce': 'signIn',
       'rooms/:roomId': 'room',
       'rooms': 'roomList',
+      'queues/:queueId': 'queue',
       'queues': 'queueList',
     },
 
@@ -82,7 +83,9 @@ var Opeka = { status: {}},
     // The actual chatroom page.
     room: function (roomId) {
       var admin = _.isFunction(now.isAdmin),
-          room = Opeka.roomList.get(roomId), sidebar;
+          room = Opeka.roomList.get(roomId),
+          sidebar,
+          that = this;
 
       if (this.checkSignIn()) {
         if (!room) {
@@ -103,18 +106,23 @@ var Opeka = { status: {}},
         }
 
         // Render the view when the server has confirmed our room change.
-        now.changeRoom(roomId, function (response, url) {
+        now.changeRoom(roomId, function (response, url, queueId) {
           if (response !== 'OK') {
             // response is false if no queue is used and room is full, redirect to url.
             if (response === false) {
-              window.location = url;
+              //window.location = url;
               return;
             }
-            else {
+            else if (queueId === 'private') {
               Opeka.chatView.inQueue = response;
             }
           }
-          Opeka.appViewInstance.replaceContent(Opeka.chatView.render().el);
+          if (queueId === 'private' || response === 'OK') {
+            Opeka.appViewInstance.replaceContent(Opeka.chatView.render().el);
+          }
+          else {
+            that.navigate('queues/' + queueId, {trigger: true});
+          }
 
           if (sidebar) {
             Opeka.appViewInstance.$el.find('.sidebar').html(sidebar.render().el);
@@ -130,6 +138,30 @@ var Opeka = { status: {}},
 
         Opeka.appViewInstance.replaceContent(view.render().el);
       }
+    },
+
+    queue: function(queueId) {
+      var queue = Opeka.queueList.get(queueId),
+          sidebar;
+
+      if (this.checkSignIn()) {
+        if (!queue) {
+          this.navigate('404', { trigger: true });
+        }
+        else {
+          Opeka.queueView = new Opeka.QueueView({
+            model: queue
+          });
+
+          now.getGlobalQueuePosition(queueId, function (position, rooms) {
+            Opeka.queueView.position = position;
+            Opeka.queueView.rooms = rooms;
+            Opeka.appViewInstance.replaceContent(Opeka.queueView.render().el);
+            Opeka.appViewInstance.$el.find('.sidebar').html('');
+          });
+        }
+
+      }
     }
   });
 
@@ -143,6 +175,7 @@ var Opeka = { status: {}},
   };
 
   now.updateQueueStatus = function (roomId) {
+    // This will react for the private queue only - when the user is in the queue on the room page.
     if (Opeka.chatView && Opeka.chatView.model.id === roomId && Opeka.chatView.inQueue !== false) {
       now.roomGetQueueNumber(roomId, function(index) {
         // Error, user is no longer in the queue, maybe he just joined the
