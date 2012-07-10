@@ -244,9 +244,17 @@ function Server(config, logger) {
   // Remove the user from queue - can only remove yourself.
   self.everyone.now.removeUserFromGlobalQueue = function (queueId, clientId) {
     if (this.user.clientId === clientId) {
-      var queue = opeka.queues.list[queueId];
+      var queue = opeka.queues.list[queueId],
+          roomId;
       queue.removeUserFromQueue(clientId);
-      //self.everyone.now.updateQueueStatus(roomId);
+      // Get a room that is attached to the queue and mark is as it has
+      // updated queue status. This is a small hack to reuse code.
+      _.forEach(opeka.rooms.list, function (room) {
+        if (room.queueSystem == queueId) {
+          roomId = room.id;
+        }
+      });
+      self.everyone.now.updateQueueStatus(roomId);
     }
   };
 

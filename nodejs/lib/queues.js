@@ -73,7 +73,7 @@ var Queue = function (options) {
 
   self.removeUserFromQueue = function (clientId) {
     var position = self.getPosition(clientId);
-    if (position > 1) {
+    if (position > 0) {
       self.queue.splice(position - 1, 1);
       return true;
     }

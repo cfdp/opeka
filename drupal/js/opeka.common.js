@@ -175,8 +175,18 @@ var Opeka = { status: {}},
   };
 
   now.updateQueueStatus = function (roomId) {
+    var room = Opeka.roomList.get(roomId);
+    if (room && room.get('queueSystem') !== 'private') {
+      if (Opeka.queueView && Opeka.queueView.model.id === room.get('queueSystem')) {
+        now.getGlobalQueuePosition(room.get('queueSystem'), function (position, rooms) {
+          Opeka.queueView.position = position;
+          Opeka.queueView.rooms = rooms;
+          Opeka.queueView.render();
+        });
+      }
+    }
     // This will react for the private queue only - when the user is in the queue on the room page.
-    if (Opeka.chatView && Opeka.chatView.model.id === roomId && Opeka.chatView.inQueue !== false) {
+    else if (Opeka.chatView && Opeka.chatView.model.id === roomId && Opeka.chatView.inQueue !== false) {
       now.roomGetQueueNumber(roomId, function(index) {
         // Error, user is no longer in the queue, maybe he just joined the
         // room or an error happened.
