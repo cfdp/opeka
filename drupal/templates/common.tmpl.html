@@ -87,6 +87,9 @@
 </script>
 
 <script id="opeka_room_list_tmpl" type="application/template">
+  <% if (admin) { %>
+    <a href="#queues"><%= labels.queueLink %></a>
+  <% } %>
   <ul class="room-list">
   <% rooms.each(function (room) { %>
     <% if (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms == false))) { %>
@@ -97,6 +100,21 @@
   <% if (labels.placeholder) { %>
     <li class="placeholder"><%= labels.placeholder %></li>
   <% } %>
+  </ul>
+
+</script>
+
+<script id="opeka_queue_list_tmpl" type="application/template">
+  <a href="#rooms"><%= labels.roomLink %></a>
+  <ul class="queue-list">
+  <% queues.each(function (queue) { %>
+      <% labels.placeholder = ''; %>
+      <li><%- queue.get('name') %></li>
+  <% }); %>
+  <% if (labels.placeholder) { %>
+    <li class="placeholder"><%= labels.placeholder %></li>
+  <% } %>
+  <button class="create-queue"><%= labels.createQueue %></button>
   </ul>
 
 </script>

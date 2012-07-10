@@ -149,6 +149,7 @@ function Server(config, logger) {
         self.logger.info('Admin user signed in.', client.user.clientId);
 
         client.now.receiveRoomList(opeka.rooms.clientData(true));
+        client.now.receiveQueueList(opeka.queues.clientData());
       }
       else {
         self.guests.addUser(client.user.clientId);
@@ -197,6 +198,33 @@ function Server(config, logger) {
 
     callback(signInURL + '#signIn/' + nonce);
   };
+
+// -------- GLOBAL QUEUE FUNCTIONS START -----------
+
+  // Called by the Counsellors in order to create a new room.
+  self.councellors.now.createQueue = function (attributes, callback) {
+    if (attributes.name.length > 0) {
+      if (attributes.active === undefined) {
+        attributes.active = true;
+      }
+      var queue = new opeka.queues.Queue(attributes);
+
+      if (callback) {
+        callback(null, queue.clientData());
+      }
+
+      // Send the new complete room list to connected users.
+      //self.councellors.now.queueCreated(room.clientData());
+
+      self.logger.info('Queue ' + queue.name + ' (' + queue.id + ') created.');
+
+    } else {
+      callback("Error creating room: room name too short.");
+    }
+  };
+
+// -------- GLOBAL QUEUE FUNCTIONS END -----------
+
 
   // Once the user has a direct sign in nonce, he has the ability to
   // reserve his spot in a room.

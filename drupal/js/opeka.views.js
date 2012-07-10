@@ -712,6 +712,66 @@
     }
   });
 
+  // Dialog to create queues with.
+  Opeka.QueueEditView = Opeka.DialogView.extend({
+    initialize: function () {
+      // Options passed to DialogView.
+      var options = {};
+
+      _.bindAll(this);
+
+      // For when creating new room.
+      if (!options.room) {
+        options.content = JST.opeka_queue_edit_tmpl({
+          labels: {
+            name: Drupal.t('Name')
+          }
+        });
+        options.queue = new Opeka.Queue({});
+        options.dialogOptions = {
+          buttons: {},
+          title: Drupal.t('Create new queue'),
+          width: 400
+        };
+
+        options.dialogOptions.buttons[Drupal.t('Create queue')] = this.saveQueue;
+      }
+
+      options.dialogOptions.buttons[Drupal.t('Discard changes')] = this.remove;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      return this;
+    },
+
+    render: function () {
+      Opeka.DialogView.prototype.render.call(this);
+
+      this.dialogElement.find('form').submit(this.saveQueue);
+    },
+
+    // When the save queue button is clicked.
+    saveQueue: function (event) {
+      var form = $(this.dialogElement).find('form'),
+          values = {
+            name: form.find('input.name').val(),
+          },
+          view = this;
+
+      this.options.queue.save(values, {
+        success: function (self, newQueue) {
+          view.remove();
+          Opeka.queueList.add(newQueue);
+        },
+      });
+
+      if (event) {
+        event.preventDefault();
+      }
+    }
+  });
+
   Opeka.RoomLeaveOwnPairRoomDialogView =  Opeka.DialogView.extend({
     initialize: function (options) {
       _.bindAll(this);
@@ -790,6 +850,7 @@
         labels: {
           createRoom: Drupal.t('Create room'),
           placeholder: Drupal.t('No rooms created'),
+          queueLink: Drupal.t('Go to queue list')
         },
         hidePairRooms: hidePairRooms,
         rooms: roomList
@@ -818,6 +879,49 @@
     // Open the dialog to create a new room.
     createRoom: function () {
       var dialog = new Opeka.RoomEditView();
+
+      dialog.render();
+    }
+  });
+
+  Opeka.QueueListView = Backbone.View.extend({
+    events: {
+      "click .create-queue": "createQueue"
+    },
+
+    initialize: function (options) {
+      _.bindAll(this);
+
+      // Re-render our list whenever the roomList changes.
+      Opeka.queueList.on('add', this.render);
+      Opeka.queueList.on('change', this.render);
+      Opeka.queueList.on('remove', this.render);
+      Opeka.queueList.on('reset', this.render);
+
+      return this;
+    },
+
+    render: function () {
+      var queueList = Opeka.queueList,
+          html = '';
+
+      html = JST.opeka_queue_list_tmpl({
+        labels: {
+          createQueue: Drupal.t('Create queue'),
+          placeholder: Drupal.t('No queues created'),
+          roomLink: Drupal.t('Go to room list')
+        },
+        queues: queueList
+      });
+
+      this.$el.html(html);
+
+      return this;
+    },
+
+    // Open the dialog to create a new room.
+    createQueue: function () {
+      var dialog = new Opeka.QueueEditView();
 
       dialog.render();
     }

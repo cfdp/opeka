@@ -35,10 +35,35 @@ var Queue = function (options) {
     return self;
   };
 
+  // Return the current group metadata in an object that is safe to send
+  // to the client side.
+  self.clientData = function () {
+    return {
+      id: self.id,
+      name: self.name,
+      active: self.active
+    };
+  };
+
   return self.construct();
 };
 
+// Provide a list of rooms for the client.
+var clientData = function () {
+  var queues = _.map(queueList, function (queue) {
+    return queue.clientData();
+  });
+
+  queues = _.sortBy(queues, function (queue) {
+    return queue.name;
+  });
+
+  return queues;
+};
+
+
 module.exports = {
   Queue: Queue,
+  clientData: clientData,
   list: queueList
 };

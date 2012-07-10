@@ -37,7 +37,8 @@ var Opeka = { status: {}},
       '': 'signIn',
       'signIn/:nonce': 'signIn',
       'rooms/:roomId': 'room',
-      'rooms': 'roomList'
+      'rooms': 'roomList',
+      'queues': 'queueList',
     },
 
     // Check that the user is signed in, and if not, redirect to the
@@ -119,6 +120,15 @@ var Opeka = { status: {}},
             Opeka.appViewInstance.$el.find('.sidebar').html(sidebar.render().el);
           }
         });
+      }
+    },
+
+    queueList: function () {
+      var admin = _.isFunction(now.isAdmin);
+      if (admin) {
+        var view = new Opeka.QueueListView({});
+
+        Opeka.appViewInstance.replaceContent(view.render().el);
       }
     }
   });
@@ -206,6 +216,13 @@ var Opeka = { status: {}},
     // This triggers a reset even on the RoomList instance, so any views
     // that use this list can listen to that for updates.
     Opeka.roomList.reset(rooms);
+  };
+
+  // For when the server has an updated room list for us.
+  now.receiveQueueList = function (queues) {
+    // This triggers a reset even on the RoomList instance, so any views
+    // that use this list can listen to that for updates.
+    Opeka.queueList.reset(queues);
   };
 
   // Add the new room to our local room list.
@@ -409,6 +426,7 @@ var Opeka = { status: {}},
     Opeka.status = new Backbone.Model();
 
     Opeka.roomList = new Opeka.RoomList();
+    Opeka.queueList = new Opeka.QueueList();
 
     Opeka.appViewInstance = new Opeka.AppView();
     Opeka.statusViewInstance = new Opeka.OnlineStatusView({
