@@ -15,6 +15,7 @@ var _ = require("underscore"),
     uuid = require('node-uuid'),
     opeka = {
       ban: require('./ban'),
+      queues: require('./queues'),
       rooms: require('./rooms'),
       user: require('./user')
     };
@@ -24,6 +25,7 @@ function Server(config, logger) {
   var self = this;
 
   self.construct = function () {
+    var queues = config.get('queues');
     self.config = config;
     self.logger = logger;
 
@@ -48,6 +50,16 @@ function Server(config, logger) {
     self.guests = nowjs.getGroup('guests');
     self.signedIn = nowjs.getGroup('signedIn');
     self.banCodeGenerator = nowjs.getGroup('banCodeGenerator');
+
+    // Create the queues from the settings.
+    if (_.isArray(queues)) {
+      _.forEach(queues, function (name) {
+        new opeka.queues.Queue({
+          name: name,
+          active: true,
+        });
+      });
+    }
   };
 
   /**
