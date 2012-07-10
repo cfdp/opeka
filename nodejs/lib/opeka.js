@@ -239,7 +239,16 @@ function Server(config, logger) {
     if (callback) {
       callback(position, rooms);
     }
-  }
+  };
+
+  // Remove the user from queue - can only remove yourself.
+  self.everyone.now.removeUserFromGlobalQueue = function (queueId, clientId) {
+    if (this.user.clientId === clientId) {
+      var queue = opeka.queues.list[queueId];
+      queue.removeUserFromQueue(clientId);
+      //self.everyone.now.updateQueueStatus(roomId);
+    }
+  };
 
 // -------- GLOBAL QUEUE FUNCTIONS END -----------
 

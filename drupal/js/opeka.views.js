@@ -392,6 +392,10 @@
   });
 
   Opeka.QueueView = Backbone.View.extend({
+    events: {
+      "submit .leave-queue-form": "leaveQueue"
+    },
+
     initialize: function (options) {
       _.bindAll(this);
 
@@ -405,7 +409,8 @@
 
       html = JST.opeka_queue_page_tmpl({
         labels: {
-          placeholder: Drupal.t('You are currently numer @position in the queue. Number of rooms you can join from this queue: @rooms.', {'@position': this.position, '@rooms': this.rooms}),
+          leaveQueue: Drupal.t('Leave queue'),
+          placeholder: Drupal.t('You are currently numer @position in the queue. Number of rooms you can join from this queue: @rooms.', {'@position': this.position, '@rooms': this.rooms})
         }
       });
 
@@ -413,6 +418,17 @@
 
       return this;
 
+    },
+
+    leaveQueue: function (event) {
+      // Remove the user from the room.
+      now.removeUserFromGlobalQueue(this.model.id, now.core.clientId);
+      Opeka.router.navigate("rooms", {trigger: true});
+      this.remove();
+
+      if (event) {
+        event.preventDefault();
+      }
     }
   });
 

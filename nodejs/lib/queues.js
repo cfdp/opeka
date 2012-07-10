@@ -71,6 +71,15 @@ var Queue = function (options) {
     return false;
   }
 
+  self.removeUserFromQueue = function (clientId) {
+    var position = self.getPosition(clientId);
+    if (position > 1) {
+      self.queue.splice(position - 1, 1);
+      return true;
+    }
+    return false;
+  }
+
   return self.construct();
 };
 
