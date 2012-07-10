@@ -109,6 +109,7 @@ var Room = function (options) {
     self.private = options.private;
     self.ipLocation = options.ipLocation;
     self.uid = options.uid;
+    self.queueSystem = options.queueSystem || 'private' // Default to private queue system.
     // When a room is created, the creator will join setting the member count to init value to 1.
     self.memberCount = 1;
 
@@ -256,7 +257,8 @@ var Room = function (options) {
       maxSize: self.maxSize,
       memberCount: self.memberCount,
       paused: this.paused || false,
-      private: self.private
+      private: self.private,
+      queueSystem: self.queueSystem
     };
   };
 

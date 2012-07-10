@@ -64,6 +64,16 @@
     </div>
 
     <div class="form-item">
+      <label for="queue-system"><%- labels.queueSystem %></label>
+      <select class="queue-system"  name="queue-system">
+        <option value="private" selected="selected"><%- labels.private %></option>
+        <% queues.each(function (queue) { %>
+          <option value="<%- queue.id %>"><%- queue.get('name') %></option>
+        <% }); %>
+      </select>
+    </div>
+
+    <div class="form-item">
       <label for="private"><%- labels.privateRoom %></label>
       <input class="private" name="private" type="checkbox" value="true" />
     </div>

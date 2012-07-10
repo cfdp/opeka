@@ -658,10 +658,13 @@
             name: Drupal.t('Name'),
             iPLocation: Drupal.t('IP location'),
             outDk: Drupal.t('Outside Denmark/Scandinavia'),
+            private: Drupal.t('Private'),
             privateRoom: Drupal.t('Private room?'),
+            queueSystem: Drupal.t('Queue system'),
             size: Drupal.t('Size limit'),
             users: Drupal.t('users')
-          }
+          },
+          queues: Opeka.queueList
         });
         options.room = new Opeka.Room({});
         options.dialogOptions = {
@@ -695,6 +698,7 @@
             maxSize: form.find('select.max-size').val(),
             ipLocation: form.find('select.ip-location').val(),
             private: form.find('input.private').attr('checked'),
+            queueSystem: form.find('select.queue-system').val()
           },
           view = this;
 
@@ -803,7 +807,6 @@
         event.preventDefault();
       }
     },
-
 
     leaveRoom: function (event) {
       // Remove the user from the room.
