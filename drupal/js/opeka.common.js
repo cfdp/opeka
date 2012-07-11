@@ -153,7 +153,7 @@ var Opeka = { status: {}},
             model: queue
           });
 
-          now.getGlobalQueuePosition(queueId, function (position, rooms) {
+          now.getGlobalQueuePosition(queueId, true, function (position, rooms) {
             Opeka.queueView.position = position;
             Opeka.queueView.rooms = rooms;
             Opeka.appViewInstance.replaceContent(Opeka.queueView.render().el);
@@ -178,7 +178,7 @@ var Opeka = { status: {}},
     var room = Opeka.roomList.get(roomId);
     if (room && room.get('queueSystem') !== 'private') {
       if (Opeka.queueView && Opeka.queueView.model.id === room.get('queueSystem')) {
-        now.getGlobalQueuePosition(room.get('queueSystem'), function (position, rooms) {
+        now.getGlobalQueuePosition(room.get('queueSystem'), false, function (position, rooms) {
           Opeka.queueView.position = position;
           Opeka.queueView.rooms = rooms;
           Opeka.queueView.render();

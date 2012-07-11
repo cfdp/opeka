@@ -224,12 +224,15 @@ function Server(config, logger) {
     }
   };
 
-  self.everyone.now.getGlobalQueuePosition = function(queueId, callback) {
+  self.everyone.now.getGlobalQueuePosition = function(queueId, autoJoin, callback) {
     var queue = opeka.queues.list[queueId],
         position,
         rooms = 0;
     if (queue) {
       position = queue.getPosition(this.user.clientId);
+      if (position === 0 && autoJoin) {
+        position = queue.addToQueue(this.user) + 1;
+      }
     }
     _.forEach(opeka.rooms.list, function(room) {
       if (room.queueSystem === queueId) {
