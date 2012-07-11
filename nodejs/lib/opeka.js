@@ -444,15 +444,37 @@ function Server(config, logger) {
 
   // This function is called by the Counsellors in order to delete a room from the system
   self.councellors.now.deleteRoom = function (roomId, finalMessage) {
-    var room = opeka.rooms.list[roomId];
+    var room = opeka.rooms.list[roomId],
+        lastRoom = true,
+        queue;
 
     if (room) {
+      queue = opeka.queues.list[room.queueSystem];
+      // Since deleting the room also flushes the queue, we need to give
+      // message in case of the room being last before the room is deleted.
+      if (room.queueSystem !== 'private') {
+        // Check to see if this was the last room for a queue that was deleted.
+        // If so, flush the queue and give notification to the users.
+        _.forEach(opeka.rooms.list, function (loopRoom) {
+          if (room.queueSystem === loopRoom.queueSystem && room.id !== loopRoom.id) {
+            lastRoom = false;
+          }
+        });
+        // Last room, flush the queue which will trigger notification.
+        if (lastRoom) {
+          queue = opeka.queues.list[room.queueSystem];
+          if (queue) {
+            queue.flushQueue(self.everyone.users);
+          }
+        }
+      }
       self.logger.info('Room ' + room.name + ' (' + roomId + ') deleted.');
 
       opeka.rooms.remove(roomId);
       self.everyone.now.roomDeleted(roomId, finalMessage);
 
       self.updateUserStatus(self.everyone.now);
+
     } else {
       this.now.displayError("Error deleting room: a room with the specified ID does not exist.");
     }

@@ -78,6 +78,8 @@ var Opeka = { status: {}},
 
         Opeka.appViewInstance.replaceContent(view.render().el);
       }
+      // Need to make sure the chat view is not set.
+      Opeka.chatView = null;
     },
 
     // The actual chatroom page.
@@ -138,9 +140,14 @@ var Opeka = { status: {}},
 
         Opeka.appViewInstance.replaceContent(view.render().el);
       }
+      // Need to make sure the chat view is not set.
+      Opeka.chatView = null;
     },
 
     queue: function(queueId) {
+      // Need to make sure the chat view is not set.
+      Opeka.chatView = null;
+
       var queue = Opeka.queueList.get(queueId),
           that = this,
           sidebar;
@@ -377,6 +384,21 @@ var Opeka = { status: {}},
       Opeka.chatView.receiveMessage(messageObj);
     }
   };
+
+  // Respond to a queue being flushed.
+  now.queueIsFlushed = function(clientId) {
+    // The queue is flushed, navigate to a different page and
+    // use a FatalErrorDialog to force them to reload the page.
+    if (now.core.clientId === clientId) {
+      Opeka.router.navigate("rooms", {trigger: true});
+
+      var view = new Opeka.FatalErrorDialogView({
+        message: Drupal.t('The chat that you were in queue for has closed and your position in the queue with it. You are welcome to join again when the chat reopens or join a different chat room or queue.'),
+        title: Drupal.t('Chat and queue closed')
+      });
+      view.render();
+    }
+  }
 
   // Response to a user leaving the room.
   now.roomUserLeft = function (roomId, nickname) {

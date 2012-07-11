@@ -80,6 +80,15 @@ var Queue = function (options) {
     return false;
   }
 
+  self.flushQueue = function (users) {
+    var user;
+    while (user = self.queue.shift()) {
+      if (users[user.clientId] && users[user.clientId].now.queueIsFlushed) {
+        users[user.clientId].now.queueIsFlushed(user.clientId);
+      }
+    }
+  }
+
   return self.construct();
 };
 
