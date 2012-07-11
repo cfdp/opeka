@@ -110,7 +110,7 @@ var Opeka = { status: {}},
           if (response !== 'OK') {
             // response is false if no queue is used and room is full, redirect to url.
             if (response === false) {
-              //window.location = url;
+              window.location = url;
               return;
             }
             else if (queueId === 'private') {
