@@ -142,6 +142,7 @@ var Opeka = { status: {}},
 
     queue: function(queueId) {
       var queue = Opeka.queueList.get(queueId),
+          that = this,
           sidebar;
 
       if (this.checkSignIn()) {
@@ -153,11 +154,16 @@ var Opeka = { status: {}},
             model: queue
           });
 
-          now.getGlobalQueuePosition(queueId, true, function (position, rooms) {
-            Opeka.queueView.position = position;
-            Opeka.queueView.rooms = rooms;
-            Opeka.appViewInstance.replaceContent(Opeka.queueView.render().el);
-            Opeka.appViewInstance.$el.find('.sidebar').html('');
+          now.getGlobalQueuePosition(queueId, true, function (position, rooms, roomId) {
+            if (roomId && Opeka.roomList.get(roomId)) {
+              that.navigate('rooms/' + roomId, {trigger: true});
+            }
+            else {
+              Opeka.queueView.position = position;
+              Opeka.queueView.rooms = rooms;
+              Opeka.appViewInstance.replaceContent(Opeka.queueView.render().el);
+              Opeka.appViewInstance.$el.find('.sidebar').html('');
+            }
           });
         }
 
@@ -178,7 +184,7 @@ var Opeka = { status: {}},
     var room = Opeka.roomList.get(roomId);
     if (room && room.get('queueSystem') !== 'private') {
       if (Opeka.queueView && Opeka.queueView.model.id === room.get('queueSystem')) {
-        now.getGlobalQueuePosition(room.get('queueSystem'), false, function (position, rooms) {
+        now.getGlobalQueuePosition(room.get('queueSystem'), false, function (position, rooms, roomId) {
           Opeka.queueView.position = position;
           Opeka.queueView.rooms = rooms;
           Opeka.queueView.render();
@@ -341,7 +347,7 @@ var Opeka = { status: {}},
 
   // Response to a user joining the room.
   now.roomUserJoined = function (roomId, nickname) {
-    if (Opeka.chatView.model.id === roomId) {
+    if (Opeka.chatView && Opeka.chatView.model && Opeka.chatView.model.id === roomId) {
       var messageObj = {
         message: Drupal.t('@user has joined the room.', { '@user': nickname }),
         system: true

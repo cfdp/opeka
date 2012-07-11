@@ -228,7 +228,8 @@ function Server(config, logger) {
   self.everyone.now.getGlobalQueuePosition = function(queueId, autoJoin, callback) {
     var queue = opeka.queues.list[queueId],
         position,
-        rooms = 0;
+        rooms = 0,
+        roomId;
     if (queue) {
       position = queue.getPosition(this.user.clientId);
       if (position === 0 && autoJoin) {
@@ -238,10 +239,14 @@ function Server(config, logger) {
     _.forEach(opeka.rooms.list, function(room) {
       if (room.queueSystem === queueId) {
         rooms += 1;
+        // Check if room is full, so it is possible to auto join.
+        if (!room.isFull()) {
+          roomId = room.id;
+        }
       }
     })
     if (callback) {
-      callback(position, rooms);
+      callback(position, rooms, roomId);
     }
   };
 
