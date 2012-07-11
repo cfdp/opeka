@@ -53,10 +53,11 @@ function Server(config, logger) {
 
     // Create the queues from the settings.
     if (_.isArray(queues)) {
-      _.forEach(queues, function (name) {
+      _.forEach(queues, function (queue) {
         new opeka.queues.Queue({
-          name: name,
-          active: true,
+          name: queue.name,
+          id: queue.id,
+          active: true
         });
       });
     }

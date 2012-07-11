@@ -14,7 +14,7 @@
   "http": {
     "port": 3000
   },
-  "queues": ["Test queue 1", "Test queue 2"],
+  "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
   "https": {
     "enabled": false,
     "key": "certs/server-key.pem",
