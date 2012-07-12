@@ -97,9 +97,16 @@ function Server(config, logger) {
       }
     }, function (err, results) {
       if (results && _.isFunction(context.updateStatus)) {
-        var roomList = [];
+        var roomList = [],
+            queueList = {},
+            queues = false;
 
         _.each(results.roomsList.list, function (room) {
+          if (room.queueSystem !== 'private') {
+            var queue = opeka.queues.list[room.queueSystem];
+            queueList[room.queueSystem] = {name: queue.name, inQueue: queue.countUsers()};
+            queues = true;
+          }
           if (room.maxSize > 2 && !room.private) {
             var roomData = {
               maxSize: room.maxSize,
@@ -111,6 +118,8 @@ function Server(config, logger) {
         });
 
         results.roomsList = roomList;
+        results.queues = queues;
+        results.queueList = queueList;
         results.queueSystem = self.config.get('features:queueSystem');
         results.chatPageURL = self.config.get('chatPage');
         context.updateStatus(results);

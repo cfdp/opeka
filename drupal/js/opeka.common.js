@@ -36,10 +36,11 @@ var Opeka = { status: {}},
     routes: {
       '': 'signIn',
       'signIn/:nonce': 'signIn',
+      'signIn/queues/:queueId': 'signInForQueue',
       'rooms/:roomId': 'room',
       'rooms': 'roomList',
       'queues/:queueId': 'queue',
-      'queues': 'queueList',
+      'queues': 'queueList'
     },
 
     // Check that the user is signed in, and if not, redirect to the
@@ -68,6 +69,14 @@ var Opeka = { status: {}},
           });
         });
       }
+
+      Opeka.appViewInstance.replaceContent(view.render().el);
+    },
+
+    signInForQueue: function (queueId) {
+      var view = new Opeka.SignInFormView({
+        queueId: queueId
+      });
 
       Opeka.appViewInstance.replaceContent(view.render().el);
     },
@@ -471,6 +480,9 @@ var Opeka = { status: {}},
 
       if (user.roomId) {
         destination = destination + '/' + user.roomId;
+      }
+      else if (user.queueId) {
+        destination = 'queues' + '/' + user.queueId;
       }
 
       callback();

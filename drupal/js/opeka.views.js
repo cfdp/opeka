@@ -1090,6 +1090,7 @@
 
     initialize: function (options) {
       this.nonce = options.nonce;
+      this.queueId = options.queueId;
 
       _.bindAll(this);
 
@@ -1135,6 +1136,7 @@
       user.age = this.$el.find('.age').val();
       user.gender = this.$el.find('.gender').val();
       user.roomId = this.roomId;
+      user.queueId = this.queueId;
 
       Opeka.signIn(user, function () {
         view.$el.fadeOut();

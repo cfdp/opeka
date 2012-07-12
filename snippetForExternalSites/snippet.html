@@ -22,7 +22,8 @@
     var statusText = $('#status'),
         pairButton = $('#join-pair-chat'),
         groupButton = $('#join-group-chat'),
-        groupRoomList = $('#group-chat-rooms');
+        groupRoomList = $('#group-chat-rooms'),
+        queueList = $("#queue-list");
 
     // Updates the actual status text.
     var updateDisplay = function (attributes) {
@@ -54,6 +55,17 @@
         groupButton.hide();
         groupRoomList.hide();
       }
+
+      if (chatStatus.queues === false || !chatStatus.queueList) {
+        queueList.hide();
+      }
+      else {
+        var liHtml = '';
+        $.each(chatStatus.queueList, function(i, queue) {
+          liHtml += '<li>' + queue.name + ' (' + queue.inQueue + ' in queue) <button class="' + i + '">Join chat</button></li>';
+        });
+        queueList.find('ul').html(liHtml).end().show();
+      }
     };
 
     // When the document is ready, update the status, and bind the event
@@ -69,7 +81,12 @@
 
     groupButton.click(function() {
       window.location = chatStatus.chatPageURL;
-    })
+    });
+
+    queueList.delegate('ul button', 'click', function() {
+      var queueId = $(this).attr('class');
+      window.location = chatStatus.chatPageURL + '#signIn/queues/' + queueId;
+    });
 
     // Run updateDisplay once manually so we have the initial text
     // nailed down.
@@ -81,6 +98,10 @@
 </head>
 <body>
   <div id="status">Chat not active</div>
+  <div id="queue-list" style="display:none;">
+    <p>Join chat about:</p>
+    <ul></ul>
+  </div>
   <div id="group-chat-rooms" style="display:none;">
     <p>Group rooms:</p>
     <ul></ul>

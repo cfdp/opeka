@@ -71,6 +71,7 @@ var Queue = function (options) {
     return false;
   }
 
+  // Remove a specific client id from the queue
   self.removeUserFromQueue = function (clientId) {
     var position = self.getPosition(clientId);
     if (position > 0) {
@@ -80,6 +81,7 @@ var Queue = function (options) {
     return false;
   }
 
+  // Flush the queue - remove the users in the queue
   self.flushQueue = function (users) {
     var user;
     while (user = self.queue.shift()) {
@@ -87,6 +89,15 @@ var Queue = function (options) {
         users[user.clientId].now.queueIsFlushed(user.clientId);
       }
     }
+  }
+
+  // Count the number of the users in the queue
+  self.countUsers = function () {
+    var count = 0;
+    _.forEach(self.queue, function (user, index) {
+      count += 1;
+    });
+    return count;
   }
 
   return self.construct();
