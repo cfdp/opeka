@@ -1,3 +1,70 @@
+<script id="opeka_chat_sidebar_tmpl" type="application/template">
+<div id="sidebar">
+  <div class="sidebar-block">
+    <h5 class="sidebar-block-heading">Room actions<span class="arrow up"></span></h5>
+    <div class="sidebar-block-content room-actions">
+      <button class="pause-toggle"><%= labels.pauseToggle %></button>
+      <button class="clear-messages"><%= labels.clearMessages %></button>
+      <button class="delete-room"><%= labels.deleteRoom %></button>
+    </div>
+  </div>
+  <div class="sidebar-block">
+    <h5 class="sidebar-block-heading">User list<span class="arrow up"></span></h5>
+    <div class="sidebar-block-content">
+      <ul class="user-list">
+      <% if (!users) { %>
+        <li class="placeholder"><%= labels.placeholder %></li>
+      <% } %>
+      <% _.each(users, function (user) { %>
+        <li data-client-id="<%= user.clientId %>">
+          <span class="name"><%- user.name %></span>
+          <% if (user.age || user.gender) { %>
+            <span class="meta">
+              (
+              <span class="age"><%- user.age %> år</span>
+              |
+              <span class="gender"><%= labels.gender[user.gender] %></span>
+              )
+            </span>
+          <% } %>
+          <% if (user.clientId !== clientId) { %>
+            <span class="actions">
+              <button class="whisper"><%= labels.whisper %></button>
+              <% if (user.muted) { %>
+                <button class="unmute-user"><%= labels.unmuteUser %></button>
+              <% }
+                 else { %>
+                <button class="mute-user"><%= labels.muteUser %></button>
+              <% } %>
+              <button class="kick-user"><%= labels.kickUser %></button>
+            </span>
+          <% } %>
+        </li>
+      <% }); %>
+      </ul>
+    </div>
+  </div>
+  <div class="sidebar-block">
+    <h5 class="sidebar-block-heading"><%= labels.registrationform %><span class="arrow up"></span></h5>
+    <div class="sidebar-block-content">
+      <a class="registrationform" href="https://docs.google.com/a/cyberhus.dk/spreadsheet/embeddedform?formkey=dHBub0M0LW5GbWpNWndqTGdDQjNwZEE6MQ" target="_blank"><%= labels.registrationform %></a>
+    </div>
+  </div>
+  <!--
+  <div class="sidebar-block">
+    <h5 class="sidebar-block-heading">Room actions test<span class="arrow up"></span></h5>
+    <div class="sidebar-block-content">
+      <span class="remove-room" title="<%= labels.deleteRoom %>">X</span>
+      <% if (room.get('paused')) { %>
+        <span class="play-btn-wr" title="<%= labels.pauseToggle %>"><span class="play-btn"></span></span>
+      <% } else { %>
+        <span class="pause-btn-wr" title="<%= labels.pauseToggle %>"><span class="pause-btn"></span></span>
+      <% } %>
+  </div>
+  -->
+</div>
+</script>
+
 <script id="opeka_room_clear_tmpl" type="application/template">
   <p><%= labels.explanation %></p>
 </script>
@@ -48,9 +115,12 @@
       <select class="max-size" name="max-size">
         <option value="2" selected="selected">2 <%- labels.users %></option>
         <option value="5">5 <%- labels.users %></option>
+        <option value="6">6 <%- labels.users %></option>
+        <option value="7">7 <%- labels.users %></option>
+        <option value="8">8 <%- labels.users %></option>
+        <option value="9">9 <%- labels.users %></option>
         <option value="10">10 <%- labels.users %></option>
-        <option value="20">20 <%- labels.users %></option>
-        <option value="30">30 <%- labels.users %></option>
+        <option value="15">15 <%- labels.users %></option>
       </select>
     </div>
 
@@ -110,8 +180,9 @@
 <script id="opeka_whisper_tmpl" type="application/template">
   <form action="#" class="whisper-form">
     <label>
-      <%= labels.whisper %>
-      <input class="form-text whisper-message" name="whisper-message" type="textfield" />
+       <%= labels.whisper %>
+      <!--<input class="form-text whisper-message" name="name" type="textfield" />-->
+      <textarea class="form-text whisper-message" name="name" rows=3 cols=32></textarea>
     </label>
   </form>
 </script>

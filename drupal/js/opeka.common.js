@@ -40,7 +40,8 @@ var Opeka = { status: {}},
       'rooms/:roomId': 'room',
       'rooms': 'roomList',
       'queues/:queueId': 'queue',
-      'queues': 'queueList'
+      'queues': 'queueList',
+      'feedback': 'feedbackPage'
     },
 
     // Check that the user is signed in, and if not, redirect to the
@@ -91,6 +92,17 @@ var Opeka = { status: {}},
       Opeka.chatView = null;
     },
 
+
+    //@daniel
+    //The feedback page
+    feedbackPage: function () {
+      //if (this.checkSignIn()) {
+        var view = new Opeka.UserFeedback({});
+
+        Opeka.appViewInstance.replaceContent(view.render().el);
+      //}
+    },
+    
     // The actual chatroom page.
     room: function (roomId) {
       var admin = _.isFunction(now.isAdmin),

@@ -42,6 +42,7 @@
     events: {
       "click .delete-message": "deleteMessage",
       "submit .message-form": "sendMessage",
+      "keyup .form-text": "sendMessageonEnter",
       "submit .leave-queue-form": "leaveQueue",
       "submit .leave-room-form": "leaveRoom"
     },
@@ -98,7 +99,7 @@
         admin: this.admin,
         formatTimestamp: this.formatTimestamp,
         labels: {
-          deleteMessage: Drupal.t('Delete'),
+          deleteMessage: Drupal.t(''),
           whispered: Drupal.t('WHISPERED'),
           whisperedTo: Drupal.t('WHISPERED TO'),
         },
@@ -124,6 +125,12 @@
         }));
       }
 
+      // @daniel
+      // Keep the scrollbar at the bottom of the .chat-message-list
+      var message_list = this.$el.find('.chat-message-list');
+      message_list.attr({scrollTop: message_list.attr("scrollHeight")});
+
+      return this;
       return this;
     },
 
@@ -169,7 +176,11 @@
         // Remove the user from the room.
         now.removeUserFromRoom(this.model.id, now.core.clientId);
         $(window).trigger('leaveRoom');
-        Opeka.router.navigate("rooms", {trigger: true});
+      
+        //Opeka.router.navigate("rooms", {trigger: true});
+        //@daniel
+        //reroute the user to the feedback page
+        Opeka.router.navigate("feedback", {trigger: true});
       }
 
       if (event) {
@@ -190,13 +201,20 @@
       if (!this.inQueue) {
         this.messages.push(message);
         this.render();
+        // @daniel
+        // Keep the scrollbar at the bottom of the .chat-message-list
+        var message_list = this.$el.find('.chat-message-list');
+        message_list.attr({scrollTop: message_list.attr("scrollHeight")});
       }
     },
 
     sendMessage: function (event) {
-      var message = this.$el.find('input.message').val();
-      // Remove the message sent.
-      this.$el.find('input.message').val('');
+      // @daniel
+      // Replaced the input with a textarea to have multiple writing lines available
+      var message = this.$el.find('textarea.message').val();
+      // Remove the message sent and regain focus
+      this.$el.find('textarea.message').val('').focus();
+      
       if (message !== '') {
         now.sendMessageToRoom(this.model.id, message);
       }
@@ -204,6 +222,28 @@
       if (event) {
         event.preventDefault();
       }
+    },
+
+    // @daniel
+    // Enable sending messages when pressing the ENTER(return) key
+    sendMessageonEnter: function(event) {
+      var message = this.$el.find('textarea.message').val();
+      var code = (event.keyCode || event.which);
+      
+      // Listen for the key code
+      if(code == 13) {
+        
+        // On pressing ENTER there is a new line element inserted in the textarea,
+        // that we have to ignore and clear the value of the textarea
+        if (message.length == 1) {
+          this.$el.find('textarea.message').val('');
+        }
+
+        if (message !== '') {
+          this.$el.find('.message-form').submit();
+        }
+      }
+
     }
   });
 
@@ -218,6 +258,7 @@
       "click .mute-user": "muteUser",
       "click .pause-toggle": "pauseToggle",
       "click .unmute-user": "unmuteUser",
+      "click .sidebar-block-heading": "sidebarBlocktoggle",
       "click .whisper": "whisper"
     },
 
@@ -252,7 +293,8 @@
             pauseToggle: pauseLabel,
             placeholder: Drupal.t('No users'),
             unmuteUser: Drupal.t('Unmute user'),
-            whisper: Drupal.t('Whisper')
+            whisper: Drupal.t('Whisper'),
+            registrationform: Drupal.t('Registration form')
           },
           room: this.model,
           users: this.model.get('userList')
@@ -328,6 +370,26 @@
       var clientId = $(event.currentTarget).closest('li').attr('data-client-id');
       now.unmute(this.model.id, clientId);
 
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    // @daniel
+    // For when you need to unmute a user.
+    sidebarBlocktoggle: function (event) {
+      var head = $(event.currentTarget),
+          body = head.next('.sidebar-block-content'),
+          arrow = head.children('.arrow');
+      
+      body.toggle();
+
+      if(arrow.hasClass('down')){
+        arrow.removeClass('down').addClass('up');
+      }else{
+        arrow.removeClass('up').addClass('down');
+      }
+      
       if (event) {
         event.preventDefault();
       }
@@ -894,7 +956,8 @@
         labels: {
           createRoom: Drupal.t('Create room'),
           placeholder: Drupal.t('No rooms created'),
-          queueLink: Drupal.t('Go to queue list')
+          queueLink: Drupal.t('Go to queue list'),
+          enterRoom: Drupal.t('Enter')
         },
         hidePairRooms: hidePairRooms,
         rooms: roomList
@@ -1101,7 +1164,10 @@
       var name = '';
 
       if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.name) {
-        name = Drupal.settings.opeka.user.name;
+        //@daniel
+        //Replace the Drupal username with rådgiver(counselor), not using the actual user name
+        //name = Drupal.settings.opeka.user.name;
+        name = 'Rådgiver';
       }
 
       var form = JST.opeka_connect_form_tmpl({
@@ -1131,6 +1197,10 @@
     signIn: function (event) {
       var user = Drupal.settings.opeka.user || {},
           view = this;
+      //@daniel
+      //add a random number to each anonymous user to help in distinguishing them
+      
+      var x = Math.floor((Math.random()*50)+1);
 
       user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous');
       user.age = this.$el.find('.age').val();
