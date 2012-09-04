@@ -1025,6 +1025,9 @@
         });
       }
 
+      // Kick the user.
+      now.kick(this.clientId, message, this.model.id)
+
       // Prevent event if needed.
       if (event) {
         event.preventDefault();
