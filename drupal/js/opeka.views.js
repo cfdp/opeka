@@ -410,7 +410,7 @@
       html = JST.opeka_queue_page_tmpl({
         labels: {
           leaveQueue: Drupal.t('Leave queue'),
-          placeholder: Drupal.t('You are currently numer @position in the queue. Number of rooms you can join from this queue: @rooms.', {'@position': this.position, '@rooms': this.rooms})
+          placeholder: Drupal.t('You are currently number @position in the queue. Number of rooms you can join from this queue: @rooms.', {'@position': this.position, '@rooms': this.rooms})
         }
       });
 

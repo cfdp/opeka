@@ -234,6 +234,7 @@ function Server(config, logger) {
     }
   };
 
+  // Get the position of a user in queue.
   self.everyone.now.getGlobalQueuePosition = function(queueId, autoJoin, callback) {
     var queue = opeka.queues.list[queueId],
         position,
@@ -245,15 +246,22 @@ function Server(config, logger) {
         position = queue.addToQueue(this.user) + 1;
       }
     }
-    _.forEach(opeka.rooms.list, function(room) {
-      if (room.queueSystem === queueId) {
-        rooms += 1;
-        // Check if room is full, so it is possible to auto join.
-        if (!room.isFull()) {
-          roomId = room.id;
+    // If we auto join - we should try to get the roomId of an open room.
+    if (autoJoin) {
+      _.forEach(opeka.rooms.list, function(room) {
+        if (room.queueSystem === queueId) {
+          rooms += 1;
+          // Check if room is full, so it is possible to auto join.
+          if (!room.isFull()) {
+            roomId = room.id;
+          }
         }
+      });
+      // If we found the room id we should leave the queue again.
+      if (roomId) {
+        queue.removeUserFromQueue(this.user.clientId);
       }
-    })
+    }
     if (callback) {
       callback(position, rooms, roomId);
     }
