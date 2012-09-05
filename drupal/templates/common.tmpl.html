@@ -50,7 +50,7 @@
 
 <script id="opeka_chat_footer_tmpl" type="application/template">
   <% if (banCodeGenerator) { %>
-    <button class="generate-ban-code btn"><%- labels.banCode %></button>
+    <button class="generate-ban-code btn-util"><%- labels.banCode %></button>
   <% } %>
 </script>
 
@@ -103,11 +103,14 @@
 
 <script id="opeka_room_list_tmpl" type="application/template">
   <% if (admin) { %>
-    <a href="#queues"><%= labels.queueLink %></a>
+    <div class="queue-utils">
+      <a href="#queues" class="go-to-queues btn-util"><%= labels.queueLink %></a>
+      <button class="create-room btn btn-small"><%= labels.createRoom %></button>
+    </div>
   <% } %>
   <ul class="room-list">
   <% if (labels.placeholder) { %>
-    <li class="placeholder"><%= labels.placeholder %></li>
+    <li class="placeholder norooms"><%= labels.placeholder %></li>
   <% } %>
   <% rooms.each(function (room) { %>
     <% if (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms == false))) { %>
@@ -125,16 +128,18 @@
 </script>
 
 <script id="opeka_queue_list_tmpl" type="application/template">
-  <a href="#rooms"><%= labels.roomLink %></a>
+  <div>
+  <a href="#rooms" class="go-back-to-rooms btn-util"><%= labels.roomLink %></a>
+  <button class="create-queue btn btn-small"><%= labels.createQueue %></button>
+  </div>
   <ul class="queue-list">
   <% queues.each(function (queue) { %>
       <% labels.placeholder = ''; %>
-      <li><%- queue.get('name') %></li>
+      <li class="queue"><%- queue.get('name') %></li>
   <% }); %>
   <% if (labels.placeholder) { %>
-    <li class="placeholder"><%= labels.placeholder %></li>
+    <li class="placeholder noqueues"><%= labels.placeholder %></li>
   <% } %>
-  <button class="create-queue btn"><%= labels.createQueue %></button>
   </ul>
 
 </script>
@@ -163,7 +168,7 @@
 </script>
 
 <script id="opeka_room_list_create_room_tmpl" type="application/template">
-  <button class="create-room btn"><%= labels.createRoom %></button>
+  <!--<button class="create-room btn btn-small"><%= labels.createRoom %></button>-->
 </script>
 
 <script id="opeka_chat_tmpl" type="application/template">

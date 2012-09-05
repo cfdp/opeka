@@ -73,9 +73,25 @@
 
 /*ROOM LIST*/
 
-#opeka-app .create-room 		{float: right; margin-top: 20px;}
+#opeka-app .create-room 		{float: right; margin-bottom: 4px;}
 
 /*---------*/
+
+/*----QUEUES-----*/
+#opeka-app .queue-list				{clear: both; list-style: none; margin: 0; padding: 0;}
+
+#opeka-app .queue-list .noqueues,
+#opeka-app .queue-list .queue 		{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49); padding: 5px 0; text-align: center;}
+
+#opeka-app .create-queue			{float: right;}
+#opeka-app .go-back-to-rooms		{float: left;}
+
+#opeka-app .create-queue,
+#opeka-app .go-back-to-rooms		{margin-bottom: 4px;}
+
+#opeka-app .go-to-queues			{float: left;}
+
+/*---------------*/
 
 /*ROOM ACTIONS TEST*/
 

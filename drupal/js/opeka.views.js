@@ -1014,9 +1014,9 @@
 
       html = JST.opeka_queue_list_tmpl({
         labels: {
-          createQueue: Drupal.t('Create queue'),
+          createQueue: Drupal.t('Create new queue'),
           placeholder: Drupal.t('No queues created'),
-          roomLink: Drupal.t('Go to room list')
+          roomLink: Drupal.t('< Go back to room list')
         },
         queues: queueList
       });
@@ -1172,7 +1172,8 @@
 
       var form = JST.opeka_connect_form_tmpl({
         labels: {
-          action: Drupal.t('Ready for chat…'),
+          action: Drupal.t('Ready for chat'),
+          welcome_message: Drupal.t('Welcome to the chat'),
           age: Drupal.t('Age'),
           gender: Drupal.t('Gender'),
           female: Drupal.t('Female'),

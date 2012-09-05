@@ -49,9 +49,9 @@ html body	{background: rgb(157,206,116);}
 
 #opeka-app .connect-interface .form-text.age{float: left; height: 17px; margin-left: 6px; text-align: center; width: 40px;}
 
-#opeka-app .connect-interface .label-tooltip {background: rgb(255,255,255); border: 1px solid rgb(129, 155, 49); display: none; font-size: 10px; line-height: 1.2em; padding: 5px; position: absolute; right: -190px; top: 18px; width: 202px;}
+/*#opeka-app .connect-interface .label-tooltip {background: rgb(255,255,255); border: 1px solid rgb(129, 155, 49); display: none; font-size: 10px; line-height: 1.2em; padding: 5px; position: absolute; right: -190px; top: 18px; width: 202px;}
 
-#opeka-app .connect-interface:hover .label-tooltip {display: inline-block;}
+#opeka-app .connect-interface:hover .label-tooltip {display: inline-block;}*/
 
 #opeka-app .connect-interface .form-item.gender-label {width: 35px;}
 
@@ -198,12 +198,20 @@ html body	{background: rgb(157,206,116);}
 
 #opeka-app .btn 		{background: rgb(17,202,3); border: 1px solid rgb(3,115,0); border-radius: 2px; color: rgb(255,255,255); font-weight: bold; margin: 0; padding: 10px 15px; text-transform: uppercase;}
 
+#opeka-app .btn-small	{padding: 5px 6px 6px 6px; text-transform: inherit;}
+
 #opeka-app .btn:hover 	{background: rgb(37,222,23); cursor: pointer;}
 
 #opeka-app .btn:active	{background: rgb(37,192,3);}
 
+#opeka-app .btn-util	{background: rgb(145,145,145); border: 1px solid rgb(110,110,110); border-radius: 2px; color: rgb(255,255,255); font-weight: bold; padding: 3px 6px;}
+
+#opeka-app .btn-util:hover	{background: rgb(190,190,190); border-color: rgb(145,145,145); cursor: pointer; text-decoration: none;}
+
+#opeka-app button.btn-util {height: 28px;}
+
 /*---*/
-#opeka-app .room-list 		{list-style: none; margin: 0; padding: 0;}
+#opeka-app .room-list 		{clear: both; list-style: none; margin: 0; padding: 0;}
 
 #opeka-app .room 			{background: rgb(255,255,255); border: 1px solid rgb(107,156,66); border-radius: 4px; margin: 0 0 10px 0; overflow: hidden; padding: 5px;}
 
@@ -228,6 +236,8 @@ html body	{background: rgb(157,206,116);}
 .room-enter			{background: rgb(157,206,116); border: 1px solid rgb(107,156,66); color: rgb(255,255,255); display: inline-block; float: right; font-weight: bold; margin: 0 0 0 5px; padding: 12px 11px;}
 
 .room-enter:hover	{background: rgb(37,222,23); text-decoration: none;}
+
+/*---------------*/
 
 /*FEEDBACK IFRAME*/
 
