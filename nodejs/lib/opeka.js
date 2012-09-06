@@ -273,6 +273,7 @@ function Server(config, logger) {
       var queue = opeka.queues.list[queueId],
           roomId;
       queue.removeUserFromQueue(clientId);
+      self.updateUserStatus(self.everyone.now);
       // Get a room that is attached to the queue and mark is as it has
       // updated queue status. This is a small hack to reuse code.
       _.forEach(opeka.rooms.list, function (room) {
@@ -610,6 +611,7 @@ function Server(config, logger) {
       var oldRoom = opeka.rooms.list[roomId];
       oldRoom.removeUserFromQueue(clientId);
       self.everyone.now.updateQueueStatus(roomId);
+      self.updateUserStatus(self.everyone.now);
     }
   };
 
