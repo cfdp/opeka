@@ -116,8 +116,8 @@
             leaveQueueButton: Drupal.t('Leave queue'),
             leaveRoomButton: Drupal.t('Leave chat room'),
             placeholder: Drupal.t('Type message here…'),
-            roomPaused: '[' + Drupal.t('The room is paused') + ']',
-            userMuted: '[' + Drupal.t('You are muted') + ']',
+            roomPaused: Drupal.t('The room is paused'),
+            userMuted: Drupal.t('You are muted'),
             messageButton: Drupal.t('Send message')
           },
           inQueue: this.inQueue,
@@ -360,9 +360,7 @@
     muteUser: function (event) {
       var clientId = $(event.currentTarget).closest('li').attr('data-client-id');
       now.mute(this.model.id, clientId);
-      var tar = $(event.currentTarget).parent().parent();
-      tar.addClass('muted');
-      console.log(tar);
+      
       if (event) {
         event.preventDefault();
       }

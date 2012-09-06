@@ -126,7 +126,7 @@ html body	{background: rgb(157,206,116);}
 
 .opeka-chat-sidebar .user-list 	{list-style: none; margin: 0;}
 
-#opeka-app .opeka-chat-sidebar .user-list li:hover 	{background: rgb(200,200,200);}
+/*#opeka-app .opeka-chat-sidebar .user-list li:hover 	{background: rgb(200,200,200);}*/
 
 .user-list li span 	{display: inline-block;}
 
@@ -156,6 +156,7 @@ html body	{background: rgb(157,206,116);}
 .opeka-chat-sidebar .pause-toggle:hover		{background: rgb(210,26,36); border: 1px solid rgb(125,1,8); color: rgb(255,255,255); cursor: pointer;}
 
 .opeka-chat-sidebar .actions .whisper:hover {background: rgb(33,177,251); border: 1px solid rgb(1,78,118);}
+
 
 /*---------*/
 
