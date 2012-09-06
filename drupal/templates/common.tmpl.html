@@ -22,14 +22,15 @@
           <% } %>
           <% if (user.clientId !== clientId && admin) { %>
             <span class="actions">
-              <button class="whisper"><%= labels.whisper %></button>
+              <button class="ban-user"><%= labels.banUser %></button>
+              <button class="kick-user"><%= labels.kickUser %></button>
               <% if (user.muted) { %>
                 <button class="unmute-user"><%= labels.unmuteUser %></button>
               <% }
                  else { %>
                 <button class="mute-user"><%= labels.muteUser %></button>
               <% } %>
-              <button class="kick-user"><%= labels.kickUser %></button>
+              <button class="whisper"><%= labels.whisper %></button>
             </span>
           <% } %>
         </li>
@@ -38,12 +39,19 @@
     </div>
   </div>
   <% if (admin) { %>
-  <div class="sidebar-block">
-    <h5 class="sidebar-block-heading">Room actions<span class="arrow up"></span></h5>
-    <div class="sidebar-block-content room-actions">
-      <button class="pause-toggle"><%= labels.pauseToggle %></button>
-      <button class="clear-messages"><%= labels.clearMessages %></button>
-      <button class="delete-room"><%= labels.deleteRoom %></button>
+    <div class="sidebar-block">
+      <h5 class="sidebar-block-heading">Room actions<span class="arrow down"></span></h5>
+      <div class="sidebar-block-content room-actions"  style="display: none;">
+        <button class="pause-toggle"><%= labels.pauseToggle %></button>
+        <button class="clear-messages"><%= labels.clearMessages %></button>
+        <button class="delete-room"><%= labels.deleteRoom %></button>
+      </div>
+    </div>
+    <div class="sidebar-block">
+      <h5 class="sidebar-block-heading"><%= labels.registrationform %><span class="arrow down"></span></h5>
+      <div class="sidebar-block-content" style="display: none;">
+        <a class="registrationform" href="https://docs.google.com/a/cyberhus.dk/spreadsheet/embeddedform?formkey=dHBub0M0LW5GbWpNWndqTGdDQjNwZEE6MQ" target="_blank"><%= labels.registrationform %></a>
+      </div>
     </div>
   <% } %>
 </script>

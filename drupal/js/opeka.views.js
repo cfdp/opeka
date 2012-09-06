@@ -289,6 +289,7 @@
             deleteRoom: Drupal.t('Delete room'),
             gender: { f: Drupal.t('woman'), m: Drupal.t('man') },
             kickUser: Drupal.t('Kick user'),
+            banUser: Drupal.t('Ban user'),
             muteUser: Drupal.t('Mute user'),
             pauseToggle: pauseLabel,
             placeholder: Drupal.t('No users'),
@@ -359,7 +360,9 @@
     muteUser: function (event) {
       var clientId = $(event.currentTarget).closest('li').attr('data-client-id');
       now.mute(this.model.id, clientId);
-
+      var tar = $(event.currentTarget).parent().parent();
+      tar.addClass('muted');
+      console.log(tar);
       if (event) {
         event.preventDefault();
       }
@@ -841,7 +844,7 @@
           width: 400
         };
 
-        options.dialogOptions.buttons[Drupal.t('Create queue')] = this.saveQueue;
+        options.dialogOptions.buttons[Drupal.t('Create new queue')] = this.saveQueue;
       }
 
       options.dialogOptions.buttons[Drupal.t('Discard changes')] = this.remove;
