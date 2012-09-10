@@ -342,6 +342,14 @@ function Server(config, logger) {
     room.paused = false;
     self.everyone.now.roomUpdated(roomId, { paused: false });
     self.sendSystemMessage('[Pause]: Chat is available again.', room.group);
+    // When unpausing a pair room that uses a queue - get the next in queue.
+    if (room.maxSize === 2 && !room.isFull() && room.queueSystem !== 'private') {
+      var queue = opeka.queues.list[room.queueSystem],
+          queueUserID = queue.getUserFromQueue();
+      self.everyone.users[queueUserID].now.changeRoom(room.id);
+      self.everyone.users[queueUserID].now.roomJoinFromQueue(room.id);
+      self.everyone.now.updateQueueStatus(room.id);
+    }
     callback();
   };
 
@@ -757,16 +765,15 @@ function Server(config, logger) {
   // Utility function to remove a user from a room.
   self.removeUserFromRoom = function(room, clientId, callback) {
     // Set room on pause if the room is a pair room.
-    var autoPause = self.config.get('features:automaticPausePairRooms');
-    if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
-      room.paused = true;
-      self.everyone.now.roomUpdated(room.id, { paused: true });
-      self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
-    }
-
-    var removedUser = self.everyone.users[clientId];
+    var autoPause = self.config.get('features:automaticPausePairRooms'),
+        removedUser = self.everyone.users[clientId];
 
     if (removedUser) {
+      if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
+        room.paused = true;
+        self.everyone.now.roomUpdated(room.id, { paused: true });
+        self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+      }
       self.everyone.users[clientId].user.activeRoomId = null;
     }
 

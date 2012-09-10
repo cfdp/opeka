@@ -213,7 +213,7 @@ var Room = function (options) {
         }
       }
     }
-    else {
+    else if (self.paused !== true) {
       // Get the next user from the global queue system.
       queue = opeka.queues.list[self.queueSystem];
       queueUserID = queue.getUserFromQueue();
