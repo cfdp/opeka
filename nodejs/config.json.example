@@ -9,6 +9,7 @@
   },
   "features" : {
     "hidePairRoomsOnRoomList": false,
+    "automaticPausePairRooms": true,
     "queueSystem" : true,
     "queueFullUrl" : "http://example.com"
   },
