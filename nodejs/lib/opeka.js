@@ -323,7 +323,9 @@ function Server(config, logger) {
     room.paused = true;
     self.everyone.now.roomUpdated(roomId, { paused: true });
     self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
-    callback();
+    if (callback) {
+      callback();
+    }
   };
 
   // Allow the councellors to unpause a room.
@@ -618,7 +620,16 @@ function Server(config, logger) {
   // Remove the user from room - can only remove yourself.
   self.everyone.now.removeUserFromRoom = function (roomId, clientId) {
     if (this.user.clientId === clientId) {
-      var room = opeka.rooms.list[roomId];
+      var room = opeka.rooms.list[roomId],
+          autoPause = self.config.get('features:automaticPausePairRooms');
+
+      // Set room on pause if the room is a pair room.
+      if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
+        room.paused = true;
+        self.everyone.now.roomUpdated(room.id, { paused: true });
+        self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+      }
+
       // Remove the user.
       self.removeUserFromRoom(room, clientId, function (users) {
         opeka.user.sendUserList(room.group, room.id, users);
@@ -745,6 +756,14 @@ function Server(config, logger) {
 
   // Utility function to remove a user from a room.
   self.removeUserFromRoom = function(room, clientId, callback) {
+    // Set room on pause if the room is a pair room.
+    var autoPause = self.config.get('features:automaticPausePairRooms');
+    if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
+      room.paused = true;
+      self.everyone.now.roomUpdated(room.id, { paused: true });
+      self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+    }
+
     var removedUser = self.everyone.users[clientId];
 
     if (removedUser) {
