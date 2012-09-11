@@ -213,7 +213,8 @@ var Room = function (options) {
         }
       }
     }
-    else if (self.paused !== true) {
+    // self.isFull() should not be needed but is needed anyways. Failsafe.
+    else if (self.paused !== true && !self.isFull()) {
       // Get the next user from the global queue system.
       queue = opeka.queues.list[self.queueSystem];
       queueUserID = queue.getUserFromQueue();
