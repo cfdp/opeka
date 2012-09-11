@@ -255,6 +255,7 @@
       "click .clear-messages": "clearMessages",
       "click .delete-room": "deleteRoom",
       "click .kick-user": "kickUser",
+      "click .ban-user": "banUser",
       "click .mute-user": "muteUser",
       "click .pause-toggle": "pauseToggle",
       "click .unmute-user": "unmuteUser",
@@ -345,6 +346,21 @@
     // For when a user needs to be kicked.
     kickUser: function (event) {
       var view = new Opeka.RoomKickUserView({
+        clientId: $(event.currentTarget).closest('li').attr('data-client-id'),
+        model: this.model
+      });
+
+      view.render();
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    //@daniel
+    // For when a user needs to be banned.
+    banUser: function (event) {
+      var view = new Opeka.RoomBanUserView({
         clientId: $(event.currentTarget).closest('li').attr('data-client-id'),
         model: this.model
       });
@@ -1035,7 +1051,7 @@
     }
   });
 
-  // Dialog for confirming that user should be kicked.
+    // Dialog for confirming that user should be kicked.
   Opeka.RoomKickUserView = Opeka.DialogView.extend({
     initialize: function (options) {
       this.clientId = options.clientId;
@@ -1044,8 +1060,6 @@
 
       options.content = JST.opeka_kick_user_tmpl({
         labels: {
-          banCode: Drupal.t('Ban code'),
-          banCodeDescription: Drupal.t('If a valid ban code is entered, user will be banned from the chat system.'),
           kickMessage: Drupal.t('Kick message')
         }
       });
@@ -1070,8 +1084,57 @@
     // Utility function for kicking the user.
     kickUser: function (event) {
       var form = $(this.dialogElement).find('form'),
+          message = form.find('input.kick-message').val();
+
+      // Kick the user.
+      now.kick(this.clientId, message, this.model.id);
+      this.remove();
+      // Prevent event if needed.
+      if (event) {
+        event.preventDefault();
+      }
+    }
+
+  });// END RoomKickUserView
+
+
+  // Dialog for confirming that user should be banned.
+  Opeka.RoomBanUserView = Opeka.DialogView.extend({
+    initialize: function (options) {
+      this.clientId = options.clientId;
+
+      _.bindAll(this);
+
+      options.content = JST.opeka_ban_user_tmpl({
+        labels: {
+          banCode: Drupal.t('Ban code'),
+          banCodeDescription: Drupal.t('If a valid ban code is entered, user will be banned from the chat system.'),
+          banMessage: Drupal.t('Ban message')
+        }
+      });
+
+      options.dialogOptions = {
+        buttons: {},
+        title: Drupal.t('Confirm ban')
+      };
+
+      options.dialogOptions.buttons[Drupal.t('Ban user')] = this.banUser;
+
+      options.dialogOptions.buttons[Drupal.t('Cancel')] = this.remove;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      this.dialogElement.delegate('form', 'submit', this.banUser);
+
+      return this;
+    },
+
+    // Utility function for kicking the user.
+    banUser: function (event) {
+      var form = $(this.dialogElement).find('form'),
           banCode = $.trim(form.find('input.ban-code').val()),
-          message = $.trim(form.find('input.kick-message').val()),
+          message = $.trim(form.find('input.ban-message').val()),
           view = this;
 
       // If a ban code was provided, try banning the user.
@@ -1129,7 +1192,7 @@
       return this;
     },
 
-    // Utility function for kicking the user.
+    // Utility function for whispering to the user.
     whisper: function (event) {
       var form = $(this.dialogElement).find('form'),
           message = form.find('input.whisper-message').val();
