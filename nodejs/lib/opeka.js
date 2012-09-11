@@ -776,6 +776,11 @@ function Server(config, logger) {
       }
       self.everyone.users[clientId].user.activeRoomId = null;
     }
+    else if (autoPause === true && room.maxSize === 2 && room.paused !== true && !room.isFull()) {
+      room.paused = true;
+      self.everyone.now.roomUpdated(room.id, { paused: true });
+      self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+    }
 
     room.removeUser(clientId, function (users, queueClientId, removedUserNickname) {
       // The user has been removed from the queue and should join the chat.
