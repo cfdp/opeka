@@ -136,9 +136,12 @@
 
     // For when the delete button next to a message is pressed.
     deleteMessage: function (event) {
-      var messageId = $(event.currentTarget).closest('li').attr('data-message-id');
+      var view = new Opeka.RemoveSingleMessage({
+        messageId: $(event.currentTarget).closest('li').attr('data-message-id'),
+        model: this.model
+      });
 
-      now.roomDeleteMessage(this.model.id, messageId);
+      view.render();
 
       if (event) {
         event.preventDefault();
@@ -714,6 +717,52 @@
       }
     }
   });
+
+  //Dialog to confirm the removal of a single message
+  Opeka.RemoveSingleMessage = Opeka.DialogView.extend({
+    initialize: function (options) {
+      // Options passed to DialogView.
+      //var options = {};
+      this.messageId = options.messageId;
+      _.bindAll(this);
+
+      // For when creating new room.
+      if (!options.room) {
+        options.content = JST.opeka_room_clear_tmpl({
+          labels: {
+            explanation: Drupal.t('Please confirm that this message should be removed.'),
+          }
+        });
+        options.dialogOptions = {
+          buttons: {},
+          title: Drupal.t('Confirm removing this message')
+        };
+
+        options.dialogOptions.buttons[Drupal.t('Remove message')] = this.removeMessage;
+      }
+
+      options.dialogOptions.buttons[Drupal.t('Cancel')] = this.remove;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      this.dialogElement.delegate('form', 'submit', this.removeMessage);
+
+      return this;
+    },
+
+    removeMessage: function (event) {
+      
+      now.roomDeleteMessage(this.model.id, this.messageId);
+
+      this.remove();
+
+      if (event) {
+        event.preventDefault();
+      }
+    }
+  });
+
 
   // Dialog to edit/create rooms with.
   Opeka.RoomDeletionView = Opeka.DialogView.extend({
