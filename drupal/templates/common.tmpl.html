@@ -112,14 +112,11 @@
 <script id="opeka_room_list_tmpl" type="application/template">
   <% if (admin) { %>
     <div class="queue-utils">
-      <a href="#queues" class="go-to-queues btn-util"><%= labels.queueLink %></a>
-      <button class="create-room btn btn-small"><%= labels.createRoom %></button>
+    <a href="#queues" class="go-to-queues btn-util"><%= labels.queueLink %></a>
+    <button class="create-room btn btn-small"><%= labels.createRoom %></button>
     </div>
   <% } %>
   <ul class="room-list">
-  <% if (labels.placeholder) { %>
-    <li class="placeholder norooms"><%= labels.placeholder %></li>
-  <% } %>
   <% rooms.each(function (room) { %>
     <% if (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms == false))) { %>
       <% labels.placeholder = ''; %>
@@ -131,6 +128,9 @@
       <p class="room-description"><%- room.get('name') %></p><a href="#rooms/<%= room.id %>" class="room-enter"><%= labels.enterRoom %></a></li>
     <% } %>
   <% }); %>
+  <% if (labels.placeholder) { %>
+    <li class="placeholder norooms"><%= labels.placeholder %></li>
+  <% } %>
   </ul>
 
 </script>
