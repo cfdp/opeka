@@ -76,6 +76,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $stylesheets = array_merge(array(
     'opeka.base.css',
     'opeka.theme.css',
+    'jquery.ui.theme.css',
   ), $stylesheets);
   foreach ($stylesheets as $filename) {
     drupal_add_css($path . '/css/' . $filename);
