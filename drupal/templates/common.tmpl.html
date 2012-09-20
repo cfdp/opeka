@@ -180,6 +180,7 @@
 </script>
 
 <script id="opeka_chat_tmpl" type="application/template">
+<div class="chat-message-list-wrapper">
   <ul class="chat-message-list">
   <% _.each(messages, function (message) { %>
     <% if (message.system) { %>
@@ -208,6 +209,7 @@
     <% } %>
   <% }); %>
   </ul>
+  </div>
 </script>
 
 <script id="opeka_chat_form_tmpl" type="application/template">

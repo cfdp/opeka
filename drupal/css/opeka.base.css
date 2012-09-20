@@ -68,8 +68,9 @@ html body	{background: rgb(157,206,116);}
 #opeka-app .footer .online-status-view 		{background: rgb(229, 255, 200); border: 1px solid rgb(129, 155, 49); display: inline-block; margin: 5px 0; padding: 5px 0; text-align: center; width: 300px;}
 /**/
 /*MESSAGE-LIST*/
+#opeka-app .chat-message-list-wrapper			{background: rgb(245,245,245); border: 1px solid rgb(175,175,175); border-radius: 4px; padding: 10px 0;}
 
-#opeka-app .chat-message-list					{border: 1px solid rgb(175,175,175); border-radius: 4px; height: 400px; list-style: none; margin: 0; overflow-y: auto; padding: 10px;}
+#opeka-app .chat-message-list					{background: rgb(255,255,255); border: 1px solid transparent; border-radius: 4px; height: 400px; list-style: none; margin: 0; overflow-y: auto; padding: 10px;}
 
 #opeka-app .chat-message-list .chat-message,
 #opeka-app .chat-message-list .system-message, 	
@@ -100,7 +101,7 @@ html body	{background: rgb(157,206,116);}
 #opeka-app .chat-message-list .chat-message.counselor .sender-name 	{background: rgb(255,241,184); border-bottom: 1px solid rgb(235,221,164);}
 
 #opeka-app .chat-message-list .chat-message .timestamp,
-#opeka-app .chat-message-list .whisper-message .timestamp		{font-size: 10px; position: absolute; right: 5px; top: 0;}
+#opeka-app .chat-message-list .whisper-message .timestamp		{font-size: 11px; position: absolute; right: 5px; top: 0;}
 
 #opeka-app .chat-message-list .chat-message.counselor + .chat-message.counselor	{}
 
@@ -212,7 +213,7 @@ html body	{background: rgb(157,206,116);}
 #opeka-app button.btn-util {height: 28px;}
 
 /*---*/
-#opeka-app .room-list 		{clear: both; list-style: none; margin: 0; padding: 0;}
+#opeka-app .room-list 		{clear: both; list-style: none; margin: 0; padding: 10px 0;}
 
 #opeka-app .room 			{background: rgb(255,255,255); border: 1px solid rgb(107,156,66); border-radius: 4px; margin: 0 0 10px 0; overflow: hidden; padding: 5px;}
 

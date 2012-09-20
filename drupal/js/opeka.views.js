@@ -350,7 +350,8 @@
     kickUser: function (event) {
       var view = new Opeka.RoomKickUserView({
         clientId: $(event.currentTarget).closest('li').attr('data-client-id'),
-        model: this.model
+        model: this.model,
+        name: $(event.currentTarget).closest('li').find('.name').text()
       });
 
       view.render();
@@ -824,7 +825,7 @@
           labels: {
             any: Drupal.t('Any'),
             dk: Drupal.t('Denmark'),
-            name: Drupal.t('Name'),
+            name: Drupal.t('The name of the room is:'),
             iPLocation: Drupal.t('IP location'),
             outDk: Drupal.t('Outside Denmark/Scandinavia'),
             private: Drupal.t('Private'),
@@ -842,7 +843,7 @@
           width: 400
         };
 
-        options.dialogOptions.buttons[Drupal.t('Create room')] = this.saveRoom;
+        options.dialogOptions.buttons[Drupal.t('Create new room')] = this.saveRoom;
       }
 
       options.dialogOptions.buttons[Drupal.t('Discard changes')] = this.remove;
@@ -864,7 +865,8 @@
       var form = $(this.dialogElement).find('form'),
           values = {
             name: form.find('input.name').val(),
-            maxSize: form.find('select.max-size').val(),
+            //maxSize: form.find('select.max-size').val(),
+            maxSize: form.find(':checked').val(),
             ipLocation: form.find('select.ip-location').val(),
             private: form.find('input.private').attr('checked'),
             queueSystem: form.find('select.queue-system').val()
@@ -882,7 +884,26 @@
       if (event) {
         event.preventDefault();
       }
-    }
+    },
+
+    // @daniel
+    // For when you need to show settings for groupchat rooms.
+    settingsBlocktoggle: function (event) {
+      var body = $('.groupchat-room-settings');
+          //arrow = head.children('.arrow');
+      
+      body.toggle();
+      /*
+      if(arrow.hasClass('down')){
+        arrow.removeClass('down').addClass('up');
+      }else{
+        arrow.removeClass('up').addClass('down');
+      }*/
+      
+      if (event) {
+        event.preventDefault();
+      }
+    },
   });
 
   // Dialog to create queues with.
@@ -1020,7 +1041,7 @@
       html = JST.opeka_room_list_tmpl({
         admin: _.isFunction(now.isAdmin),
         labels: {
-          createRoom: Drupal.t('Create room'),
+          createRoom: Drupal.t('Create new room'),
           placeholder: Drupal.t('No rooms created'),
           queueLink: Drupal.t('Go to queue list'),
           enterRoom: Drupal.t('Enter')
@@ -1109,7 +1130,8 @@
 
       options.content = JST.opeka_kick_user_tmpl({
         labels: {
-          kickMessage: Drupal.t('Kick message')
+          kickMessage: Drupal.t('Kick message'),
+          kickHelpText: Drupal.t('@name will be removed from the room, but he/she will be able to log in again.',{'@name':options.name})
         }
       });
 
@@ -1220,7 +1242,8 @@
 
       options.content = JST.opeka_whisper_tmpl({
         labels: {
-          whisperMessage: Drupal.t('Whisper message')
+          whisperMessage: Drupal.t('Whisper message'),
+          whisperHelpText: Drupal.t('This message is only visible by @name',{'@name': options.name})
         }
       });
 
@@ -1244,7 +1267,7 @@
     // Utility function for whispering to the user.
     whisper: function (event) {
       var form = $(this.dialogElement).find('form'),
-          message = form.find('input.whisper-message').val();
+          message = form.find('textarea.whisper-message').val();
 
       // Whisper the user.
       now.whisper(this.clientId, message);
