@@ -704,43 +704,39 @@ function Server(config, logger) {
    * disconnected, etc.
    */
   self.everyone.on("disconnect", function () {
-    var client = this, oldRoom;
+    var client = this, clientId = client.user.clientId, queueLeft;
 
     self.logger.info('User disconnected.', client.user.clientId);
 
     // We need to wait a single tick before updating the online counts,
     // since there's a bit of delay before they are accurate.
     process.nextTick(function () {
-
-      // Remove the user from any rooms he might be in.
-      _.map(opeka.rooms.list, function (room) {
-        self.removeUserFromRoom(room, client.user.clientId);
+      // Loop through all the global queues and remove user from them if present.
+      Object.keys(opeka.queues.list).forEach(function (key) {
+        var queue = opeka.queues.list[key];
+        if (queue.removeUserFromQueue(clientId)) {
+          queueLeft = queue;
+        };
       });
 
-      // Leave the active room, if it is defined and it still exists.
-      if (opeka.rooms.list[client.user.activeRoomId]) {
-        oldRoom = opeka.rooms.list[client.user.activeRoomId];
-
-        self.removeUserFromRoom(oldRoom, client.user.clientId, function(users) {
-          // self.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.name);
-          opeka.user.sendUserList(oldRoom.group, oldRoom.id, users);
-        });
-
-        client.user.activeRoomId = null;
-      }
-
-      // Remove user from queue on disconnect.
-      if (opeka.rooms.list[client.user.activeQueueRoomId]) {
-        oldRoom = opeka.rooms.list[client.user.activeQueueRoomId];
-        oldRoom.removeUserFromQueue(client.user.clientId);
-        self.everyone.now.updateQueueStatus(oldRoom.id);
-      }
-
-      // Loop through all the global queues and remove user from them if present.
-      _.forEach(opeka.queues.list, function (queue) {
-        _.forEach(queue.queue, function (user, index) {
-          if (user.clientId === client.user.clientId) {
-            queue.queue.splice(index, 1);
+      // Remove the user from any rooms he might be in.
+      Object.keys(opeka.rooms.list).forEach(function (key) {
+        var room = opeka.rooms.list[key];
+        // Need to call updateQueueStatus on a room belonging to the queue
+        // that the user left.
+        if (queueLeft && queueLeft.id === room.queueSystem) {
+          self.everyone.now.updateQueueStatus(room.id);
+          queueLeft = null;
+        }
+        // Try to remove user from room queue.
+        if (room.removeUserFromQueue(clientId)) {
+          self.everyone.now.updateQueueStatus(room.id);
+        }
+        // Try to remove user from room.
+        self.removeUserFromRoom(room, clientId, function(users) {
+          if (users) {
+            opeka.user.sendUserList(room.group, room.id, users);
+            client.user.activeRoomId = null;
           }
         });
       });

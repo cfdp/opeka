@@ -240,7 +240,9 @@ var Room = function (options) {
     // We found the user - remove him.
     if (userIndex !== null) {
       this.queue.splice(userIndex, 1);
+      return true;
     }
+    return false;
   };
 
   self.getUserQueueNumber = function (clientId) {
