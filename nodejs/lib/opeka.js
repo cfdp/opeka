@@ -787,6 +787,10 @@ function Server(config, logger) {
         self.everyone.now.updateQueueStatus(room.id);
       }
 
+      // We always need to update the room count after a user has tried to
+      // leave the queue
+      self.helperUpdateRoomCount(room.id);
+
       // Notify the chat room if we know who left.
       if (removedUserNickname) {
         room.group.now.roomUserLeft(room.id, removedUserNickname);
