@@ -236,7 +236,8 @@ function Server(config, logger) {
 
   // Get the position of a user in queue.
   self.everyone.now.getGlobalQueuePosition = function(queueId, autoJoin, callback) {
-    var queue = opeka.queues.list[queueId],
+    var autoPause = self.config.get('features:automaticPausePairRooms'),
+        queue = opeka.queues.list[queueId],
         position,
         rooms = 0,
         roomId;
@@ -251,7 +252,7 @@ function Server(config, logger) {
       if (room.queueSystem === queueId) {
         rooms += 1;
         // Check if room is full, so it is possible to auto join.
-        if (!room.isFull()) {
+        if (!room.isFull() && (autoPause !== true || (!room.paused || room.maxSize > 2))) {
           roomId = room.id;
         }
       }
@@ -344,8 +345,10 @@ function Server(config, logger) {
     if (room.maxSize === 2 && !room.isFull() && room.queueSystem !== 'private') {
       var queue = opeka.queues.list[room.queueSystem],
           queueUserID = queue.getUserFromQueue();
-      self.everyone.users[queueUserID].now.changeRoom(room.id);
-      self.everyone.users[queueUserID].now.roomJoinFromQueue(room.id);
+      if (queueUserID && self.everyone.users[queueUserID]) {
+        self.everyone.users[queueUserID].now.changeRoom(room.id);
+        self.everyone.users[queueUserID].now.roomJoinFromQueue(room.id);
+      }
       self.everyone.now.updateQueueStatus(room.id);
     }
     callback();
