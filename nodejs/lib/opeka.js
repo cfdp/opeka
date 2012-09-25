@@ -40,6 +40,15 @@ function Server(config, logger) {
     // Log that the server is now listening.
     self.server.listen(self.config.get('server:port'), function () {
       logger.info('Opeka chat server listening on port ' + self.config.get('server:port'));
+
+      // Now the server is running, we no longer need root privileges, so
+      // lets drop them if we have them.
+      if (process.getuid() === 0) {
+        process.setgid(self.config.get('server:group') || 'nogroup');
+        process.setuid(self.config.get('server:user') || 'nobody');
+
+        logger.info('Dropped privileges, now running as UID ' + process.getuid());
+      }
     });
 
     // Keep track of valid sign in nonces.
