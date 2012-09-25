@@ -54,7 +54,7 @@ function Server(config, logger) {
     // Create the queues from the settings.
     if (_.isArray(queues)) {
       _.forEach(queues, function (queue) {
-        new opeka.queues.Queue({
+        return new opeka.queues.Queue({
           name: queue.name,
           id: queue.id,
           active: true
@@ -276,7 +276,7 @@ function Server(config, logger) {
       // Get a room that is attached to the queue and mark is as it has
       // updated queue status. This is a small hack to reuse code.
       _.forEach(opeka.rooms.list, function (room) {
-        if (room.queueSystem == queueId) {
+        if (room.queueSystem === queueId) {
           roomId = room.id;
         }
       });
@@ -716,7 +716,7 @@ function Server(config, logger) {
         var queue = opeka.queues.list[key];
         if (queue.removeUserFromQueue(clientId)) {
           queueLeft = queue;
-        };
+        }
       });
 
       // Remove the user from any rooms he might be in.
@@ -811,11 +811,10 @@ function Server(config, logger) {
         opeka.rooms.list[roomId].memberCount = count;
       });
     }
-  }
+  };
 
   return self;
 }
 
 module.exports = opeka;
 module.exports.Server = Server;
-
