@@ -121,11 +121,19 @@
     <% if (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms == false))) { %>
       <% labels.placeholder = ''; %>
       <li class="room">
-      <div class="room-details">
-          <span class="room-status"></span>
+      <div class="room-details <% if (room.get('memberCount') == room.get('maxSize')){%>full<%} %>">
           <span class="room-size"><%- room.get('memberCount') %>/<%- room.get('maxSize') %></span>
+          <% if (room.get('memberCount') == room.get('maxSize')){%>
+            <span class="room-status">FULL</span>
+          <%} %>
         </div>
-      <p class="room-description"><%- room.get('name') %></p><a href="#rooms/<%= room.id %>" class="room-enter"><%= labels.enterRoom %></a></li>
+      <p class="room-description"><%- room.get('name') %></p>
+      <% if (room.get('memberCount') != room.get('maxSize')){%>
+        <a href="#rooms/<%= room.id %>" class="room-enter"><%= labels.enterRoom %></a>
+      <%}else{ %>
+        <a href="<%= labels.fullRoomLinkText %>" target="_blank" class="meantime"><%= labels.fullRoomLink %></a>
+      <%}%>  
+      </li>
     <% } %>
   <% }); %>
   <% if (labels.placeholder) { %>
@@ -222,9 +230,15 @@
     <input class="form-submit send" type="submit" value="<%= labels.messageButton %>" />
   </form>
   <% } else if (activeUser.muted) { %>
-  <p><%= labels.userMuted %></p>
+    <div class="userMuted">
+      <p><%= labels.userMuted %></p>
+      <span class="help-text">When you are muted, you are not alllowed to send any messages until the counselor decides to unmute you. You can see all the other messages and receive whispers.</span>
+    </div>
   <% } else if (inQueue === false) { %>
-    <p><%= labels.roomPaused %></p>
+    <div class="roomPaused">
+      <p><%= labels.roomPaused %></p>
+      <span class="help-text">The room has been paused by the counselor.</span>
+    </div>
   <% } %>
   <% if (inQueue !== false) { %>
     <p><%= labels.inQueueMessage %></p>

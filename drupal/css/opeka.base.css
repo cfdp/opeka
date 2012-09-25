@@ -185,6 +185,12 @@ html body	{background: rgb(157,206,116);}
 
 .paused-nowriting					{background-color: rgb(175,175,175); border: 1px solid rgb(126,126,126); border-radius: 4px; padding: 10px;}
 
+#opeka-app .chat-view-form p 		{font-weight: bold; margin: 0 0 1em 0;}
+
+#opeka-app .userMuted,
+#opeka-app .roomPaused				{padding: 5px 10px;}
+
+
 .leave-room-form .form-submit 		{position: absolute; right: 10px; top: 10px;}
 
 #opeka-app .leave-queue-form 		{overflow: hidden;}
@@ -228,16 +234,22 @@ html body	{background: rgb(157,206,116);}
 
 .room-details		{background: rgb(37,222,23); border: 1px solid rgb(7,192,3); font-size: 12px; padding: 2px; width: 50px;}
 
+.room-details.full 	{background: rgb(210,26,36); border: 1px solid rgb(125,1,8);}
+
 .room-status,
 .room-size			{color: rgb(255,255,255); display: inline-block; font-size: 14px; font-weight: bold; padding: 10px 0; text-align: center; text-transform: uppercase; width: 50px;}
 
-.room-status		{border-bottom: 2px solid white; display: none; height: 16px;}
+.room-details.full span {padding: 0;}
+
+.room-status		{/*border-bottom: 2px solid white; display: none*/; font-size: 11px; height: 16px;}
 
 .room-description 	{background: rgb(255,255,255); color: #000; display: inline-block; margin: 0 0 0 5px; padding: 12px 5px;}
 
-.room-enter			{background: rgb(157,206,116); border: 1px solid rgb(107,156,66); color: rgb(255,255,255); display: inline-block; float: right; font-weight: bold; margin: 0 0 0 5px; padding: 12px 11px;}
+.room-enter,
+.meantime			{background: rgb(157,206,116); border: 1px solid rgb(107,156,66); color: rgb(255,255,255); display: inline-block; float: right; font-weight: bold; margin: 0 0 0 5px; padding: 12px 11px;}
 
-.room-enter:hover	{background: rgb(37,222,23); text-decoration: none;}
+.room-enter:hover,
+.meantime:hover		{background: rgb(37,222,23); text-decoration: none;}
 
 /*---------------*/
 
@@ -246,3 +258,4 @@ html body	{background: rgb(157,206,116);}
 #opeka-app iframe	{background: rgb(255,255,255); min-height: 2670px; padding: 20px;}
 
 /*---------------*/
+.help-text				{color: rgb(140,140,140); display: inline-block; font-size: .8em; font-style: italic; line-height: 1.4em; margin-top: 1em;}

@@ -1044,7 +1044,9 @@
           createRoom: Drupal.t('Create new room'),
           placeholder: Drupal.t('No rooms created'),
           queueLink: Drupal.t('Go to queue list'),
-          enterRoom: Drupal.t('Enter')
+          enterRoom: Drupal.t('Enter'),
+          fullRoomLink: Drupal.t('Do while'),
+          fullRoomLinkText: "http://chat.cyberhus.dk/yellow.php"
         },
         hidePairRooms: hidePairRooms,
         rooms: roomList
