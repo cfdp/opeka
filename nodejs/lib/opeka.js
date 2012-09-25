@@ -35,8 +35,10 @@ function Server(config, logger) {
       res.write('Welcome to Opeka.');
       res.end();
     });
-    self.server.listen(self.config.get('http:port'), function () {
-      logger.info('Opeka chat server listening on port '  + self.config.get('http:port'));
+
+    // Log that the server is now listening.
+    self.server.listen(self.config.get('server:port'), function () {
+      logger.info('Opeka chat server listening on port ' + self.config.get('server:port'));
     });
 
     // Keep track of valid sign in nonces.
@@ -67,8 +69,8 @@ function Server(config, logger) {
    * Create a server instance, HTTP or HTTPS depending on config.
    */
   self.createServer = function (config, callback) {
-    if (config.get('https:enabled')) {
-      return require('https').createServer(config.get('https'), callback);
+    if (config.get('server:https:enabled')) {
+      return require('https').createServer(config.get('server:https'), callback);
     }
 
     return require('http').createServer(callback);
