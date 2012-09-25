@@ -10,6 +10,7 @@
 var _ = require("underscore"),
     async = require("async"),
     crypto = require('crypto'),
+    fs = require('fs'),
     nowjs = require("now"),
     util = require("util"),
     uuid = require('node-uuid'),
@@ -70,7 +71,10 @@ function Server(config, logger) {
    */
   self.createServer = function (config, callback) {
     if (config.get('server:https:enabled')) {
-      return require('https').createServer(config.get('server:https'), callback);
+      return require('https').createServer({
+        cert: fs.readFileSync(self.config.get('server:https:cert')),
+        key: fs.readFileSync(self.config.get('server:https:key')),
+      }, callback);
     }
 
     return require('http').createServer(callback);
