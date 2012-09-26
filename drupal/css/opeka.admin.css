@@ -38,13 +38,10 @@
 
 .opeka-chat-sidebar .user-list 	{list-style: none; margin: 0;}
 
-#opeka-app .opeka-chat-sidebar .user-list li:hover 	{background: rgb(200,200,200);}
+.opeka-chat-sidebar .user-list li span 		{display: inline-block;}
 
-.user-list li span 	{display: inline-block;}
-
-.user-list .name,
-.user-list .meta					{font-size: 0.8em;}
-
+.opeka-chat-sidebar .user-list .name,
+.opeka-chat-sidebar .user-list .meta		{font-size: 0.8em;}
 
 .opeka-chat-sidebar li .actions				{display: none; float: right;}
 .opeka-chat-sidebar li:hover .actions		{display: block;}
@@ -69,13 +66,36 @@
 
 .opeka-chat-sidebar .actions .whisper:hover {background: rgb(33,177,251); border: 1px solid rgb(1,78,118);}
 
+#opeka-app .opeka-chat-sidebar .unmute-user			{background: rgb(210,26,36); color: rgb(255,255,255);}
+
 /*---------*/
 
 /*ROOM LIST*/
 
-#opeka-app .create-room 		{float: right; margin-top: 20px;}
+#opeka-app .create-room 		{float: right; margin-bottom: 4px;}
 
 /*---------*/
+
+/*ROOM CREATE*/
+
+
+/*---------*/
+
+/*----QUEUES-----*/
+#opeka-app .queue-list				{clear: both; list-style: none; margin: 0; padding: 10px 0;}
+
+#opeka-app .queue-list .noqueues,
+#opeka-app .queue-list .queue 		{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49); padding: 5px 0; text-align: center;}
+
+#opeka-app .create-queue			{float: right;}
+#opeka-app .go-back-to-rooms		{float: left;}
+
+#opeka-app .create-queue,
+#opeka-app .go-back-to-rooms		{margin-bottom: 4px;}
+
+#opeka-app .go-to-queues			{float: left;}
+
+/*---------------*/
 
 /*ROOM ACTIONS TEST*/
 

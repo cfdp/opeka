@@ -32,6 +32,25 @@
         now.deleteRoom(model.id, options.message);
       }
     }
+    else if (model instanceof Opeka.Queue) {
+      if (method === 'create') {
+        now.createQueue(model.toJSON(), function (err, success) {
+          if (err) {
+            var errMsg = new Opeka.DialogView({
+              content: err
+            });
+
+            errMsg.render();
+          } else if (_.isFunction(options.success)) {
+            options.success(success);
+          }
+        });
+      // Read, update and delete not supported yet.
+      //} else if (method === 'read') {
+      //} else if (method === 'update') {
+      //} else if (method === 'delete') {
+      }
+    }
   };
 
   Opeka.Room = Backbone.Model.extend({
@@ -39,7 +58,15 @@
   });
 
   Opeka.RoomList = Backbone.Collection.extend({
-    model: Opeka.Room,
+    model: Opeka.Room
+  });
+
+  Opeka.Queue = Backbone.Model.extend({
+    sync: Opeka.Sync
+  });
+
+  Opeka.QueueList = Backbone.Collection.extend({
+    model: Opeka.Queue
   });
 
 }(jQuery));

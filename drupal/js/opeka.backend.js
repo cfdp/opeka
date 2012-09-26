@@ -7,14 +7,8 @@
 (function ($) {
   "use strict";
 
-  // Recieve the user list from the server.
-  now.receiveUserList = function (roomId, userList) {
-    var room = Opeka.roomList.get(roomId);
-
-    if (room) {
-      room.set('userList', userList);
-    }
-  };
+  // Used to check if is admin.
+  now.isAdmin = function () {}
 
 /*
 // Method used in order to print the final message when the chat room has been closed.

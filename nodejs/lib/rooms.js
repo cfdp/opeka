@@ -10,6 +10,7 @@ var _ = require('underscore'),
     util = require("util"),
     opeka = {
       user: require("./user"),
+      queues: require("./queues"),
     },
     roomList = {},
     roomCounts = {
@@ -29,6 +30,17 @@ var _ = require('underscore'),
         full: 0
       }
     };
+
+// Get an open room of a specific type - pair or group.
+var getOpenRoom = function (roomType) {
+  return _.find(roomList, function (room) {
+    var userCount = Object.keys(room.users).length;
+
+    if (roomType === 'pair') {
+      return (room.maxSize === 2 && userCount < 2);
+    }
+  });
+};
 
 // Sums together a room list into empty, active and full rooms.
 var sumRoomList = function (rooms) {
@@ -97,6 +109,10 @@ var Room = function (options) {
     self.maxSize = parseInt(options.maxSize, 10);
     self.private = options.private;
     self.ipLocation = options.ipLocation;
+    self.uid = options.uid;
+    self.queueSystem = options.queueSystem || 'private' // Default to private queue system.
+    // When a room is created, the creator will join setting the member count to init value to 1.
+    self.memberCount = 1;
 
     // Create Now.js groups for connected users and councellors.
     self.group = nowjs.getGroup(self.id);
@@ -166,14 +182,14 @@ var Room = function (options) {
       return 'OK';
     } else {
       // Put in queue and return queue number.
-      return self.queue.push(user) - 1;
+      return self.addToQueue(user);
     }
   };
 
   // Remove user from the room.
   // If somebody is in queue return the user object of the first in queue for this chat room
   self.removeUser = function (clientId, callback) {
-    var queueUserID, removedUserNickname;
+    var queueUserID, removedUserNickname, queue;
 
     if (self.users[clientId]) {
       removedUserNickname = self.users[clientId].name;
@@ -185,14 +201,22 @@ var Room = function (options) {
       updateRoomCounts();
     }
 
-    // Iterate over the queue to find the first user that is not in a
-    // different room.
-    while (self.queue.length > 0 && !queueUserID) {
-      var user = self.queue.shift();
-      // The user has not to be in other rooms.
-      if (!user.activeRoomId) {
-        queueUserID = user.clientId;
+    // Check which queue to get the next user from.
+    if (self.queueSystem === 'private') {
+      // Iterate over the queue to find the first user that is not in a
+      // different room.
+      while (self.queue.length > 0) {
+        var user = self.queue.shift();
+        // The user has not to be in other rooms.
+        if (!user.activeRoomId) {
+          queueUserID = user.clientId;
+        }
       }
+    }
+    else {
+      // Get the next user from the global queue system.
+      queue = opeka.queues.list[self.queueSystem];
+      queueUserID = queue.getUserFromQueue();
     }
 
     if (callback) {
@@ -228,15 +252,35 @@ var Room = function (options) {
     return userIndex;
   };
 
+  // Reserve spot in room.
+  self.reserveSpot = function (clientId) {
+  };
+
+  self.addToQueue = function (user) {
+    // Private queue system - add to the private queue.
+    if (self.queueSystem === 'private') {
+      return self.queue.push(user) - 1;
+    }
+    // Global queue.
+    var queue = opeka.queues.list[self.queueSystem];
+    if (queue) {
+      return queue.addToQueue(user);
+    }
+    return false;
+  }
+
   // Return the current group metadata in an object that is safe to send
   // to the client side.
   self.clientData = function () {
     return {
       id: self.id,
+      uid: self.uid,
       name: self.name,
       maxSize: self.maxSize,
+      memberCount: self.memberCount,
       paused: this.paused || false,
-      private: self.private
+      private: self.private,
+      queueSystem: self.queueSystem
     };
   };
 
@@ -300,6 +344,7 @@ module.exports = {
   Room: Room,
   clientData: clientData,
   counts: roomCounts,
+  getOpenRoom: getOpenRoom,
   list: roomList,
   remove: remove
 };

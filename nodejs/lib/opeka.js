@@ -9,10 +9,13 @@
 // Load all our dependencies.
 var _ = require("underscore"),
     async = require("async"),
+    crypto = require('crypto'),
     nowjs = require("now"),
     util = require("util"),
     uuid = require('node-uuid'),
     opeka = {
+      ban: require('./ban'),
+      queues: require('./queues'),
       rooms: require('./rooms'),
       user: require('./user')
     },
@@ -23,6 +26,7 @@ function Server(config, logger) {
   var self = this;
 
   self.construct = function () {
+    var queues = config.get('queues');
     self.config = config;
     self.logger = logger;
 
@@ -36,13 +40,28 @@ function Server(config, logger) {
       logger.info('Opeka chat server listening on port '  + self.config.get('http:port'));
     });
 
+    // Keep track of valid sign in nonces.
+    self.signInNonces = {};
+
     // Initialise Now.js on our server object.
     self.everyone = nowjs.initialize(self.server);
 
     // Create groups for councellors and guests.
     self.councellors = nowjs.getGroup('councellors');
-    self.guests = nowjs.getGroup("guests");
-    self.signedIn = nowjs.getGroup("signedIn");
+    self.guests = nowjs.getGroup('guests');
+    self.signedIn = nowjs.getGroup('signedIn');
+    self.banCodeGenerator = nowjs.getGroup('banCodeGenerator');
+
+    // Create the queues from the settings.
+    if (_.isArray(queues)) {
+      _.forEach(queues, function (queue) {
+        new opeka.queues.Queue({
+          name: queue.name,
+          id: queue.id,
+          active: true
+        });
+      });
+    }
   };
 
   /**
@@ -59,9 +78,8 @@ function Server(config, logger) {
       //
       return require('https').createServer(options, callback);
     }
-    else {
-      return require('http').createServer(callback);
-    }
+
+    return require('http').createServer(callback);
   };
 
   // Update the client side guest/councellor counts.
@@ -81,9 +99,37 @@ function Server(config, logger) {
       },
       rooms: function (callback) {
         callback(null, opeka.rooms.counts);
+      },
+      roomsList: function (callback) {
+        callback(null, opeka.rooms);
       }
     }, function (err, results) {
       if (results && _.isFunction(context.updateStatus)) {
+        var roomList = [],
+            queueList = {},
+            queues = false;
+
+        _.each(results.roomsList.list, function (room) {
+          if (room.queueSystem !== 'private') {
+            var queue = opeka.queues.list[room.queueSystem];
+            queueList[room.queueSystem] = {name: queue.name, inQueue: queue.countUsers()};
+            queues = true;
+          }
+          if (room.maxSize > 2 && !room.private) {
+            var roomData = {
+              maxSize: room.maxSize,
+              memberCount: room.memberCount,
+              name: room.name
+            };
+            roomList.push(roomData);
+          }
+        });
+
+        results.roomsList = roomList;
+        results.queues = queues;
+        results.queueList = queueList;
+        results.queueSystem = self.config.get('features:queueSystem');
+        results.chatPageURL = self.config.get('chatPage');
         context.updateStatus(results);
       }
     });
@@ -111,6 +157,10 @@ function Server(config, logger) {
       // Add the user to the signedIn group.
       self.signedIn.addUser(client.user.clientId);
 
+      if (account.canGenerateCanCode) {
+        self.banCodeGenerator.addUser(client.user.clientId);
+        self.logger.info('User that can generate ban codes signed in.', client.user.clientId);
+      }
       if (account.isAdmin) {
         self.councellors.addUser(client.user.clientId);
 
@@ -136,6 +186,8 @@ function Server(config, logger) {
         client.now.receiveRoomList(opeka.rooms.clientData());
       }
 
+      client.now.receiveQueueList(opeka.queues.clientData());
+
       // Store the account and nickname for later use.
       client.user.account = account;
       client.user.nickname = clientUser.nickname;
@@ -151,6 +203,107 @@ function Server(config, logger) {
     });
   };
 
+  // Give the client a URL where he can sign in and go directly to a
+  // room of the requested type.
+  self.everyone.now.getDirectSignInURL = function (roomType, callback) {
+    var rightNow = new Date(),
+        nonce = crypto.createHash('sha256').update(this.user.clientId + rightNow.getTime()).digest('hex'),
+        signInURL = self.config.get('chatPage');
+
+    self.signInNonces[nonce] = {
+      date: rightNow,
+      roomType: roomType
+    };
+
+    callback(signInURL + '#signIn/' + nonce);
+  };
+
+// -------- GLOBAL QUEUE FUNCTIONS START -----------
+
+  // Called by the Counsellors in order to create a new room.
+  self.councellors.now.createQueue = function (attributes, callback) {
+    if (attributes.name.length > 0) {
+      if (attributes.active === undefined) {
+        attributes.active = true;
+      }
+      var queue = new opeka.queues.Queue(attributes);
+
+      if (callback) {
+        callback(null, queue.clientData());
+      }
+
+      // Send the new complete room list to connected users.
+      //self.councellors.now.queueCreated(room.clientData());
+
+      self.logger.info('Queue ' + queue.name + ' (' + queue.id + ') created.');
+
+    } else {
+      callback("Error creating room: room name too short.");
+    }
+  };
+
+  self.everyone.now.getGlobalQueuePosition = function(queueId, autoJoin, callback) {
+    var queue = opeka.queues.list[queueId],
+        position,
+        rooms = 0,
+        roomId;
+    if (queue) {
+      position = queue.getPosition(this.user.clientId);
+      if (position === 0 && autoJoin) {
+        position = queue.addToQueue(this.user) + 1;
+      }
+    }
+    _.forEach(opeka.rooms.list, function(room) {
+      if (room.queueSystem === queueId) {
+        rooms += 1;
+        // Check if room is full, so it is possible to auto join.
+        if (!room.isFull()) {
+          roomId = room.id;
+        }
+      }
+    })
+    if (callback) {
+      callback(position, rooms, roomId);
+    }
+  };
+
+  // Remove the user from queue - can only remove yourself.
+  self.everyone.now.removeUserFromGlobalQueue = function (queueId, clientId) {
+    if (this.user.clientId === clientId) {
+      var queue = opeka.queues.list[queueId],
+          roomId;
+      queue.removeUserFromQueue(clientId);
+      // Get a room that is attached to the queue and mark is as it has
+      // updated queue status. This is a small hack to reuse code.
+      _.forEach(opeka.rooms.list, function (room) {
+        if (room.queueSystem == queueId) {
+          roomId = room.id;
+        }
+      });
+      self.everyone.now.updateQueueStatus(roomId);
+    }
+  };
+
+// -------- GLOBAL QUEUE FUNCTIONS END -----------
+
+
+  // Once the user has a direct sign in nonce, he has the ability to
+  // reserve his spot in a room.
+  self.everyone.now.reserveRoomSpot = function (nonce, callback) {
+    var room, roomType;
+
+    if (self.signInNonces[nonce]) {
+      roomType = self.signInNonces[nonce].roomType;
+
+      room = opeka.rooms.getOpenRoom(roomType);
+
+      if (room) {
+        room.reserveSpot(this.user.clientId);
+        callback(room.id);
+      }
+    }
+  };
+
   self.everyone.now.getFeatures = function (callback) {
     callback(self.config.get('features'));
   };
@@ -164,12 +317,12 @@ function Server(config, logger) {
       self.logger.error('User ' + this.user.clientId + ' tried to pause room ' + roomId + ' that was already paused.');
       callback("Error Pause: the room has already been paused.");
       return;
-    } else {
-      room.paused = true;
-      self.everyone.now.roomUpdated(roomId, { paused: true });
-      self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
-      callback();
     }
+
+    room.paused = true;
+    self.everyone.now.roomUpdated(roomId, { paused: true });
+    self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+    callback();
   };
 
   // Allow the councellors to unpause a room.
@@ -181,15 +334,53 @@ function Server(config, logger) {
       self.logger.error('User ' + this.user.clientId + ' tried to unpause room ' + roomId + ' that was not paused.');
       callback("Error Unpause: the room has not been paused.");
       return;
-    } else {
-      room.paused = false;
-      self.everyone.now.roomUpdated(roomId, { paused: false });
-      self.sendSystemMessage('[Pause]: Chat is available again.', room.group);
-      callback();
+    }
+
+    room.paused = false;
+    self.everyone.now.roomUpdated(roomId, { paused: false });
+    self.sendSystemMessage('[Pause]: Chat is available again.', room.group);
+    callback();
+  };
+
+  // Function used by the counselors to ban a user from the chat.
+  self.councellors.now.banUser = function (clientId, banCode, callback) {
+    if (opeka.ban.validCode(banCode)) {
+      nowjs.getClient(clientId, function () {
+        var socket = this.socket,
+            ip = socket.handshake.address.address;
+
+        if (!ip) { return; }
+
+        // Register the ban.
+        opeka.ban.create(ip, self.config.get('ban:salt'));
+
+        // Mark banned user's session as banned.
+        this.now.isBanned = true;
+
+        // Close the socket so the banned user is disconnected, after
+        // now.js has had its chance to synch.
+        setTimeout(function () {
+          socket.disconnect();
+        }, 500);
+
+        // Invalidate the ban code so it can't be used again.
+        opeka.ban.invalidateCode(banCode);
+
+        // Let the calling user know we've successfully banned someone.
+        callback();
+      });
+    }
+    else {
+      callback('Invalid ban code.');
     }
   };
 
-  /* Function used by the counselors in order to kick an user out his room */
+  // Function used by admins to get a ban code.
+  self.banCodeGenerator.now.getBanCode = function (callback) {
+    callback(opeka.ban.getCode());
+  };
+
+  // Function used by the counselors to kick an user out of a room.
   self.councellors.now.kick = function (clientId, messageText, roomId) {
     // Get room.
     var room = opeka.rooms.list[roomId],
@@ -200,10 +391,11 @@ function Server(config, logger) {
     }
     // Remove the user.
     self.removeUserFromRoom(room, clientId, function (users) {
-      opeka.user.sendUserList(room.counsellorGroup, room.id, users);
+      opeka.user.sendUserList(room.group, room.id, users);
     });
 
     self.updateUserStatus(self.everyone.now);
+    self.helperUpdateRoomCount(roomId);
   };
 
   /* Function used in order to mute a single user */
@@ -234,15 +426,17 @@ function Server(config, logger) {
   self.councellors.now.whisper = function (clientId, messageText) {
     var whisperClientId = this.user.clientId,
         whisperName = this.user.nickname,
-        recieverName = self.everyone.users[clientId].user.nickname;
+        recieverName = self.everyone.users[clientId].user.nickname,
+        date = new Date();
     // Send to user being whispered.
-    self.everyone.users[clientId].now.roomRecieveWhisper(clientId, messageText, whisperName, true);
+    self.everyone.users[clientId].now.roomRecieveWhisper(clientId, messageText, whisperName, true, date);
     // Send to counselor who did the whispering.
-    this.now.roomRecieveWhisper(whisperClientId, messageText, recieverName, false);
+    this.now.roomRecieveWhisper(whisperClientId, messageText, recieverName, false, date);
   };
 
   // Called by the Counsellors in order to create a new room.
   self.councellors.now.createRoom = function (attributes, callback) {
+    attributes.uid = this.user.account.uid;
     if (attributes.name.length > 0) {
       var room = new opeka.rooms.Room(attributes);
 
@@ -267,15 +461,37 @@ function Server(config, logger) {
 
   // This function is called by the Counsellors in order to delete a room from the system
   self.councellors.now.deleteRoom = function (roomId, finalMessage) {
-    var room = opeka.rooms.list[roomId];
+    var room = opeka.rooms.list[roomId],
+        lastRoom = true,
+        queue;
 
     if (room) {
+      queue = opeka.queues.list[room.queueSystem];
+      // Since deleting the room also flushes the queue, we need to give
+      // message in case of the room being last before the room is deleted.
+      if (room.queueSystem !== 'private') {
+        // Check to see if this was the last room for a queue that was deleted.
+        // If so, flush the queue and give notification to the users.
+        _.forEach(opeka.rooms.list, function (loopRoom) {
+          if (room.queueSystem === loopRoom.queueSystem && room.id !== loopRoom.id) {
+            lastRoom = false;
+          }
+        });
+        // Last room, flush the queue which will trigger notification.
+        if (lastRoom) {
+          queue = opeka.queues.list[room.queueSystem];
+          if (queue) {
+            queue.flushQueue(self.everyone.users);
+          }
+        }
+      }
       self.logger.info('Room ' + room.name + ' (' + roomId + ') deleted.');
 
       opeka.rooms.remove(roomId);
       self.everyone.now.roomDeleted(roomId, finalMessage);
 
       self.updateUserStatus(self.everyone.now);
+
     } else {
       this.now.displayError("Error deleting room: a room with the specified ID does not exist.");
     }
@@ -310,7 +526,18 @@ function Server(config, logger) {
   self.signedIn.now.changeRoom = function (roomId, callback, quit) {
     var client = this,
         serv = self,
-        newRoom = opeka.rooms.list[roomId];
+        newRoom = opeka.rooms.list[roomId],
+        queueSystem = self.config.get('features:queueSystem'),
+        queueFullUrl = self.config.get('features:queueFullUrl');
+
+    // Special case when joining from the global Queue.
+    // Use is already in the room, so fake an OK response.
+    if (client.user.activeRoomId === roomId) {
+      if (callback) {
+        callback('OK', false, false);
+      }
+      return ;
+    }
 
     // If the user was muted, unmute it.
     if (client.user.muted) {
@@ -323,19 +550,20 @@ function Server(config, logger) {
       var oldRoom = opeka.rooms.list[client.user.activeRoomId];
 
       self.roomRemoveUser(oldRoom.client.user.clientId, function (users) {
-        opeka.user.sendUserList(oldRoom.counsellorGroup, oldRoom.id, users);
+        opeka.user.sendUserList(oldRoom.group, oldRoom.id, users);
       });
 
       if (quit) {
         client.now.quitRoom(callback);
       }
+      self.helperUpdateRoomCount(oldRoom.id);
     }
 
     // Trying to add the user, if this returns false the room is full or does not exists
     var addedUser;
     if (newRoom) {
       addedUser = newRoom.addUser(client.user, function(users) {
-        opeka.user.sendUserList(newRoom.counsellorGroup, newRoom.id, users);
+        opeka.user.sendUserList(newRoom.group, newRoom.id, users);
         opeka.user.sendActiveUser(client, newRoom.id, users[client.user.clientId]);
       });
     }
@@ -346,15 +574,27 @@ function Server(config, logger) {
       newRoom.group.now.roomUserJoined(newRoom.id, client.user.nickname);
     }
     else {
-      client.user.activeRoomId = null;
-      client.user.activeQueueRoomId = roomId;
+      if (queueSystem) {
+        if (newRoom.queueSystem === 'private') {
+          client.user.activeRoomId = null;
+          client.user.activeQueueRoomId = roomId;
+        }
+      }
+      else {
+        // Remove the user from the queue again.
+        if (newRoom.queueSystem === 'private') {
+          newRoom.queue.splice(addedUser, 1);
+          addedUser = false;
+        }
+      }
     }
 
     if (callback) {
-      callback(addedUser);
+      callback(addedUser, queueFullUrl, newRoom.queueSystem);
     }
 
     self.updateUserStatus(self.everyone.now);
+    self.helperUpdateRoomCount(roomId);
   };
 
   // Get the number you have in the queue.
@@ -379,9 +619,10 @@ function Server(config, logger) {
       var room = opeka.rooms.list[roomId];
       // Remove the user.
       self.removeUserFromRoom(room, clientId, function (users) {
-        opeka.user.sendUserList(room.counsellorGroup, room.id, users);
+        opeka.user.sendUserList(room.group, room.id, users);
         self.updateUserStatus(self.everyone.now);
       });
+      self.helperUpdateRoomCount(roomId);
     }
   };
 
@@ -418,6 +659,19 @@ function Server(config, logger) {
    * The client not counted as online until it calls clientReady.
    */
   self.everyone.on("connect", function () {
+    var socket = this.socket,
+        banInfo = opeka.ban.checkIP(socket.handshake.address.address, self.config.get('ban:salt'));
+
+    if (banInfo.isBanned) {
+      self.logger.warning('User ' + this.user.clientId + ' tried to connect with banned address ' + banInfo.digest);
+      this.now.isBanned = true;
+
+      // Close the socket after now.js has had its chance to synch.
+      setTimeout(function () {
+        socket.disconnect();
+      }, 500);
+    }
+
     self.updateUserStatus(this.now);
   });
 
@@ -447,18 +701,27 @@ function Server(config, logger) {
 
         self.removeUserFromRoom(oldRoom, client.user.clientId, function(users) {
           // self.sendSystemMessage(client.user.nickname + " left the room.", oldRoom.name);
-          opeka.user.sendUserList(oldRoom.counsellorGroup, oldRoom.id, users);
+          opeka.user.sendUserList(oldRoom.group, oldRoom.id, users);
         });
 
         client.user.activeRoomId = null;
       }
 
-      // TODO: What is this?
+      // Remove user from queue on disconnect.
       if (opeka.rooms.list[client.user.activeQueueRoomId]) {
         oldRoom = opeka.rooms.list[client.user.activeQueueRoomId];
         oldRoom.removeUserFromQueue(client.user.clientId);
         self.everyone.now.updateQueueStatus(oldRoom.id);
       }
+
+      // Loop through all the global queues and remove user from them if present.
+      _.forEach(opeka.queues.list, function (queue) {
+        _.forEach(queue.queue, function (user, index) {
+          if (user.clientId === client.user.clientId) {
+            queue.queue.splice(index, 1);
+          }
+        });
+      });
 
       self.updateUserStatus(self.everyone.now);
     });
@@ -505,6 +768,16 @@ function Server(config, logger) {
       }
     });
   };
+
+  self.helperUpdateRoomCount = function(roomId) {
+    var room = opeka.rooms.list[roomId];
+    if (room) {
+      room.group.count(function (count) {
+        self.everyone.now.updateRoomMemberCount(roomId, count);
+        opeka.rooms.list[roomId].memberCount = count;
+      });
+    }
+  }
 
   return self;
 }

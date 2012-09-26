@@ -20,6 +20,10 @@ function opeka_permission() {
       'title' => t('Administer the chat system'),
       'description' => t('Grants a user access to the admin backend of the Opeka chat system.'),
     ),
+    'generate opeka chat ban codes' => array(
+      'title' => t('Generate opeka chat ban codes'),
+      'description' => t('Grants a user access to generate opeka chat ban codes.'),
+    ),
   );
 }
 
@@ -80,6 +84,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $stylesheets = array_merge(array(
     'opeka.base.css',
     'opeka.theme.css',
+    'jquery.ui.theme.css',
   ), $stylesheets);
   foreach ($stylesheets as $filename) {
     drupal_add_css($path . '/css/' . $filename);

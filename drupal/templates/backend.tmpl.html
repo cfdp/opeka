@@ -65,35 +65,45 @@
 </div>
 </script>
 
-
 <script id="opeka_room_clear_tmpl" type="application/template">
   <p><%= labels.explanation %></p>
 </script>
 
 
-<script id="opeka_kick_user_tmpl" type="application/template">
-  <form action="#" class="kick-user-form">
+<script id="opeka_ban_user_tmpl" type="application/template">
+  <form action="#" class="ban-user-form">
     <label>
-      <%= labels.kickMessage %>
-      <input class="form-text kick-message" name="name" type="textfield" />
+      <%= labels.banMessage %>
+      <input class="form-text ban-message" name="ban-message" type="textfield" />
     </label>
+    <label><%= labels.banCode %></label>
+      <input class="form-text ban-code" name="name" type="textfield" />
+      <span class="help-text"><%= labels.banCodeDescription %></span>
   </form>
 </script>
 
+<script id="opeka_kick_user_tmpl" type="application/template">
+  <form action="#" class="kick-user-form">
+    <label><%= labels.kickMessage %></label>
+      <input class="form-text kick-message" name="kick-message" type="textfield" />
+    <span class="help-text"><%= labels.kickHelpText %></span>
+  </form>
+</script>
+<!--
 <script id="opeka_mute_user_tmpl" type="application/template">
   <form action="#" class="mute-user-form">
     <label>
       <%= labels.muteMessage %>
-      <input class="form-text mute-message" name="name" type="textfield" />
+      <input class="form-text mute-message" name="mute-message" type="textfield" />
     </label>
   </form>
 </script>
-
+-->
 <script id="opeka_unmute_user_tmpl" type="application/template">
   <form action="#" class="unmute-user-form">
     <label>
       <%= labels.unmuteMessage %>
-      <input class="form-text unmute-message" name="name" type="textfield" />
+      <input class="form-text unmute-message" name="unmute-message" type="textfield" />
     </label>
   </form>
 </script>
@@ -101,61 +111,117 @@
 
 <script id="opeka_room_edit_tmpl" type="application/template">
   <form action="#" class="room-edit-form">
+    <p>To create a simple 1 to 1 chat, please click the green button below.</p>
+      <button class="ui-button ui-button-text-only"><span class="ui-button-text">Create a 1 to 1 chat room</span></button>
+    <div class="create-groupchat-room">
+    <div class="groupchat-room-settings">
+      <div class="form-item">
+        <label for="name"><%- labels.name %></label>
+        <input class="form-text name required" name="name" type="textfield" placeholder="1to1" />
+      </div>
+
+      <div class="form-item">
+        <!--
+        <label for="max-size"><%- labels.size %></label>
+        <select class="max-size" name="max-size">
+          <option value="2" selected="selected">2 <%- labels.users %></option>
+          <option value="5">5 <%- labels.users %></option>
+          <option value="6">6 <%- labels.users %></option>
+          <option value="7">7 <%- labels.users %></option>
+          <option value="8">8 <%- labels.users %></option>
+          <option value="9">9 <%- labels.users %></option>
+          <option value="10">10 <%- labels.users %></option>
+          <option value="15">15 <%- labels.users %></option>
+        </select>
+        -->
+        <div class="form-item max-size2">
+        <label for="max-size"><%- labels.size %></label>
+        <input type="radio" name="max-size" class="max-size2" id="2" checked="checked" value="2" />
+        <label for="2">2</label>
+        <input type="radio" name="max-size" class="max-size2" id="5" value="5" />
+        <label for="5">5</label>
+        <input type="radio" name="max-size" class="max-size2" id="7" value="7" />
+        <label for="7">7</label>
+        <input type="radio" name="max-size" class="max-size2" id="8" value="8" />
+        <label for="8">8</label>
+        <input type="radio" name="max-size" class="max-size2" id="9" value="9" />
+        <label for="9">9</label>
+        <input type="radio" name="max-size" class="max-size2" id="10" value="10" />
+        <label for="10">10</label>
+        <input type="radio" name="max-size" class="max-size2" id="15" value="15" />
+        <label for="15">15</label>
+        </div>
+      <!--
+      <div class="form-item">
+        <label for="ip-location"><%- labels.iPLocation %></label>
+        <select class="ip-location"  name="ip-location">
+          <option value="Any" selected="selected"><%- labels.any %></option>
+          <option value="Denmark"><%- labels.dk %></option>
+          <option value="Scandinavia"><%- labels.outDk %></option>
+        </select>
+      </div>
+      -->
+      <div class="form-item queue-system">
+        <label for="queue-system"><%- labels.queueSystem %></label>
+        <!--
+        <select class="queue-system"  name="queue-system">
+          <option value="private" selected="selected"><%- labels.private %></option>
+          <% queues.each(function (queue) { %>
+            <option value="<%- queue.id %>"><%- queue.get('name') %></option>
+          <% }); %>
+        </select>
+        -->
+        <input type="radio" value="simplechat" name="queue" id="simplechat" checked="checked" />
+            <label for="simplechat">simplechat</label>
+        <% queues.each(function (queue) { %>
+            <input type="radio" class="queue" value="<%- queue.id %>" name="queue" id="<%- queue.id %>" />
+            <label for="<%- queue.id %>"><%- queue.get('name') %></label>
+          <% }); %>
+      </div>
+
+      <div class="form-item private-room">
+        <label for="private-room">Is this room for training?</label>
+        <input class="private" name="private" id="private" type="checkbox" value="true" />
+        <label for="private"><%- labels.privateRoom %></label>
+      </div>
+    </div>
+  </form>
+</script>
+
+<script id="opeka_queue_edit_tmpl" type="application/template">
+  <form action="#" class="room-edit-form">
     <div class="form-item">
       <label for="name"><%- labels.name %></label>
       <input class="form-text name required" name="name" type="textfield" />
     </div>
 
-    <div class="form-item">
-      <label for="max-size"><%- labels.size %></label>
-      <select class="max-size" name="max-size">
-        <option value="2" selected="selected">2 <%- labels.users %></option>
-        <option value="5">5 <%- labels.users %></option>
-        <option value="6">6 <%- labels.users %></option>
-        <option value="7">7 <%- labels.users %></option>
-        <option value="8">8 <%- labels.users %></option>
-        <option value="9">9 <%- labels.users %></option>
-        <option value="10">10 <%- labels.users %></option>
-        <option value="15">15 <%- labels.users %></option>
-      </select>
-    </div>
-
-    <div class="form-item">
-      <label for="ip-location"><%- labels.iPLocation %></label>
-      <select class="ip-location"  name="ip-location">
-        <option value="Any" selected="selected"><%- labels.any %></option>
-        <option value="Denmark"><%- labels.dk %></option>
-        <option value="Scandinavia"><%- labels.outDk %></option>
-      </select>
-    </div>
-
-    <div class="form-item">
-      <label for="private"><%- labels.privateRoom %></label>
-      <input class="private" name="private" type="checkbox" value="true" />
-    </div>
-
   </form>
 </script>
+
 
 <script id="opeka_room_delete_tmpl" type="application/template">
   <form action="#" class="room-delete-form">
     <label>
       <%= labels.finalMessage %>
-      <input class="form-text final-message" name="name" type="textfield" />
+      <input class="form-text final-message" name="final-message" type="textfield" />
     </label>
+  </form>
+</script>
+
+<script id="opeka_room_own_pair_room_tmpl" type="application/template">
+  <p><%= labels.explanation %></p>
+  <form action="#" class="room-leave-form">
   </form>
 </script>
 
 <script id="opeka_whisper_tmpl" type="application/template">
   <form action="#" class="whisper-form">
-    <label>
-      <%= labels.whisper %>
+    <label><%= labels.whisperMessage %></label>
       <!--<input class="form-text whisper-message" name="name" type="textfield" />-->
       <textarea class="form-text whisper-message" name="name" rows=3 cols=32></textarea>
-    </label>
+    <span class="help-text"><%= labels.whisperHelpText %></span>
   </form>
 </script>
-
 
 <script id="opeka_backend_tmpl" type="x-jquery-tmpl">
   <div id="opeka-backend">

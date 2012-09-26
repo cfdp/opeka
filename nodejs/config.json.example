@@ -6,9 +6,15 @@
     "password": "asdfsecret",
     "database": "john_doe"
   },
+  "features" : {
+    "hidePairRoomsOnRoomList": false,
+    "queueSystem" : true,
+    "queueFullUrl" : "http://example.com"
+  },
   "http": {
     "port": 3000
   },
+  "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
   "https": {
     "enabled": false,
     "key": "certs/server-key.pem",

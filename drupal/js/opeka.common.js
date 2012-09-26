@@ -35,8 +35,12 @@ var Opeka = { status: {}},
   Opeka.MainRouter = Backbone.Router.extend({
     routes: {
       '': 'signIn',
+      'signIn/:nonce': 'signIn',
+      'signIn/queues/:queueId': 'signInForQueue',
       'rooms/:roomId': 'room',
       'rooms': 'roomList',
+      'queues/:queueId': 'queue',
+      'queues': 'queueList',
       'feedback': 'feedbackPage'
     },
 
@@ -53,8 +57,27 @@ var Opeka = { status: {}},
     },
 
     // Chat sign in page.
-    signIn: function () {
-      var view = new Opeka.SignInFormView({});
+    signIn: function (nonce) {
+      var view = new Opeka.SignInFormView({
+        nonce: nonce
+      });
+
+      if (nonce) {
+        // Reserve our spot as soon as the Now server is able.
+        now.ready(function () {
+          now.reserveRoomSpot(nonce, function (roomId) {
+            view.roomId = roomId;
+          });
+        });
+      }
+
+      Opeka.appViewInstance.replaceContent(view.render().el);
+    },
+
+    signInForQueue: function (queueId) {
+      var view = new Opeka.SignInFormView({
+        queueId: queueId
+      });
 
       Opeka.appViewInstance.replaceContent(view.render().el);
     },
@@ -65,6 +88,8 @@ var Opeka = { status: {}},
 
         Opeka.appViewInstance.replaceContent(view.render().el);
       }
+      // Need to make sure the chat view is not set.
+      Opeka.chatView = null;
     },
 
     //@daniel
@@ -79,8 +104,10 @@ var Opeka = { status: {}},
 
     // The actual chatroom page.
     room: function (roomId) {
-      var admin = _.isFunction(now.receiveUserList),
-          room = Opeka.roomList.get(roomId), sidebar;
+      var admin = _.isFunction(now.isAdmin),
+          room = Opeka.roomList.get(roomId),
+          sidebar,
+          that = this;
 
       if (this.checkSignIn()) {
         if (!room) {
@@ -93,7 +120,7 @@ var Opeka = { status: {}},
           model: room
         });
 
-        if (admin) {
+        if (Opeka) {
           sidebar = new Opeka.ChatSidebarView({
             admin: admin,
             model: room
@@ -101,22 +128,98 @@ var Opeka = { status: {}},
         }
 
         // Render the view when the server has confirmed our room change.
-        now.changeRoom(roomId, function (response) {
+        now.changeRoom(roomId, function (response, url, queueId) {
           if (response !== 'OK') {
-            Opeka.chatView.inQueue = response;
+            // response is false if no queue is used and room is full, redirect to url.
+            if (response === false) {
+              window.location = url;
+              return;
+            }
+            else if (queueId === 'private') {
+              Opeka.chatView.inQueue = response;
+            }
           }
-          Opeka.appViewInstance.replaceContent(Opeka.chatView.render().el);
+          if (queueId === 'private' || response === 'OK') {
+            Opeka.appViewInstance.replaceContent(Opeka.chatView.render().el);
+          }
+          else {
+            that.navigate('queues/' + queueId, {trigger: true});
+          }
 
-          if (admin) {
+          if (sidebar) {
             Opeka.appViewInstance.$el.find('.sidebar').html(sidebar.render().el);
           }
         });
       }
+    },
+
+    queueList: function () {
+      var admin = _.isFunction(now.isAdmin);
+      if (admin) {
+        var view = new Opeka.QueueListView({});
+
+        Opeka.appViewInstance.replaceContent(view.render().el);
+      }
+      // Need to make sure the chat view is not set.
+      Opeka.chatView = null;
+    },
+
+    queue: function(queueId) {
+      // Need to make sure the chat view is not set.
+      Opeka.chatView = null;
+
+      var queue = Opeka.queueList.get(queueId),
+          that = this,
+          sidebar;
+
+      if (this.checkSignIn()) {
+        if (!queue) {
+          this.navigate('404', { trigger: true });
+        }
+        else {
+          Opeka.queueView = new Opeka.QueueView({
+            model: queue
+          });
+
+          now.getGlobalQueuePosition(queueId, true, function (position, rooms, roomId) {
+            if (roomId && Opeka.roomList.get(roomId)) {
+              that.navigate('rooms/' + roomId, {trigger: true});
+            }
+            else {
+              Opeka.queueView.position = position;
+              Opeka.queueView.rooms = rooms;
+              Opeka.appViewInstance.replaceContent(Opeka.queueView.render().el);
+              Opeka.appViewInstance.$el.find('.sidebar').html('');
+            }
+          });
+        }
+
+      }
     }
   });
 
+  // Recieve the user list from the server.
+  now.receiveUserList = function (roomId, userList) {
+    var room = Opeka.roomList.get(roomId);
+
+    if (room) {
+      room.set('userList', userList);
+    }
+  };
+
   now.updateQueueStatus = function (roomId) {
-    if (Opeka.chatView && Opeka.chatView.model.id === roomId && Opeka.chatView.inQueue !== false) {
+    var room = Opeka.roomList.get(roomId);
+    if (room && room.get('queueSystem') !== 'private') {
+      if (Opeka.queueView && Opeka.queueView.model.id === room.get('queueSystem')) {
+        now.getGlobalQueuePosition(room.get('queueSystem'), false, function (position, rooms, roomId) {
+          Opeka.queueView.position = position;
+          Opeka.queueView.rooms = rooms;
+          Opeka.queueView.render();
+        });
+      }
+    }
+    // This will react for the private queue only - when the user is in the queue on the room page.
+    else if (Opeka.chatView && Opeka.chatView.model.id === roomId && Opeka.chatView.inQueue !== false) {
       now.roomGetQueueNumber(roomId, function(index) {
         // Error, user is no longer in the queue, maybe he just joined the
         // room or an error happened.
@@ -142,7 +245,8 @@ var Opeka = { status: {}},
     if (_.isFunction(Opeka.status.set)) {
       Opeka.status.set(attributes);
 
-      Opeka.statusViewInstance.render();
+      // Update the status view if present.
+      Opeka.statusViewInstance && Opeka.statusViewInstance.render();
     }
   };
 
@@ -175,11 +279,26 @@ var Opeka = { status: {}},
     }
   };
 
+  // Set the member count for a room.
+  now.updateRoomMemberCount = function (roomId, count) {
+    var room = Opeka.roomList.get(roomId);
+    if (room) {
+      room.set('memberCount', count);
+    }
+  };
+
   // For when the server has an updated room list for us.
   now.receiveRoomList = function (rooms) {
     // This triggers a reset even on the RoomList instance, so any views
     // that use this list can listen to that for updates.
     Opeka.roomList.reset(rooms);
+  };
+
+  // For when the server has an updated room list for us.
+  now.receiveQueueList = function (queues) {
+    // This triggers a reset even on the RoomList instance, so any views
+    // that use this list can listen to that for updates.
+    Opeka.queueList.reset(queues);
   };
 
   // Add the new room to our local room list.
@@ -192,7 +311,11 @@ var Opeka = { status: {}},
 
   // Reaction for when joining the room.
   now.roomJoinFromQueue = function (roomId) {
-    if (Opeka.chatView && Opeka.chatView.model.id === roomId) {
+    var room = Opeka.roomList.get(roomId);
+    if (room && room.get('queueSystem') !== 'private') {
+      Opeka.router.navigate("rooms/" + roomId, {trigger: true});
+    }
+    else if (Opeka.chatView && Opeka.chatView.model.id === roomId) {
       Opeka.chatView.inQueue = false;
       Opeka.chatView.render();
     }
@@ -227,17 +350,23 @@ var Opeka = { status: {}},
       }
 
       Opeka.roomList.remove(room);
+      // Remove the sidebar.
+      Opeka.appViewInstance.$el.find('.sidebar').html('');
     }
   };
 
   // Receive the whisper form an user.
-  now.roomRecieveWhisper = function (clientId, messageText, nickname, receiver) {
+  now.roomRecieveWhisper = function (clientId, messageText, nickname, receiver, date) {
     if (now.core.clientId === clientId) {
       // A user receiving the whisper.
       var messageObj = {
+        receiver: receiver,
         message: messageText,
         whisper: true,
-        name: nickname
+        sender: {
+          name: nickname
+        },
+        date: date
       };
       Opeka.chatView.receiveMessage(messageObj);
     }
@@ -245,7 +374,7 @@ var Opeka = { status: {}},
 
   // Response to a user joining the room.
   now.roomUserJoined = function (roomId, nickname) {
-    if (Opeka.chatView.model.id === roomId) {
+    if (Opeka.chatView && Opeka.chatView.model && Opeka.chatView.model.id === roomId) {
       var messageObj = {
         message: Drupal.t('@user has joined the room.', { '@user': nickname }),
         system: true
@@ -275,6 +404,21 @@ var Opeka = { status: {}},
       Opeka.chatView.receiveMessage(messageObj);
     }
   };
+
+  // Respond to a queue being flushed.
+  now.queueIsFlushed = function(clientId) {
+    // The queue is flushed, navigate to a different page and
+    // use a FatalErrorDialog to force them to reload the page.
+    if (now.core.clientId === clientId) {
+      Opeka.router.navigate("rooms", {trigger: true});
+
+      var view = new Opeka.FatalErrorDialogView({
+        message: Drupal.t('The chat that you were in queue for has closed and your position in the queue with it. You are welcome to join again when the chat reopens or join a different chat room or queue.'),
+        title: Drupal.t('Chat and queue closed')
+      });
+      view.render();
+    }
+  }
 
   // Response to a user leaving the room.
   now.roomUserLeft = function (roomId, nickname) {
@@ -342,8 +486,23 @@ var Opeka = { status: {}},
   // Sign in to the chat app.
   Opeka.signIn = function (user, callback) {
     now.signIn(user, function () {
+      var destination = 'rooms',
+          footer;
+
+      if (user.roomId) {
+        destination = destination + '/' + user.roomId;
+      }
+      else if (user.queueId) {
+        destination = 'queues' + '/' + user.queueId;
+      }
+
       callback();
-      Opeka.router.navigate("rooms", {trigger: true});
+      Opeka.router.navigate(destination, {trigger: true});
+
+      footer = new Opeka.ChatFooterView({
+        banCodeGenerator: _.isFunction(now.getBanCode)
+      });
+      $('#opeka-app').find('.footer').append(footer.render().el);
     });
   };
 
@@ -365,6 +524,7 @@ var Opeka = { status: {}},
     Opeka.status = new Backbone.Model();
 
     Opeka.roomList = new Opeka.RoomList();
+    Opeka.queueList = new Opeka.QueueList();
 
     Opeka.appViewInstance = new Opeka.AppView();
     Opeka.statusViewInstance = new Opeka.OnlineStatusView({
@@ -376,19 +536,26 @@ var Opeka = { status: {}},
     });
 
     $('#opeka-app').html(Opeka.appViewInstance.render().el);
+
     $('#help .region-help').hide();
     // If the connection is dropped, advise the user that he has to
     // reload the page.
+
     now.core.on('disconnect', function() {
+
+      // If the user is banned, tell him to go away.
+      if (now.isBanned) {
+        view = new Opeka.BannedDialogView().render();
+        return;
+      }
+
       // Wait five seconds before showing the dialog, in case the
       // disconnect was caused by the user reloading the page.
       window.setTimeout(function () {
         var view = new Opeka.FatalErrorDialogView({
           message: Drupal.t('Your connection to the chat server was lost. Please reconnect. Contact support if problem persists.'),
           title: Drupal.t('Disconnected')
-        });
-
-        view.render();
+        }).render();
       }, 5000);
     });
 
@@ -408,4 +575,3 @@ var Opeka = { status: {}},
     Backbone.history.start();
   });
 }(jQuery));
-
