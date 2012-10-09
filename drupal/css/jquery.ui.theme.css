@@ -54,7 +54,7 @@
 .ui-widget-content .room-edit-form .private-room input[type=checkbox]+label		{background: rgb(17,202,3); border: 1px solid rgb(3,115,0); border-radius: 2px; color: rgb(255,255,255); display: inline-block; margin-right: -4px; padding: 5px 5px 5px 0; text-align: right; width: 94px;}
 
 
-.ui-widget-content form[action~="#"] textarea			{outline: 1px solid rgb(180,180,180); outline-offset: 2px;}
+.ui-widget-content form[action~="#"x½] textarea			{outline: 1px solid rgb(180,180,180); outline-offset: 2px;}
 .ui-widget-content form[action~="#"] textarea:focus		{box-shadow: 0 0 6px 5px rgba(33,177,251,0.5);}
 
 
@@ -63,4 +63,4 @@
 .ui-widget-content form[action~="#"] input.form-text			{display: block; margin: 1em 0; padding: 5px; width: 264px;}
 .ui-widget-content form[action~="#"] input.form-text:focus		{box-shadow: 0 0 6px 5px rgba(33,177,251,0.2);}
 
-.ui-widget-content form[action~="#"] .help-text				{color: rgb(140,140,140); display: inline-block; font-size: .8em; font-style: italic; line-height: 1.4em; margin-top: 2em; width: 274px;}
+.ui-widget-content form[action~="#"] .help-text				{color: rgb(140,140,140); display: inline-block; font-size: .8em; font-style: italic; line-height: 1.4em; margin-top: 2em; width: 274px;}	

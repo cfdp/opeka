@@ -38,7 +38,7 @@
 
 .opeka-chat-sidebar .user-list 	{list-style: none; margin: 0;}
 
-.opeka-chat-sidebar .user-list li span 		{display: inline-block;}
+.opeka-chat-sidebar .user-list li span 		{}
 
 .opeka-chat-sidebar .user-list .name,
 .opeka-chat-sidebar .user-list .meta		{font-size: 0.8em;}

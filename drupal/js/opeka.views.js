@@ -115,6 +115,7 @@
             placeholder: Drupal.t('Type message here…'),
             roomPaused: Drupal.t('The room is paused'),
             userMuted: Drupal.t('You are muted'),
+            messageButton: Drupal.t('Send')
           },
           inQueue: this.inQueue,
           room: this.model

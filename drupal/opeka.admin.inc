@@ -55,5 +55,27 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_schedule', ''),
   );
 
+  $form['opeka_server_start'] = array(
+    '#type' => 'submit',
+    '#value' => 'Start server',
+    '#submit' => array('opeka_start_server')
+    );
+
+  $form['opeka_server_stop'] = array(
+    '#type' => 'submit',
+    '#value' => 'Stop server',
+    '#submit' => array('opeka_stop_server')
+    );
+
   return system_settings_form($form);
+}
+
+function opeka_start_server($form, &$form_state){
+  $output = shell_exec('node /home/cyberhus/devel/cfdpchat/nodejs/main.js');
+  //die ("<pre>$output</pre>");
+}
+
+function opeka_stop_server($form, &$form_state){
+  $output = shell_exec('./stopchat');
+  //die ("<pre>$output</pre>");
 }
