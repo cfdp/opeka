@@ -47,7 +47,7 @@
 .ui-widget-content .room-edit-form .queue-system input[type=radio]+label:last-child 		{border-top-right-radius: 2px; border-bottom-right-radius: 2px;}
 
 .ui-widget-content .room-edit-form .queue-system								{margin: 10px 0;}
-.ui-widget-content .room-edit-form .queue-system input[type=radio]+label		{width: 85px;}
+.ui-widget-content .room-edit-form .queue-system input[type=radio]+label		{padding-right: 10px;  width: 100px;}
 
 .ui-widget-content .room-edit-form .private-room 								{position: relative;}
 .ui-widget-content .room-edit-form .private-room input[type=checkbox]			{margin-left: 3px; position: absolute; top: 34px;}

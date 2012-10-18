@@ -834,13 +834,14 @@
             size: Drupal.t('Size limit'),
             users: Drupal.t('users')
           },
-          queues: Opeka.queueList
+          queues: Opeka.queueList,
+          enableQueues: true,
         });
         options.room = new Opeka.Room({});
         options.dialogOptions = {
           buttons: {},
           title: Drupal.t('Create new room'),
-          width: 400
+          width: 500
         };
 
         options.dialogOptions.buttons[Drupal.t('Create new room')] = this.saveRoom;

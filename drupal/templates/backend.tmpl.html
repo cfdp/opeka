@@ -161,23 +161,25 @@
         </select>
       </div>
       -->
-      <div class="form-item queue-system">
-        <label for="queue-system"><%- labels.queueSystem %></label>
-        <!--
-        <select class="queue-system"  name="queue-system">
-          <option value="private" selected="selected"><%- labels.private %></option>
+      <% if (enableQueues) {%>
+        <div class="form-item queue-system">
+          <label for="queue-system"><%- labels.queueSystem %></label>
+          <!--
+          <select class="queue-system"  name="queue-system">
+            <option value="private" selected="selected"><%- labels.private %></option>
+            <% queues.each(function (queue) { %>
+              <option value="<%- queue.id %>"><%- queue.get('name') %></option>
+            <% }); %>
+          </select>
+          -->
+          <input type="radio" value="simplechat" name="queue" id="simplechat" checked="checked" />
+              <label for="simplechat">simplechat</label>
           <% queues.each(function (queue) { %>
-            <option value="<%- queue.id %>"><%- queue.get('name') %></option>
-          <% }); %>
-        </select>
-        -->
-        <input type="radio" value="simplechat" name="queue" id="simplechat" checked="checked" />
-            <label for="simplechat">simplechat</label>
-        <% queues.each(function (queue) { %>
-            <input type="radio" class="queue" value="<%- queue.id %>" name="queue" id="<%- queue.id %>" />
-            <label for="<%- queue.id %>"><%- queue.get('name') %></label>
-          <% }); %>
-      </div>
+              <input type="radio" class="queue" value="<%- queue.id %>" name="queue" id="<%- queue.id %>" />
+              <label for="<%- queue.id %>"><%- queue.get('name') %></label>
+            <% }); %>
+        </div>
+      <% }%>
 
       <div class="form-item private-room">
         <label for="private-room">Is this room for training?</label>
