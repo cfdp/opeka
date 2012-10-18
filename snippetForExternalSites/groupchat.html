@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!-- saved from url=(0047)http://alin-tincas.com/html/chat/groupchat.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>External Customer Site</title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+<script src="http://netstofchat.cybhus.dk:3003/nowjs/now.js"></script>
+
+<script>
+// Build pop-up window
+function open_window(window_name,file_name,width,height) {
+  parameters = "width=" + width;
+  parameters = parameters + ",height=" + height;
+  parameters = parameters + ",status=no";
+  parameters = parameters + ",resizable=no";
+  parameters = parameters + ",scrollbars=no";
+  parameters = parameters + ",menubar=no";
+  parameters = parameters + ",toolbar=no";
+  parameters = parameters + ",directories=no";
+  parameters = parameters + ",location=no";
+  vindue = window.open(file_name,window_name,parameters);
+  vindue.focus();
+}
+(function ($) {
+  var chatStatus = {};
+
+  // The following callback is called by the server in order to
+  // advertise its status.
+  now.updateStatus = function (attributes) {
+    chatStatus = attributes;
+    $(window).trigger('opekaChatStatusUpdate', [attributes]);
+  };
+
+  // When the DOM is ready, set up the widget.
+  $(function () {
+    var statusText = $('#status'),
+        groupButton = $('#join-group-chat');
+
+    // Updates the actual status text.
+    var updateDisplay = function (attributes) {
+      // If there are any active one-to-one rooms.
+      if (chatStatus.rooms) {
+        statusText.text("Chat active");
+        statusText.hide();
+      // If not, check if there are any active group rooms.
+      } else {
+        statusText.text("Chat not active");
+        statusText.hide();
+      };
+
+      var current = 0;
+      var maxim = 0;
+      if (chatStatus.roomsList && chatStatus.roomsList.length) {
+        statusText.text("Chat active");
+        statusText.hide();
+        groupButton.css("background","url('http://netstofchat.cybhus.dk/sites/default/files/green.jpg')");
+        $.each(chatStatus.roomsList, function(i, room) {
+           current += room.memberCount;
+           maxim += room.maxSize;
+        });
+        if (current === maxim) {groupButton.css("background","url('http://netstofchat.cybhus.dk/sites/default/files/yellow.jpg')");}
+       };
+    };
+    // When the document is ready, update the status, and bind the event
+    // to have it update automatically later.
+    $(window).bind('opekaChatStatusUpdate', updateDisplay);
+
+    // When the user clicks the button, ask the chat server to join a room.
+    groupButton.click(function() {
+      if (!(chatStatus.roomsList && chatStatus.roomsList.length)) {
+         window.parent.location = "http://cyberhus.dk/gruppechat";
+      }
+      else {
+         //window.parent.location = chatStatus.chatPageURL;
+	if(!$.browser.opera){
+		open_window("_blank",chatStatus.chatPageURL,700,600);
+	}else{
+		window.parent.location = "http://netstof.dk/chat-on-opera";	
+	}
+      }
+    });
+
+    // Run updateDisplay once manually so we have the initial text
+    // nailed down.
+    updateDisplay();
+  });
+}(jQuery));
+
+</script>
+<style>
+    #join-group-chat {
+          width:174px;
+	  border-width: 0;
+          height:57px;
+          padding: 0;
+          display: inline-block;
+          background:url("http://netstofchat.cybhus.dk/sites/default/files/red.jpg");}
+    }
+	#join-group-chat:hover{cursor:pointer;}
+</style>
+</head>
+<body>
+<div id="status">Chat not active</div>
+<p><input id="join-group-chat" type="button" value=""></p>
+</body></html>
