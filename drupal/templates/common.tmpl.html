@@ -127,8 +127,7 @@
             <span class="room-status">FULL</span>
           <%} %>
         </div>
-      <p class="room-description"><%- room.get('name') %></p>
-      <% if (room.get('memberCount') != room.get('maxSize')){%>
+      <p class="room-description"><%- room.get('name') %></p><% if (room.get('memberCount') != room.get('maxSize')){%>
         <a href="#rooms/<%= room.id %>" class="room-enter"><%= labels.enterRoom %></a>
       <%}else{ %>
         <a href="<%= labels.fullRoomLinkText %>" target="_blank" class="meantime"><%= labels.fullRoomLink %></a>
@@ -237,7 +236,7 @@
   <% } else if (inQueue === false) { %>
     <div class="roomPaused">
       <p><%= labels.roomPaused %></p>
-      <span class="help-text">The room has been paused by the counselor.</span>
+      <span class="help-text"><%= labels.roomPausedHelpText %></span>
     </div>
   <% } %>
   <% if (inQueue !== false) { %>

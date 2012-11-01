@@ -83,15 +83,24 @@
         activeUser = {muted:false};
       }
       
+      // If user is in the queue, show it to him.
       if (this.inQueue !== false) {
         inQueueMessage = Drupal.t('Chat room is full, you are currently in queue as number: @number. You can stay and wait until you can enter or leave the queue.', {'@number': this.inQueue + 1});
       }
+
+      // Hide the send message form if room is paused, user is muted or
+      // in queue.
       hideForm = !this.model.get('paused') && !activeUser.muted && this.inQueue === false;
+      
+      // Figure out if the message form is currently present.
       formPresent = this.$el.find(".message-form").length > 0;
+      
+      // For the first time the view is rendered, create some wrapper divs.
       if (this.$el.find('.chat-view-window').length === 0) {
         hideForm = 'show';
         this.$el.html('<div class="chat-view-window"></div><div class="chat-view-form"></div>');
       }
+
       // Always render the chat window.
       this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
@@ -104,6 +113,7 @@
         messages: this.messages,
       }));
 
+      // Conditionally render the message form.
       if (hideForm !== formPresent || this.inQueue !== false) {
         this.$el.find('.chat-view-form').html(JST.opeka_chat_form_tmpl({
           activeUser: activeUser,
@@ -887,24 +897,6 @@
       }
     },
 
-    // @daniel
-    // For when you need to show settings for groupchat rooms.
-    settingsBlocktoggle: function (event) {
-      var body = $('.groupchat-room-settings');
-          //arrow = head.children('.arrow');
-      
-      body.toggle();
-      /*
-      if(arrow.hasClass('down')){
-        arrow.removeClass('down').addClass('up');
-      }else{
-        arrow.removeClass('up').addClass('down');
-      }*/
-      
-      if (event) {
-        event.preventDefault();
-      }
-    },
   });
 
   // Dialog to create queues with.
@@ -1087,7 +1079,7 @@
   });// END RoomListView
 
   //@daniel
-  //Page to place the link for user feedback  
+  //Page to place the google form for user feedback  
   Opeka.UserFeedback = Backbone.View.extend({
     
     initialize: function (options) {
@@ -1098,7 +1090,7 @@
     render: function () {
       this.$el.html(JST.opeka_user_feedback_tmpl({
         
-        admin: _.isFunction(now.receiveUserList),
+        admin: _.isFunction(now.isAdmin),
                 
       }));
       
@@ -1346,8 +1338,7 @@
           female: Drupal.t('Female'),
           male: Drupal.t('Male'),
           nick: Drupal.t('Nickname'),
-          nick_tooltip: Drupal.t('Det er vigtigt at du skriver et navn i feltet for at I kan kende forskel på hinanden når I chatter. Hvis flere logger ind som "Anonym" vil man ikke kunne kende forskel.'),
-          placeholder: Drupal.t('Type the name you want to have'),
+          placeholder: Drupal.t('Anonymous'),
         },
         name: name
       });
@@ -1371,17 +1362,11 @@
       
       var x = Math.floor((Math.random()*50)+1);
 
-      //@daniel
-      //add a random number to each anonymous user to help in distinguishing them
-      
-      var x = Math.floor((Math.random()*50)+1);
-
       user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous'+x);""
       user.age = this.$el.find('.age').val();
       user.gender = this.$el.find('.gender').val();
       user.roomId = this.roomId;
       user.queueId = this.queueId;
-
 
       Opeka.signIn(user, function () {
         view.$el.fadeOut();
@@ -1391,7 +1376,6 @@
         event.preventDefault();
       }
     }
-
   });// END SignInFormView
 
 }(jQuery));
