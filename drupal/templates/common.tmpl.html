@@ -135,7 +135,7 @@
       </li>
     <% } %>
   <% }); %>
-  <% if (labels.placeholder && !admin) { %>
+  <% if (labels.placeholder && !hidePairRooms) { %>
     <li class="placeholder norooms"><%= labels.placeholder %></li>
   <% } %>
   </ul>
@@ -155,6 +155,9 @@
       </li>
     <% } %>
   <% }); %>
+  <% if (labels.placeholder && !admin) { %>
+    <li class="placeholder norooms"><%= labels.placeholder %></li>
+  <% } %>
   </ul>
 
 </script>
