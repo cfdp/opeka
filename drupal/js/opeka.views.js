@@ -1053,6 +1053,9 @@
       if (hidePairRooms) {
         html += JST.opeka_pair_room_list_tmpl({
           admin: _.isFunction(now.isAdmin),
+          labels: {
+          enterRoom: Drupal.t('Enter')
+        },
           rooms: roomList
         });
       }

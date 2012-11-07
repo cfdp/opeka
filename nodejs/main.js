@@ -31,7 +31,8 @@ nconf.defaults({
   },
   "features": {
     "hidePairRoomsOnRoomList": false,
-    "queueSystem" : true
+    "automaticPausePairRooms": true,
+    "queueSystem" : false
   }
 });
 
