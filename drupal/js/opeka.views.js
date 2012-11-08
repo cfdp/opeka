@@ -1054,9 +1054,9 @@
         html += JST.opeka_pair_room_list_tmpl({
           admin: _.isFunction(now.isAdmin),
           labels: {
-          placeholder: Drupal.t('No rooms created'),
-          enterRoom: Drupal.t('Enter')
-        },
+            placeholder: Drupal.t('No rooms created'),
+            enterRoom: Drupal.t('Enter')
+          },
           rooms: roomList
         });
       }
