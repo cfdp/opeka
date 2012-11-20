@@ -845,7 +845,7 @@
             users: Drupal.t('users')
           },
           queues: Opeka.queueList,
-          enableQueues: true,
+          enableQueues: false,
         });
         options.room = new Opeka.Room({});
         options.dialogOptions = {
@@ -883,6 +883,23 @@
             queueSystem: form.find('select.queue-system').val()
           },
           view = this;
+      
+      if(values.name == ''){
+        values.name = 'Simple Rum';
+      }else{
+        values.name = values.name;
+      }
+
+      if(values.maxSize != 2){
+        values.maxSize = values.maxSize;
+        if(values.name == 'Simple Rum'){
+          values.name = 'Group Rum';
+        }else{
+          values.name = values.name;
+        }
+      }else{
+        values.maxSize = 2;
+      }
 
       this.options.room.save(values, {
         success: function (self, newRoom) {
