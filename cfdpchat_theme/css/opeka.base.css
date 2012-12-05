@@ -1,0 +1,262 @@
+/*STRIPPER*/
+#branding,
+.page-opeka #page .tabs-secondary	{display: none;}
+/*.page-opeka #page {background: rgb(157, 206, 116);}*/
+/*#help .region-help {background: rgb(157, 206, 116); height: 110px;}*/
+/*#opeka-app 	{margin: 0 0 -40px;}*/
+#opeka-app .connect-interface .cyberhus-logo	{background: #E5FFC8 url('../img/cyberhuslogo_hus_46.png') no-repeat; bottom: 39px; display: inline-block; height: 46px; left: 30px; position: absolute; width: 46px; opacity: 0.6;}
+/*--------*/
+
+/*LAYOUT*/
+#opeka-app	{padding: 60px 10px; position: relative;}
+
+#opeka-app,
+html body	{background: rgb(157,206,116);}
+
+#opeka-app .header,
+#opeka-app .footer 		{clear: both;}
+
+#opeka-app .content		{float: left;}
+#opeka-app .sidebar 	{float: right;}
+
+#opeka-app .content 	{min-height: 300px; width: 55%; min-width: 320px;}
+
+#opeka-app .sidebar 	{min-width: 260px; width: 37%;}
+
+/*------*/
+
+#opeka-app{font-family: 'helvetica';}
+
+
+#opeka-app .chat-view-window,
+#opeka-app .chat-view-form				 		{background: rgb(255,255,255); border-radius: 4px;}
+
+/*Client Login Form*/
+
+#opeka-app .connect-interface	{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49); width: 300px;}
+
+#opeka-app .connect-interface .welcome-message{background: rgb(157,206,116); border-style: solid; border-color: rgb(129,155,49); border-width: 1px 0;  color: rgb(255,255,255); font-size: 1.3em; font-weight: bold; margin: 15px 0 0; padding: 5px 0; text-align: center;}
+
+#opeka-app .connect-interface fieldset		{border:0px solid transparent; margin: 0; padding: 15px 30px 15px; position: relative; width: 240px;}
+
+#opeka-app .connect-interface .form-item 	{display: inline-block; font-weight: normal; margin-bottom: 0; padding: 13px 0; text-align: right; width: 70px;}
+
+#opeka-app .connect-interface .form-text 	{border-radius: 2px; display: block; float: right; margin-top: 10px; padding: 5px; width: 152px;}
+
+#opeka-app .connect-interface .label-helper {background: rgb(255,255,255); border: 1px solid rgb(129, 155, 49); border-radius: 2px; display: none; font-weight: bold; height: 15px; padding-bottom: 2px; position: absolute; right: 8px; text-align: center; top: 44px; width: 16px;}
+
+#opeka-app .connect-interface .form-item.age-label{float: left;}
+
+#opeka-app .connect-interface .form-text.age{float: left; height: 17px; margin-left: 6px; text-align: center; width: 40px;}
+
+/*#opeka-app .connect-interface .label-tooltip {background: rgb(255,255,255); border: 1px solid rgb(129, 155, 49); display: none; font-size: 10px; line-height: 1.2em; padding: 5px; position: absolute; right: -190px; top: 18px; width: 202px;}
+
+#opeka-app .connect-interface:hover .label-tooltip {display: inline-block;}*/
+
+#opeka-app .connect-interface .form-item.gender-label {width: 35px;}
+
+#opeka-app .connect-interface .form-select	{border-radius: 2px; float: right; margin-top: 10px; padding: 5px; width: 164px;}
+
+#opeka-app .connect-interface .form-select.gender {height: 29px; width: 70px;}
+
+#opeka-app .connect-interface .form-submit	{font-size: 1em; float: right; margin: 25px 0; padding: 10px 13px; width: 164px;}
+
+
+/*-----------------*/
+
+/*FOOTER*/
+#opeka-app .footer .online-status-view 		{background: rgb(229, 255, 200); border: 1px solid rgb(129, 155, 49); display: inline-block; margin: 5px 0; padding: 5px 0; text-align: center; width: 300px;}
+/**/
+/*MESSAGE-LIST*/
+
+#opeka-app .chat-message-list-wrapper			{background: rgb(245,245,245); border: 1px solid rgb(175,175,175); border-radius: 4px; padding: 10px 0;}
+
+#opeka-app .chat-message-list					{background: rgb(255,255,255); border: 1px solid transparent; border-radius: 4px; height: 400px; list-style: none; margin: 0; overflow-y: auto; padding: 10px;}
+
+#opeka-app .chat-message-list .chat-message,
+#opeka-app .chat-message-list .system-message, 	
+#opeka-app .chat-message-list .whisper-message	{border-radius: 4px; margin: 0 0 10px 0; position: relative;}
+
+
+#opeka-app .chat-message-list .system-message	{border: 1px solid rgb(126,126,126);}
+
+#opeka-app .chat-message-list .system-message 	{background-color: rgb(175,175,175); color: rgb(255,255,255); font-style: italic; padding: 5px 10px; text-align: center;}
+
+#opeka-app .chat-message-list .system-message span 		{float: left; font-style: normal; font-weight: bold; text-transform: capitalize;}
+
+#opeka-app .chat-message-list .whisper-message 			{background: rgb(33,177,251); border: 1px solid rgb(1,78,118); color: rgb(255,255,255); padding-top: 3px;}
+
+#opeka-app .chat-message-list .chat-message .message,
+#opeka-app .chat-message-list .whisper-message .message 			{display: block; font-size: 14px; line-height: 1.4em; padding: 5px 10px;}
+
+#opeka-app .chat-message-list .whisper-message .sender-name			{font-weight: bold; padding: 0 5px;}
+
+#opeka-app .chat-message-list .chat-message .sender-name			{border-top-left-radius: 4px; border-top-right-radius: 4px; display: block; padding: 0 5px;}
+
+#opeka-app .chat-message-list .chat-message.counselor		{border: 1px solid rgb(235,221,164);}
+
+#opeka-app .chat-message-list .chat-message.user 			{border: 1px solid rgb(209,235,129);}
+
+#opeka-app .chat-message-list .chat-message.user .sender-name		{background-color: rgb(229,255,149); border-bottom: 1px solid rgb(209,235,129);}
+
+#opeka-app .chat-message-list .chat-message.counselor .sender-name 	{background: rgb(255,241,184); border-bottom: 1px solid rgb(235,221,164);}
+
+#opeka-app .chat-message-list .chat-message .timestamp,
+
+#opeka-app .chat-message-list .whisper-message .timestamp		{font-size: 11px; position: absolute; right: 5px; top: 0;}
+
+#opeka-app .chat-message-list .chat-message.counselor + .chat-message.counselor	{}
+
+#opeka-app .opeka-chat-sidebar					{overflow: hidden;}
+
+#opeka-app .opeka-chat-sidebar .user-list 		{list-style: none; margin: 0;}
+
+#opeka-app .opeka-chat-sidebar .user-list li 	{background: rgb(238, 238, 238); border: 1px solid rgb(186, 186, 186); margin: 0 3px; padding: 5px;}
+
+/*------------*/
+
+/*USER-LIST*/
+
+.sidebar-block-content			{background: rgb(255,255,255); margin: 0 5px; padding: 5px;}
+
+.sidebar-block-heading			{background: rgb(200,200,200); border: 1px solid rgb(186,186,186); font-size: 12px; margin: 0; padding: 2px 5px; position: relative; }
+
+.sidebar-block-heading .arrow.down	{border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 8px solid rgb(68,68,68); height: 0; position: absolute; right: 5px; top: 10px; width: 0;}
+
+.sidebar-block-heading .arrow.up	{border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 8px solid rgb(68,68,68); height: 0; position: absolute; right: 5px; top: 10px; width: 0;}
+
+.sidebar-block-heading:hover	{cursor: pointer;}
+
+.opeka-chat-sidebar .user-list 	{list-style: none; margin: 0; padding: 0;}
+
+/*#opeka-app .opeka-chat-sidebar .user-list li:hover 	{background: rgb(200,200,200);}*/
+
+.user-list li span 	{display: inline-block;}
+
+.user-list .name,
+.user-list .meta					{font-size: 0.8em;}
+
+
+.opeka-chat-sidebar li .actions				{display: none; float: right;}
+.opeka-chat-sidebar li:hover .actions		{display: block;}
+
+.opeka-chat-sidebar .actions button,
+.opeka-chat-sidebar .delete-room,
+.opeka-chat-sidebar .clear-messages,
+.opeka-chat-sidebar .pause-toggle,
+.opeka-chat-sidebar .unmute-user,
+.opeka-chat-sidebar .mute-user,
+.opeka-chat-sidebar .kick-user,
+.opeka-chat-sidebar .whisper				{background: rgb(245,245,245); border: 1px solid rgb(174, 174, 174); float: right; font-family: calibri, sans-serif; font-size: 0.8em; font-weight: bold; margin: 0 1px; padding: 3px 3px 1px 4px;}
+
+.opeka-chat-sidebar .delete-room,
+.opeka-chat-sidebar .clear-messages,
+.opeka-chat-sidebar .pause-toggle			{float: none;}
+
+.opeka-chat-sidebar .actions button:hover,
+.opeka-chat-sidebar .delete-room:hover,
+.opeka-chat-sidebar .clear-messages:hover,
+.opeka-chat-sidebar .pause-toggle:hover		{background: rgb(210,26,36); border: 1px solid rgb(125,1,8); color: rgb(255,255,255); cursor: pointer;}
+
+.opeka-chat-sidebar .actions .whisper:hover {background: rgb(33,177,251); border: 1px solid rgb(1,78,118);}
+
+
+/*---------*/
+
+/*CHAT-MESSAGE-FORM*/
+
+.chat-view-form		{margin-top: 20px;}
+
+.message-form 		{position: relative;}
+
+.message-form .form-text-container 	{border: 1px solid rgb(205,205,205); border-radius: 4px; height: 61px; padding: 5px 0 5px 5px;}
+
+.message-form .form-text 	 		{border: 0 solid transparent; height: 60px; resize: none; width: 75%;}
+.message-form .form-text:focus 		{outline: 0 solid transparent;}
+
+.message-form .form-submit			{position: absolute; right: 11px; top: 16px;}
+
+.message-form .form-submit,
+.leave-room-form .form-submit		{background: rgb(17,202,3); border: 1px solid rgb(3,115,0); border-radius: 2px; color: rgb(255,255,255); font-weight: bold; margin: 0; padding: 10px 15px; text-transform: uppercase;}
+
+.message-form .form-submit:hover,
+.leave-room-form .form-submit:hover	{background: rgb(37,222,23);}
+
+.message-form .form-submit:active,	
+.leave-room-form .form-submit:active{background: rgb(37,192,3);}
+
+.paused-nowriting					{background-color: rgb(175,175,175); border: 1px solid rgb(126,126,126); border-radius: 4px; padding: 10px;}
+
+#opeka-app .chat-view-form p 		{font-weight: bold; margin: 0 0 1em 0;}
+
+#opeka-app .userMuted,
+#opeka-app .roomPaused				{padding: 5px 10px;}
+
+.leave-room-form .form-submit 		{position: absolute; right: 10px; top: 10px;}
+
+#opeka-app .leave-queue-form 		{overflow: hidden;}
+
+#opeka-app .chat-view-form .paused-nowriting+p	{padding: 0 4px;}
+
+#opeka-app .leave-queue-form .form-submit 		{border-radius: 2px; cursor: pointer; float: right; text-shadow: none;}
+
+#opeka-app .leave-queue-form .form-submit:hover {background: rgb(210,26,36); border: 1px solid rgb(125,1,8); color: rgb(255,255,255);}
+/*-----------------*/
+
+/*.BTN*/
+
+#opeka-app .btn 		{background: rgb(17,202,3); border: 1px solid rgb(3,115,0); border-radius: 2px; color: rgb(255,255,255); font-weight: bold; margin: 0; padding: 10px 15px; text-transform: uppercase;}
+
+#opeka-app .btn-small	{padding: 5px 6px 6px 6px; text-transform: inherit;}
+
+#opeka-app .btn:hover 	{background: rgb(37,222,23); cursor: pointer;}
+
+#opeka-app .btn:active	{background: rgb(37,192,3);}
+
+#opeka-app .btn-util	{background: rgb(145,145,145); border: 1px solid rgb(110,110,110); border-radius: 2px; color: rgb(255,255,255); font-weight: bold; padding: 3px 6px;}
+
+#opeka-app .btn-util:hover	{background: rgb(190,190,190); border-color: rgb(145,145,145); cursor: pointer; text-decoration: none;}
+
+#opeka-app button.btn-util {height: 28px;}
+
+/*---*/
+#opeka-app .room-list 		{clear: both; list-style: none; margin: 0; padding: 10px 0;}
+
+#opeka-app .room 			{background: rgb(255,255,255); border: 1px solid rgb(107,156,66); border-radius: 4px; margin: 0 0 10px 0; overflow: hidden; padding: 5px;}
+
+#opeka-app .norooms			{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49); padding: 5px 0; text-align: center;}
+
+#opeka-app .room.closed .room-details 	{background-color: rgb(220,2,2); border-color: rgb(200,0,0);}
+
+#opeka-app .room.closed .room-enter 	{display: none;}
+
+.room-details,
+.room-description	{float: left;}
+
+.room-details		{background: rgb(37,222,23); border: 1px solid rgb(7,192,3); font-size: 12px; padding: 2px; width: 50px;}
+
+.room-details.full 	{background: rgb(210,26,36); border: 1px solid rgb(125,1,8);}
+
+.room-status,
+.room-size			{color: rgb(255,255,255); display: inline-block; font-size: 14px; font-weight: bold; padding: 10px 0; text-align: center; text-transform: uppercase; width: 50px;}
+
+.room-details.full span {padding: 0;}
+
+.room-status		{/*border-bottom: 2px solid white; display: none*/; font-size: 11px; height: 16px;}
+
+.room-description 	{background: rgb(255,255,255); color: #000; display: inline-block; margin: 0 0 0 5px; padding: 12px 5px;}
+
+.room-enter,
+.meantime			{background: rgb(157,206,116); border: 1px solid rgb(107,156,66); color: rgb(255,255,255); display: inline-block; float: right; font-weight: bold; margin: 0 0 0 5px; padding: 12px 11px;}
+
+.room-enter:hover,
+.meantime:hover		{background: rgb(37,222,23); text-decoration: none;}
+
+/*---------------*/
+
+/*FEEDBACK IFRAME*/
+
+#opeka-app iframe	{background: rgb(255,255,255); min-height: 2670px; padding: 20px;}
+
+/*---------------*/
+.help-text				{color: rgb(140,140,140); display: inline-block; font-size: .8em; font-style: italic; line-height: 1.4em; margin-top: 1em;}

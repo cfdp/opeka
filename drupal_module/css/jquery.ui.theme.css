@@ -1,0 +1,66 @@
+.ui-widget {background: rgb(245,245,245); border: 1px solid rgb(110,110,110); border-radius: 2px;}
+
+.ui-widget-overlay				{background: rgba(10,10,10,0.8);}
+
+.ui-dialog .ui-dialog-titlebar {background: rgb(145,145,145); border: 1px solid rgb(110,110,110); border-radius: 2px;}
+
+.ui-dialog .ui-dialog-title 	{color: rgb(255,255,255); font-weight: bold;}
+
+.ui-dialog .ui-dialog-titlebar-close							{top: 46%;}
+.ui-dialog .ui-dialog-titlebar-close span.ui-icon-closethick	{background: url('http://cfdpchat/misc/ui/images/ui-icons_222222_256x240.png') -96px -126px no-repeat;}
+.ui-dialog .ui-dialog-titlebar-close:hover span.ui-icon-closethick 	{background: rgb(10,26,36) url('http://cfdpchat/misc/ui/images/ui-icons_888888_256x240.png') -96px -126px no-repeat; border-radius: 2px;}
+
+.ui-dialog .ui-dialog-titlebar-close:hover	{padding: 1px;}
+
+.ui-dialog .ui-button			{background: rgb(17,202,3); border: 1px solid rgb(3,115,0); border-radius: 2px; color: rgb(255,255,255); font-weight: bold; min-width: 73px;}
+.ui-dialog .ui-button:hover 	{background: rgb(37,222,23);}
+
+.ui-dialog .ui-dialog-buttonpane {border-top: 1px solid rgb(185,185,185); padding: 1em;}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {float: none;}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .ui-button{margin-right: 0;}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .ui-button:last-child {background: rgb(210,26,36); border: 1px solid rgb(125,1,8); color: rgb(255,255,255); float: right;}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .ui-button:last-child:hover {background: rgb(230,46,56);}
+
+
+.ui-widget-content .room-edit-form input.form-text.name.required 	{padding: 5px; width: 364px;}
+
+/*.ui-widget-content .room-edit-form .groupchat-room-settings		{display: none;}*/
+.ui-widget-content .room-edit-form .max-size2,
+.ui-widget-content .room-edit-form .queue-system 		{position: relative;}
+
+.ui-widget-content .room-edit-form .max-size2 input[type=radio],
+.ui-widget-content .room-edit-form .queue-system input[type=radio] 			{/*clip: rect(1px, 1px, 1px, 1px);*/ margin: 0 3px 0 0; position: absolute; top: 34px;}
+.ui-widget-content .room-edit-form .max-size2 input[type=radio]+label,
+.ui-widget-content .room-edit-form .queue-system input[type=radio]+label 		{background: rgb(17,202,3); border: 1px solid rgb(3,115,0); color: rgb(255,255,255); display: inline-block; margin: 0 0 0 -4px; padding: 5px 5px 5px 0; text-align: right; width: 30px;}
+
+.ui-widget-content .room-edit-form .max-size2 input[type=radio]+label:hover,
+.ui-widget-content .room-edit-form .queue-system input[type=radio]+label:hover	{background: rgb(37,222,23); cursor: pointer;}
+
+.ui-widget-content .room-edit-form .max-size2 input[type=radio][checked=checked]+label,
+.ui-widget-content .room-edit-form .queue-system input[type=radio][checked=checked]+label{border-top-left-radius: 2px; border-bottom-left-radius: 2px;}
+
+.ui-widget-content .room-edit-form .max-size2 input[type=radio]+label:last-child,
+.ui-widget-content .room-edit-form .queue-system input[type=radio]+label:last-child 		{border-top-right-radius: 2px; border-bottom-right-radius: 2px;}
+
+.ui-widget-content .room-edit-form .queue-system								{margin: 10px 0;}
+.ui-widget-content .room-edit-form .queue-system input[type=radio]+label		{padding-right: 10px;  width: 100px;}
+
+.ui-widget-content .room-edit-form .private-room 								{position: relative;}
+.ui-widget-content .room-edit-form .private-room input[type=checkbox]			{margin-left: 3px; position: absolute; top: 34px;}
+.ui-widget-content .room-edit-form .private-room input[type=checkbox]+label		{background: rgb(17,202,3); border: 1px solid rgb(3,115,0); border-radius: 2px; color: rgb(255,255,255); display: inline-block; margin-right: -4px; padding: 5px 5px 5px 0; text-align: right; width: 94px;}
+
+
+.ui-widget-content form[action~="#"x½] textarea			{outline: 1px solid rgb(180,180,180); outline-offset: 2px;}
+.ui-widget-content form[action~="#"] textarea:focus		{box-shadow: 0 0 6px 5px rgba(33,177,251,0.5);}
+
+
+.ui-widget-content form[action~="#"] label				{display: block; width: 264px;}
+
+.ui-widget-content form[action~="#"] input.form-text			{display: block; margin: 1em 0; padding: 5px; width: 264px;}
+.ui-widget-content form[action~="#"] input.form-text:focus		{box-shadow: 0 0 6px 5px rgba(33,177,251,0.2);}
+
+.ui-widget-content form[action~="#"] .help-text				{color: rgb(140,140,140); display: inline-block; font-size: .8em; font-style: italic; line-height: 1.4em; margin-top: 2em; width: 274px;}	

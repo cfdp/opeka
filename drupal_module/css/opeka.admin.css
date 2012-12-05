@@ -1,0 +1,126 @@
+#branding	{display: none;}
+#opeka-app 	{margin: -25px 0 -40px;}
+
+/*#opeka-app .content {
+  width: 32em;
+}
+
+#opeka-app .sidebar {
+  width: 25em;
+}*/
+
+#opeka-app .connect-interface .form-submit {font-size: 0.9em; width: 164px;}
+
+#opeka-app .chat-message-list .chat-message .actions .delete-message {background: url('../img/delete.png') 0 0 no-repeat; border-radius: 2px; border: 1px solid transparent; display: none; height: 19px; margin: 0; padding: 0; position: absolute; right: 55px; top: 0; width: 18px;}
+
+#opeka-app .chat-message-list .chat-message .actions .delete-message:hover	{background: url('../img/delete.png') 0 100% no-repeat; border: 1px solid rgb(125,1,8); cursor: pointer;}
+
+#opeka-app .chat-message-list .chat-message:hover .actions .delete-message {display: block;}
+
+#opeka-app .chat-message-list .chat-message .timestamp	{top: 0;}
+
+/*SIDEBAR*/
+
+.sidebar-block-heading		{background: rgb(200,200,200); font-size: 1em; margin: 0; padding: 0 5px;}
+
+.sidebar-block-content		{background: rgb(255,255,255); margin: 0 5px; padding: 5px;}
+/*-------*/
+
+
+/*USER-LIST*/
+.sidebar-block-heading			{border: 1px solid rgb(186,186,186); font-size: 12px; padding: 2px 5px; position: relative; }
+
+.sidebar-block-heading .arrow.down	{border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 8px solid rgb(68,68,68); height: 0; position: absolute; right: 5px; top: 10px; width: 0;}
+
+.sidebar-block-heading .arrow.up	{border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 8px solid rgb(68,68,68); height: 0; position: absolute; right: 5px; top: 10px; width: 0;}
+
+.sidebar-block-heading:hover	{cursor: pointer;}
+
+.opeka-chat-sidebar .user-list 	{list-style: none; margin: 0;}
+
+.opeka-chat-sidebar .user-list li span 		{}
+
+.opeka-chat-sidebar .user-list .name,
+.opeka-chat-sidebar .user-list .meta		{font-size: 0.8em;}
+
+.opeka-chat-sidebar li .actions				{display: none; float: right;}
+.opeka-chat-sidebar li:hover .actions		{display: block;}
+
+.opeka-chat-sidebar .actions button,
+.opeka-chat-sidebar .delete-room,
+.opeka-chat-sidebar .clear-messages,
+.opeka-chat-sidebar .pause-toggle,
+.opeka-chat-sidebar .unmute-user,
+.opeka-chat-sidebar .mute-user,
+.opeka-chat-sidebar .kick-user,
+.opeka-chat-sidebar .whisper				{background: rgb(245,245,245); border: 1px solid rgb(174, 174, 174); float: right; font-family: calibri, sans-serif; font-size: 0.8em; font-weight: bold; margin: 0 1px; padding: 3px 3px 1px 4px;}
+
+.opeka-chat-sidebar .delete-room,
+.opeka-chat-sidebar .clear-messages,
+.opeka-chat-sidebar .pause-toggle			{float: none;}
+
+.opeka-chat-sidebar .actions button:hover,
+.opeka-chat-sidebar .delete-room:hover,
+.opeka-chat-sidebar .clear-messages:hover,
+.opeka-chat-sidebar .pause-toggle:hover		{background: rgb(210,26,36); border: 1px solid rgb(125,1,8); color: rgb(255,255,255); cursor: pointer;}
+
+.opeka-chat-sidebar .actions .whisper:hover {background: rgb(33,177,251); border: 1px solid rgb(1,78,118);}
+
+#opeka-app .opeka-chat-sidebar .unmute-user			{background: rgb(210,26,36); color: rgb(255,255,255);}
+
+/*---------*/
+
+/*ROOM LIST*/
+
+#opeka-app .create-room 		{float: right; margin-bottom: 4px;}
+
+/*---------*/
+
+/*ROOM CREATE*/
+
+
+/*---------*/
+
+/*----QUEUES-----*/
+#opeka-app .queue-list				{clear: both; list-style: none; margin: 0; padding: 10px 0;}
+
+#opeka-app .queue-list .noqueues,
+#opeka-app .queue-list .queue 		{background: rgb(229,255,200); border: 1px solid rgb(129, 155, 49); padding: 5px 0; text-align: center;}
+
+#opeka-app .create-queue			{float: right;}
+#opeka-app .go-back-to-rooms		{float: left;}
+
+#opeka-app .create-queue,
+#opeka-app .go-back-to-rooms		{margin-bottom: 4px;}
+
+#opeka-app .go-to-queues			{float: left;}
+
+/*---------------*/
+
+/*ROOM ACTIONS TEST*/
+
+.remove-room 		{border: 1px solid rgb(89,89,89); border-radius: 4px; color: rgb(30,30,30); display: inline-block; font-size: 1.5em; font-weight: bold; padding: 4px 0; text-align: center; width: 24px;}
+
+.remove-room:hover 	{background: rgb(210,26,36); cursor: pointer;}
+
+.pause-btn-wr		{border: 1px solid rgb(89,89,89); border-radius: 4px; display: inline-block; padding: 6px 6px 0;}
+
+.pause-btn-wr:hover,
+.play-btn-wr:hover	{background: rgb(240,240,240); cursor: pointer;}
+
+.pause-btn 			{border-left: 4px solid rgb(89,89,89); border-right: 4px solid rgb(89,89,89); display: inline-block; height: 16px; width: 4px;}
+
+.pause-btn-wr:hover .pause-btn 		{border-color: rgb(30,30,30);}
+
+.play-btn-wr		{background: rgb(210,26,36); border: 1px solid rgb(30,30,30); border-radius: 4px; display: inline-block; padding: 6px 7px 0 9px;}
+.play-btn 			{border-left: 8px solid rgb(30,30,30); border-top: 8px solid transparent; border-bottom: 8px solid transparent; display: inline-block;}
+
+.play-btn-wr:hover .play-btn		{border-left-color: rgb(30,30,30);}
+
+/*------------------*/
+/*REGISTRATION FORM*/
+
+.registrationform		{background: rgb(245,245,245); border: 1px solid rgb(174,174,174); color: rgb(89,89,89); display: inline-block; font-size: 0.9em; font-weight: bold; padding: 0 3px;}
+.registrationform:hover	{background: rgb(33,177,251); border: 1px solid rgb(1,78,118);  color: rgb(255,255,255); text-decoration: none;}
+
+/*-----------------*/

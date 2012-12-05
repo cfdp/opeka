@@ -80,7 +80,7 @@ function opeka_menu() {
  */
 function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings = array()) {
   $path = drupal_get_path('module', 'opeka');
-
+/*
   $stylesheets = array_merge(array(
     'opeka.base.css',
     'opeka.theme.css',
@@ -89,7 +89,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   foreach ($stylesheets as $filename) {
     drupal_add_css($path . '/css/' . $filename);
   }
-
+*/
   $js_url = variable_get('opeka_nowjs_url', 'https://localhost:3000/nowjs/now.js');
 
   if (!$js_url) {
