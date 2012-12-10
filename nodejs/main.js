@@ -19,13 +19,6 @@ nconf.defaults({
     "host": "localhost",
     "port": 3306,
   },
-  "http": {
-    "hostname": "localhost",
-    "port": 3000
-  },
-  "https": {
-    "enabled": false,
-  },
   "logging": {
     "level": "debug"
   },
@@ -33,6 +26,13 @@ nconf.defaults({
     "hidePairRoomsOnRoomList": false,
     "automaticPausePairRooms": true,
     "queueSystem" : true
+  },
+  "server": {
+    "hostname": "localhost",
+    "https": {
+      "enabled": false,
+    },
+    "port": 3000
   }
 });
 
