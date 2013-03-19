@@ -503,7 +503,7 @@
       html = JST.opeka_queue_page_tmpl({
         labels: {
           leaveQueue: Drupal.t('Leave queue'),
-          placeholder: Drupal.t('You are currently numer @position in the queue. Number of rooms you can join from this queue: @rooms.', {'@position': this.position, '@rooms': this.rooms})
+          placeholder: Drupal.t('You are currently number @position in the queue. Number of rooms you can join from this queue: @rooms.', {'@position': this.position, '@rooms': this.rooms})
         }
       });
 
@@ -1257,11 +1257,14 @@
               content: view.make('p', { 'class': "message" }, err)
             });
 
-            dialog.addButton('Ok', function () { dialog.remove(); } )
+            dialog.addButton('Ok', function () { dialog.remove(); } );
             dialog.render();
           }
         });
       }
+
+      // Kick the user.
+      now.kick(this.clientId, message, this.model.id)
 
       // Prevent event if needed.
       if (event) {

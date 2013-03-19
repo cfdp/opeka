@@ -213,7 +213,8 @@ var Room = function (options) {
         }
       }
     }
-    else {
+    // self.isFull() should not be needed but is needed anyways. Failsafe.
+    else if (self.paused !== true && !self.isFull()) {
       // Get the next user from the global queue system.
       queue = opeka.queues.list[self.queueSystem];
       queueUserID = queue.getUserFromQueue();
@@ -239,7 +240,9 @@ var Room = function (options) {
     // We found the user - remove him.
     if (userIndex !== null) {
       this.queue.splice(userIndex, 1);
+      return true;
     }
+    return false;
   };
 
   self.getUserQueueNumber = function (clientId) {
