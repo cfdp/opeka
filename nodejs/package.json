@@ -6,6 +6,7 @@
   "author": "Cyberhus <info@cyberhus.dk>",
   "contributors": [
     "Angelo Agatino Nicolosi",
+    "Jakob Torp <jakob@revealit.dk> (http://googletorp.com/)",
     "Mikkel Hoegh <mikkel@hoegh.org> (http://mikkel.hoegh.org/)"
   ],
   "main": "main.js",
@@ -25,7 +26,7 @@
     "winston": "0.6.x"
   },
   "devDependencies": {
-    "forever": "0.9.x"
+    "forever": "0.10.x"
   },
   "licenses": [
     {

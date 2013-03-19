@@ -1,4 +1,5 @@
 {
+  "chatPage" : "http://example.com",
   "database": {
     "host": "localhost",
     "port": 3306,
@@ -8,16 +9,19 @@
   },
   "features" : {
     "hidePairRoomsOnRoomList": false,
+    "automaticPausePairRooms": true,
     "queueSystem" : true,
     "queueFullUrl" : "http://example.com"
   },
-  "http": {
-    "port": 3000
-  },
   "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
-  "https": {
-    "enabled": false,
-    "key": "certs/server-key.pem",
-    "cert": "certs/server-cert.pem"
+  "server": {
+    "port": 3000,
+    "https": {
+      "enabled": false,
+      "cert": "certs/server-cert.pem",
+      "key": "certs/server-key.pem"
+    },
+    "user": "www-data",
+    "group": "www-data"
   }
 }

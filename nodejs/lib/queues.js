@@ -47,6 +47,17 @@ var Queue = function (options) {
 
   // Add a user to the queue.
   self.addToQueue = function (user) {
+    var position;
+    _.forEach(self.queue, function (queueUser, index) {
+      if (queueUser.clientId === user.clientId) {
+        // Zero indexes so +1 to make truthy.
+        position = index + 1;
+      }
+    });
+    // Make sure that the user can't join the queue twice.
+    if (position) {
+      return position - 1;
+    }
     return self.queue.push(user) - 1;
   }
 
