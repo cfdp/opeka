@@ -1368,7 +1368,7 @@
       });
 
       this.$el.html(form);
-
+	$('#block-block-1').hide();
       return this;
     },
 
