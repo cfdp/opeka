@@ -838,6 +838,7 @@
             name: Drupal.t('The name of the room is:'),
             iPLocation: Drupal.t('IP location'),
             outDk: Drupal.t('Outside Denmark/Scandinavia'),
+            chatroomhelp: Drupal.t('This field is for the topic of a group chat'),
             private: Drupal.t('Private'),
             privateRoom: Drupal.t('Private room?'),
             training: Drupal.t('Is this room for training'),
@@ -886,14 +887,14 @@
           view = this;
       
       if(values.name == ''){
-        values.name = 'Simple Rum';
+        values.name = 'Chatrum';
       }else{
         values.name = values.name;
       }
 
       if(values.maxSize != 2){
         values.maxSize = values.maxSize;
-        if(values.name == 'Simple Rum'){
+        if(values.name == 'Chatrum'){
           values.name = 'Group Rum';
         }else{
           values.name = values.name;
