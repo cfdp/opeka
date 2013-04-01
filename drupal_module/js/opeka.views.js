@@ -840,6 +840,7 @@
             outDk: Drupal.t('Outside Denmark/Scandinavia'),
             private: Drupal.t('Private'),
             privateRoom: Drupal.t('Private room?'),
+            training: Drupal.t('Is this room for training'),
             queueSystem: Drupal.t('Queue system'),
             size: Drupal.t('Size limit'),
             users: Drupal.t('users')
