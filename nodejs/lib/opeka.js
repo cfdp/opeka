@@ -330,8 +330,8 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId];
 
     if (room.paused) {
-      self.logger.error('User ' + this.user.clientId + ' tried to pause room ' + roomId + ' that was already paused.');
-      callback("Error Pause: the room has already been paused.");
+      self.logger.error('Brugeren ' + this.user.clientId + ' forsøgte at sætte rummet ' + roomId + ' på pause, selvom det allerede var på pause.');
+      callback("Fejl, pausefunktion: Rummet er allerede sat på pause.");
       return;
     }
 

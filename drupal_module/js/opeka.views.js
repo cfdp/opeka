@@ -847,6 +847,7 @@
             users: Drupal.t('users')
           },
           queues: Opeka.queueList,
+//@todo Get the option from the config file
           enableQueues: false,
         });
         options.room = new Opeka.Room({});
@@ -895,7 +896,7 @@
       if(values.maxSize != 2){
         values.maxSize = values.maxSize;
         if(values.name == 'Chatrum'){
-          values.name = 'Group Rum';
+          values.name = 'Grupperum';
         }else{
           values.name = values.name;
         }
