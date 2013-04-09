@@ -74,7 +74,7 @@
 </script>
 
 <script id="opeka_connect_form_tmpl" type="application/template">
- <p>Cyberhus' chatten har fået nyt udseende! Ung-til-voksen chatten ligner nu gruppechatten, men bare rolig du er det rigtige sted og du er stadig helt anonym. Hvis du er i tvivl så spørg Rådgiveren!</p> <p>Vi oplever nogle tekniske vanskeligheder i forbindelse med den nye chat, vi beklager!</p>
+ <p class="welcome-notice"><%- labels.welcome_notice %></p>
  <form action="#" class="connect-interface">
     <p class="welcome-message"><%= labels.welcome_message %></p>
     <fieldset>
@@ -239,7 +239,7 @@
   <% } else if (activeUser.muted) { %>
     <div class="userMuted">
       <p><%= labels.userMuted %></p>
-      <span class="help-text">When you are muted, you are not allowed to send any messages until the counselor decides to unmute you. You can see all the other messages and receive whispers.</span>
+      <span class="help-text"><%= labels.mutehelptext %></span>
     </div>
   <% } else if (inQueue === false) { %>
     <div class="roomPaused">

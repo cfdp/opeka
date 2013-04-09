@@ -123,6 +123,7 @@
             leaveQueueButton: Drupal.t('Leave queue'),
             leaveRoomButton: Drupal.t('Leave chat room'),
             placeholder: Drupal.t('Type message here…'),
+            mutehelptext: Drupal.t('When you are muted, you are not allowed to send any messages until the counselor decides to unmute you. You can see all the other messages and receive whispers.'),
             roomPaused: Drupal.t('The room is paused'),
             userMuted: Drupal.t('You are muted'),
             messageButton: Drupal.t('Send')
@@ -1359,6 +1360,7 @@
       var form = JST.opeka_connect_form_tmpl({
         labels: {
           action: Drupal.t('Ready for chat'),
+          welcome_notice: Drupal.t('Welcome to the new chat. The group chat and 1 to 1 chat now looks similar.'),
           welcome_message: Drupal.t('Welcome to the chat'),
           age: Drupal.t('Age'),
           gender: Drupal.t('Gender'),
