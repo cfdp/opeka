@@ -775,7 +775,7 @@
   });
 
 
-  // Dialog to edit/create rooms with.
+  // Dialog to delete rooms with.
   Opeka.RoomDeletionView = Opeka.DialogView.extend({
     initialize: function () {
       // Options passed to DialogView.
@@ -783,7 +783,7 @@
 
       _.bindAll(this);
 
-      // For when creating new room.
+      // For deleting a room.
       if (!options.room) {
         options.content = JST.opeka_room_delete_tmpl({
           labels: {
