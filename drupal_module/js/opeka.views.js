@@ -1391,7 +1391,7 @@
       
       var x = Math.floor((Math.random()*50)+1);
 
-      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous'+x);""
+      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous');""
       user.age = this.$el.find('.age').val();
       user.gender = this.$el.find('.gender').val();
       user.roomId = this.roomId;
