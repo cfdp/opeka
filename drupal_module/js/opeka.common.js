@@ -347,11 +347,12 @@ var Opeka = { status: {}},
         view.render();
 
         Opeka.router.navigate("rooms", {trigger: true});
+        // Remove the sidebar.
+        Opeka.appViewInstance.$el.find('.sidebar').html('');
       }
 
       Opeka.roomList.remove(room);
-      // Remove the sidebar.
-      Opeka.appViewInstance.$el.find('.sidebar').html('');
+
     }
   };
 
