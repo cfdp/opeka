@@ -123,6 +123,7 @@
             leaveQueueButton: Drupal.t('Leave queue'),
             leaveRoomButton: Drupal.t('Leave chat room'),
             placeholder: Drupal.t('Type message here…'),
+            mutehelptext: Drupal.t('When you are muted, you are not allowed to send any messages until the counselor decides to unmute you. You can see all the other messages and receive whispers.'),
             roomPaused: Drupal.t('The room is paused'),
             userMuted: Drupal.t('You are muted'),
             messageButton: Drupal.t('Send')
@@ -838,13 +839,16 @@
             name: Drupal.t('The name of the room is:'),
             iPLocation: Drupal.t('IP location'),
             outDk: Drupal.t('Outside Denmark/Scandinavia'),
+            chatroomhelp: Drupal.t('This field is for the topic of a group chat'),
             private: Drupal.t('Private'),
             privateRoom: Drupal.t('Private room?'),
+            training: Drupal.t('Is this room for training'),
             queueSystem: Drupal.t('Queue system'),
             size: Drupal.t('Size limit'),
             users: Drupal.t('users')
           },
           queues: Opeka.queueList,
+//@todo Get the option from the config file
           enableQueues: false,
         });
         options.room = new Opeka.Room({});
@@ -885,15 +889,15 @@
           view = this;
       
       if(values.name == ''){
-        values.name = 'Simple Rum';
+        values.name = 'Chatrum';
       }else{
         values.name = values.name;
       }
 
       if(values.maxSize != 2){
         values.maxSize = values.maxSize;
-        if(values.name == 'Simple Rum'){
-          values.name = 'Group Rum';
+        if(values.name == 'Chatrum'){
+          values.name = 'Grupperum';
         }else{
           values.name = values.name;
         }
@@ -1356,6 +1360,7 @@
       var form = JST.opeka_connect_form_tmpl({
         labels: {
           action: Drupal.t('Ready for chat'),
+          welcome_notice: Drupal.t('Welcome to the new chat. The group chat and 1 to 1 chat now looks similar.'),
           welcome_message: Drupal.t('Welcome to the chat'),
           age: Drupal.t('Age'),
           gender: Drupal.t('Gender'),
@@ -1368,7 +1373,7 @@
       });
 
       this.$el.html(form);
-
+	$('#block-block-1').hide();
       return this;
     },
 

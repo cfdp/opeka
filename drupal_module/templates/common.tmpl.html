@@ -74,7 +74,8 @@
 </script>
 
 <script id="opeka_connect_form_tmpl" type="application/template">
-  <form action="#" class="connect-interface">
+ <p class="welcome-notice"><%- labels.welcome_notice %></p>
+ <form action="#" class="connect-interface">
     <p class="welcome-message"><%= labels.welcome_message %></p>
     <fieldset>
       <label class="form-item nickname-label">
@@ -238,7 +239,7 @@
   <% } else if (activeUser.muted) { %>
     <div class="userMuted">
       <p><%= labels.userMuted %></p>
-      <span class="help-text">When you are muted, you are not alllowed to send any messages until the counselor decides to unmute you. You can see all the other messages and receive whispers.</span>
+      <span class="help-text"><%= labels.mutehelptext %></span>
     </div>
   <% } else if (inQueue === false) { %>
     <div class="roomPaused">
@@ -261,9 +262,9 @@
 <script id="opeka_user_feedback_tmpl" type="application/template">
 
   <% if(admin) { %>
-    <p>Thank you!</p>
+    <p>Tak!</p>
   <% }else{ %>
-    <iframe height="2800" frameborder="0" width="618" onLoad="window.scrollTo(0,0);" src="https://docs.google.com/a/cyberhus.dk/spreadsheet/embeddedform?formkey=dFBPMklBOU5RZEFuVktUVTlRNmNtYnc6MQ" marginwidth="0" marginheight="0">Indlæser ...</iframe>
+    <!--<iframe height="2800" frameborder="0" width="618" onLoad="window.scrollTo(0,0);" src="https://docs.google.com/a/cyberhus.dk/spreadsheet/embeddedform?formkey=dFBPMklBOU5RZEFuVktUVTlRNmNtYnc6MQ" marginwidth="0" marginheight="0">Indlæser ...</iframe>--><p>Tak fordi du brugte Cyberhus-chatten.</p>
   <% } %>
 
 </script>

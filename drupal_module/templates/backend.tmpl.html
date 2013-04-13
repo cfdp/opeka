@@ -117,8 +117,8 @@
     <div class="groupchat-room-settings">
       <div class="form-item">
         <label for="name"><%- labels.name %></label>
-        <input class="form-text name required" name="name" type="textfield" placeholder="Simple Rum" />
-        <span class="help-text">For simple 1 to 1 chat leave it blank.</span>
+        <input class="form-text name required" name="name" type="textfield" placeholder="Chatrum" />
+        <span class="help-text"><%- labels.chatroomhelp %></span>
       </div>
 
       <div class="form-item">
@@ -152,7 +152,7 @@
         <input type="radio" name="max-size" class="max-size2" id="15" value="15" />
         <label for="15">15</label>
         </div>
-      <!--
+<!--
       <div class="form-item">
         <label for="ip-location"><%- labels.iPLocation %></label>
         <select class="ip-location"  name="ip-location">
@@ -161,29 +161,32 @@
           <option value="Scandinavia"><%- labels.outDk %></option>
         </select>
       </div>
-      -->
+--> 
       <% if (enableQueues) {%>
+<!--
         <div class="form-item queue-system">
           <label for="queue-system"><%- labels.queueSystem %></label>
-          <!--
+
           <select class="queue-system"  name="queue-system">
             <option value="private" selected="selected"><%- labels.private %></option>
             <% queues.each(function (queue) { %>
               <option value="<%- queue.id %>"><%- queue.get('name') %></option>
             <% }); %>
           </select>
-          -->
+
           <input type="radio" value="simplechat" name="queue" id="simplechat" checked="checked" />
               <label for="simplechat">simplechat</label>
+
           <% queues.each(function (queue) { %>
               <input type="radio" class="queue" value="<%- queue.id %>" name="queue" id="<%- queue.id %>" />
               <label for="<%- queue.id %>"><%- queue.get('name') %></label>
             <% }); %>
         </div>
+-->
       <% }%>
 
       <div class="form-item private-room">
-        <label for="private-room">Is this room for training?</label>
+        <label for="private-room"><%= labels.training %></label>
         <input class="private" name="private" id="private" type="checkbox" value="true" />
         <label for="private"><%- labels.privateRoom %></label>
       </div>
