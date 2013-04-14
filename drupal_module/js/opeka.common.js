@@ -347,11 +347,12 @@ var Opeka = { status: {}},
         view.render();
 
         Opeka.router.navigate("rooms", {trigger: true});
+        // Remove the sidebar.
+        Opeka.appViewInstance.$el.find('.sidebar').html('');
       }
 
       Opeka.roomList.remove(room);
-      // Remove the sidebar.
-      Opeka.appViewInstance.$el.find('.sidebar').html('');
+
     }
   };
 
@@ -431,7 +432,7 @@ var Opeka = { status: {}},
     }
   };
 
-  // Repsonse to a user being muted.
+  // Response to a user being muted.
   now.roomUserMuted = function (roomId, clientId, user, nickname) {
     var room = Opeka.roomList.get(roomId),
         messageObj = {};
@@ -457,11 +458,11 @@ var Opeka = { status: {}},
     }
   };
 
-  // Repsonse to a user being muted.
+  // Response to a user being unmuted.
   now.roomUserUnmuted = function (roomId, clientId, user, nickname, messageText) {
     var room = Opeka.roomList.get(roomId),
         messageObj = {};
-    // Make sure we only mute the correct user and we got the room.
+    // Make sure we only unmute the correct user and we got the room.
     if (now.core.clientId === clientId && room) {
       room.set('activeUser', user);
       if (Opeka.chatView.model.id === roomId) {
