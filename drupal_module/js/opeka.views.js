@@ -888,20 +888,15 @@
           },
           view = this;
       
-      if(values.name == ''){
+      if (values.name == '') {
         values.name = 'Chatrum';
-      }else{
-        values.name = values.name;
       }
 
-      if(values.maxSize != 2){
-        values.maxSize = values.maxSize;
-        if(values.name == 'Chatrum'){
+      if (values.maxSize != 2) {
+        if (values.name == 'Chatrum') {
           values.name = 'Grupperum';
-        }else{
-          values.name = values.name;
         }
-      }else{
+      } else {
         values.maxSize = 2;
       }
 

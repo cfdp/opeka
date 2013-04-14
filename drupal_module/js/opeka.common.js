@@ -148,6 +148,7 @@ var Opeka = { status: {}},
 
           if (sidebar) {
             Opeka.appViewInstance.$el.find('.sidebar').html(sidebar.render().el);
+            Opeka.addRoomSizeToBody();
           }
         });
       }
@@ -515,6 +516,25 @@ var Opeka = { status: {}},
       }
     });
   };
+
+  // Adds CSS class to the body element of the page
+  // allows us to style group chats and pair room chats differently
+  Opeka.addRoomSizeToBody = function() {
+    // Start by clearing any classes from previous chat sessions
+    if ($('body').hasClass('room-size-2')) {
+      $('body').removeClass('room-size-2')
+    }
+    else if ($('body').hasClass('groupchat')) {
+      $('body').removeClass('groupchat')
+    }
+    // Now add the right classes
+    if ($('div#user-list-block').hasClass('room-size-2')){
+      $('body').addClass('room-size-2');
+    }
+    else {
+      $('body').addClass('groupchat');
+    }
+  }
 
   // Basic setup for the app when the DOM is loaded.
   $(function () {
