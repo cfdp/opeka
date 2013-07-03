@@ -338,10 +338,8 @@ function Server(config, logger) {
     room.paused = true;
     self.everyone.now.roomUpdated(roomId, { paused: true });
     self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
-    // @todo: test this...
-    //opeka.rooms.updateRoomCounts();
-    //self.logger.info('updateRoomCounts called from opeka.js.');
-    // Update the status for all users
+    // Update the room counts and chat status for all users
+    opeka.rooms.updateRoomCounts();
     self.updateUserStatus(self.everyone.now);
 
     if (callback) {
@@ -363,10 +361,8 @@ function Server(config, logger) {
     room.paused = false;
     self.everyone.now.roomUpdated(roomId, { paused: false });
     self.sendSystemMessage('[Pause]: Chat is available again.', room.group);
-    // @todo: test this...
-    //opeka.rooms.updateRoomCounts();
-    //self.logger.info('updateRoomCounts called from opeka.js.');
-    // Update the status for all users
+    // Update the room counts and chat status for all users
+    opeka.rooms.updateRoomCounts();
     self.updateUserStatus(self.everyone.now);
     // When unpausing a pair room that uses a queue - get the next in queue.
     if (room.maxSize === 2 && !room.isFull() && room.queueSystem !== 'private') {
@@ -767,11 +763,10 @@ function Server(config, logger) {
             // no anonymous users should be left without counselor
             // @todo: this fix works badly with several counselors in a room, a check should be made to see if any
             // of the remaining users are admins, if yes, then don't delete the room
-            self.logger.warning('user disconnected - activeRoomId ', client.user.activeRoomId);
-            self.logger.warning('user disconnected - room.id ', room.id);
-            self.logger.warning('user disconnected - isAdmin? ',client.user.account.isAdmin);
+            self.logger.info('user disconnected - activeRoomId: ', client.user.activeRoomId);
+            self.logger.info('user disconnected - room.id: ', room.id);
             if (client.user.account.isAdmin){
-              self.logger.warning('Admin user disconnected - shutting down room. Counselor id', client.user.clientId);
+              self.logger.warning('Admin user disconnected - shutting down room. Counselor id: ', client.user.clientId);
               //Inform the remaining users that the room is closing down
               if (client.user.activeRoomId){
                 opeka.rooms.remove(client.user.activeRoomId);
