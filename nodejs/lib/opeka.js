@@ -338,6 +338,12 @@ function Server(config, logger) {
     room.paused = true;
     self.everyone.now.roomUpdated(roomId, { paused: true });
     self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+    // @todo: test this...
+    //opeka.rooms.updateRoomCounts();
+    //self.logger.info('updateRoomCounts called from opeka.js.');
+    // Update the status for all users
+    self.updateUserStatus(self.everyone.now);
+
     if (callback) {
       callback();
     }
@@ -357,6 +363,11 @@ function Server(config, logger) {
     room.paused = false;
     self.everyone.now.roomUpdated(roomId, { paused: false });
     self.sendSystemMessage('[Pause]: Chat is available again.', room.group);
+    // @todo: test this...
+    //opeka.rooms.updateRoomCounts();
+    //self.logger.info('updateRoomCounts called from opeka.js.');
+    // Update the status for all users
+    self.updateUserStatus(self.everyone.now);
     // When unpausing a pair room that uses a queue - get the next in queue.
     if (room.maxSize === 2 && !room.isFull() && room.queueSystem !== 'private') {
       var queue = opeka.queues.list[room.queueSystem],

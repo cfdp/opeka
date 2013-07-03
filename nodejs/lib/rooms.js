@@ -31,13 +31,16 @@ var _ = require('underscore'),
       }
     };
 
-// Get an open room of a specific type - pair or group.
+/**
+* Get an open room of a specific type - pair or group. @todo: should not return a paused room and it should 
+* randomize the room returned so counselors will be handed new clients evenly. 
+*/
 var getOpenRoom = function (roomType) {
   return _.find(roomList, function (room) {
     var userCount = Object.keys(room.users).length;
 
     if (roomType === 'pair') {
-      return (room.maxSize === 2 && userCount < 2);
+      return (room.maxSize === 2 && userCount < 2 && !room.paused);
     }
   });
 };
@@ -52,8 +55,11 @@ var sumRoomList = function (rooms) {
     var userCount = Object.keys(room.users).length;
 
     if (userCount > 0) {
-      if (room.isFull()) {
+      // If the room is full or paused, it counts as full
+      if (room.isFull() || room.paused) {
         full = full + 1;
+        util.log('Room is full, room #:' + room.id);
+
       }
       else {
         active = active + 1;
@@ -96,6 +102,8 @@ var updateRoomCounts = function () {
   roomCounts.pair = sumRoomList(pairRooms);
   roomCounts.group = sumRoomList(groupRooms);
   roomCounts.total = sumRoomList(allRooms);
+  util.log('RoomCounts updated');
+
 };
 
 // The main chatroom object.
@@ -113,6 +121,8 @@ var Room = function (options) {
     self.queueSystem = options.queueSystem || 'private' // Default to private queue system.
     // When a room is created, the creator will join setting the member count to init value to 1.
     self.memberCount = 1;
+    // A room can be paused by the counselor and an autoPauseRoom setting is available as well in config.json
+    self.paused = false;
 
     // Create Now.js groups for connected users and councellors.
     self.group = nowjs.getGroup(self.id);
@@ -281,7 +291,7 @@ var Room = function (options) {
       name: self.name,
       maxSize: self.maxSize,
       memberCount: self.memberCount,
-      paused: this.paused || false,
+      paused: self.paused || false,
       private: self.private,
       queueSystem: self.queueSystem
     };
@@ -349,6 +359,7 @@ module.exports = {
   counts: roomCounts,
   getOpenRoom: getOpenRoom,
   list: roomList,
-  remove: remove
+  remove: remove,
+  updateRoomCounts: updateRoomCounts
 };
 
