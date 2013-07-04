@@ -20,7 +20,8 @@ nconf.defaults({
     "port": 3306,
   },
   "logging": {
-    "level": "debug"
+    "level": "debug",
+    "file": "../logs/chatlog"
   },
   "features": {
     "hidePairRoomsOnRoomList": false,
@@ -40,6 +41,12 @@ nconf.defaults({
 var logger = new (winston.Logger)({
   transports: [
     new (winston.transports.Console)({
+      colorize: true,
+      level: nconf.get("logging:level"),
+      timestamp: true
+    }),
+    new (winston.transports.File)({
+      filename: nconf.get("logging:file"),
       colorize: true,
       level: nconf.get("logging:level"),
       timestamp: true
