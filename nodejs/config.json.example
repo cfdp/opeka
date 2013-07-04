@@ -7,6 +7,10 @@
     "password": "asdfsecret",
     "database": "john_doe"
   },
+  "logging": {
+    "level": "debug",
+    "file": "../logs/chatlog"
+  },
   "features" : {
     "hidePairRoomsOnRoomList": false,
     "automaticPausePairRooms": true,
