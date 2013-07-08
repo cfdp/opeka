@@ -1060,7 +1060,7 @@
           queueLink: Drupal.t('Go to queue list'),
           enterRoom: Drupal.t('Enter'),
           fullRoomLinkText: Drupal.t('Busy'),
-          fullRoomLink: "http://chat.cyberhus.dk/yellow.php",
+          fullRoomLink: Opeka.features.fullRoomLink,
           pausedRoomText: Drupal.t('Paused')
         },
         hidePairRooms: hidePairRooms,

@@ -137,6 +137,7 @@ function Server(config, logger) {
         results.queues = queues;
         results.queueList = queueList;
         results.queueSystem = self.config.get('features:queueSystem');
+        results.fullRoomLink = self.config.get('features:fullRoomLink');
         results.chatPageURL = self.config.get('chatPage');
         context.updateStatus(results);
       }
