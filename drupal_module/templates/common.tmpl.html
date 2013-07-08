@@ -122,16 +122,19 @@
     <% if (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms == false))) { %>
       <% labels.placeholder = ''; %>
       <li class="room">
-      <div class="room-details <% if (room.get('memberCount') == room.get('maxSize')){%>full<%} %>">
+      <div class="room-details <% if (room.get('memberCount') == room.get('maxSize')){%>full<%} %><% if (room.attributes.paused){%> paused<%} %>">
           <span class="room-size"><%- room.get('memberCount') %>/<%- room.get('maxSize') %></span>
           <% if (room.get('memberCount') == room.get('maxSize')){%>
             <span class="room-status">FULL</span>
           <%} %>
+          <% if (room.attributes.paused){%>
+            <span class="room-status">PAUSED</span>
+          <%} %>
         </div>
-      <p class="room-description"><%- room.get('name') %></p><% if (room.get('memberCount') != room.get('maxSize')){%>
+      <p class="room-description"><%- room.get('name') %></p><% if ((room.get('memberCount') != room.get('maxSize')) && (!room.attributes.paused)){%>
         <a href="#rooms/<%= room.id %>" class="room-enter"><%= labels.enterRoom %></a>
       <%}else{ %>
-        <a href="<%= labels.fullRoomLinkText %>" target="_blank" class="meantime"><%= labels.fullRoomLink %></a>
+        <a href="<%= labels.fullRoomLink %>" target="_blank" class="meantime"><%= labels.fullRoomLinkText %></a>
       <%}%>  
       </li>
     <% } %>

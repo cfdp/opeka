@@ -1059,8 +1059,9 @@
           placeholder: Drupal.t('No rooms created'),
           queueLink: Drupal.t('Go to queue list'),
           enterRoom: Drupal.t('Enter'),
-          fullRoomLink: Drupal.t('Do while'),
-          fullRoomLinkText: "http://chat.cyberhus.dk/yellow.php"
+          fullRoomLinkText: Drupal.t('Busy'),
+          fullRoomLink: "http://chat.cyberhus.dk/yellow.php",
+          pausedRoomText: Drupal.t('Paused')
         },
         hidePairRooms: hidePairRooms,
         rooms: roomList

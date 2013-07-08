@@ -566,7 +566,7 @@ function Server(config, logger) {
         queueFullUrl = self.config.get('features:queueFullUrl');
 
     // Special case when joining from the global Queue.
-    // Use is already in the room, so fake an OK response.
+    // User is already in the room, so fake an OK response.
     if (client.user.activeRoomId === roomId) {
       if (callback) {
         callback('OK', false, false);

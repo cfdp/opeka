@@ -32,8 +32,10 @@ var _ = require('underscore'),
     };
 
 /**
-* Get an open room of a specific type - pair or group. @todo: should not return a paused room and it should 
-* randomize the room returned so counselors will be handed new clients evenly. 
+* Get an open room of a specific type - pair or group. 
+* Should not return a paused room and it should (@todo)
+* randomize between the available rooms so counselors will be handed new clients evenly.
+* @todo: test if this works for group chats
 */
 var getOpenRoom = function (roomType) {
   return _.find(roomList, function (room) {
@@ -45,7 +47,9 @@ var getOpenRoom = function (roomType) {
   });
 };
 
+
 // Sums together a room list into empty, active and full rooms.
+// @todo: the "full" variable should be renamed to e.g. inaccessible and signaling that it reflects the paused property also
 var sumRoomList = function (rooms) {
   var empty = 0,
       active = 0,
@@ -55,10 +59,10 @@ var sumRoomList = function (rooms) {
     var userCount = Object.keys(room.users).length;
 
     if (userCount > 0) {
-      // If the room is full or paused, it counts as full
+      // If the room is full or paused, it counts as inaccessible
       if (room.isFull() || room.paused) {
         full = full + 1;
-        util.log('Room is full, room #:' + room.id);
+        util.log('Room is not accessible, room id:' + room.id);
 
       }
       else {
@@ -103,7 +107,6 @@ var updateRoomCounts = function () {
   roomCounts.group = sumRoomList(groupRooms);
   roomCounts.total = sumRoomList(allRooms);
   util.log('RoomCounts updated');
-
 };
 
 // The main chatroom object.
@@ -164,17 +167,20 @@ var Room = function (options) {
     // When a user enters a room, he is never muted.
     user.muted = false;
     // If we have both rooms and groups, check that we don't exceed the
-    // room size (if set) before adding the person to the room.
-    if ((user.account.isAdmin || (!self.maxSize || count < self.maxSize)) && user) {
+    // room size (if set) and that the room is not paused before adding the person to the room.
+    if ((user.account.isAdmin || ((!self.maxSize || count < self.maxSize) && (!self.paused))) && user) {
       self.users[user.clientId] = opeka.user.filterData(user);
       self.group.addUser(user.clientId);
 
       // Start the timer in order to retrieve at the end the duration of the chat
       if (user.account.isAdmin) {
         self.counsellorGroup.addUser(user.clientId);
+        util.log('Admin user added to room ' + self.id);
+
       }
       else {
         self.chatDurationStart_Min = Math.round((new Date()).getTime() / 60000);
+        util.log('Regular user added to room ' + self.id);
       }
 
       updateRoomCounts();
