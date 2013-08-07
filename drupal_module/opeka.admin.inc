@@ -55,6 +55,14 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_schedule', ''),
   );
 
+  $form['opeka_feedback_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Feedback URL'),
+    '#description' => t('URL to a feedback page, e.g. a Google Form, where clients can enter evaluation data after a chat.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_feedback_url', ''),
+  );
+
   $form['opeka_server_start'] = array(
     '#type' => 'submit',
     '#value' => 'Start server',
