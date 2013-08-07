@@ -375,8 +375,12 @@ var Opeka = { status: {}},
   };
 
   // Response to a user joining the room.
-  now.roomUserJoined = function (roomId, nickname) {
+  now.roomUserJoined = function (roomId, nickname, isAdmin) {
     if (Opeka.chatView && Opeka.chatView.model && Opeka.chatView.model.id === roomId) {
+      // If the user logged into the room is admin and the joining user is a client, play a sound
+      if (now.isAdmin && !isAdmin) {
+        Opeka.userJoinedSound();
+      }
       var messageObj = {
         message: Drupal.t('@user has joined the room.', { '@user': nickname }),
         system: true
@@ -534,6 +538,10 @@ var Opeka = { status: {}},
     else {
       $('body').addClass('groupchat');
     }
+  }
+
+  Opeka.userJoinedSound = function() {
+    document.getElementById('audiotag1').play();
   }
 
   // Basic setup for the app when the DOM is loaded.

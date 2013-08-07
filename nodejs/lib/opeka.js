@@ -607,7 +607,7 @@ function Server(config, logger) {
     if (addedUser === 'OK') {
       client.user.activeRoomId = roomId;
       client.user.activeQueueRoomId = null;
-      newRoom.group.now.roomUserJoined(newRoom.id, client.user.nickname);
+      newRoom.group.now.roomUserJoined(newRoom.id, client.user.nickname, client.user.account.isAdmin);
     }
     else {
       if (queueSystem) {
