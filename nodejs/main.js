@@ -37,7 +37,7 @@ nconf.defaults({
   }
 });
 
-// Configure logging to use the console, but with timestamps (off by default).
+// Configure logging to use the console and a log file, but with timestamps (off by default).
 var logger = new (winston.Logger)({
   transports: [
     new (winston.transports.Console)({
