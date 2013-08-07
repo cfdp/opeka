@@ -15,7 +15,8 @@
     "hidePairRoomsOnRoomList": false,
     "automaticPausePairRooms": true,
     "queueSystem" : true,
-    "queueFullUrl" : "http://example.com"
+    "queueFullUrl" : "http://example.com",
+    "fullRoomLink" : "http://example.com"
   },
   "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
   "server": {
