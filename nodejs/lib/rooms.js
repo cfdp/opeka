@@ -63,8 +63,6 @@ var sumRoomList = function (rooms) {
       // If the room is full or paused, it counts as inaccessible
       if (room.isFull() || room.paused) {
         full = full + 1;
-        util.log('Room is not accessible, room id:' + room.id);
-
       }
       else {
         active = active + 1;
@@ -107,7 +105,6 @@ var updateRoomCounts = function () {
   roomCounts.pair = sumRoomList(pairRooms);
   roomCounts.group = sumRoomList(groupRooms);
   roomCounts.total = sumRoomList(allRooms);
-  util.log('RoomCounts updated');
 };
 
 // The main chatroom object.
@@ -196,6 +193,9 @@ var Room = function (options) {
       self.users[user.clientId] = opeka.user.filterData(user);
       self.group.addUser(user.clientId);
 
+      var chatStart_Min = Math.round((new Date()).getTime() / 60000);
+      opeka.user.chatStart(user.clientId, chatStart_Min);
+
       // Start the timer in order to retrieve at the end the duration of the chat
       if (user.account.isAdmin) {
         self.counsellorGroup.addUser(user.clientId);
@@ -203,7 +203,6 @@ var Room = function (options) {
 
       }
       else {
-        self.chatDurationStart_Min = Math.round((new Date()).getTime() / 60000);
         util.log('Regular user added to room ' + self.id);
       }
 
@@ -232,6 +231,9 @@ var Room = function (options) {
     var queueUserID, removedUserNickname, queue;
 
     if (self.users[clientId]) {
+      var chatEnd_Min = Math.round((new Date()).getTime() / 60000);
+      var chatDuration = opeka.user.chatDuration(self.users[clientId], chatEnd_Min);
+
       removedUserNickname = self.users[clientId].name;
       // Remove clientId from either group as well as the user list.
       self.group.removeUser(clientId);
@@ -262,7 +264,7 @@ var Room = function (options) {
 
     if (callback) {
       try {
-        callback(self.users, queueUserID, removedUserNickname);
+        callback(self.users, queueUserID, removedUserNickname, chatDuration);
       } catch(ignored) {
         //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
       }

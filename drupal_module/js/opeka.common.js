@@ -427,10 +427,10 @@ var Opeka = { status: {}},
   }
 
   // Response to a user leaving the room.
-  now.roomUserLeft = function (roomId, nickname) {
+  now.roomUserLeft = function (roomId, nickname, chatDuration) {
     if (Opeka.chatView.model.id === roomId) {
       var messageObj = {
-        message: Drupal.t('@user has left the room.', { '@user': nickname }),
+        message: Drupal.t('@user has left the room. Chat duration: @chatDuration minutes.', { '@user': nickname, '@chatDuration': chatDuration }),
         system: true
       };
       Opeka.chatView.receiveMessage(messageObj);

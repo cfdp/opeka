@@ -817,7 +817,7 @@ function Server(config, logger) {
       self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
     }
 
-    room.removeUser(clientId, function (users, queueClientId, removedUserNickname) {
+    room.removeUser(clientId, function (users, queueClientId, removedUserNickname, chatDuration) {
       // The user has been removed from the queue and should join the chat.
       if (queueClientId) {
         self.everyone.users[queueClientId].now.changeRoom(room.id);
@@ -831,7 +831,7 @@ function Server(config, logger) {
 
       // Notify the chat room if we know who left.
       if (removedUserNickname) {
-        room.group.now.roomUserLeft(room.id, removedUserNickname);
+        room.group.now.roomUserLeft(room.id, removedUserNickname, chatDuration);
       }
 
       // Call the callback.
