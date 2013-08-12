@@ -204,7 +204,6 @@ function Server(config, logger) {
       client.user.nickname = clientUser.nickname;
       client.user.gender = clientUser.gender;
       client.user.age = clientUser.age;
-      client.user.chatStart_Min = Math.round((new Date()).getTime() / 1000);
 
       // Update online users count for all clients.
       self.updateUserStatus(self.everyone.now);
@@ -569,6 +568,10 @@ function Server(config, logger) {
         queueSystem = self.config.get('features:queueSystem'),
         queueFullUrl = self.config.get('features:queueFullUrl');
 
+    // Set the chat start time
+    client.user.chatStart_Min = Math.round((new Date()).getTime() / 60000);
+    self.logger.info('Login: User chat start: ', client.user.chatStart_Min);
+
     // Special case when joining from the global Queue.
     // User is already in the room, so fake an OK response.
     if (client.user.activeRoomId === roomId) {
@@ -814,7 +817,10 @@ function Server(config, logger) {
       }
 
       // Calculate the duration of the chat of the user being removed
-      self.everyone.users[clientId].user.chatEnd_Min = Math.round((new Date()).getTime() / 1000);
+      self.everyone.users[clientId].user.chatEnd_Min = Math.round((new Date()).getTime() / 60000);
+      self.logger.info('Logout: User chat start: ', self.everyone.users[clientId].user.chatStart_Min);
+      self.logger.info('Logout: User chat end: ', self.everyone.users[clientId].user.chatEnd_Min);
+
       var chatDuration = self.everyone.users[clientId].user.chatEnd_Min - self.everyone.users[clientId].user.chatStart_Min;
 
       self.everyone.users[clientId].user.activeRoomId = null;
