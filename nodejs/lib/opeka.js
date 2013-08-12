@@ -183,7 +183,7 @@ function Server(config, logger) {
         // In this way we are able to give to the counselors the ability to whisper
         nowjs.getGroup(client.user.clientId).addUser(client.user.clientId);
 
-        self.logger.info('User signed in.', client.user.clientId);
+        self.logger.info('Regular user signed in.', client.user.clientId);
 
         // Store the location information for later use, if they have been defined.
         if (clientUser.address) {
@@ -191,6 +191,8 @@ function Server(config, logger) {
           client.user.city = add[0];
           client.user.state = add[1];
         }
+
+
 
         client.now.receiveRoomList(opeka.rooms.clientData());
       }
@@ -202,6 +204,7 @@ function Server(config, logger) {
       client.user.nickname = clientUser.nickname;
       client.user.gender = clientUser.gender;
       client.user.age = clientUser.age;
+      client.user.chatStart_Min = Math.round((new Date()).getTime() / 1000);
 
       // Update online users count for all clients.
       self.updateUserStatus(self.everyone.now);
@@ -809,6 +812,11 @@ function Server(config, logger) {
         self.everyone.now.roomUpdated(room.id, { paused: true });
         self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
       }
+
+      // Calculate the duration of the chat of the user being removed
+      self.everyone.users[clientId].user.chatEnd_Min = Math.round((new Date()).getTime() / 1000);
+      var chatDuration = self.everyone.users[clientId].user.chatEnd_Min - self.everyone.users[clientId].user.chatStart_Min;
+
       self.everyone.users[clientId].user.activeRoomId = null;
     }
     else if (autoPause === true && room.maxSize === 2 && room.paused !== true && !room.isFull()) {
@@ -817,7 +825,7 @@ function Server(config, logger) {
       self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
     }
 
-    room.removeUser(clientId, function (users, queueClientId, removedUserNickname, chatDuration) {
+    room.removeUser(clientId, function (users, queueClientId, removedUserNickname) {
       // The user has been removed from the queue and should join the chat.
       if (queueClientId) {
         self.everyone.users[queueClientId].now.changeRoom(room.id);

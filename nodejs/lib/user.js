@@ -5,8 +5,6 @@
 
 var _ = require("underscore"),
     util = require("util"),
-    chatStart_Min,
-    chatEnd_Min,
     drupal = require("drupal");
 
 // Authenticate a user logging on to the chat server.
@@ -48,6 +46,8 @@ module.exports.authenticate = function (clientUser, callback) {
 module.exports.filterData = function (user) {
   return {
     age: user.age,
+    chatStart_Min: user.chatStart_Min,
+    chatEnd_Min: user.chatEnd_Min,
     clientId: user.clientId,
     gender: user.gender,
     isAdmin: user.isAdmin,
@@ -64,15 +64,4 @@ module.exports.sendUserList = function (context, roomId, users) {
 // Send the active user object to a room.
 module.exports.sendActiveUser = function (context, roomId, user) {
   context.now.receiveActiveUser(roomId, user);
-};
-
-// Set chat start time
-module.exports.chatStart = function (user, startTime) {
-  this.chatStart_Min = startTime;
-};
-
-// Return the chat duration
-module.exports.chatDuration = function (user, endTime) {
-  this.chatEnd_Min = endTime;
-  return this.chatEnd_Min - this.chatStart_Min;
 };
