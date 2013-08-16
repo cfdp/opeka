@@ -269,7 +269,10 @@
   <% if(admin) { %>
     <p>Tak!</p>
   <% }else{ %>
-    <!--<iframe height="2800" frameborder="0" width="618" onLoad="window.scrollTo(0,0);" src="https://docs.google.com/a/cyberhus.dk/spreadsheet/embeddedform?formkey=dFBPMklBOU5RZEFuVktUVTlRNmNtYnc6MQ" marginwidth="0" marginheight="0">Indlæser ...</iframe>--><p>Tak fordi du brugte Cyberhus-chatten.</p>
+    <p><%= labels.farewellMessage %></p>
+    <% if (Drupal.settings.opeka.feedback_url != '') { %>
+      <iframe height="3800" frameborder="0" width="618" onLoad="window.scrollTo(0,0);" src="<%= Drupal.settings.opeka.feedback_url %>" marginwidth="0" marginheight="0">Indlæser ...</iframe>
+    <% } %>
   <% } %>
 
 </script>

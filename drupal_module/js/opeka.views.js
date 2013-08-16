@@ -119,6 +119,7 @@
           activeUser: activeUser,
           admin: this.admin,
           labels: {
+            farewellMessage: Drupal.t('Thanks for using our chat!'),
             inQueueMessage: inQueueMessage,
             leaveQueueButton: Drupal.t('Leave queue'),
             leaveRoomButton: Drupal.t('Leave chat room'),
