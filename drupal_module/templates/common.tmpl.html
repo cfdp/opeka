@@ -16,23 +16,22 @@
           <% if (user.age || user.gender) { %>
             <span class="meta">
               (
-              <span class="age"><%- user.age %></span>
-              /
+              <span class="age"><%- user.age %></span>/
               <span class="gender"><%= labels.gender[user.gender] %></span>
               )
             </span>
           <% } %>
           <% if (user.clientId !== clientId && admin) { %>
-            <span class="actions">
-              <button class="ban-user"><%= labels.banUser %></button>
-              <button class="kick-user"><%= labels.kickUser %></button>
+            <span class="actions btn-group">
+              <button class="ban-user btn btn-small"><%= labels.banUser %></button>
+              <button class="kick-user btn btn-small"><%= labels.kickUser %></button>
               <% if (user.muted) { %>
-                <button class="unmute-user"><%= labels.unmuteUser %></button>
+                <button class="unmute-user btn btn-small"><%= labels.unmuteUser %></button>
               <% }
                  else { %>
-                <button class="mute-user"><%= labels.muteUser %></button>
+                <button class="mute-user btn btn-small"><%= labels.muteUser %></button>
               <% } %>
-              <button class="whisper"><%= labels.whisper %></button>
+              <button class="whisper btn btn-small"><%= labels.whisper %></button>
             </span>
           <% } %>
         </li>
@@ -43,10 +42,10 @@
   <% if (admin) { %>
     <div class="sidebar-block">
       <h5 class="sidebar-block-heading">Room actions<span class="arrow down"></span></h5>
-      <div class="sidebar-block-content room-actions"  style="display: block;">
-        <button class="pause-toggle"><%= labels.pauseToggle %></button>
-        <button class="clear-messages"><%= labels.clearMessages %></button>
-        <button class="delete-room"><%= labels.deleteRoom %></button>
+      <div class="sidebar-block-content room-actions btn-group"  style="display: block;">
+        <button class="pause-toggle btn"><%= labels.pauseToggle %></button>
+        <button class="clear-messages btn"><%= labels.clearMessages %></button>
+        <button class="delete-room btn"><%= labels.deleteRoom %></button>
       </div>
     </div>
     <div class="sidebar-block">
@@ -60,7 +59,7 @@
 
 <script id="opeka_chat_footer_tmpl" type="application/template">
   <% if (banCodeGenerator) { %>
-    <button class="generate-ban-code btn-util"><%- labels.banCode %></button>
+    <button class="generate-ban-code btn-util btn"><%- labels.banCode %></button>
   <% } %>
 </script>
 
@@ -76,9 +75,8 @@
 </script>
 
 <script id="opeka_connect_form_tmpl" type="application/template">
- <p class="welcome-notice"><%- labels.welcome_notice %></p>
- <form action="#" class="connect-interface">
-    <p class="welcome-message"><%= labels.welcome_message %></p>
+ <p class="welcome-message"><%= Drupal.settings.opeka.welcome_message %></p>
+ <form action="#" class="connect-interface well">
     <fieldset>
       <label class="form-item nickname-label">
         <%= labels.nick %>
@@ -106,7 +104,7 @@
 
       <% } %>
 
-      <input class="connect form-submit btn" type="submit" value="<%= labels.action %>" />
+      <input class="connect form-submit btn btn-success" type="submit" value="<%= labels.action %>" />
       <span class="cyberhus-logo"></span>
     </fieldset>
   </form>
@@ -115,28 +113,28 @@
 <script id="opeka_room_list_tmpl" type="application/template">
   <% if (admin) { %>
     <div class="queue-utils">
-    <a href="#queues" class="go-to-queues btn-util"><%= labels.queueLink %></a>
-    <button class="create-room btn btn-small"><%= labels.createRoom %></button>
+    <a href="#queues" class="go-to-queues btn-util btn btn-small"><%= labels.queueLink %></a>
+    <button class="create-room btn btn-small btn-success"><%= labels.createRoom %></button>
     </div>
   <% } %>
   <ul class="room-list">
   <% rooms.each(function (room) { %>
     <% if (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms == false))) { %>
       <% labels.placeholder = ''; %>
-      <li class="room">
-      <div class="room-details <% if (room.get('memberCount') == room.get('maxSize')){%>full<%} %><% if (room.attributes.paused){%> paused<%} %>">
+      <li class="room well">
+      <div class="room-details badge badge-info <% if (room.get('memberCount') == room.get('maxSize')){%>full<%} %><% if (room.attributes.paused){%> paused<%} %>">
           <span class="room-size"><%- room.get('memberCount') %>/<%- room.get('maxSize') %></span>
           <% if (room.get('memberCount') == room.get('maxSize')){%>
-            <span class="room-status">FULL</span>
+            <span class="room-status full">Full</span>
           <%} %>
           <% if (room.attributes.paused){%>
-            <span class="room-status">PAUSED</span>
+            <span class="room-status paused">Paused</span>
           <%} %>
         </div>
       <p class="room-description"><%- room.get('name') %></p><% if ((room.get('memberCount') != room.get('maxSize')) && (!room.attributes.paused)){%>
-        <a href="#rooms/<%= room.id %>" class="room-enter"><%= labels.enterRoom %></a>
+        <a href="#rooms/<%= room.id %>" class="room-enter btn btn-success"><%= labels.enterRoom %></a>
       <%}else{ %>
-        <a href="<%= labels.fullRoomLink %>" target="_blank" class="meantime"><%= labels.fullRoomLinkText %></a>
+        <a href="<%= labels.fullRoomLink %>" target="_blank" class="meantime btn btn-warning"><%= labels.fullRoomLinkText %></a>
       <%}%>  
       </li>
     <% } %>
@@ -200,13 +198,13 @@
 </script>
 
 <script id="opeka_chat_tmpl" type="application/template">
-<div class="chat-message-list-wrapper">
+<div class="chat-message-list-wrapper well">
   <ul class="chat-message-list">
   <% _.each(messages, function (message) { %>
     <% if (message.system) { %>
-      <li class="system-message"><span>system:</span><%- message.message %></li>
+      <li class="system-message well"><span>system:</span><%- message.message %></li>
     <% } else if (message.whisper) { %>
-      <li class="whisper-message" data-message-id="<%= message.messageId %>">
+      <li class="whisper-message well" data-message-id="<%= message.messageId %>">
         <% if (message.receiver) { %>
           <span class="sender-name"><%- message.sender.name %> - <%= labels.whispered %></span>
         <% } else { %>
@@ -216,7 +214,7 @@
         <span class="timestamp"><%= formatTimestamp(message.date) %></span>
       </li>
     <% } else { %>
-      <li class="chat-message <% if(message.sender.isCouncellor) { %>counselor<% }else{%>user<% } %>" data-message-id="<%= message.messageId %>">
+      <li class="chat-message well <% if(message.sender.isCouncellor) { %>counselor<% }else{%>user<% } %>" data-message-id="<%= message.messageId %>">
         <span class="sender-name"><%- message.sender.name %></span>
         <span class="message"><%- message.message %></span>
         <span class="timestamp"><%= formatTimestamp(message.date) %></span>
@@ -239,7 +237,7 @@
     <div class="form-text-container">
       <textarea autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" ></textarea>
     </div>
-    <input class="form-submit send" type="submit" value="<%= labels.messageButton %>" />
+    <input class="form-submit send btn btn-success" type="submit" value="<%= labels.messageButton %>" />
   </form>
   <% } else if (activeUser.muted) { %>
     <div class="userMuted">
@@ -259,7 +257,7 @@
     </form>
   <% } else { %>
     <form action="#" class="leave-room-form">
-      <input class="form-submit send" type="submit" value="<%= labels.leaveRoomButton %>" />
+      <input class="form-submit send btn btn-warning" type="submit" value="<%= labels.leaveRoomButton %>" />
     </form>
   <% } %>
 </script>
