@@ -1357,8 +1357,6 @@
       var form = JST.opeka_connect_form_tmpl({
         labels: {
           action: Drupal.t('Ready for chat'),
-          welcome_notice: Drupal.t('Welcome to the new chat. The group chat and 1 to 1 chat now looks similar.'),
-          welcome_message: Drupal.t('Welcome to the chat'),
           age: Drupal.t('Age'),
           gender: Drupal.t('Gender'),
           female: Drupal.t('Female'),

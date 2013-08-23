@@ -55,6 +55,14 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_schedule', ''),
   );
 
+  $form['opeka_welcome_message'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Welcome message'),
+    '#description' => t('Text shown before user logs into the chat.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_welcome_message', ''),
+  );
+
   $form['opeka_feedback_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Feedback URL'),

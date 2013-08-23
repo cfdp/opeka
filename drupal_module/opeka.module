@@ -72,16 +72,16 @@ function opeka_menu() {
  */
 function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings = array()) {
   $path = drupal_get_path('module', 'opeka');
-/*
+
   $stylesheets = array_merge(array(
     'opeka.base.css',
-    'opeka.theme.css',
-    'jquery.ui.theme.css',
+    /*'opeka.theme.css',
+    'jquery.ui.theme.css',*/
   ), $stylesheets);
   foreach ($stylesheets as $filename) {
     drupal_add_css($path . '/css/' . $filename);
   }
-*/
+
   $js_url = variable_get('opeka_nowjs_url', 'https://localhost:3000/nowjs/now.js');
 
   if (!$js_url) {
@@ -94,10 +94,12 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   // connecting to the nowjs server.
   drupal_add_js($js_url, array('type' => 'external', 'weight' => -42));
 
-  $feedback_url = variable_get('opeka_feedback_url', 'http://bevidstforbrug.dk');
+  $welcome_message = variable_get('opeka_welcome_message', '');
+  $feedback_url = variable_get('opeka_feedback_url', '');
 
   // Settings to expose to the JavaScript client.
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
+  $settings['welcome_message'] = $welcome_message;
   $settings['feedback_url'] = $feedback_url;
   drupal_add_js(array('opeka' => $settings), 'setting');
 
