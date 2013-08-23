@@ -122,7 +122,6 @@
       </div>
 
       <div class="form-item">
-        <!--
         <label for="max-size"><%- labels.size %></label>
         <select class="max-size" name="max-size">
           <option value="2" selected="selected">2 <%- labels.users %></option>
@@ -134,25 +133,7 @@
           <option value="10">10 <%- labels.users %></option>
           <option value="15">15 <%- labels.users %></option>
         </select>
-        -->
-        <div class="form-item max-size2">
-        <label for="max-size"><%- labels.size %></label>
-        <input type="radio" name="max-size" class="max-size2" id="2" checked="checked" value="2" />
-        <label for="2">2</label>
-        <input type="radio" name="max-size" class="max-size2" id="5" value="5" />
-        <label for="5">5</label>
-        <input type="radio" name="max-size" class="max-size2" id="7" value="7" />
-        <label for="7">7</label>
-        <input type="radio" name="max-size" class="max-size2" id="8" value="8" />
-        <label for="8">8</label>
-        <input type="radio" name="max-size" class="max-size2" id="9" value="9" />
-        <label for="9">9</label>
-        <input type="radio" name="max-size" class="max-size2" id="10" value="10" />
-        <label for="10">10</label>
-        <input type="radio" name="max-size" class="max-size2" id="15" value="15" />
-        <label for="15">15</label>
-        </div>
-<!--
+
       <div class="form-item">
         <label for="ip-location"><%- labels.iPLocation %></label>
         <select class="ip-location"  name="ip-location">
@@ -161,9 +142,7 @@
           <option value="Scandinavia"><%- labels.outDk %></option>
         </select>
       </div>
---> 
       <% if (enableQueues) {%>
-<!--
         <div class="form-item queue-system">
           <label for="queue-system"><%- labels.queueSystem %></label>
 
@@ -182,13 +161,11 @@
               <label for="<%- queue.id %>"><%- queue.get('name') %></label>
             <% }); %>
         </div>
--->
       <% }%>
 
       <div class="form-item private-room">
-        <label for="private-room"><%= labels.training %></label>
         <input class="private" name="private" id="private" type="checkbox" value="true" />
-        <label for="private"><%- labels.privateRoom %></label>
+        <label for="private-room"><%= labels.training %></label>
       </div>
     </div>
   </form>
