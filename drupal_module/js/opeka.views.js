@@ -1,12 +1,18 @@
-/*!
- * Copyright 2012 Cyberhus.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- */
+
+// Copyright 2012 Cyberhus.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 /*global _, Backbone, Drupal, JST, now, Opeka, window */
 (function ($) {
   "use strict";
@@ -106,9 +112,9 @@
         admin: this.admin,
         formatTimestamp: this.formatTimestamp,
         labels: {
-          deleteMessage: Drupal.t(''),
-          whispered: Drupal.t('WHISPERED'),
-          whisperedTo: Drupal.t('WHISPERED TO'),
+          deleteMessage: Drupal.t('Delete'),
+          whispered: Drupal.t('Whispered'),
+          whisperedTo: Drupal.t('Whispered to'),
         },
         messages: this.messages,
       }));
@@ -137,8 +143,7 @@
       // @daniel
       // Keep the scrollbar at the bottom of the .chat-message-list
       var message_list = this.$el.find('.chat-message-list');
-      message_list.attr({scrollTop: message_list.attr("scrollHeight")});
-
+      message_list.scrollTop(message_list.prop("scrollHeight"));
       return this;
     },
 
@@ -218,7 +223,8 @@
         // @daniel
         // Keep the scrollbar at the bottom of the .chat-message-list
         var message_list = this.$el.find('.chat-message-list');
-        message_list.attr({scrollTop: message_list.attr("scrollHeight")});
+        console.log(message_list.outerHeight());
+        message_list.scrollTop(message_list.prop("scrollHeight"));
       }
     },
 
