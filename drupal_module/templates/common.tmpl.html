@@ -12,7 +12,7 @@
       <% } %>
       <% _.each(users, function (user) { %>
         <li data-client-id="<%= user.clientId %>">
-          <span class="name"><%- user.name %></span>
+          <i class="icon-user"></i><span class="name"><%- user.name %></span>
           <% if (user.age || user.gender) { %>
             <span class="meta">
               (
@@ -198,30 +198,34 @@
 </script>
 
 <script id="opeka_chat_tmpl" type="application/template">
-<div class="chat-message-list-wrapper well">
-  <ul class="chat-message-list">
+<div class="chat-message-list-wrapper">
+  <ul class="chat-message-list list-unstyled">
   <% _.each(messages, function (message) { %>
     <% if (message.system) { %>
-      <li class="system-message well"><span>system:</span><%- message.message %></li>
+      <li class="system-message"><span>system:</span><%- message.message %></li>
     <% } else if (message.whisper) { %>
-      <li class="whisper-message well" data-message-id="<%= message.messageId %>">
+      <li class="whisper-message bs-callout" data-message-id="<%= message.messageId %>">
         <% if (message.receiver) { %>
-          <span class="sender-name"><%- message.sender.name %> - <%= labels.whispered %></span>
-        <% } else { %>
-          <span class="sender-name"><%= labels.whisperedTo %> - <%- message.sender.name %></span>
-        <% } %>
-        <span class="message"><%- message.message %></span>
-        <span class="timestamp"><%= formatTimestamp(message.date) %></span>
+          <div class="top-info clearfix">
+            <div class="sender-name pull-left"><%- message.sender.name %> - <%= labels.whispered %></div>
+            <% } else { %>
+            <div class="sender-name pull-left"><%= labels.whisperedTo %> - <%- message.sender.name %></div>
+            <% } %>
+            <div class="time pull-right"><%= formatTimestamp(message.date) %></div>
+          </div>
+        <div class="message"><%- message.message %></div>
       </li>
     <% } else { %>
-      <li class="chat-message well <% if(message.sender.isCouncellor) { %>counselor<% }else{%>user<% } %>" data-message-id="<%= message.messageId %>">
-        <span class="sender-name"><%- message.sender.name %></span>
-        <span class="message"><%- message.message %></span>
-        <span class="timestamp"><%= formatTimestamp(message.date) %></span>
+      <li class="chat-message bs-callout <% if(message.sender.isCouncellor) { %>bs-callout-counselor<% }else{%>bs-callout-client<% } %>" data-message-id="<%= message.messageId %>">
+        <div class="top-info clearfix">
+          <div class="sender-name pull-left"><%- message.sender.name %></div>
+          <div class="time pull-right"><%= formatTimestamp(message.date) %></div>
+        </div>
+        <div class="message"><%- message.message %></div>
         <% if (admin) { %>
-        <span class="actions">
-          <button class="delete-message"><%= labels.deleteMessage %></button>
-        </span>
+        <div class="actions clearfix">
+          <button class="delete-message btn-link pull-right"><%= labels.deleteMessage %></button>
+        </div>
         <% } %>
       </li>
     <% } %>
