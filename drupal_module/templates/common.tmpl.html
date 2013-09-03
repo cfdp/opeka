@@ -205,8 +205,8 @@
       <li class="system-message"><span>system:</span><%- message.message %></li>
     <% } else if (message.whisper) { %>
       <li class="whisper-message bs-callout" data-message-id="<%= message.messageId %>">
-        <% if (message.receiver) { %>
-          <div class="top-info clearfix">
+        <div class="top-info clearfix">
+          <% if (message.receiver) { %>
             <div class="sender-name pull-left"><%- message.sender.name %> - <%= labels.whispered %></div>
             <% } else { %>
             <div class="sender-name pull-left"><%= labels.whisperedTo %> - <%- message.sender.name %></div>
