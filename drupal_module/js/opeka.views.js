@@ -223,7 +223,6 @@
         // @daniel
         // Keep the scrollbar at the bottom of the .chat-message-list
         var message_list = this.$el.find('.chat-message-list');
-        console.log(message_list.outerHeight());
         message_list.scrollTop(message_list.prop("scrollHeight"));
       }
     },
