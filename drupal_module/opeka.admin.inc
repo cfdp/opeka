@@ -63,12 +63,28 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_welcome_message', ''),
   );
 
+  $form['opeka_client_login_sound'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Login sound file'),
+    '#description' => t('URL to a sound file that is played for the counselor when a client logs in.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.wav'),
+  );
+
   $form['opeka_feedback_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Feedback URL'),
     '#description' => t('URL to a feedback page, e.g. a Google Form, where clients can enter evaluation data after a chat.'),
     '#required' => FALSE,
     '#default_value' => variable_get('opeka_feedback_url', ''),
+  );
+
+  $form['opeka_pairchat_user_list'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Pair chat user list visibility'),
+    '#description' => t('Toggle the user list visibility in the pair chat. Check it if the user list should be visible'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_pairchat_user_list', 0),
   );
 
   $form['opeka_server_start'] = array(

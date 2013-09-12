@@ -22,3 +22,12 @@
 #opeka-app .sidebar {
   width: 33%;
 }
+
+/* Anonymous clients can have the sidebar disabled */
+.not-logged-in #opeka-app .content.client-sidebar-0 {
+  width: 100%;
+}
+
+.not-logged-in #opeka-app .content.client-sidebar-1 {
+  width: 66%;
+}

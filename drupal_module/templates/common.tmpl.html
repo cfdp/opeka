@@ -1,44 +1,45 @@
 <div id="opeka-app"></div>
-<audio id="audiotag1" src="../sites/all/modules/custom/opeka/media/keykrusher_bicycle-bell-2.wav" preload="auto"></audio>
-
-
+<audio id="audiotag1" src="../sites/all/modules/custom/opeka/media/bell.wav" preload="auto"></audio>
 <script id="opeka_chat_sidebar_tmpl" type="application/template">
-  <div id="user-list-block" class="room-size-<%- room.get('maxSize') %>">
-    <h5 class="sidebar-block-heading">User list<span class="arrow up"></span></h5>
-    <div class="sidebar-block-content">
-      <ul class="user-list">
-      <% if (!users) { %>
-        <li class="placeholder"><%= labels.placeholder %></li>
-      <% } %>
-      <% _.each(users, function (user) { %>
-        <li data-client-id="<%= user.clientId %>">
-          <i class="icon-user"></i><span class="name"><%- user.name %></span>
-          <% if (user.age || user.gender) { %>
-            <span class="meta">
-              (
-              <span class="age"><%- user.age %></span>/
-              <span class="gender"><%= labels.gender[user.gender] %></span>
-              )
-            </span>
-          <% } %>
-          <% if (user.clientId !== clientId && admin) { %>
-            <span class="actions btn-group">
-              <button class="ban-user btn btn-small"><%= labels.banUser %></button>
-              <button class="kick-user btn btn-small"><%= labels.kickUser %></button>
-              <% if (user.muted) { %>
-                <button class="unmute-user btn btn-small"><%= labels.unmuteUser %></button>
-              <% }
-                 else { %>
-                <button class="mute-user btn btn-small"><%= labels.muteUser %></button>
-              <% } %>
-              <button class="whisper btn btn-small"><%= labels.whisper %></button>
-            </span>
-          <% } %>
-        </li>
-      <% }); %>
-      </ul>
+  <% /* Only display sidebar for anonymous clients if this settings is chosen*/ %>
+  <% if (admin || (Drupal.settings.opeka.pairchat_user_list == 1)) { %>
+    <div id="user-list-block" class="room-size-<%- room.get('maxSize') %>">
+      <h5 class="sidebar-block-heading">User list<span class="arrow up"></span></h5>
+      <div class="sidebar-block-content">
+        <ul class="user-list">
+        <% if (!users) { %>
+          <li class="placeholder"><%= labels.placeholder %></li>
+        <% } %>
+        <% _.each(users, function (user) { %>
+          <li data-client-id="<%= user.clientId %>">
+            <i class="icon-user"></i><span class="name"><%- user.name %></span>
+            <% if (user.age || user.gender) { %>
+              <span class="meta">
+                (
+                <span class="age"><%- user.age %></span>/
+                <span class="gender"><%= labels.gender[user.gender] %></span>
+                )
+              </span>
+            <% } %>
+            <% if (user.clientId !== clientId && admin) { %>
+              <span class="actions btn-group">
+                <button class="ban-user btn btn-small"><%= labels.banUser %></button>
+                <button class="kick-user btn btn-small"><%= labels.kickUser %></button>
+                <% if (user.muted) { %>
+                  <button class="unmute-user btn btn-small"><%= labels.unmuteUser %></button>
+                <% }
+                   else { %>
+                  <button class="mute-user btn btn-small"><%= labels.muteUser %></button>
+                <% } %>
+                <button class="whisper btn btn-small"><%= labels.whisper %></button>
+              </span>
+            <% } %>
+          </li>
+        <% }); %>
+        </ul>
+      </div>
     </div>
-  </div>
+  <% } %>
   <% if (admin) { %>
     <div class="sidebar-block">
       <h5 class="sidebar-block-heading">Room actions<span class="arrow down"></span></h5>
@@ -65,7 +66,7 @@
 
 <script id="opeka_app_tmpl" type="application/template">
   <div class="header"></div>
-  <div class="content"><%= content %></div>
+  <div class="content client-sidebar-<%= Drupal.settings.opeka.pairchat_user_list %>"><%= content %></div>
   <div class="sidebar"></div>
   <div class="footer"></div>
 </script>

@@ -96,11 +96,18 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
 
   $welcome_message = variable_get('opeka_welcome_message', '');
   $feedback_url = variable_get('opeka_feedback_url', '');
+  /* Get the pair chat user list setting */
+  $pairchat_user_list = variable_get('opeka_pairchat_user_list', 0);
+  $client_login_sound = variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.wav');
+  dpm('pairchat er' . $pairchat_user_list);
 
   // Settings to expose to the JavaScript client.
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
   $settings['welcome_message'] = $welcome_message;
   $settings['feedback_url'] = $feedback_url;
+  $settings['client_login_sound'] = $client_login_sound;
+  $settings['pairchat_user_list'] = $pairchat_user_list;
+
   drupal_add_js(array('opeka' => $settings), 'setting');
 
   // Load the required JavaScript libraries.
