@@ -544,6 +544,7 @@ var Opeka = { status: {}},
     }
   }
 
+  // Play a sound when a client joins the chat
   Opeka.userJoinedSound = function() {
     document.getElementById('audiotag1').play();
   }

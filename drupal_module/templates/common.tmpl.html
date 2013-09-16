@@ -1,8 +1,8 @@
 <div id="opeka-app"></div>
 <script id="opeka_chat_sidebar_tmpl" type="application/template">
   <audio id="audiotag1" src="<%= Drupal.settings.opeka.client_login_sound %>" preload="auto"></audio>
-  <% /* Only display sidebar for anonymous clients if this settings is chosen*/ %>
-  <% if (admin || (Drupal.settings.opeka.pairchat_user_list == 1)) { %>
+  <% /* Only display sidebar for anonymous clients in pair rooms if this settings is set to 1*/ %>
+  <% if (!((Drupal.settings.opeka.pairchat_user_list == 0) && (room.get('maxSize') == 2))) { %>
     <div id="user-list-block" class="room-size-<%- room.get('maxSize') %>">
       <h5 class="sidebar-block-heading">User list<span class="arrow up"></span></h5>
       <div class="sidebar-block-content">
@@ -120,19 +120,21 @@
   <% } %>
   <ul class="room-list">
   <% rooms.each(function (room) { %>
-    <% if (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms == false))) { %>
+    <% /* Show the room list - show all rooms for counselors */ %>
+    <% if (admin || (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms == false)))) { %>
       <% labels.placeholder = ''; %>
       <li class="room well">
       <div class="room-details badge badge-info <% if (room.get('memberCount') == room.get('maxSize')){%>full<%} %><% if (room.attributes.paused){%> paused<%} %>">
-          <span class="room-size"><%- room.get('memberCount') %>/<%- room.get('maxSize') %></span>
-          <% if (room.get('memberCount') == room.get('maxSize')){%>
-            <span class="room-status full">Full</span>
-          <%} %>
-          <% if (room.attributes.paused){%>
-            <span class="room-status paused">Paused</span>
-          <%} %>
-        </div>
-      <p class="room-description"><%- room.get('name') %></p><% if ((room.get('memberCount') != room.get('maxSize')) && (!room.attributes.paused)){%>
+        <span class="room-size"><%- room.get('memberCount') %>/<%- room.get('maxSize') %></span>
+        <% if (room.get('memberCount') == room.get('maxSize')){%>
+          <span class="room-status full">Full</span>
+        <%} %>
+        <% if (room.attributes.paused){%>
+          <span class="room-status paused">Paused</span>
+        <%} %>
+      </div>
+      <% /* Only admins should be able to enter a full or paused room */ %>
+      <p class="room-description"><%- room.get('name') %></p><% if (admin || ((room.get('memberCount') != room.get('maxSize')) && (!room.attributes.paused))) {%>
         <a href="#rooms/<%= room.id %>" class="room-enter btn btn-success"><%= labels.enterRoom %></a>
       <%}else{ %>
         <a href="<%= labels.fullRoomLink %>" target="_blank" class="meantime btn btn-warning"><%= labels.fullRoomLinkText %></a>
