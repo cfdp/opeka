@@ -77,37 +77,51 @@
 
 <script id="opeka_connect_form_tmpl" type="application/template">
  <p class="welcome-message"><%= Drupal.settings.opeka.welcome_message %></p>
- <form action="#" class="connect-interface well">
-    <fieldset>
-      <label class="form-item nickname-label">
+ <form action="#" class="form-horizontal well">
+    <div class="control-group">
+      <label class="form-item control-label nickname-label">
         <%= labels.nick %>
       </label>
-      <input class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
-      <% if (name != 'Rådgiver') { %>
-      <!--<span class="label-tooltip"><%= labels.nick_tooltip %></span>-->
-      <% } %>
-      <% if (!name) { %>
+      <div class="controls">
+        <input class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
+        <% if (name != 'Rådgiver') { %>
+        <!--<span class="label-tooltip"><%= labels.nick_tooltip %></span>-->
+        <% } %>
+      </div>
+    </div>
+        <% if (!name) { %>
 
-      <label class="form-item age-label">
+
+    <div class="control-group">
+      <label class="form-item control-label age-label">
         <%= labels.age %>
       </label>
-      <input class="form-text age" type="text" maxlength="2" />
-      
-      <label class="form-item gender-label">
+      <div class="controls">
+        <input class="form-text age" type="text" maxlength="2" />
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="form-item control-label gender-label">
         <%= labels.gender %>
       </label>
+      <div class="controls">
         <select class="form-select gender">
-        <option value="" selected="selected"></option>
-        <option value="m"><%= labels.male %></option>
-        <option value="f"><%= labels.female %></option>
-      </select>
-      
+          <option value="" selected="selected"></option>
+          <option value="m"><%= labels.male %></option>
+          <option value="f"><%= labels.female %></option>
+        </select>
+      </div>
+    </div>
 
       <% } %>
+    <div class="control-group">
+      <div class="controls">
+        <input class="connect form-submit btn btn-success" type="submit" value="<%= labels.action %>" />
+        <span class="cyberhus-logo"></span>
+      </div>
+    </div>
 
-      <input class="connect form-submit btn btn-success" type="submit" value="<%= labels.action %>" />
-      <span class="cyberhus-logo"></span>
-    </fieldset>
   </form>
 </script>
 
@@ -223,13 +237,13 @@
         <div class="top-info clearfix">
           <div class="sender-name pull-left"><%- message.sender.name %></div>
           <div class="time pull-right"><%= formatTimestamp(message.date) %></div>
+          <% if (admin) { %>
+            <div class="actions pull-right">
+              <button class="delete-message btn-link pull-right"><%= labels.deleteMessage %></button>
+            </div>
+          <% } %>
         </div>
         <div class="message"><%- message.message %></div>
-        <% if (admin) { %>
-        <div class="actions clearfix">
-          <button class="delete-message btn-link pull-right"><%= labels.deleteMessage %></button>
-        </div>
-        <% } %>
       </li>
     <% } %>
   <% }); %>

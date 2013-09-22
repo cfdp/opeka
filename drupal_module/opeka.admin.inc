@@ -109,14 +109,14 @@ function opeka_admin_settings_form($form, &$form_state) {
 }
 
 function opeka_start_server($form, &$form_state){
-  $output = shell_exec('/home/cyberhus/www/cfdpchat.dk/startchat');
+  $output = shell_exec('/home/cyberhus/www/cfdpchat.eu/startchat');
   
 }
 
 function opeka_stop_server($form, &$form_state){
-  $output = shell_exec('/home/cyberhus/www/cfdpchat.dk/stopchat');
+  $output = shell_exec('/home/cyberhus/www/cfdpchat.eu/stopchat');
 }
 
 function opeka_restart_server($form, &$form_state){
-  $output = shell_exec('/home/cyberhus/www/cfdpchat.dk/restartchat');
+  $output = shell_exec('/home/cyberhus/www/cfdpchat.eu/restartchat');
 }
