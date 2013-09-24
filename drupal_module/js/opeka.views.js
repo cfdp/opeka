@@ -846,9 +846,7 @@
             iPLocation: Drupal.t('IP location'),
             outDk: Drupal.t('Outside Denmark/Scandinavia'),
             chatroomhelp: Drupal.t('This field is for the topic of a group chat'),
-            private: Drupal.t('Private'),
-            privateRoom: Drupal.t('Private room?'),
-            training: Drupal.t('Is this room for training'),
+            training: Drupal.t('For training'),
             queueSystem: Drupal.t('Queue system'),
             size: Drupal.t('Size limit'),
             users: Drupal.t('users')
@@ -886,8 +884,7 @@
       var form = $(this.dialogElement).find('form'),
           values = {
             name: form.find('input.name').val(),
-            //maxSize: form.find('select.max-size').val(),
-            maxSize: form.find(':checked').val(),
+            maxSize: form.find('select.max-size').val(),
             ipLocation: form.find('select.ip-location').val(),
             private: form.find('input.private').attr('checked'),
             queueSystem: form.find('select.queue-system').val()
