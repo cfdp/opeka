@@ -151,8 +151,6 @@
       <% if (room.attributes.private){%>
           <div class="badge badge-important private-room">Training room</div>
       <%} %>
-      <% /* debug */ %>
-      <div class="users"><% console.log(room.hasCounsellor) %></div>
       <% /* Only admins should be able to enter a full or paused room */ %>
       <% if (admin || ((room.get('memberCount') != room.get('maxSize')) && (!room.attributes.paused))) {%>
         <a href="#rooms/<%= room.id %>" class="room-enter btn btn-success"><%= labels.enterRoom %></a>
