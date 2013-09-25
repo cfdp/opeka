@@ -414,7 +414,7 @@
     },
 
     // @daniel
-    // For when you need to unmute a user.
+    // For toggling visibility on chat room menu items
     sidebarBlocktoggle: function (event) {
       var head = $(event.currentTarget),
           body = head.next('.sidebar-block-content'),
