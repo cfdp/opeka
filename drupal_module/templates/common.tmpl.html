@@ -288,14 +288,12 @@
 </script>
 
 <script id="opeka_user_feedback_tmpl" type="application/template">
-
   <% if(admin) { %>
-    <p>Tak!</p>
+    <p>The chat session has ended.</p>
   <% }else{ %>
     <p><%= labels.farewellMessage %></p>
     <% if (Drupal.settings.opeka.feedback_url != '') { %>
-      <iframe height="3800" frameborder="0" width="618" onLoad="window.scrollTo(0,0);" src="<%= Drupal.settings.opeka.feedback_url %>" marginwidth="0" marginheight="0">Indlæser ...</iframe>
+      <a href="<%= Drupal.settings.opeka.feedback_url %>"><%= labels.feedbackLinkText %></a>
     <% } %>
   <% } %>
-
 </script>

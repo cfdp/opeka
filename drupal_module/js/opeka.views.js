@@ -125,7 +125,6 @@
           activeUser: activeUser,
           admin: this.admin,
           labels: {
-            farewellMessage: Drupal.t('Thanks for using our chat!'),
             inQueueMessage: inQueueMessage,
             leaveQueueButton: Drupal.t('Leave queue'),
             leaveRoomButton: Drupal.t('Leave chat room'),
@@ -1115,7 +1114,10 @@
       this.$el.html(JST.opeka_user_feedback_tmpl({
         
         admin: _.isFunction(now.isAdmin),
-                
+        labels: {
+          farewellMessage: Drupal.t('Thanks for using our chat!'),
+          feedbackLinkText: Drupal.t('Open the feedback form.')
+        }
       }));
       
       return this;
