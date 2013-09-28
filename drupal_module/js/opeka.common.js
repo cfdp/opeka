@@ -299,9 +299,9 @@ var Opeka = { status: {}},
     Opeka.roomList.reset(rooms);
   };
 
-  // For when the server has an updated room list for us.
+  // For when the server has an updated queue list for us.
   now.receiveQueueList = function (queues) {
-    // This triggers a reset even on the RoomList instance, so any views
+    // This triggers a reset even on the queueList instance, so any views
     // that use this list can listen to that for updates.
     Opeka.queueList.reset(queues);
   };

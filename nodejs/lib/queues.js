@@ -19,7 +19,7 @@ var Queue = function (options) {
   var self = this;
 
   self.construct = function () {
-    // Core attributes of a room.
+    // Core attributes of a queue.
     self.id = options.id || uuid();
     self.name = options.name;
     self.active = options.active;
@@ -27,7 +27,7 @@ var Queue = function (options) {
     // A list of users who is in the queue.
     self.queue = [];
 
-    // Add our new room to the room list.
+    // Add our new queue to the queue list.
     queueList[self.id] = self;
 
     util.log('Queue created: ' + self.name);
@@ -114,7 +114,7 @@ var Queue = function (options) {
   return self.construct();
 };
 
-// Provide a list of rooms for the client.
+// Provide a list of queues for the client.
 var clientData = function () {
   var queues = _.map(queueList, function (queue) {
     return queue.clientData();
