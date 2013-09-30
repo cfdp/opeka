@@ -845,14 +845,13 @@
             iPLocation: Drupal.t('IP location'),
             outDk: Drupal.t('Outside Denmark/Scandinavia'),
             chatroomhelp: Drupal.t('This field is for the topic of a group chat'),
+            privateQueue: Drupal.t('Private queue'),
             training: Drupal.t('For training'),
             queueSystem: Drupal.t('Queue system'),
             size: Drupal.t('Size limit'),
             users: Drupal.t('users')
           },
           queues: Opeka.queueList,
-//@todo Get the option from the config file
-          enableQueues: false,
         });
         options.room = new Opeka.Room({});
         options.dialogOptions = {
@@ -1355,7 +1354,7 @@
         //@daniel
         //Replace the Drupal username with rådgiver(counselor), not using the actual user name
         //name = Drupal.settings.opeka.user.name;
-        name = 'Rådgiver';
+        name = Drupal.t('Counselor');
       }
 
       var form = JST.opeka_connect_form_tmpl({
