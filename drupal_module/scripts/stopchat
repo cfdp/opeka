@@ -1,0 +1,7 @@
+#!/bin/bash
+# Script to start the node server for the cfdpchat-app
+# Depends on an upstart script placed in /etc/init
+# authors: Daniel Mois and Benjamin Christensen
+
+echo -e "Stopping CfDP Chat. \n";
+sudo stop cfdpchat-app;

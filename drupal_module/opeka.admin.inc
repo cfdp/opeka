@@ -99,24 +99,39 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#submit' => array('opeka_stop_server')
     );
 
-  $form['opeka_server_restart'] = array(
-    '#type' => 'submit',
-    '#value' => 'Restart server',
-    '#submit' => array('opeka_restart_server')
-    );
+  // $form['opeka_server_restart'] = array(
+  //   '#type' => 'submit',
+  //   '#value' => 'Restart server',
+  //   '#submit' => array('opeka_restart_server')
+  //   );
 
   return system_settings_form($form);
 }
 
 function opeka_start_server($form, &$form_state){
-  $output = shell_exec('/home/cyberhus/www/cfdpchat.eu/startchat');
-  
+  global $base_url;
+  $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
+  $output = shell_exec($opeka_path . '/scripts/startchat');
+  if ($output == NULL) {
+    drupal_set_message(t('Something went wrong - the chat was not started'), 'status');
+  }
+  else {
+    drupal_set_message($output, 'status');
+  }
 }
 
 function opeka_stop_server($form, &$form_state){
-  $output = shell_exec('/home/cyberhus/www/cfdpchat.eu/stopchat');
+  global $base_url;
+  $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
+  $output = shell_exec($opeka_path . '/scripts/stopchat');
+  if ($output == NULL) {
+    drupal_set_message(t('Something went wrong - the chat was not stopped'), 'status');
+  }
+  else {
+    drupal_set_message($output, 'status');
+  }
 }
 
-function opeka_restart_server($form, &$form_state){
-  $output = shell_exec('/home/cyberhus/www/cfdpchat.eu/restartchat');
-}
+// function opeka_restart_server($form, &$form_state){
+//   $output = shell_exec('/home/cyberhus/www/cfdpchat.eu/restartchat');
+// }
