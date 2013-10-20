@@ -529,14 +529,9 @@ var Opeka = { status: {}},
   // allows us to style group chats and pair room chats differently
   Opeka.addRoomSizeToBody = function() {
     // Start by clearing any classes from previous chat sessions
-    if ($('body').hasClass('room-size-2')) {
-      $('body').removeClass('room-size-2')
-    }
-    else if ($('body').hasClass('groupchat')) {
-      $('body').removeClass('groupchat')
-    }
+    Opeka.resetRoomSizeClass();
     // Now add the right classes
-    if ($('div#user-list-block').hasClass('room-size-2')){
+    if ($( "#room-size" ).data( "room-size" ) == 2) {
       $('body').addClass('room-size-2');
     }
     else {
@@ -547,6 +542,16 @@ var Opeka = { status: {}},
   // Play a sound when a client joins the chat
   Opeka.userJoinedSound = function() {
     document.getElementById('audiotag1').play();
+  }
+
+  // Remove room size info from body tag
+  Opeka.resetRoomSizeClass = function() {
+    if ($('body').hasClass('room-size-2')) {
+      $('body').removeClass('room-size-2');
+    }
+    else if ($('body').hasClass('groupchat')) {
+      $('body').removeClass('groupchat');
+    }
   }
 
   // Basic setup for the app when the DOM is loaded.

@@ -1086,7 +1086,7 @@
           }
         });
       }
-
+      Opeka.resetRoomSizeClass();
       this.$el.html(html);
 
       return this;
