@@ -99,12 +99,6 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#submit' => array('opeka_stop_server')
     );
 
-  // $form['opeka_server_restart'] = array(
-  //   '#type' => 'submit',
-  //   '#value' => 'Restart server',
-  //   '#submit' => array('opeka_restart_server')
-  //   );
-
   return system_settings_form($form);
 }
 
@@ -131,7 +125,3 @@ function opeka_stop_server($form, &$form_state){
     drupal_set_message($output, 'status');
   }
 }
-
-// function opeka_restart_server($form, &$form_state){
-//   $output = shell_exec('/home/cyberhus/www/cfdpchat.eu/restartchat');
-// }

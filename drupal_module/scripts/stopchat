@@ -1,7 +1,17 @@
 #!/bin/bash
-# Script to start the node server for the cfdpchat-app
-# Depends on an upstart script placed in /etc/init
+# Script to stop the forever process running the cfdpchat-app
 # authors: Daniel Mois and Benjamin Christensen
+# The paths below should be updated to match your server setup.
 
-echo -e "Stopping CfDP Chat. \n";
-sudo stop cfdpchat-app;
+NODE_BIN_DIR="/usr/local/bin/node"
+NODE_PATH="/home/benjamin/workspace/web/node_modules"
+APPLICATION_DIRECTORY="/home/benjamin/workspace/web/cfdpchat/nodejs"
+APPLICATION_START="main.js"
+LOG="/home/benjamin/workspace/web/cfdpchat/logs/forever.log"
+
+echo -e "Stopping CfDP Chat... \n"
+
+# cd to app home directory
+cd $APPLICATION_DIRECTORY
+
+forever stop $APPLICATION_START
