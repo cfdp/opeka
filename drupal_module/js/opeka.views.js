@@ -107,6 +107,7 @@
         this.$el.html('<div class="chat-view-window"></div><div class="chat-view-form"></div>');
       }
 
+
       // Always render the chat window.
       this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
@@ -1086,7 +1087,7 @@
           }
         });
       }
-      Opeka.resetRoomSizeClass();
+
       this.$el.html(html);
 
       return this;

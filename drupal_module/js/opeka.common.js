@@ -94,6 +94,8 @@ var Opeka = { status: {}},
       }
       // Need to make sure the chat view is not set.
       Opeka.chatView = null;
+      // Remove room size body class
+      Opeka.removeRoomSizeClass();
     },
 
     //@daniel
@@ -529,7 +531,7 @@ var Opeka = { status: {}},
   // allows us to style group chats and pair room chats differently
   Opeka.addRoomSizeToBody = function() {
     // Start by clearing any classes from previous chat sessions
-    Opeka.resetRoomSizeClass();
+    Opeka.removeRoomSizeClass();
     // Now add the right classes
     if ($( "#room-size" ).data( "room-size" ) == 2) {
       $('body').addClass('room-size-2');
@@ -545,7 +547,7 @@ var Opeka = { status: {}},
   }
 
   // Remove room size info from body tag
-  Opeka.resetRoomSizeClass = function() {
+  Opeka.removeRoomSizeClass = function() {
     if ($('body').hasClass('room-size-2')) {
       $('body').removeClass('room-size-2');
     }
