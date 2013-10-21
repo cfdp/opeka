@@ -28,6 +28,11 @@
   width: 100%;
 }
 
+/* The sidebar is always visible in a group chat for anonymous clients*/
+.not-logged-in.groupchat #opeka-app .content.client-sidebar-0 {
+  width: 66%;
+}
+
 .not-logged-in #opeka-app .content.client-sidebar-1 {
   width: 66%;
 }
