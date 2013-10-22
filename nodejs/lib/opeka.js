@@ -18,7 +18,8 @@ var _ = require("underscore"),
       ban: require('./ban'),
       queues: require('./queues'),
       rooms: require('./rooms'),
-      user: require('./user')
+      user: require('./user'),
+      chatOpen: false
     },
     fs = require('fs');
 
@@ -74,6 +75,10 @@ function Server(config, logger) {
         });
       });
     }
+
+    //chat state
+    opeka.chatOpen = false;
+    logger.info('Opeka chatOpen = ' + opeka.chatOpen);
   };
 
   /**
@@ -136,6 +141,7 @@ function Server(config, logger) {
         results.roomsList = roomList;
         results.queues = queues;
         results.queueList = queueList;
+        results.chatOpen = chatOpen;
         results.queueSystem = self.config.get('features:queueSystem');
         results.fullRoomLink = self.config.get('features:fullRoomLink');
         results.chatPageURL = self.config.get('chatPage');
@@ -416,6 +422,11 @@ function Server(config, logger) {
   // Function used by admins to get a ban code.
   self.banCodeGenerator.now.getBanCode = function (callback) {
     callback(opeka.ban.getCode());
+  };
+
+  // Function used by admins to open or close the chat.
+  self.banCodeGenerator.now.toggleChat = function (callback) {
+    callback(self.toggleChat());
   };
 
   // Function used by the counselors to kick an user out of a room.
@@ -863,6 +874,17 @@ function Server(config, logger) {
         opeka.rooms.list[roomId].memberCount = count;
       });
     }
+  };
+
+  self.toggleChat = function() {
+    self.logger.info('ChatToggle: ', opeka.chatOpen);
+    if (opeka.chatOpen) {
+      opeka.chatOpen = false;
+    }
+    else {
+      opeka.chatOpen = true;
+    }
+    return opeka.chatOpen;
   };
 
   return self;
