@@ -6,7 +6,9 @@
  */
 "use strict";
 
-// Load all our dependencies.
+// Load all our dependencies
+// and the chatOpen setting indicating if the chat service is open for clients or not
+
 var _ = require("underscore"),
     async = require("async"),
     crypto = require('crypto'),
@@ -75,10 +77,6 @@ function Server(config, logger) {
         });
       });
     }
-
-    //chat state
-    opeka.chatOpen = false;
-    logger.info('Opeka chatOpen = ' + opeka.chatOpen);
   };
 
   /**
@@ -141,10 +139,11 @@ function Server(config, logger) {
         results.roomsList = roomList;
         results.queues = queues;
         results.queueList = queueList;
-        results.chatOpen = chatOpen;
         results.queueSystem = self.config.get('features:queueSystem');
         results.fullRoomLink = self.config.get('features:fullRoomLink');
         results.chatPageURL = self.config.get('chatPage');
+        results.chatOpen = opeka.chatOpen;
+
         context.updateStatus(results);
       }
     });
@@ -877,13 +876,14 @@ function Server(config, logger) {
   };
 
   self.toggleChat = function() {
-    self.logger.info('ChatToggle: ', opeka.chatOpen);
     if (opeka.chatOpen) {
       opeka.chatOpen = false;
     }
     else {
       opeka.chatOpen = true;
     }
+    // Update the server status
+    self.updateUserStatus(self.everyone.now);
     return opeka.chatOpen;
   };
 

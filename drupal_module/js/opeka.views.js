@@ -462,7 +462,8 @@
     initialize: function (options) {
       var self = this;
       this.banCodeGenerator = options.banCodeGenerator;
-      this.chatOpen = Opeka.chatOpen;
+      this.chatOpen = Opeka.status.attributes.chatOpen;
+      this.model.on('change:chatOpen', this.render, this);
       _.bindAll(this);
 
     },
@@ -471,7 +472,7 @@
       if (JST.opeka_chat_footer_tmpl) {
         this.$el.html(JST.opeka_chat_footer_tmpl({
           banCodeGenerator: this.banCodeGenerator,
-          chatOpen: this.chatOpen,
+          chatOpen: Opeka.status.attributes.chatOpen,
           labels: {
             banCode: Drupal.t('Generate new ban code'),
             chatOpen: Drupal.t('Open chat'),
@@ -496,10 +497,7 @@
     },
 
     toggleChat: function (event) {
-      now.toggleChat(function(newChatState) {
-        //var dialog = new Opeka.BanCodeDialogView({banCode: banCode});
-        console.log('my new chat state' + newChatState);
-        //dialog.render();
+        now.toggleChat(function(newChatState) {
       });
 
       if (event) {

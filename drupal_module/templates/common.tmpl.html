@@ -61,7 +61,11 @@
 
 <script id="opeka_chat_footer_tmpl" type="application/template">
   <% if (banCodeGenerator) { %>
-    <button class="chat-toggle btn-success btn"><% console.log(chatOpen); %><%- labels.chatOpen %></button>
+    <% if (!chatOpen) { %>
+      <button class="chat-toggle btn-success btn"><%- labels.chatOpen %></button>
+    <%}else{ %>
+      <button class="chat-toggle btn-danger btn"><%- labels.chatClose %></button>
+    <% } %>
     <button class="generate-ban-code btn-util btn"><%- labels.banCode %></button>
   <% } %>
 </script>

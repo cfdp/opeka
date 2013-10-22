@@ -512,6 +512,7 @@ var Opeka = { status: {}},
       Opeka.router.navigate(destination, {trigger: true});
 
       footer = new Opeka.ChatFooterView({
+        model: Opeka.status,
         banCodeGenerator: _.isFunction(now.getBanCode)
       });
       $('#opeka-app').find('.footer').append(footer.render().el);
