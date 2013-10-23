@@ -328,6 +328,10 @@ function Server(config, logger) {
     }
   };
 
+  self.everyone.now.chatOpen = function (callback) {
+    callback(opeka.chatOpen);
+  };
+
   self.everyone.now.getFeatures = function (callback) {
     callback(self.config.get('features'));
   };

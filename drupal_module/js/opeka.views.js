@@ -462,7 +462,7 @@
     initialize: function (options) {
       var self = this;
       this.banCodeGenerator = options.banCodeGenerator;
-      this.chatOpen = Opeka.status.attributes.chatOpen;
+      this.chatOpen = this.model.get('chatOpen');
       this.model.on('change:chatOpen', this.render, this);
       _.bindAll(this);
 
@@ -1356,38 +1356,47 @@
     initialize: function (options) {
       this.nonce = options.nonce;
       this.queueId = options.queueId;
-
       _.bindAll(this);
-
+      this.model.on('change:chatOpen', this.render, this);
       return this;
     },
 
     render: function () {
       var name = '';
+      var chatOpen = this.model.get('chatOpen');
 
       if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.name) {
 
-        //@daniel
+        //@daniel - @todo: the visibility of the name should probably be a setting somewhere
         //Replace the Drupal username with rådgiver(counselor), not using the actual user name
         //name = Drupal.settings.opeka.user.name;
         name = Drupal.t('Counselor');
       }
 
-      var form = JST.opeka_connect_form_tmpl({
-        labels: {
-          action: Drupal.t('Ready for chat'),
-          age: Drupal.t('Age'),
-          gender: Drupal.t('Gender'),
-          female: Drupal.t('Female'),
-          male: Drupal.t('Male'),
-          nick: Drupal.t('Nickname'),
-          placeholder: Drupal.t('Anonymous'),
-        },
-        name: name
-      });
+      // If the chat is closed, only authenticated Drupal users is presented with the sign in form
+      if (Drupal.settings.opeka.user || this.model.get('chatOpen')) {
+        var form = JST.opeka_connect_form_tmpl({
+          labels: {
+            action: Drupal.t('Ready for chat'),
+            age: Drupal.t('Age'),
+            gender: Drupal.t('Gender'),
+            female: Drupal.t('Female'),
+            male: Drupal.t('Male'),
+            nick: Drupal.t('Nickname'),
+            placeholder: Drupal.t('Anonymous'),
+          },
+          name: name
+        });
+      }
+      else if (this.model.get('chatOpen') == false) {
+        var form = Drupal.t('The chat is closed');
+      }
+      // chatOpen is undefined
+      else {
+        var form = Drupal.t('The chat is not accessible at the moment.');
+      }
 
       this.$el.html(form);
-	$('#block-block-1').hide();
       return this;
     },
 

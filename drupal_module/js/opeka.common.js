@@ -63,7 +63,8 @@ var Opeka = { status: {}},
     // Chat sign in page.
     signIn: function (nonce) {
       var view = new Opeka.SignInFormView({
-        nonce: nonce
+        nonce: nonce,
+        model: Opeka.status
       });
 
       if (nonce) {
@@ -76,6 +77,7 @@ var Opeka = { status: {}},
       }
 
       Opeka.appViewInstance.replaceContent(view.render().el);
+
     },
 
     signInForQueue: function (queueId) {
