@@ -3,7 +3,7 @@
 <head>
 <title>External Customer Site</title>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
-<script src="http://opeka.d7.dev.revealit.dk:3000/nowjs/now.js"></script>
+<script src="http://dev.cfdpchat:3000/nowjs/now.js"></script>
 
 <script>
 
@@ -28,13 +28,13 @@
     // Updates the actual status text.
     var updateDisplay = function (attributes) {
       // If there are any active one-to-one rooms.
-      if (chatStatus.rooms && chatStatus.rooms.pair.active > 0) {
+      if (chatStatus.chatOpen && chatStatus.rooms && chatStatus.rooms.pair.active > 0) {
         statusText.text("Chat active");
 
         pairButton.show();
 
       // If not, check if there are any active group rooms.
-      } else if (chatStatus.rooms && chatStatus.rooms.pair.full > 0) {
+      } else if (chatStatus.chatOpen && chatStatus.rooms && chatStatus.rooms.pair.full > 0) {
         statusText.text("Chat busy");
         pairButton.hide();
       } else {
@@ -42,7 +42,7 @@
         pairButton.hide();
       };
 
-      if (chatStatus.roomsList && chatStatus.roomsList.length) {
+      if (chatStatus.chatOpen && chatStatus.roomsList && chatStatus.roomsList.length) {
         statusText.text("Chat active");
         groupButton.show();
         var liHtml = '';
@@ -56,7 +56,7 @@
         groupRoomList.hide();
       }
 
-      if (chatStatus.queues === false || !chatStatus.queueList) {
+      if (!chatStatus.chatOpen || chatStatus.queues === false || !chatStatus.queueList) {
         queueList.hide();
       }
       else {
