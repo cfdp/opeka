@@ -6,7 +6,9 @@
  */
 "use strict";
 
-// Load all our dependencies.
+// Load all our dependencies
+// and the chatOpen setting indicating if the chat service is open for clients or not
+
 var _ = require("underscore"),
     async = require("async"),
     crypto = require('crypto'),
@@ -18,7 +20,8 @@ var _ = require("underscore"),
       ban: require('./ban'),
       queues: require('./queues'),
       rooms: require('./rooms'),
-      user: require('./user')
+      user: require('./user'),
+      chatOpen: false
     },
     fs = require('fs');
 
@@ -137,7 +140,10 @@ function Server(config, logger) {
         results.queues = queues;
         results.queueList = queueList;
         results.queueSystem = self.config.get('features:queueSystem');
+        results.fullRoomLink = self.config.get('features:fullRoomLink');
         results.chatPageURL = self.config.get('chatPage');
+        results.chatOpen = opeka.chatOpen;
+
         context.updateStatus(results);
       }
     });
@@ -182,7 +188,7 @@ function Server(config, logger) {
         // In this way we are able to give to the counselors the ability to whisper
         nowjs.getGroup(client.user.clientId).addUser(client.user.clientId);
 
-        self.logger.info('User signed in.', client.user.clientId);
+        self.logger.info('Regular user signed in.', client.user.clientId);
 
         // Store the location information for later use, if they have been defined.
         if (clientUser.address) {
@@ -190,6 +196,8 @@ function Server(config, logger) {
           client.user.city = add[0];
           client.user.state = add[1];
         }
+
+
 
         client.now.receiveRoomList(opeka.rooms.clientData());
       }
@@ -320,6 +328,10 @@ function Server(config, logger) {
     }
   };
 
+  self.everyone.now.chatOpen = function (callback) {
+    callback(opeka.chatOpen);
+  };
+
   self.everyone.now.getFeatures = function (callback) {
     callback(self.config.get('features'));
   };
@@ -338,6 +350,10 @@ function Server(config, logger) {
     room.paused = true;
     self.everyone.now.roomUpdated(roomId, { paused: true });
     self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+    // Update the room counts and chat status for all users
+    opeka.rooms.updateRoomCounts();
+    self.updateUserStatus(self.everyone.now);
+
     if (callback) {
       callback();
     }
@@ -357,6 +373,9 @@ function Server(config, logger) {
     room.paused = false;
     self.everyone.now.roomUpdated(roomId, { paused: false });
     self.sendSystemMessage('[Pause]: Chat is available again.', room.group);
+    // Update the room counts and chat status for all users
+    opeka.rooms.updateRoomCounts();
+    self.updateUserStatus(self.everyone.now);
     // When unpausing a pair room that uses a queue - get the next in queue.
     if (room.maxSize === 2 && !room.isFull() && room.queueSystem !== 'private') {
       var queue = opeka.queues.list[room.queueSystem],
@@ -406,6 +425,11 @@ function Server(config, logger) {
   // Function used by admins to get a ban code.
   self.banCodeGenerator.now.getBanCode = function (callback) {
     callback(opeka.ban.getCode());
+  };
+
+  // Function used by admins to open or close the chat.
+  self.banCodeGenerator.now.toggleChat = function (callback) {
+    callback(self.toggleChat());
   };
 
   // Function used by the counselors to kick an user out of a room.
@@ -558,8 +582,12 @@ function Server(config, logger) {
         queueSystem = self.config.get('features:queueSystem'),
         queueFullUrl = self.config.get('features:queueFullUrl');
 
+    // Set the chat start time
+    client.user.chatStart_Min = Math.round((new Date()).getTime() / 60000);
+    self.logger.info('Login: User chat start: ', client.user.chatStart_Min);
+
     // Special case when joining from the global Queue.
-    // Use is already in the room, so fake an OK response.
+    // User is already in the room, so fake an OK response.
     if (client.user.activeRoomId === roomId) {
       if (callback) {
         callback('OK', false, false);
@@ -599,7 +627,7 @@ function Server(config, logger) {
     if (addedUser === 'OK') {
       client.user.activeRoomId = roomId;
       client.user.activeQueueRoomId = null;
-      newRoom.group.now.roomUserJoined(newRoom.id, client.user.nickname);
+      newRoom.group.now.roomUserJoined(newRoom.id, client.user.nickname, client.user.account.isAdmin);
     }
     else {
       if (queueSystem) {
@@ -756,11 +784,10 @@ function Server(config, logger) {
             // no anonymous users should be left without counselor
             // @todo: this fix works badly with several counselors in a room, a check should be made to see if any
             // of the remaining users are admins, if yes, then don't delete the room
-            self.logger.warning('user disconnected - activeRoomId ', client.user.activeRoomId);
-            self.logger.warning('user disconnected - room.id ', room.id);
-            self.logger.warning('user disconnected - isAdmin? ',client.user.account.isAdmin);
+            self.logger.info('user disconnected - activeRoomId: ', client.user.activeRoomId);
+            self.logger.info('user disconnected - room.id: ', room.id);
             if (client.user.account.isAdmin){
-              self.logger.warning('Admin user disconnected - shutting down room. Counselor id', client.user.clientId);
+              self.logger.warning('Admin user disconnected - shutting down room. Counselor id: ', client.user.clientId);
               //Inform the remaining users that the room is closing down
               if (client.user.activeRoomId){
                 opeka.rooms.remove(client.user.activeRoomId);
@@ -802,6 +829,14 @@ function Server(config, logger) {
         self.everyone.now.roomUpdated(room.id, { paused: true });
         self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
       }
+
+      // Calculate the duration of the chat of the user being removed
+      self.everyone.users[clientId].user.chatEnd_Min = Math.round((new Date()).getTime() / 60000);
+      self.logger.info('Logout: User chat start: ', self.everyone.users[clientId].user.chatStart_Min);
+      self.logger.info('Logout: User chat end: ', self.everyone.users[clientId].user.chatEnd_Min);
+
+      var chatDuration = self.everyone.users[clientId].user.chatEnd_Min - self.everyone.users[clientId].user.chatStart_Min;
+
       self.everyone.users[clientId].user.activeRoomId = null;
     }
     else if (autoPause === true && room.maxSize === 2 && room.paused !== true && !room.isFull()) {
@@ -824,7 +859,7 @@ function Server(config, logger) {
 
       // Notify the chat room if we know who left.
       if (removedUserNickname) {
-        room.group.now.roomUserLeft(room.id, removedUserNickname);
+        room.group.now.roomUserLeft(room.id, removedUserNickname, chatDuration);
       }
 
       // Call the callback.
@@ -842,6 +877,18 @@ function Server(config, logger) {
         opeka.rooms.list[roomId].memberCount = count;
       });
     }
+  };
+
+  self.toggleChat = function() {
+    if (opeka.chatOpen) {
+      opeka.chatOpen = false;
+    }
+    else {
+      opeka.chatOpen = true;
+    }
+    // Update the server status
+    self.updateUserStatus(self.everyone.now);
+    return opeka.chatOpen;
   };
 
   return self;

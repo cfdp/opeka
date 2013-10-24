@@ -1,12 +1,18 @@
-/*!
- * Copyright 2012 Cyberhus.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- */
+
+// Copyright 2012 Cyberhus.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 /*global _, Backbone, Drupal, JST, now, Opeka, window */
 (function ($) {
   "use strict";
@@ -101,14 +107,15 @@
         this.$el.html('<div class="chat-view-window"></div><div class="chat-view-form"></div>');
       }
 
+
       // Always render the chat window.
       this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
         formatTimestamp: this.formatTimestamp,
         labels: {
-          deleteMessage: Drupal.t(''),
-          whispered: Drupal.t('WHISPERED'),
-          whisperedTo: Drupal.t('WHISPERED TO'),
+          deleteMessage: Drupal.t('Delete'),
+          whispered: Drupal.t('Whispered'),
+          whisperedTo: Drupal.t('Whispered to'),
         },
         messages: this.messages,
       }));
@@ -136,8 +143,7 @@
       // @daniel
       // Keep the scrollbar at the bottom of the .chat-message-list
       var message_list = this.$el.find('.chat-message-list');
-      message_list.attr({scrollTop: message_list.attr("scrollHeight")});
-
+      message_list.scrollTop(message_list.prop("scrollHeight"));
       return this;
     },
 
@@ -217,7 +223,7 @@
         // @daniel
         // Keep the scrollbar at the bottom of the .chat-message-list
         var message_list = this.$el.find('.chat-message-list');
-        message_list.attr({scrollTop: message_list.attr("scrollHeight")});
+        message_list.scrollTop(message_list.prop("scrollHeight"));
       }
     },
 
@@ -408,7 +414,7 @@
     },
 
     // @daniel
-    // For when you need to unmute a user.
+    // For toggling visibility on chat room menu items
     sidebarBlocktoggle: function (event) {
       var head = $(event.currentTarget),
           body = head.next('.sidebar-block-content'),
@@ -450,11 +456,14 @@
 
     events: {
       "click .generate-ban-code": "generateBanCode",
+      "click .chat-toggle": "toggleChat"
     },
 
     initialize: function (options) {
       var self = this;
       this.banCodeGenerator = options.banCodeGenerator;
+      this.chatOpen = this.model.get('chatOpen');
+      this.model.on('change:chatOpen', this.render, this);
       _.bindAll(this);
 
     },
@@ -463,8 +472,11 @@
       if (JST.opeka_chat_footer_tmpl) {
         this.$el.html(JST.opeka_chat_footer_tmpl({
           banCodeGenerator: this.banCodeGenerator,
+          chatOpen: Opeka.status.attributes.chatOpen,
           labels: {
-            banCode: Drupal.t('Generate new ban code')
+            banCode: Drupal.t('Generate new ban code'),
+            chatOpen: Drupal.t('Open chat'),
+            chatClose: Drupal.t('Close chat')
           }
         }));
       }
@@ -477,6 +489,15 @@
         var dialog = new Opeka.BanCodeDialogView({banCode: banCode});
 
         dialog.render();
+      });
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    toggleChat: function (event) {
+        now.toggleChat(function(newChatState) {
       });
 
       if (event) {
@@ -840,16 +861,13 @@
             iPLocation: Drupal.t('IP location'),
             outDk: Drupal.t('Outside Denmark/Scandinavia'),
             chatroomhelp: Drupal.t('This field is for the topic of a group chat'),
-            private: Drupal.t('Private'),
-            privateRoom: Drupal.t('Private room?'),
-            training: Drupal.t('Is this room for training'),
+            privateQueue: Drupal.t('Private queue'),
+            training: Drupal.t('For training'),
             queueSystem: Drupal.t('Queue system'),
             size: Drupal.t('Size limit'),
             users: Drupal.t('users')
           },
           queues: Opeka.queueList,
-//@todo Get the option from the config file
-          enableQueues: false,
         });
         options.room = new Opeka.Room({});
         options.dialogOptions = {
@@ -880,8 +898,7 @@
       var form = $(this.dialogElement).find('form'),
           values = {
             name: form.find('input.name').val(),
-            //maxSize: form.find('select.max-size').val(),
-            maxSize: form.find(':checked').val(),
+            maxSize: form.find('select.max-size').val(),
             ipLocation: form.find('select.ip-location').val(),
             private: form.find('input.private').attr('checked'),
             queueSystem: form.find('select.queue-system').val()
@@ -1059,8 +1076,9 @@
           placeholder: Drupal.t('No rooms created'),
           queueLink: Drupal.t('Go to queue list'),
           enterRoom: Drupal.t('Enter'),
-          fullRoomLink: Drupal.t('Do while'),
-          fullRoomLinkText: "http://chat.cyberhus.dk/yellow.php"
+          fullRoomLinkText: Drupal.t('Busy'),
+          fullRoomLink: Opeka.features.fullRoomLink,
+          pausedRoomText: Drupal.t('Paused')
         },
         hidePairRooms: hidePairRooms,
         rooms: roomList
@@ -1111,7 +1129,10 @@
       this.$el.html(JST.opeka_user_feedback_tmpl({
         
         admin: _.isFunction(now.isAdmin),
-                
+        labels: {
+          farewellMessage: Drupal.t('Thanks for using our chat!'),
+          feedbackLinkText: Drupal.t('Open the feedback form.')
+        }
       }));
       
       return this;
@@ -1335,40 +1356,47 @@
     initialize: function (options) {
       this.nonce = options.nonce;
       this.queueId = options.queueId;
-
       _.bindAll(this);
-
+      this.model.on('change:chatOpen', this.render, this);
       return this;
     },
 
     render: function () {
       var name = '';
+      var chatOpen = this.model.get('chatOpen');
 
       if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.name) {
 
-        //@daniel
+        //@daniel - @todo: the visibility of the name should probably be a setting somewhere
         //Replace the Drupal username with rådgiver(counselor), not using the actual user name
         //name = Drupal.settings.opeka.user.name;
-        name = 'Rådgiver';
+        name = Drupal.t('Counselor');
       }
 
-      var form = JST.opeka_connect_form_tmpl({
-        labels: {
-          action: Drupal.t('Ready for chat'),
-          welcome_notice: Drupal.t('Welcome to the new chat. The group chat and 1 to 1 chat now looks similar.'),
-          welcome_message: Drupal.t('Welcome to the chat'),
-          age: Drupal.t('Age'),
-          gender: Drupal.t('Gender'),
-          female: Drupal.t('Female'),
-          male: Drupal.t('Male'),
-          nick: Drupal.t('Nickname'),
-          placeholder: Drupal.t('Anonymous'),
-        },
-        name: name
-      });
+      // If the chat is closed, only authenticated Drupal users is presented with the sign in form
+      if (Drupal.settings.opeka.user || this.model.get('chatOpen')) {
+        var form = JST.opeka_connect_form_tmpl({
+          labels: {
+            action: Drupal.t('Ready for chat'),
+            age: Drupal.t('Age'),
+            gender: Drupal.t('Gender'),
+            female: Drupal.t('Female'),
+            male: Drupal.t('Male'),
+            nick: Drupal.t('Nickname'),
+            placeholder: Drupal.t('Anonymous'),
+          },
+          name: name
+        });
+      }
+      else if (this.model.get('chatOpen') == false) {
+        var form = Drupal.t('The chat is closed');
+      }
+      // chatOpen is undefined
+      else {
+        var form = Drupal.t('The chat is not accessible at the moment.');
+      }
 
       this.$el.html(form);
-	$('#block-block-1').hide();
       return this;
     },
 

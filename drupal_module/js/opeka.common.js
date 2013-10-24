@@ -1,12 +1,16 @@
-/*!
- * Copyright 2012 Cyberhus.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- */
+// Copyright 2012 Cyberhus.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*global now */
 
 var Opeka = { status: {}},
@@ -59,7 +63,8 @@ var Opeka = { status: {}},
     // Chat sign in page.
     signIn: function (nonce) {
       var view = new Opeka.SignInFormView({
-        nonce: nonce
+        nonce: nonce,
+        model: Opeka.status
       });
 
       if (nonce) {
@@ -72,6 +77,7 @@ var Opeka = { status: {}},
       }
 
       Opeka.appViewInstance.replaceContent(view.render().el);
+
     },
 
     signInForQueue: function (queueId) {
@@ -90,6 +96,8 @@ var Opeka = { status: {}},
       }
       // Need to make sure the chat view is not set.
       Opeka.chatView = null;
+      // Remove room size body class
+      Opeka.removeRoomSizeClass();
     },
 
     //@daniel
@@ -295,9 +303,9 @@ var Opeka = { status: {}},
     Opeka.roomList.reset(rooms);
   };
 
-  // For when the server has an updated room list for us.
+  // For when the server has an updated queue list for us.
   now.receiveQueueList = function (queues) {
-    // This triggers a reset even on the RoomList instance, so any views
+    // This triggers a reset even on the queueList instance, so any views
     // that use this list can listen to that for updates.
     Opeka.queueList.reset(queues);
   };
@@ -375,8 +383,12 @@ var Opeka = { status: {}},
   };
 
   // Response to a user joining the room.
-  now.roomUserJoined = function (roomId, nickname) {
+  now.roomUserJoined = function (roomId, nickname, isAdmin) {
     if (Opeka.chatView && Opeka.chatView.model && Opeka.chatView.model.id === roomId) {
+      // If the user logged into the room is admin and the joining user is a client, play a sound
+      if (now.isAdmin && !isAdmin) {
+        Opeka.userJoinedSound();
+      }
       var messageObj = {
         message: Drupal.t('@user has joined the room.', { '@user': nickname }),
         system: true
@@ -423,10 +435,10 @@ var Opeka = { status: {}},
   }
 
   // Response to a user leaving the room.
-  now.roomUserLeft = function (roomId, nickname) {
+  now.roomUserLeft = function (roomId, nickname, chatDuration) {
     if (Opeka.chatView.model.id === roomId) {
       var messageObj = {
-        message: Drupal.t('@user has left the room.', { '@user': nickname }),
+        message: Drupal.t('@user has left the room. Chat duration: @chatDuration minutes.', { '@user': nickname, '@chatDuration': chatDuration }),
         system: true
       };
       Opeka.chatView.receiveMessage(messageObj);
@@ -502,6 +514,7 @@ var Opeka = { status: {}},
       Opeka.router.navigate(destination, {trigger: true});
 
       footer = new Opeka.ChatFooterView({
+        model: Opeka.status,
         banCodeGenerator: _.isFunction(now.getBanCode)
       });
       $('#opeka-app').find('.footer').append(footer.render().el);
@@ -521,18 +534,28 @@ var Opeka = { status: {}},
   // allows us to style group chats and pair room chats differently
   Opeka.addRoomSizeToBody = function() {
     // Start by clearing any classes from previous chat sessions
-    if ($('body').hasClass('room-size-2')) {
-      $('body').removeClass('room-size-2')
-    }
-    else if ($('body').hasClass('groupchat')) {
-      $('body').removeClass('groupchat')
-    }
+    Opeka.removeRoomSizeClass();
     // Now add the right classes
-    if ($('div#user-list-block').hasClass('room-size-2')){
+    if ($( "#room-size" ).data( "room-size" ) == 2) {
       $('body').addClass('room-size-2');
     }
     else {
       $('body').addClass('groupchat');
+    }
+  }
+
+  // Play a sound when a client joins the chat
+  Opeka.userJoinedSound = function() {
+    document.getElementById('audiotag1').play();
+  }
+
+  // Remove room size info from body tag
+  Opeka.removeRoomSizeClass = function() {
+    if ($('body').hasClass('room-size-2')) {
+      $('body').removeClass('room-size-2');
+    }
+    else if ($('body').hasClass('groupchat')) {
+      $('body').removeClass('groupchat');
     }
   }
 

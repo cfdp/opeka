@@ -56,14 +56,6 @@ function opeka_menu() {
     'file' => 'opeka.admin.inc',
   );
 
-  // $items['admin/config/services/opeka/schedule'] = array(
-  //   'title' => 'Schedule sessions and opening hours',
-  //   'description' => 'Here you can list the upcoming group chat sessions and the schedule',
-  //   'page callback' => 'drupal_get_form',
-  //   'page arguments' => array('opeka_admin_settings_form'),
-  //   'access arguments' => array('administer site configuration'),
-  // );
-
   return $items;
 }
 
@@ -80,16 +72,16 @@ function opeka_menu() {
  */
 function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings = array()) {
   $path = drupal_get_path('module', 'opeka');
-/*
+
   $stylesheets = array_merge(array(
     'opeka.base.css',
-    'opeka.theme.css',
-    'jquery.ui.theme.css',
+    /*'opeka.theme.css',
+    'jquery.ui.theme.css',*/
   ), $stylesheets);
   foreach ($stylesheets as $filename) {
     drupal_add_css($path . '/css/' . $filename);
   }
-*/
+
   $js_url = variable_get('opeka_nowjs_url', 'https://localhost:3000/nowjs/now.js');
 
   if (!$js_url) {
@@ -102,8 +94,19 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   // connecting to the nowjs server.
   drupal_add_js($js_url, array('type' => 'external', 'weight' => -42));
 
+  $welcome_message = variable_get('opeka_welcome_message', '');
+  $feedback_url = variable_get('opeka_feedback_url', '');
+  /* Get the pair chat user list setting */
+  $pairchat_user_list = variable_get('opeka_pairchat_user_list', 0);
+  $client_login_sound = variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.wav');
+
   // Settings to expose to the JavaScript client.
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
+  $settings['welcome_message'] = $welcome_message;
+  $settings['feedback_url'] = $feedback_url;
+  $settings['client_login_sound'] = $client_login_sound;
+  $settings['pairchat_user_list'] = $pairchat_user_list;
+
   drupal_add_js(array('opeka' => $settings), 'setting');
 
   // Load the required JavaScript libraries.

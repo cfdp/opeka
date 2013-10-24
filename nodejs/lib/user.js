@@ -4,6 +4,7 @@
 "use strict";
 
 var _ = require("underscore"),
+    util = require("util"),
     drupal = require("drupal");
 
 // Authenticate a user logging on to the chat server.
@@ -41,10 +42,12 @@ module.exports.authenticate = function (clientUser, callback) {
 };
 
 // Filters the user data and remove personal/security sensitive data and
-// create and new user object.
+// create a new user object.
 module.exports.filterData = function (user) {
   return {
     age: user.age,
+    chatStart_Min: user.chatStart_Min,
+    chatEnd_Min: user.chatEnd_Min,
     clientId: user.clientId,
     gender: user.gender,
     isAdmin: user.isAdmin,

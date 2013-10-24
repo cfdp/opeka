@@ -55,6 +55,38 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_schedule', ''),
   );
 
+  $form['opeka_welcome_message'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Welcome message'),
+    '#description' => t('Text shown before user logs into the chat.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_welcome_message', ''),
+  );
+
+  $form['opeka_client_login_sound'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Login sound file'),
+    '#description' => t('URL to a sound file that is played for the counselor when a client logs in.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.wav'),
+  );
+
+  $form['opeka_feedback_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Feedback URL'),
+    '#description' => t('URL to a feedback page, e.g. a Google Form, where clients can enter evaluation data after a chat.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_feedback_url', ''),
+  );
+
+  $form['opeka_pairchat_user_list'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Pair chat user list visibility'),
+    '#description' => t('Toggle the user list visibility in the pair chat. Check it if the user list should be visible'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_pairchat_user_list', 0),
+  );
+
   $form['opeka_server_start'] = array(
     '#type' => 'submit',
     '#value' => 'Start server',
@@ -67,24 +99,29 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#submit' => array('opeka_stop_server')
     );
 
-  $form['opeka_server_restart'] = array(
-    '#type' => 'submit',
-    '#value' => 'Restart server',
-    '#submit' => array('opeka_restart_server')
-    );
-
   return system_settings_form($form);
 }
 
 function opeka_start_server($form, &$form_state){
-  $output = shell_exec('/home/cyberhus/www/cfdpchat.dk/startchat');
-  
+  global $base_url;
+  $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
+  $output = shell_exec($opeka_path . '/scripts/startchat');
+  if ($output == NULL) {
+    drupal_set_message(t('Something went wrong - the chat was not started'), 'status');
+  }
+  else {
+    drupal_set_message($output, 'status');
+  }
 }
 
 function opeka_stop_server($form, &$form_state){
-  $output = shell_exec('/home/cyberhus/www/cfdpchat.dk/stopchat');
-}
-
-function opeka_restart_server($form, &$form_state){
-  $output = shell_exec('/home/cyberhus/www/cfdpchat.dk/restartchat');
+  global $base_url;
+  $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
+  $output = shell_exec($opeka_path . '/scripts/stopchat');
+  if ($output == NULL) {
+    drupal_set_message(t('Something went wrong - the chat was not stopped'), 'status');
+  }
+  else {
+    drupal_set_message($output, 'status');
+  }
 }

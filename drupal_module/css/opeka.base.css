@@ -1,0 +1,38 @@
+#opeka-app .header,
+#opeka-app .footer {
+  clear: both;
+}
+
+#opeka-app .content,
+#opeka-app .sidebar {
+  float: left;
+}
+
+/*
+.opeka-chat-sidebar {
+  background-color: #eee;
+  border: 1px solid #aaa;
+  padding: 1em;
+}
+*/
+#opeka-app .content {
+  width: 66%;
+}
+
+#opeka-app .sidebar {
+  width: 33%;
+}
+
+/* Anonymous clients can have the sidebar disabled */
+.not-logged-in #opeka-app .content.client-sidebar-0 {
+  width: 100%;
+}
+
+/* The sidebar is always visible in a group chat for anonymous clients*/
+.not-logged-in.groupchat #opeka-app .content.client-sidebar-0 {
+  width: 66%;
+}
+
+.not-logged-in #opeka-app .content.client-sidebar-1 {
+  width: 66%;
+}
