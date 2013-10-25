@@ -780,14 +780,11 @@ function Server(config, logger) {
         self.removeUserFromRoom(room, clientId, function(users) {
           if (users) {
             opeka.user.sendUserList(room.group, room.id, users);
-            // Try to remove the room if the disconnected user is admin since
-            // no anonymous users should be left without counselor
-            // @todo: this fix works badly with several counselors in a room, a check should be made to see if any
-            // of the remaining users are admins, if yes, then don't delete the room
             self.logger.info('user disconnected - activeRoomId: ', client.user.activeRoomId);
-            self.logger.info('user disconnected - room.id: ', room.id);
-            if (client.user.account.isAdmin){
-              self.logger.warning('Admin user disconnected - shutting down room. Counselor id: ', client.user.clientId);
+            // Try to remove the room if the disconnected user is the last counselor since
+            // no anonymous users should be left without counselor if soloClientsAllowed is false
+            if (client.user.account.isAdmin && !room.counsellorPresent && !room.soloClientsAllowed){
+              self.logger.warning('Last admin user disconnected - shutting down room. Counselor id: ', client.user.clientId);
               //Inform the remaining users that the room is closing down
               if (client.user.activeRoomId){
                 opeka.rooms.remove(client.user.activeRoomId);

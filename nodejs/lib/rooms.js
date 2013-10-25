@@ -127,6 +127,9 @@ var Room = function (options) {
     // Is it allowed for clients to be alone in a room without a counselor?
     self.soloClientsAllowed = false; //@todo: should probably be a setting in config.json
 
+    // Keep track of counselor presence
+    self.counsellorPresent = true;
+
     // Create Now.js groups for connected users and councellors.
     self.group = nowjs.getGroup(self.id);
     self.counsellorGroup = nowjs.getGroup("counsellors-" + self.id);
@@ -169,11 +172,12 @@ var Room = function (options) {
       setCount(ct);
     });
     if (count >= 1) {
-      return true;
+      self.counsellorPresent = true;
     }
     else {
-      return false;
+      self.counsellorPresent = false;
     }
+    return self.counsellorPresent;
   };
 
   // Add an user to the group.
@@ -233,6 +237,9 @@ var Room = function (options) {
       self.group.removeUser(clientId);
       self.counsellorGroup.removeUser(clientId);
       delete self.users[clientId];
+
+      // Update counsellorPresent state
+      self.hasCounsellor();
 
       updateRoomCounts();
     }
