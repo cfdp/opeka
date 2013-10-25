@@ -93,11 +93,11 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#submit' => array('opeka_start_server')
     );
 
-  $form['opeka_server_stop'] = array(
-    '#type' => 'submit',
-    '#value' => 'Stop server',
-    '#submit' => array('opeka_stop_server')
-    );
+  // $form['opeka_server_stop'] = array(
+  //   '#type' => 'submit',
+  //   '#value' => 'Stop server',
+  //   '#submit' => array('opeka_stop_server')
+  //   );
 
   return system_settings_form($form);
 }
@@ -114,14 +114,14 @@ function opeka_start_server($form, &$form_state){
   }
 }
 
-function opeka_stop_server($form, &$form_state){
-  global $base_url;
-  $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
-  $output = shell_exec($opeka_path . '/scripts/stopchat');
-  if ($output == NULL) {
-    drupal_set_message(t('Something went wrong - the chat was not stopped'), 'status');
-  }
-  else {
-    drupal_set_message($output, 'status');
-  }
-}
+// function opeka_stop_server($form, &$form_state){
+//   global $base_url;
+//   $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
+//   $output = shell_exec($opeka_path . '/scripts/stopchat');
+//   if ($output == NULL) {
+//     drupal_set_message(t('Something went wrong - the chat was not stopped'), 'status');
+//   }
+//   else {
+//     drupal_set_message($output, 'status');
+//   }
+// }
