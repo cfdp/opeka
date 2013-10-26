@@ -1119,7 +1119,7 @@
   //@daniel
   //Page to place the google form for user feedback  
   Opeka.UserFeedback = Backbone.View.extend({
-    
+    className: 'user-feedback-view well',
     initialize: function (options) {
       _.bindAll(this);
 
