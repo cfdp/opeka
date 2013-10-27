@@ -5,7 +5,7 @@
   <% /* Only display sidebar for anonymous clients in pair rooms if this settings is set to 1*/ %>
   <% if ((admin) || (!((Drupal.settings.opeka.pairchat_user_list == 0) && (room.get('maxSize') == 2)))) { %>
     <div id="user-list-block">
-      <h5 class="sidebar-block-heading">User list<span class="arrow up"></span></h5>
+      <h5 class="sidebar-block-heading"><%= labels.userListHeading %><span class="arrow up"></span></h5>
       <div class="sidebar-block-content">
         <ul class="user-list">
         <% if (!users) { %>

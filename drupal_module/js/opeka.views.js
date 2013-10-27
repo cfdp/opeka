@@ -306,6 +306,7 @@
           admin: this.admin,
           clientId: now.core.clientId,
           labels: {
+            userListHeading: Drupal.t('User list'),
             clearMessages: Drupal.t("Clear messages"),
             deleteRoom: Drupal.t('Delete room'),
             gender: { f: Drupal.t('woman'), m: Drupal.t('man') },
@@ -1414,7 +1415,7 @@
       
       var x = Math.floor((Math.random()*50)+1);
 
-      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous');""
+      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous'+x);
       user.age = this.$el.find('.age').val();
       user.gender = this.$el.find('.gender').val();
       user.roomId = this.roomId;
