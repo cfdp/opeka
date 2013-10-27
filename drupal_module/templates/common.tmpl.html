@@ -297,7 +297,7 @@
   <% }else{ %>
     <p><%= labels.farewellMessage %></p>
     <% if (Drupal.settings.opeka.feedback_url != '') { %>
-      <a href="<%= Drupal.settings.opeka.feedback_url %>"><%= labels.feedbackLinkText %></a>
+      <a href="<%= Drupal.settings.opeka.feedback_url %>" target="_blank"><%= labels.feedbackLinkText %></a>
     <% } %>
   <% } %>
 </script>
