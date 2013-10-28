@@ -6,3 +6,6 @@
 /nodejs/certs/*
 /drupal/img/*
 /logs
+/drupal_module/scripts/startchat
+/drupal_module/scripts/stopchat
+
