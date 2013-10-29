@@ -748,7 +748,7 @@ function Server(config, logger) {
           self.everyone.now.updateQueueStatus(room.id);
         }
         // Try to remove user from room.
-        self.removeUserFromRoom(room, clientId, function(users) {
+        self.removeUserFromRoom(room, clientId, client.user.activeRoomId, function(users) {
           if (users) {
             opeka.user.sendUserList(room.group, room.id, users);
             client.user.activeRoomId = null;
@@ -775,7 +775,7 @@ function Server(config, logger) {
   };
 
   // Utility function to remove a user from a room.
-  self.removeUserFromRoom = function(room, clientId, callback) {
+  self.removeUserFromRoom = function(room, clientId, activeRoomId, callback) {
     // Set room on pause if the room is a pair room.
     var autoPause = self.config.get('features:automaticPausePairRooms'),
         removedUser = self.everyone.users[clientId];
@@ -788,7 +788,10 @@ function Server(config, logger) {
       }
       self.everyone.users[clientId].user.activeRoomId = null;
     }
-    else if (autoPause === true && room.maxSize === 2 && room.paused !== true && !room.isFull()) {
+    // In this case we don't have a valid reference to a signed in client (happens when client closes/refreshes the app)
+    // - also from the snippet/chatwidget. The chat should only pause if the user is leaving an
+    // active room.
+    else if (autoPause === true && room.maxSize === 2 && !room.paused && activeRoomId) {
       room.paused = true;
       self.everyone.now.roomUpdated(room.id, { paused: true });
       self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
