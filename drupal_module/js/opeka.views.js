@@ -1394,7 +1394,7 @@
       }
       // chatOpen is undefined
       else {
-        var form = Drupal.t('The chat is not accessible at the moment.');
+        var form = Drupal.t('Loading...');
       }
 
       this.$el.html(form);
