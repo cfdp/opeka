@@ -134,9 +134,13 @@
 <script id="opeka_room_list_tmpl" type="application/template">
   <% if (admin) { %>
     <div class="queue-utils">
-    <a href="#queues" class="go-to-queues btn-util btn btn-small"><%= labels.queueLink %></a>
-    <button class="create-room btn btn-small btn-success"><%= labels.createRoom %></button>
+      <a href="#queues" class="go-to-queues btn-util btn btn-small"><%= labels.queueLink %></a>
+      <button class="create-room btn btn-small btn-success"><%= labels.createRoom %></button>
+      <% if (!chatOpen) { %>
+        <div class="chat-state"><%= labels.chatClosed %></div>
+      <% } %>
     </div>
+
   <% } %>
   <ul class="room-list">
   <% rooms.each(function (room) { %>
