@@ -451,7 +451,7 @@
 
   });// END ChatSidebarView
 
-  // Footer for the chat with generate ban code button.
+  // Footer for the chat with generate ban code and open/close button.
   Opeka.ChatFooterView = Backbone.View.extend({
     className: 'opeka-chat-footer',
 
@@ -1057,13 +1057,14 @@
       Opeka.roomList.on('change', this.render);
       Opeka.roomList.on('remove', this.render);
       Opeka.roomList.on('reset', this.render);
-
+      this.model.on('change:chatOpen', this.render, this);
       return this;
     },
 
     render: function () {
       var roomList = Opeka.roomList,
           hidePairRooms = false,
+          chatOpen = Opeka.status.attributes.chatOpen,
           html = '';
       // Hide rooms with only two slots.
       if (Opeka.features && Opeka.features.hidePairRoomsOnRoomList) {
@@ -1079,10 +1080,12 @@
           enterRoom: Drupal.t('Enter'),
           fullRoomLinkText: Drupal.t('Busy'),
           fullRoomLink: Opeka.features.fullRoomLink,
-          pausedRoomText: Drupal.t('Paused')
+          pausedRoomText: Drupal.t('Paused'),
+          chatClosed: Drupal.t('The chat is closed. Users will not be able to log into chat rooms before it is opened by a coordinator')
         },
         hidePairRooms: hidePairRooms,
-        rooms: roomList
+        rooms: roomList,
+        chatOpen: chatOpen
       });
 
       if (hidePairRooms) {
