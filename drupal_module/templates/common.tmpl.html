@@ -97,7 +97,6 @@
     </div>
         <% if (!name) { %>
 
-
     <div class="control-group">
       <label class="control-label age-label">
         <%= labels.age %>
@@ -301,7 +300,8 @@
   <% }else{ %>
     <p><%= labels.farewellMessage %></p>
     <% if (Drupal.settings.opeka.feedback_url != '') { %>
-      <a href="<%= Drupal.settings.opeka.feedback_url %>" target="_blank"><%= labels.feedbackLinkText %></a>
+      <p><a href="<%= Drupal.settings.opeka.feedback_url %>" target="_blank"><%= labels.feedbackLinkText %></a></p>
     <% } %>
+    <p><a class="btn btn-success" href="#" onclick="javascript: window.close();"><%= labels.closeWindowText %></a></p>
   <% } %>
 </script>

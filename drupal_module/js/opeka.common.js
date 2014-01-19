@@ -103,11 +103,9 @@ var Opeka = { status: {}},
     //@daniel
     //The feedback page
     feedbackPage: function () {
-      //if (this.checkSignIn()) {
         var view = new Opeka.UserFeedback({});
 
         Opeka.appViewInstance.replaceContent(view.render().el);
-      //}
     },
 
     // The actual chatroom page.
@@ -542,12 +540,12 @@ var Opeka = { status: {}},
     else {
       $('body').addClass('groupchat');
     }
-  }
+  };
 
   // Play a sound when a client joins the chat
   Opeka.userJoinedSound = function() {
     document.getElementById('audiotag1').play();
-  }
+  };
 
   // Remove room size info from body tag
   Opeka.removeRoomSizeClass = function() {
@@ -557,7 +555,7 @@ var Opeka = { status: {}},
     else if ($('body').hasClass('groupchat')) {
       $('body').removeClass('groupchat');
     }
-  }
+  };
 
   // Basic setup for the app when the DOM is loaded.
   $(function () {

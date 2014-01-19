@@ -1120,7 +1120,6 @@
     }
   });// END RoomListView
 
-  //@daniel
   //Page to place the google form for user feedback  
   Opeka.UserFeedback = Backbone.View.extend({
     className: 'user-feedback-view well',
@@ -1135,13 +1134,15 @@
         admin: _.isFunction(now.isAdmin),
         labels: {
           farewellMessage: Drupal.t('Thanks for using our chat!'),
-          feedbackLinkText: Drupal.t('Open the feedback form.')
+          feedbackLinkText: Drupal.t('Open the feedback form.'),
+          closeWindowText: Drupal.t('Close the window')
         }
       }));
       
       return this;
     }
   });// END UserFeedback
+
 
   Opeka.QueueListView = Backbone.View.extend({
     events: {
@@ -1288,7 +1289,7 @@
       }
 
       // Kick the user.
-      now.kick(this.clientId, message, this.model.id)
+      now.kick(this.clientId, message, this.model.id);
 
       // Prevent event if needed.
       if (event) {
@@ -1392,7 +1393,7 @@
           name: name
         });
       }
-      else if (this.model.get('chatOpen') == false) {
+      else if (this.model.get('chatOpen') === false) {
         var form = Drupal.t('The chat is closed');
       }
       // chatOpen is undefined
