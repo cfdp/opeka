@@ -105,7 +105,7 @@ function opeka_admin_settings_form($form, &$form_state) {
 function opeka_start_server($form, &$form_state){
   global $base_url;
   $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
-  $output = shell_exec($opeka_path . '/scripts/startchat');
+  $output = shell_exec($opeka_path . '/scripts/startchat.sh');
   if ($output == NULL) {
     drupal_set_message(t('Something went wrong - the chat was not started'), 'status');
   }
@@ -117,7 +117,7 @@ function opeka_start_server($form, &$form_state){
 // function opeka_stop_server($form, &$form_state){
 //   global $base_url;
 //   $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
-//   $output = shell_exec($opeka_path . '/scripts/stopchat');
+//   $output = shell_exec($opeka_path . '/scripts/stopchat.sh');
 //   if ($output == NULL) {
 //     drupal_set_message(t('Something went wrong - the chat was not stopped'), 'status');
 //   }
