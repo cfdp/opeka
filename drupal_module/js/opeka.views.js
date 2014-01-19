@@ -1076,6 +1076,7 @@
         labels: {
           createRoom: Drupal.t('Create new room'),
           placeholder: Drupal.t('No rooms created'),
+          closeWindowText: Drupal.t('Close window'),
           queueLink: Drupal.t('Go to queue list'),
           enterRoom: Drupal.t('Enter'),
           fullRoomLinkText: Drupal.t('Busy'),
