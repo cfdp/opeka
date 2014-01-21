@@ -476,8 +476,8 @@
           chatOpen: Opeka.status.attributes.chatOpen,
           labels: {
             banCode: Drupal.t('Generate new ban code'),
-            chatOpen: Drupal.t('Open chat'),
-            chatClose: Drupal.t('Close chat')
+            chatOpen: Drupal.t('Turn on chat'),
+            chatClose: Drupal.t('Turn off chat')
           }
         }));
       }
