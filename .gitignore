@@ -1,11 +1,13 @@
 /modules/contrib
 /nodejs/.monitor
-/nodejs/config.json
+/nodejs/config*
+/nodejs/main_ch.js
 /nodejs/node_modules
 /nodejs/certs
 /nodejs/certs/*
 /drupal/img/*
 /logs
 /drupal_module/scripts/startchat.sh
+/drupal_module/scripts/start_ch_chat.sh
 /drupal_module/scripts/stopchat.sh
 
