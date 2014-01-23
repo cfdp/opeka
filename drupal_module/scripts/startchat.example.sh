@@ -10,6 +10,7 @@ NODE_PATH="/home/benjamin/workspace/web/node_modules"
 APPLICATION_DIRECTORY="/home/benjamin/workspace/web/cfdpchat/nodejs"
 APPLICATION_START="main.js"
 LOG="/home/benjamin/workspace/web/cfdpchat/logs/forever.log"
+PIDFILE="/home/benjamin/workspace/web/cfdpchat/logs/pids.pid"
 
 echo -e "Starting CfDP Chat... \n"
 
@@ -25,4 +26,4 @@ cd $APPLICATION_DIRECTORY
 # production servers the same way if a database or other critical service
 # suddenly becomes inaccessible.
 forever --sourceDir $APPLICATION_DIRECTORY -a -l $LOG \
- --minUptime 5000 --spinSleepTime 2000 start $APPLICATION_START
+--pidFile $PIDFILE --minUptime 5000 --spinSleepTime 2000 start $APPLICATION_START
