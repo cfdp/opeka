@@ -59,6 +59,7 @@ function Server(config, logger) {
     self.signInNonces = {};
 
     // Initialise Now.js on our server object.
+    // To @debug socket.io: self.everyone = nowjs.initialize(self.server, {socketio: {"log level": 3}});
     self.everyone = nowjs.initialize(self.server);
 
     // Create groups for councellors and guests.
@@ -515,6 +516,7 @@ function Server(config, logger) {
   self.councellors.now.deleteRoom = function (roomId, finalMessage) {
     var room = opeka.rooms.list[roomId],
         lastRoom = true,
+        counselor = this.user,
         queue;
 
     if (room) {
@@ -538,7 +540,8 @@ function Server(config, logger) {
         }
       }
       self.logger.info('Room ' + room.name + ' (' + roomId + ') deleted.');
-
+      // Set the activeRoomId for the counselor to null
+      counselor.activeRoomId = null;
       opeka.rooms.remove(roomId);
       self.everyone.now.roomDeleted(roomId, finalMessage);
 
@@ -671,7 +674,7 @@ function Server(config, logger) {
   };
 
   // Remove the user from room - can only remove yourself.
-  self.everyone.now.removeUserFromRoom = function (roomId, clientId) {
+  self.everyone.now.removeUserFromRoom = function (roomId, clientId, activeRoomId, chatStart_Min) {
     if (this.user.clientId === clientId) {
       var room = opeka.rooms.list[roomId],
           autoPause = self.config.get('features:automaticPausePairRooms');
@@ -684,7 +687,7 @@ function Server(config, logger) {
       }
 
       // Remove the user.
-      self.removeUserFromRoom(room, clientId, function (users) {
+      self.removeUserFromRoom(room, clientId, activeRoomId, chatStart_Min, function (users) {
         opeka.user.sendUserList(room.group, room.id, users);
         self.updateUserStatus(self.everyone.now);
       });
@@ -748,7 +751,11 @@ function Server(config, logger) {
    * disconnected, etc.
    */
   self.everyone.on("disconnect", function () {
-    var client = this, clientId = client.user.clientId, queueLeft;
+    var client = this,
+        clientId = client.user.clientId,
+        activeRoomId = client.user.activeRoomId,
+        chatStart_Min = client.user.chatStart_Min,
+        queueLeft;
 
     self.logger.info('User disconnected.', client.user.clientId);
 
@@ -777,7 +784,7 @@ function Server(config, logger) {
           self.everyone.now.updateQueueStatus(room.id);
         }
         // Try to remove user from room.
-        self.removeUserFromRoom(room, clientId, client.user.activeRoomId, function(users) {
+        self.removeUserFromRoom(room, clientId, activeRoomId, chatStart_Min, function(users) {
           if (users) {
             opeka.user.sendUserList(room.group, room.id, users);
             self.logger.info('user disconnected - activeRoomId: ', client.user.activeRoomId);
@@ -815,35 +822,41 @@ function Server(config, logger) {
   };
 
   // Utility function to remove a user from a room.
-  self.removeUserFromRoom = function(room, clientId, activeRoomId, callback) {
-    // Set room on pause if the room is a pair room.
+  self.removeUserFromRoom = function(room, clientId, activeRoomId, chatStart_Min, callback) {
     var autoPause = self.config.get('features:automaticPausePairRooms'),
-        removedUser = self.everyone.users[clientId];
+        removedUser = self.everyone.users[clientId],
+        chatEnd_Min,
+        chatDuration;
 
+    // Set room on pause if the room is a pair room.
     if (removedUser) {
       if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
         room.paused = true;
         self.everyone.now.roomUpdated(room.id, { paused: true });
         self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
       }
-
-      // Calculate the duration of the chat of the user being removed
-      self.everyone.users[clientId].user.chatEnd_Min = Math.round((new Date()).getTime() / 60000);
-      self.logger.info('Logout: User chat start: ', self.everyone.users[clientId].user.chatStart_Min);
-      self.logger.info('Logout: User chat end: ', self.everyone.users[clientId].user.chatEnd_Min);
-
-      var chatDuration = self.everyone.users[clientId].user.chatEnd_Min - self.everyone.users[clientId].user.chatStart_Min;
-
+      chatStart_Min = self.everyone.users[clientId].user.chatStart_Min;
       self.everyone.users[clientId].user.activeRoomId = null;
     }
-    // In this case we don't have a valid reference to a signed in client (happens when client closes/refreshes the app)
+    // In this case we don't have a valid reference to a signed in client (happens when
+    // client closes / refreshes the browser window)
     // - also from the snippet/chatwidget. The chat should only pause if the user is leaving an
     // active room.
-    else if (autoPause === true && room.maxSize === 2 && !room.paused && activeRoomId) {
+    else if (autoPause === true && room.maxSize === 2 && !room.paused && (activeRoomId === room.id)) {
       room.paused = true;
       self.everyone.now.roomUpdated(room.id, { paused: true });
       self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
     }
+
+    // Calculate the duration of the chat session of the user being removed
+    if (chatStart_Min) {
+      chatEnd_Min = Math.round((new Date()).getTime() / 60000);
+      self.logger.info('Logout: User chat start: ', chatStart_Min);
+      self.logger.info('Logout: User chat end: ', chatEnd_Min);
+
+      chatDuration = chatEnd_Min - chatStart_Min;
+    }
+
 
     room.removeUser(clientId, function (users, queueClientId, removedUserNickname) {
       // The user has been removed from the queue and should join the chat.
