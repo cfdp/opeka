@@ -112,6 +112,12 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   // Load the required JavaScript libraries.
   drupal_add_library('system', 'ui.dialog');
 
+  // Add the Emoticons JavaScript and css files to the page. They will take care of
+  // replacing text emoticons with images
+  drupal_add_js($path .'/emoticons/lib/emoticons.js');
+  drupal_add_js($path .'/js/emoticons-support.js');
+  drupal_add_css($path . '/emoticons/support/skype/emoticons.css');
+
   // Add our default JavaScript files to the array.
   $scripts = array_merge(array(
     'underscore.js',

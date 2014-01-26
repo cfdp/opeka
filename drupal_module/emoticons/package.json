@@ -1,0 +1,39 @@
+{
+  "name": "emoticons",
+  "description": "Parse text emoticons and replace them by graphics.",
+  "version": "0.1.6",
+  "author": {
+    "name": "Oleg Slobodskoi",
+    "email": "oleg008@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:kof/emoticons.git"
+  },
+  "keywords": [
+    "emoticon",
+    "smily",
+    "smilies",
+    "emotify",
+    "parser"
+  ],
+  "engines": {
+    "node": "*"
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "_id": "emoticons@0.1.6",
+  "dependencies": {},
+  "optionalDependencies": {},
+  "_engineSupported": true,
+  "_npmVersion": "1.1.9",
+  "_nodeVersion": "v0.8.0",
+  "_defaultsLoaded": true,
+  "_from": "emoticons"
+}

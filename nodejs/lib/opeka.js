@@ -22,9 +22,7 @@ var _ = require("underscore"),
       rooms: require('./rooms'),
       user: require('./user'),
       chatOpen: false
-    },
-    fs = require('fs');
-
+    };
 
 function Server(config, logger) {
   var self = this;

@@ -36,3 +36,7 @@
 .not-logged-in #opeka-app .content.client-sidebar-1 {
   width: 66%;
 }
+
+.emoticon {
+  margin-bottom: -6px;
+}

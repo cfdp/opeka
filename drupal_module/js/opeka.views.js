@@ -212,6 +212,8 @@
       });
 
       this.render();
+      // Trigger the messageRender event for the Emoticons script to react upon
+      $.event.trigger({ type: "messageRender" });
     },
 
     receiveMessage: function (message) {
@@ -220,17 +222,17 @@
         this.messages.push(message);
         this.render();
 
-        // @daniel
         // Keep the scrollbar at the bottom of the .chat-message-list
         var message_list = this.$el.find('.chat-message-list');
         message_list.scrollTop(message_list.prop("scrollHeight"));
+
+        $.event.trigger({ type: "messageRender" });
       }
     },
 
     sendMessage: function (event) {
 
-      // @daniel
-      // Replaced the input with a textarea to have multiple writing lines available
+      // Input with a textarea to have multiple writing lines available
       var message = this.$el.find('textarea.message').val();
       // Remove the message sent and regain focus
       this.$el.find('textarea.message').val('').focus();
@@ -1337,13 +1339,13 @@
     whisper: function (event) {
       var form = $(this.dialogElement).find('form'),
 
-          //@daniel
-          //replacing the input for the whisper dialog overlay with a textarea
-          message = form.find('textarea.whisper-message').val();
+      // Replacing the input for the whisper dialog overlay with a textarea
+      message = form.find('textarea.whisper-message').val();
           
       // Whisper the user.
       now.whisper(this.clientId, message);
       this.remove();
+
       // Prevent event if needed.
       if (event) {
         event.preventDefault();
