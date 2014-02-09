@@ -77,6 +77,7 @@ var Opeka = { status: {}},
       }
 
       Opeka.appViewInstance.replaceContent(view.render().el);
+      Opeka.cleanAfterChat();
 
     },
 
@@ -94,18 +95,17 @@ var Opeka = { status: {}},
 
         Opeka.appViewInstance.replaceContent(view.render().el);
       }
-      // Need to make sure the chat view is not set.
-      Opeka.chatView = null;
-      // Remove room size body class
-      Opeka.removeRoomSizeClass();
+      // Need to make sure that chat view is removed and user has been properly removed from
+      // rooms he might have visited (needed in case of browser back navigation)
+      Opeka.cleanAfterChat();
     },
 
-    //@daniel
     //The feedback page
     feedbackPage: function () {
         var view = new Opeka.UserFeedback({});
 
         Opeka.appViewInstance.replaceContent(view.render().el);
+        Opeka.cleanAfterChat();
     },
 
     // The actual chatroom page.
@@ -167,13 +167,13 @@ var Opeka = { status: {}},
 
         Opeka.appViewInstance.replaceContent(view.render().el);
       }
-      // Need to make sure the chat view is not set.
-      Opeka.chatView = null;
+      // Need to make sure the chat view is not set. @todo - needs testing
+      Opeka.cleanAfterChat();
     },
 
     queue: function(queueId) {
-      // Need to make sure the chat view is not set.
-      Opeka.chatView = null;
+      // Need to make sure the chat view is not set. @todo - needs testing
+      Opeka.cleanAfterChat();
 
       var queue = Opeka.queueList.get(queueId),
           that = this,
@@ -430,7 +430,7 @@ var Opeka = { status: {}},
       });
       view.render();
     }
-  }
+  };
 
   // Response to a user leaving the room.
   now.roomUserLeft = function (roomId, nickname, chatDuration) {
@@ -492,6 +492,25 @@ var Opeka = { status: {}},
         name: nickname
       };
       Opeka.chatView.receiveMessage(messageObj);
+    }
+  };
+
+  /**
+   * Make sure user is properly removed from room
+   */
+  Opeka.cleanAfterChat = function() {
+    // Need to make sure the chat view and sidebar is not set.
+    Opeka.chatView = null;
+    Opeka.appViewInstance.$el.find('.sidebar').html('');
+
+    // Remove room size body class
+    Opeka.removeRoomSizeClass();
+    // We check if the user is signed in
+    if (_.isFunction(now.changeRoom)) {
+      now.cleanAfterChat(now.core.clientId, function() {
+        // If we need to take action depending on the results from the server,
+        // it can be done here...
+      });
     }
   };
 

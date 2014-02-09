@@ -324,6 +324,12 @@ function Server(config, logger) {
         room.reserveSpot(this.user.clientId);
         callback(room.id);
       }
+      else {
+        self.logger.info('@debug: User did not get a room (reserveRoomSpot)');
+      }
+    }
+    else {
+      self.logger.info('@debug: User did not have a valid signin-nonce (reserveRoomSpot)');
     }
   };
 
@@ -718,6 +724,32 @@ function Server(config, logger) {
         }
       });
     });
+  };
+
+  /**
+   * Make sure user is properly removed from room
+   */
+  self.everyone.now.cleanAfterChat = function (clientId, callback) {
+    var user = this.user,
+        room;
+    // If the user is leaving a room, make sure he is removed properly
+    if (user.activeRoomId) {
+      room = opeka.rooms.list[user.activeRoomId];
+      if (room && (user.clientId === clientId)) {
+        self.logger.info('@debug: Cleaned up after chat - user.activeRoomId ' + user.activeRoomId + ' clientId ' + user.clientId);
+
+        // @todo - make sure to shut down the room if there are only clients left &&
+        // noSoloClientsAllowed is true...
+        self.removeUserFromRoom(room, user.clientId, user.activeRoomId);
+        // Update the server status
+        self.updateUserStatus(self.everyone.now);
+        opeka.user.sendUserList(room.group, room.id, room.users);
+      }
+    }
+    // Call the callback.
+    if (callback) {
+      callback();
+    }
   };
 
   /**
