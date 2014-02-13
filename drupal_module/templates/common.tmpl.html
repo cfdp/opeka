@@ -162,7 +162,7 @@
       <%} %>
       <% /* Only admins should be able to enter a full or paused room */ %>
       <% if (admin || ((room.get('memberCount') != room.get('maxSize')) && (!room.attributes.paused))) {%>
-        <a href="#rooms/<%= room.id %>"><%= labels.enterRoom %></a>
+        <a href="#rooms/<%= room.id %>" class="admin-enter"><%= labels.enterRoom %></a>
       <%}else{ %>
         <a href="<%= labels.fullRoomLink %>" target="_blank" class="meantime btn btn-warning"><%= labels.fullRoomLinkText %></a>
       <%}%>  
