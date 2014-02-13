@@ -1091,17 +1091,6 @@
         chatOpen: chatOpen
       });
 
-      if (hidePairRooms) {
-        html += JST.opeka_pair_room_list_tmpl({
-          admin: _.isFunction(now.isAdmin),
-          labels: {
-            placeholder: Drupal.t('No rooms created'),
-            enterRoom: Drupal.t('Enter')
-          },
-          rooms: roomList
-        });
-      }
-
       if (_.isFunction(now.isAdmin)) {
         html += JST.opeka_room_list_create_room_tmpl({
           labels: {
