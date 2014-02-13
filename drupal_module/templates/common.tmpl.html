@@ -162,7 +162,7 @@
       <%} %>
       <% /* Only admins should be able to enter a full or paused room */ %>
       <% if (admin || ((room.get('memberCount') != room.get('maxSize')) && (!room.attributes.paused))) {%>
-        <a href="#rooms/<%= room.id %>" class="room-enter btn btn-success"><%= labels.enterRoom %></a>
+        <a href="#rooms/<%= room.id %>"><%= labels.enterRoom %></a>
       <%}else{ %>
         <a href="<%= labels.fullRoomLink %>" target="_blank" class="meantime btn btn-warning"><%= labels.fullRoomLinkText %></a>
       <%}%>  
@@ -173,23 +173,6 @@
     <li class="placeholder norooms"><%= labels.placeholder %></li>
     <li><a class="btn btn-success" href="#" onclick="javascript: window.close();"><%= labels.closeWindowText %></a></li>
   <% } %>
-  </ul>
-
-</script>
-
-<script id="opeka_pair_room_list_tmpl" type="application/template">
-  <ul class="room-list pair-room-list">
-  <% rooms.each(function (room) { %>
-    <% if (!room.attributes.private && room.attributes.maxSize === 2 && (Drupal.settings.opeka.user && Drupal.settings.opeka.user.uid == room.attributes.uid)) { %>
-      <li class="room">
-        <div class="room-details">
-          <span class="room-size"><%- room.get('memberCount') %>/<%- room.get('maxSize') %></span>
-        </div>
-        <p class="room-description"><%- room.get('name') %></p>
-        <a href="#rooms/<%= room.id %>" class="room-enter"><%= labels.enterRoom %></a>
-      </li>
-    <% } %>
-  <% }); %>
   </ul>
 
 </script>
