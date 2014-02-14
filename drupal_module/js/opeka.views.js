@@ -369,9 +369,9 @@
     // For when a user needs to be kicked.
     kickUser: function (event) {
       var view = new Opeka.RoomKickUserView({
-        clientId: $(event.currentTarget).closest('li').attr('data-client-id'),
+        clientId: $(event.currentTarget).closest('.user-list-item').attr('data-client-id'),
         model: this.model,
-        name: $(event.currentTarget).closest('li').find('.name').text()
+        name: $(event.currentTarget).closest('.user-list-item').find('.name').text()
       });
 
       view.render();

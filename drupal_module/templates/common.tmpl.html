@@ -12,30 +12,38 @@
           <li class="placeholder"><%= labels.placeholder %></li>
         <% } %>
         <% _.each(users, function (user) { %>
-          <li data-client-id="<%= user.clientId %>">
-            <i class="icon-user"></i><span class="name"><%- user.name %></span>
-            <% if (user.age || user.gender) { %>
-              <span class="meta">
-                (
-                <span class="age"><%- user.age %></span>/
-                <span class="gender"><%= labels.gender[user.gender] %></span>
-                )
-              </span>
-            <% } %>
-            <% if (user.clientId !== clientId && admin) { %>
-              <span class="actions btn-group">
-                <button class="ban-user btn btn-small"><%= labels.banUser %></button>
-                <button class="kick-user btn btn-small"><%= labels.kickUser %></button>
-                <% if (user.muted) { %>
-                  <button class="unmute-user btn btn-small"><%= labels.unmuteUser %></button>
-                <% }
-                   else { %>
-                  <button class="mute-user btn btn-small"><%= labels.muteUser %></button>
+          <li class="user-list-item" data-client-id="<%= user.clientId %>">
+            <div class="actions btn-group">
+              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="icon-user"></i><span class="name"><%- user.name %></span>
+                <% if (user.age || user.gender) { %>
+                  <span class="meta">
+                    (
+                    <span class="age"><%- user.age %></span>/
+                    <span class="gender"><%= labels.gender[user.gender] %></span>
+                    )
+                  </span>
                 <% } %>
-                <button class="whisper btn btn-small"><%= labels.whisper %></button>
-              </span>
+                <span class="caret"></span>
+              </a>
+
+            <% if (user.clientId !== clientId && admin) { %>
+                <ul class="dropdown-menu">
+                  <li class="ban-user"><%= labels.banUser %></li>
+                  <li class="kick-user"><%= labels.kickUser %></li>
+                  <% if (user.muted) { %>
+                    <li class="unmute-user"><%= labels.unmuteUser %></li>
+                  <% }
+                     else { %>
+                    <li class="mute-user"><%= labels.muteUser %></li>
+                  <% } %>
+                  <li class="whisper"><%= labels.whisper %></li>
+                </ul>
             <% } %>
+          </div>
           </li>
+
+
         <% }); %>
         </ul>
       </div>
@@ -162,7 +170,7 @@
       <%} %>
       <% /* Only admins should be able to enter a full or paused room */ %>
       <% if (admin || ((room.get('memberCount') != room.get('maxSize')) && (!room.attributes.paused))) {%>
-        <a href="#rooms/<%= room.id %>" class="admin-enter"><%= labels.enterRoom %></a>
+        <a href="#rooms/<%= room.id %>" class="room-enter btn btn-success"><%= labels.enterRoom %></a>
       <%}else{ %>
         <a href="<%= labels.fullRoomLink %>" target="_blank" class="meantime btn btn-warning"><%= labels.fullRoomLinkText %></a>
       <%}%>  
