@@ -385,7 +385,7 @@
     // For when a user needs to be banned.
     banUser: function (event) {
       var view = new Opeka.RoomBanUserView({
-        clientId: $(event.currentTarget).closest('li').attr('data-client-id'),
+        clientId: $(event.currentTarget).closest('.user-list-item').attr('data-client-id'),
         model: this.model
       });
 
@@ -398,7 +398,7 @@
 
     // For when you need to mute a user.
     muteUser: function (event) {
-      var clientId = $(event.currentTarget).closest('li').attr('data-client-id');
+      var clientId = $(event.currentTarget).closest('.user-list-item').attr('data-client-id');
       now.mute(this.model.id, clientId);
       
       if (event) {
@@ -408,7 +408,7 @@
 
     // For when you need to unmute a user.
     unmuteUser: function (event) {
-      var clientId = $(event.currentTarget).closest('li').attr('data-client-id');
+      var clientId = $(event.currentTarget).closest('.user-list-item').attr('data-client-id');
       now.unmute(this.model.id, clientId);
 
       if (event) {
@@ -439,9 +439,9 @@
     // Open dialog to whisper to an user.
     whisper: function (event) {
       var view = new Opeka.RoomWhisperView({
-        clientId: $(event.currentTarget).closest('li').attr('data-client-id'),
+        clientId: $(event.currentTarget).closest('.user-list-item').attr('data-client-id'),
         model: this.model,
-        name: $(event.currentTarget).closest('li').find('.name').text()
+        name: $(event.currentTarget).closest('.user-list-item').find('.name').text()
       });
 
       view.render();

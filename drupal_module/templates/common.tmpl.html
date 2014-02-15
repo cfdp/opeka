@@ -13,8 +13,12 @@
         <% } %>
         <% _.each(users, function (user) { %>
           <li class="user-list-item" data-client-id="<%= user.clientId %>">
-            <div class="actions btn-group">
-              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+
+            <% if (user.clientId !== clientId && admin) { %>
+              <div class="actions btn-group">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+            <% } %>
+
                 <i class="icon-user"></i><span class="name"><%- user.name %></span>
                 <% if (user.age || user.gender) { %>
                   <span class="meta">
@@ -24,10 +28,10 @@
                     )
                   </span>
                 <% } %>
-                <span class="caret"></span>
-              </a>
 
             <% if (user.clientId !== clientId && admin) { %>
+              <span class="caret"></span>
+              </a>
                 <ul class="dropdown-menu">
                   <li class="ban-user"><%= labels.banUser %></li>
                   <li class="kick-user"><%= labels.kickUser %></li>
@@ -39,8 +43,10 @@
                   <% } %>
                   <li class="whisper"><%= labels.whisper %></li>
                 </ul>
+              </div>
+              <!-- end dropdown btn-group -->
             <% } %>
-          </div>
+
           </li>
 
 
@@ -59,9 +65,9 @@
       </div>
     </div>
     <div class="sidebar-block">
-      <h5 class="sidebar-block-heading"><%= labels.registrationform %><span class="arrow down"></span></h5>
+      <h5 class="sidebar-block-heading">Registration form<span class="arrow down"></span></h5>
       <div class="sidebar-block-content">
-        <a class="registrationform" href="https://docs.google.com/a/cyberhus.dk/spreadsheet/embeddedform?formkey=dHBub0M0LW5GbWpNWndqTGdDQjNwZEE6MQ" target="_blank"><%= labels.registrationform %></a>
+        <a class="registrationform btn" href="https://docs.google.com/a/cyberhus.dk/spreadsheet/embeddedform?formkey=dHBub0M0LW5GbWpNWndqTGdDQjNwZEE6MQ" target="_blank"><%= labels.registrationform %></a>
       </div>
     </div>
   <% } %>
