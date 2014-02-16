@@ -230,7 +230,7 @@ function Server(config, logger) {
       roomType: roomType
     };
 
-    callback(signInURL + '#signIn/' + nonce);
+    callback(signInURL + '#signIn/' + nonce + '/' + roomType);
   };
 
 // -------- GLOBAL QUEUE FUNCTIONS START -----------

@@ -39,7 +39,8 @@ var Opeka = { status: {}},
   Opeka.MainRouter = Backbone.Router.extend({
     routes: {
       '': 'signIn',
-      'signIn/:nonce': 'signIn',
+      'signIn/groupChat': 'signIn',
+      'signIn/:nonce(/:chatType)': 'signIn',
       'signIn/queues/:queueId': 'signInForQueue',
       'rooms/:roomId': 'room',
       'rooms': 'roomList',
@@ -61,9 +62,10 @@ var Opeka = { status: {}},
     },
 
     // Chat sign in page.
-    signIn: function (nonce) {
+    signIn: function (nonce, chatType) {
       var view = new Opeka.SignInFormView({
         nonce: nonce,
+        chatType: chatType,
         model: Opeka.status
       });
 
@@ -74,6 +76,11 @@ var Opeka = { status: {}},
             view.roomId = roomId;
           });
         });
+      }
+
+      if (chatType) {
+        // The chatType parameter can be set from the chat widget
+        $('body').addClass(chatType);
       }
 
       Opeka.appViewInstance.replaceContent(view.render().el);
@@ -550,30 +557,27 @@ var Opeka = { status: {}},
   // Adds CSS class to the body element of the page
   // allows us to style group chats and pair room chats differently
   Opeka.addRoomSizeToBody = function() {
-    // Start by clearing any classes from previous chat sessions
-    Opeka.removeRoomSizeClass();
-    // Now add the right classes
     if ($( "#room-size" ).data( "room-size" ) == 2) {
-      $('body').addClass('room-size-2');
+      $('body').removeClass('room-size-2 groupchat').addClass('room-size-2');
     }
     else {
-      $('body').addClass('groupchat');
+      $('body').removeClass('room-size-2 groupchat').addClass('groupchat');
     }
   };
 
   // Play a sound when a client joins the chat
   Opeka.userJoinedSound = function() {
-    document.getElementById('audiotag1').play();
+    if ($('audiotag1').length !== 0) {
+      document.getElementById('audiotag1').play();
+    }
+    else {
+      console.log('Opeka chat app error: User joined sound not found.');
+    }
   };
 
   // Remove room size info from body tag
   Opeka.removeRoomSizeClass = function() {
-    if ($('body').hasClass('room-size-2')) {
-      $('body').removeClass('room-size-2');
-    }
-    else if ($('body').hasClass('groupchat')) {
-      $('body').removeClass('groupchat');
-    }
+      $('body').removeClass('room-size-2 groupchat');
   };
 
   // Basic setup for the app when the DOM is loaded.
