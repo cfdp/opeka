@@ -1112,7 +1112,7 @@
     }
   });// END RoomListView
 
-  //Page to place the google form for user feedback  
+  // Page to place the google form for user feedback
   Opeka.UserFeedback = Backbone.View.extend({
     className: 'user-feedback-view well',
     initialize: function (options) {
@@ -1135,6 +1135,26 @@
     }
   });// END UserFeedback
 
+  // The user ends on this page after pair chat when hidepairroomsonroomlist is true
+  Opeka.GoodbyeView = Backbone.View.extend({
+    className: 'goodbye-view well',
+    initialize: function (options) {
+      _.bindAll(this);
+
+      return this;
+    },
+    render: function () {
+      this.$el.html(JST.opeka_goodbye_tmpl({
+
+        labels: {
+          message: Drupal.t('Thanks for using our chat!'),
+          closeWindowText: Drupal.t('Close the window')
+        }
+      }));
+
+      return this;
+    }
+  });// END goodbyeView
 
   Opeka.QueueListView = Backbone.View.extend({
     events: {

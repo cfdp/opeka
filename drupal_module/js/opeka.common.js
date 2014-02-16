@@ -46,7 +46,8 @@ var Opeka = { status: {}},
       'rooms': 'roomList',
       'queues/:queueId': 'queue',
       'queues': 'queueList',
-      'feedback': 'feedbackPage'
+      'feedback': 'feedbackPage',
+      'goodbye': 'goodbye'
     },
 
     // Check that the user is signed in, and if not, redirect to the
@@ -107,7 +108,7 @@ var Opeka = { status: {}},
       Opeka.cleanAfterChat();
     },
 
-    //The feedback page
+    // The feedback page
     feedbackPage: function () {
         var view = new Opeka.UserFeedback({});
 
@@ -209,7 +210,16 @@ var Opeka = { status: {}},
         }
 
       }
-    }
+    },
+
+    goodbye: function () {
+      var view = new Opeka.GoodbyeView({});
+
+      Opeka.appViewInstance.replaceContent(view.render().el);
+
+      // Need to make sure the chat view is not set.
+      Opeka.cleanAfterChat();
+    },
   });
 
   // Recieve the user list from the server.
@@ -360,7 +370,8 @@ var Opeka = { status: {}},
 
         view.render();
 
-        Opeka.router.navigate("rooms", {trigger: true});
+        Opeka.getExitRoute(room);
+
         // Remove the sidebar.
         Opeka.appViewInstance.$el.find('.sidebar').html('');
       }
@@ -407,7 +418,9 @@ var Opeka = { status: {}},
     // If this client is being kicked, navigate to a different page and
     // use a FatalErrorDialog to force them to reload the page.
     if (now.core.clientId === clientId) {
-      Opeka.router.navigate("rooms", {trigger: true});
+      var room = Opeka.roomList.get(roomId);
+
+      Opeka.getExitRoute(room);
 
       var view = new Opeka.FatalErrorDialogView({
         message: Drupal.t('You have been kicked from the chat with the following reason: @reason.', {'@reason': message}),
@@ -503,6 +516,20 @@ var Opeka = { status: {}},
   };
 
   /**
+   * If the client user is leaving a pair room and hidePairRoomsOnRoomList is true
+   * send him to the goodbye page
+   */
+  Opeka.getExitRoute = function(room) {
+    var admin = _.isFunction(now.isAdmin);
+    if (!admin && room.get('maxSize') === 2  && Opeka.features.hidePairRoomsOnRoomList === true) {
+      Opeka.router.navigate("goodbye", {trigger: true});
+    }
+    else {
+      Opeka.router.navigate("rooms", {trigger: true});
+    }
+  };
+
+  /**
    * Make sure user is properly removed from room
    */
   Opeka.cleanAfterChat = function() {
@@ -565,19 +592,14 @@ var Opeka = { status: {}},
     }
   };
 
-  // Play a sound when a client joins the chat
-  Opeka.userJoinedSound = function() {
-    if ($('audiotag1').length !== 0) {
-      document.getElementById('audiotag1').play();
-    }
-    else {
-      console.log('Opeka chat app error: User joined sound not found.');
-    }
-  };
-
   // Remove room size info from body tag
   Opeka.removeRoomSizeClass = function() {
       $('body').removeClass('room-size-2 groupchat');
+  };
+
+  // Play a sound when a client joins the chat
+  Opeka.userJoinedSound = function() {
+     document.getElementById('audiotag1').play();
   };
 
   // Basic setup for the app when the DOM is loaded.
