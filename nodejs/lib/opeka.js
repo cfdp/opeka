@@ -787,7 +787,20 @@ function Server(config, logger) {
         chatStart_Min = client.user.chatStart_Min,
         queueLeft;
 
-    self.logger.info('User disconnected.', client.user.clientId);
+    if (client.user.account !== undefined) {
+      if (client.user.account.isAdmin === true) {
+        self.logger.info('Admin user disconnected.', client.user.clientId);
+      }
+      else {
+        self.logger.info('Regular user disconnected.', client.user.clientId);
+        if (client.user.activeRoomId) {
+          self.logger.info('Disconnected user had activeRoomId: ', client.user.activeRoomId);
+        }
+      }
+    }
+    else {
+      // User is not signed in, no reason logging this
+    }
 
     // We need to wait a single tick before updating the online counts,
     // since there's a bit of delay before they are accurate.
@@ -817,7 +830,6 @@ function Server(config, logger) {
         self.removeUserFromRoom(room, clientId, activeRoomId, chatStart_Min, function(users) {
           if (users) {
             opeka.user.sendUserList(room.group, room.id, users);
-            self.logger.info('user disconnected - activeRoomId: ', client.user.activeRoomId);
             // Try to remove the room if the disconnected user is the last counselor since
             // no anonymous users should be left without counselor if soloClientsAllowed is false
             if (client.user.account.isAdmin && !room.counsellorPresent && !room.soloClientsAllowed){

@@ -3,7 +3,7 @@
   <audio id="audiotag1" src="<%= Drupal.settings.opeka.client_login_sound %>" preload="auto"></audio>
   <div id="room-size" data-room-size="<%- room.get('maxSize') %>"></div>
   <% /* Only display sidebar for anonymous clients in pair rooms if this settings is set to 1*/ %>
-  <% if ((admin) || (!((Drupal.settings.opeka.pairchat_user_list == 0) && (room.get('maxSize') == 2)))) { %>
+  <% if ((admin) || (!((Drupal.settings.opeka.pairchat_user_list === 0) && (room.get('maxSize') === 2)))) { %>
     <div id="user-list-block">
       <h5 class="sidebar-block-heading"><%= labels.userListHeading %><span class="arrow up"></span></h5>
       <div class="sidebar-block-content">
@@ -67,7 +67,7 @@
     <div class="sidebar-block">
       <h5 class="sidebar-block-heading">Registration form<span class="arrow down"></span></h5>
       <div class="sidebar-block-content">
-        <% if (room.get('maxSize') == 2 && (Drupal.settings.opeka.reg_pair_url != '')) { %>
+        <% if (room.get('maxSize') === 2 && (Drupal.settings.opeka.reg_pair_url !== '')) { %>
           <a class="registrationform btn" href="<%= Drupal.settings.opeka.reg_pair_url %>" target="_blank"><%= labels.registrationform %></a>
         <% } else if (Drupal.settings.opeka.reg_group_url != '') { %>
           <a class="registrationform btn" href="<%= Drupal.settings.opeka.reg_group_url %>" target="_blank"><%= labels.registrationform %></a> 
@@ -164,12 +164,12 @@
   <ul class="room-list">
   <% rooms.each(function (room) { %>
     <% /* Show the room list - show all rooms for counselors */ %>
-    <% if (admin || (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms == false)))) { %>
+    <% if (admin || (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms === false)))) { %>
       <% labels.placeholder = ''; %>
       <li class="room well">
-      <div class="room-details badge badge-info <% if (room.get('memberCount') == room.get('maxSize')){%>full<%} %><% if (room.attributes.paused){%> paused<%} %>">
+      <div class="room-details badge badge-info <% if (room.get('memberCount') === room.get('maxSize')){%>full<%} %><% if (room.attributes.paused){%> paused<%} %>">
         <span class="room-size"><%- room.get('memberCount') %>/<%- room.get('maxSize') %></span>
-        <% if (room.get('memberCount') == room.get('maxSize')){%>
+        <% if (room.get('memberCount') === room.get('maxSize')){%>
           <span class="room-status full">Full</span>
         <%} %>
         <% if (room.attributes.paused){%>
