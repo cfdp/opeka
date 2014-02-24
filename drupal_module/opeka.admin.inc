@@ -79,6 +79,22 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_feedback_url', ''),
   );
 
+  $form['opeka_reg_pair_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('1-to-1 chat registration form'),
+    '#description' => t('URL to a registration form, where counselors can enter data after a 1-to-1 chat.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_reg_pair_url', ''),
+  );
+
+  $form['opeka_reg_group_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Group chat registration form'),
+    '#description' => t('URL to a registration form, where counselors can enter data after a group chat.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_reg_group_url', ''),
+  );
+
   $form['opeka_pairchat_user_list'] = array(
     '#type' => 'checkbox',
     '#title' => t('Pair chat user list visibility'),
