@@ -612,9 +612,12 @@ function Server(config, logger) {
     if (opeka.rooms.list[client.user.activeRoomId]) {
       var oldRoom = opeka.rooms.list[client.user.activeRoomId];
 
-      self.roomRemoveUser(oldRoom.client.user.clientId, function (users) {
-        opeka.user.sendUserList(oldRoom.group, oldRoom.id, users);
-      });
+      if (client.user.clientId !== undefined) {
+        self.removeUserFromRoom(oldRoom.id, client.user.clientId, function (users) {
+          opeka.user.sendUserList(oldRoom.group, oldRoom.id, users);
+        });
+        self.logger.info('@debug changeRoom: User was removed from different room');
+      }
 
       if (quit) {
         client.now.quitRoom(callback);
