@@ -826,9 +826,12 @@ function Server(config, logger) {
           queueLeft = null;
         }
         // Try to remove user from room queue.
-        if (room.removeUserFromQueue(clientId)) {
-          self.everyone.now.updateQueueStatus(room.id);
+        if (room !== undefined) {
+          if (room.removeUserFromQueue(clientId)) {
+            self.everyone.now.updateQueueStatus(room.id);
+          }
         }
+
         // Try to remove user from room.
         self.removeUserFromRoom(room, clientId, activeRoomId, chatStart_Min, function(users) {
           if (users) {
