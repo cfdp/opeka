@@ -552,7 +552,9 @@ function Server(config, logger) {
       self.updateUserStatus(self.everyone.now);
 
     } else {
-      this.now.displayError("Error deleting room: a room with the specified ID does not exist.");
+      // @todo: the line below throws an error (see issue #37)
+      // this.now.displayError("Error deleting room: a room with the specified ID does not exist.");
+      self.logger.warning('@debug deleteRoom: Room could not be deleted by counselor.');
     }
   };
 
@@ -949,7 +951,7 @@ function Server(config, logger) {
     }
     // Update the server status
     self.updateUserStatus(self.everyone.now);
-    return opeka.chatOpen;
+    //return opeka.chatOpen;
   };
 
   return self;
