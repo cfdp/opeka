@@ -1365,6 +1365,9 @@
 
   // Sign-in form to get the chat started.
   Opeka.SignInFormView = Backbone.View.extend({
+
+    className: 'signin-view',
+
     events: {
       "click .connect": "preventDoublePost",
       "submit form": "signIn"
