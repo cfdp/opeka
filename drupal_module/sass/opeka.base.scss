@@ -17,6 +17,13 @@
 
   }
 
+  .groupchat,
+  .room-size-2 {
+    .footer {
+      display: none;
+    }
+  }
+
 }
 
 /* All users */
@@ -52,11 +59,4 @@
     }
   }
 
-}
-
-.groupchat,
-.room-size-2 {
-  .footer {
-    display: none;
-  }
 }
