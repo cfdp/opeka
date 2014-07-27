@@ -8,18 +8,15 @@
 # exec >  >(tee -a /home/ubuntu/programs/cfdpchat/drupal_module/scripts/restart.log)
 # exec 2> >(tee -a /home/ubuntu/programs/cfdpchat/drupal_module/scripts/restart.log >&2)
 
-echo -e "Restarting the chat, this will take a few seconds... arg: $1 \n"
+echo -e "Restarting the chat, this will take a few seconds... \n"
 if [ "$1" == "http://ch.curachat.com" ]
 then
-  echo "chat is ch"
   sudo /usr/bin/monit restart cyberhuschat
 elif [ "$1" == "http://kram.curachat.com" ]
 then
-  echo "chat is kram"
   sudo /usr/bin/monit restart kramchat
 elif [ "$1" == "http://netstof.curachat.com" ]
 then
-  echo "chat is netstof"
   sudo /usr/bin/monit restart netstofchat
 else
   echo "Chat not identified - please contact support."
