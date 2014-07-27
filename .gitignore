@@ -11,4 +11,4 @@
 /drupal_module/scripts/start_ch_chat.sh
 /drupal_module/scripts/stopchat.sh
 /logs
-
+.brackets.json

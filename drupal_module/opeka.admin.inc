@@ -103,6 +103,12 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_pairchat_user_list', 0),
   );
 
+  $form['opeka_server_restart'] = array(
+   '#type' => 'submit',
+   '#value' => 'Restart server',
+   '#submit' => array('opeka_restart_server')
+  );
+
   // $form['opeka_server_start'] = array(
   //   '#type' => 'submit',
   //   '#value' => 'Start server',
@@ -114,8 +120,20 @@ function opeka_admin_settings_form($form, &$form_state) {
   //   '#value' => 'Stop server',
   //   '#submit' => array('opeka_stop_server')
   //   );
-
+  
   return system_settings_form($form);
+}
+
+function opeka_restart_server($form, &$form_state){
+ global $base_url;
+ $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
+ $output = shell_exec($opeka_path . '/scripts/restart_wrapper.sh');
+ if ($output == NULL) {
+   drupal_set_message(t('Something went wrong - the chat was not restarted'), 'status');
+ }
+ else {
+   drupal_set_message($output, 'status');
+ }
 }
 
 // function opeka_start_server($form, &$form_state){
