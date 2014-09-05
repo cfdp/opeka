@@ -10,5 +10,6 @@
 /drupal_module/scripts/startchat.sh
 /drupal_module/scripts/start_ch_chat.sh
 /drupal_module/scripts/stopchat.sh
+/drupal_module/scripts/restart_wrapper.sh
 /logs
 .brackets.json
