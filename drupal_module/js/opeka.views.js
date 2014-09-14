@@ -309,6 +309,7 @@
           clientId: now.core.clientId,
           labels: {
             userListHeading: Drupal.t('User list'),
+            roomActions: Drupal.t('Room actions'),
             clearMessages: Drupal.t("Clear messages"),
             deleteRoom: Drupal.t('Delete room'),
             gender: { f: Drupal.t('woman'), m: Drupal.t('man') },
@@ -319,7 +320,9 @@
             placeholder: Drupal.t('No users'),
             unmuteUser: Drupal.t('Unmute user'),
             whisper: Drupal.t('Whisper'),
-            registrationform: Drupal.t('Registration form')
+            registrationForm: Drupal.t('Registration'),
+            registrationFormLink: Drupal.t('Open registration form'),
+            noRegistrationForm: Drupal.t('No registration form entered'),
           },
           room: this.model,
           users: this.model.get('userList')
@@ -1067,6 +1070,7 @@
       var roomList = Opeka.roomList,
           hidePairRooms = false,
           chatOpen = Opeka.status.attributes.chatOpen,
+          queueSystem = Opeka.status.attributes.queueSystem,
           html = '';
       // Hide rooms with only two slots.
       if (Opeka.features && Opeka.features.hidePairRoomsOnRoomList) {
@@ -1088,6 +1092,7 @@
         },
         hidePairRooms: hidePairRooms,
         rooms: roomList,
+        queueSystem: queueSystem,
         chatOpen: chatOpen
       });
 
@@ -1382,20 +1387,20 @@
     },
 
     render: function () {
-      var name = '';
-      var chatOpen = this.model.get('chatOpen');
-
+      var name = '',
+          chatOpen = this.model.get('chatOpen');
+      
+      //@todo: the visibility of the name should probably be a setting somewhere
+      //Replace the Drupal username with rådgiver(counselor), not using the actual user name
+      //name = Drupal.settings.opeka.user.name;
       if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.name) {
-
-        //@daniel - @todo: the visibility of the name should probably be a setting somewhere
-        //Replace the Drupal username with rådgiver(counselor), not using the actual user name
-        //name = Drupal.settings.opeka.user.name;
         name = Drupal.t('Counselor');
       }
 
       // If the chat is closed, only authenticated Drupal users is presented with the sign in form
       if (Drupal.settings.opeka.user || this.model.get('chatOpen')) {
         var form = JST.opeka_connect_form_tmpl({
+          accessCodeEnabled: Opeka.status.attributes.accessCodeEnabled,
           labels: {
             action: Drupal.t('Ready for chat'),
             age: Drupal.t('Age'),
@@ -1404,6 +1409,7 @@
             male: Drupal.t('Male'),
             nick: Drupal.t('Nickname'),
             placeholder: Drupal.t('Anonymous'),
+            accessCode: Drupal.t('Access code'),
           },
           name: name
         });
@@ -1429,14 +1435,14 @@
     signIn: function (event) {
       var user = Drupal.settings.opeka.user || {},
           view = this;
-      //@daniel
-      //add a random number to each anonymous user to help in distinguishing them
       
+      //add a random number to each anonymous user to help in distinguishing them
       var x = Math.floor((Math.random()*50)+1);
 
       user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous'+x);
       user.age = this.$el.find('.age').val();
       user.gender = this.$el.find('.gender').val();
+      user.accessCode = this.$el.find('.accesscode').val();
       user.roomId = this.roomId;
       user.queueId = this.queueId;
 

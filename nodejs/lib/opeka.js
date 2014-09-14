@@ -141,6 +141,7 @@ function Server(config, logger) {
         results.queueSystem = self.config.get('features:queueSystem');
         results.fullRoomLink = self.config.get('features:fullRoomLink');
         results.chatPageURL = self.config.get('chatPage');
+        results.accessCodeEnabled = self.config.get('features:accessCodeEnabled');
         results.chatOpen = opeka.chatOpen;
 
         context.updateStatus(results);
@@ -160,10 +161,14 @@ function Server(config, logger) {
    * resources required for the safe operation of the chat.
    */
   self.everyone.now.signIn = function (clientUser, callback) {
-    var client = this;
+    var client = this,
+        accessCode = self.config.get('accessCode'),
+        accessCodeEnabled = self.config.get('features:accessCodeEnabled');
 
-    opeka.user.authenticate(clientUser, function (err, account) {
+    opeka.user.authenticate(clientUser, accessCodeEnabled, accessCode, function (err, account) {
       if (err) {
+        self.logger.info('Incorrect access code given.');
+        client.now.accessDenied(client.user.clientId);
         throw err;
       }
 
@@ -187,16 +192,12 @@ function Server(config, logger) {
         // In this way we are able to give to the counselors the ability to whisper
         nowjs.getGroup(client.user.clientId).addUser(client.user.clientId);
 
-        self.logger.info('Regular user signed in.', client.user.clientId);
-
         // Store the location information for later use, if they have been defined.
         if (clientUser.address) {
           var add = clientUser.address.split(", ");
           client.user.city = add[0];
           client.user.state = add[1];
         }
-
-
 
         client.now.receiveRoomList(opeka.rooms.clientData());
       }
@@ -208,6 +209,7 @@ function Server(config, logger) {
       client.user.nickname = clientUser.nickname;
       client.user.gender = clientUser.gender;
       client.user.age = clientUser.age;
+      client.user.accessCode = clientUser.accessCode;
 
       // Update online users count for all clients.
       self.updateUserStatus(self.everyone.now);
@@ -708,7 +710,7 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId],
         user = this.user;
 
-    // Verify that whether the user is a councellor, so we can set a
+    // Verify whether the user is a councellor, so we can set a
     // flag on the message.
     self.councellors.hasClient(user.clientId, function (isCouncellor) {
       var messageObj = {

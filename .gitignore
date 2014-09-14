@@ -13,3 +13,4 @@
 /drupal_module/scripts/restart_wrapper.sh
 /logs
 .brackets.json
+/db-template

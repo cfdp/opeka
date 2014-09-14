@@ -515,6 +515,16 @@ var Opeka = { status: {}},
     }
   };
 
+  // Response to a user not entering the correct access code
+  now.accessDenied = function (clientId) {
+      var view = new Opeka.FatalErrorDialogView({
+        message: Drupal.t("Sorry, you did not enter the correct code."),
+        title: Drupal.t('Wrong code.')
+      });
+
+      view.render();
+  };
+
   /**
    * If the client user is leaving a pair room and hidePairRoomsOnRoomList is true
    * send him to the goodbye page
@@ -653,7 +663,7 @@ var Opeka = { status: {}},
     if (!now) {
       var view = new Opeka.FatalErrorDialogView({
         message: Drupal.t('The chat server seems to be offline. Please reload the page to try connecting again or contact support if the problem persists.'),
-        title: Drupal.t('No connection server')
+        title: Drupal.t('No connection to server')
       });
 
       view.render();

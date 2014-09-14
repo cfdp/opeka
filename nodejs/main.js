@@ -26,7 +26,11 @@ nconf.defaults({
   "features": {
     "hidePairRoomsOnRoomList": false,
     "automaticPausePairRooms": true,
-    "queueSystem" : false
+    "queueSystem" : false,
+    "accessCodeEnabled" : false
+  },
+  "authentication": {
+    "accessCode": ""
   },
   "server": {
     "hostname": "localhost",

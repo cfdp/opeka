@@ -57,7 +57,7 @@
   <% } %>
   <% if (admin) { %>
     <div class="sidebar-block">
-      <h5 class="sidebar-block-heading">Room actions<span class="arrow down"></span></h5>
+      <h5 class="sidebar-block-heading"><%= labels.roomActions %><span class="arrow down"></span></h5>
       <div class="sidebar-block-content room-actions btn-group"  style="display: block;">
         <button class="pause-toggle btn btn-small"><%= labels.pauseToggle %></button>
         <button class="clear-messages btn btn-small"><%= labels.clearMessages %></button>
@@ -65,14 +65,14 @@
       </div>
     </div>
     <div class="sidebar-block">
-      <h5 class="sidebar-block-heading">Registration form<span class="arrow down"></span></h5>
+      <h5 class="sidebar-block-heading"><%= labels.registrationForm %><span class="arrow down"></span></h5>
       <div class="sidebar-block-content">
         <% if (room.get('maxSize') === 2 && (Drupal.settings.opeka.reg_pair_url !== '')) { %>
-          <a class="registrationform btn" href="<%= Drupal.settings.opeka.reg_pair_url %>" target="_blank"><%= labels.registrationform %></a>
+          <a class="registrationform btn" href="<%= Drupal.settings.opeka.reg_pair_url %>" target="_blank"><%= labels.registrationFormLink %></a>
         <% } else if (Drupal.settings.opeka.reg_group_url != '') { %>
-          <a class="registrationform btn" href="<%= Drupal.settings.opeka.reg_group_url %>" target="_blank"><%= labels.registrationform %></a> 
+          <a class="registrationform btn" href="<%= Drupal.settings.opeka.reg_group_url %>" target="_blank"><%= labels.registrationFormLink %></a> 
         <%} else { %>
-          <p>No registration form entered</p>
+          <p><%= labels.noRegistrationForm %></p>
       <% } %>
       </div>
     </div>
@@ -115,31 +115,42 @@
         <% } %>
       </div>
     </div>
-        <% if (!name) { %>
+    <% if (!name) { %>
 
-    <div class="control-group">
-      <label class="control-label age-label">
-        <%= labels.age %>
-      </label>
-      <div class="controls">
-        <input class="form-text age" type="text" maxlength="2" />
+      <div class="control-group">
+        <label class="control-label age-label">
+          <%= labels.age %>
+        </label>
+        <div class="controls">
+          <input class="form-text age" type="text" maxlength="2" />
+        </div>
       </div>
-    </div>
 
-    <div class="control-group">
-      <label class="control-label gender-label">
-        <%= labels.gender %>
-      </label>
-      <div class="controls">
-        <select class="form-select gender">
-          <option value="" selected="selected"></option>
-          <option value="m"><%= labels.male %></option>
-          <option value="f"><%= labels.female %></option>
-        </select>
+      <div class="control-group">
+        <label class="control-label gender-label">
+          <%= labels.gender %>
+        </label>
+        <div class="controls">
+          <select class="form-select gender">
+            <option value="" selected="selected"></option>
+            <option value="m"><%= labels.male %></option>
+            <option value="f"><%= labels.female %></option>
+          </select>
+        </div>
       </div>
-    </div>
 
+      <% if (accessCodeEnabled) { %>
+        <div class="control-group">
+          <label class="control-label accesscode-label">
+            <%= labels.accessCode %>
+          </label>
+          <div class="controls">
+            <input class="form-text accesscode" type="text" maxlength="10" />
+          </div>
+        </div>
       <% } %>
+
+    <% } %>
     <div class="control-group">
       <div class="controls">
         <input class="connect form-submit btn btn-success" type="submit" value="<%= labels.action %>" />
@@ -153,7 +164,9 @@
 <script id="opeka_room_list_tmpl" type="application/template">
   <% if (admin) { %>
     <div class="queue-utils">
-      <a href="#queues" class="go-to-queues btn-util btn btn-small"><%= labels.queueLink %></a>
+      <% if (queueSystem) { %>
+        <a href="#queues" class="go-to-queues btn-util btn btn-small"><%= labels.queueLink %></a>
+      <% } %>
       <button class="create-room btn btn-small btn-success"><%= labels.createRoom %></button>
       <% if (!chatOpen) { %>
         <div class="chat-state alert"><%= labels.chatClosed %></div>

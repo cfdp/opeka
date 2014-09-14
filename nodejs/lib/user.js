@@ -8,7 +8,7 @@ var _ = require("underscore"),
     drupal = require("drupal");
 
 // Authenticate a user logging on to the chat server.
-module.exports.authenticate = function (clientUser, callback) {
+module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCode, callback) {
   // If the client claims he's logged in, validate that assertion.
   if (clientUser.sid && clientUser.uid) {
     // Validate the user's session.
@@ -32,10 +32,16 @@ module.exports.authenticate = function (clientUser, callback) {
       });
     });
   }
-  // Otherwise, there's little to authenticate.
+  // Otherwise, we need to check if the accessCode feature is enabled
   else {
     var account = {};
     account.isAdmin = false;
+
+    // If the accessCode functionality is activated, make sure the right access code is given
+    if (accessCodeEnabled === true && clientUser.accessCode !== accessCode) {
+      callback(true);
+      throw 'Wrong or no access code given on signIn form';
+    }
 
     callback(null, account);
   }
