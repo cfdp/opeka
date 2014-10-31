@@ -49,15 +49,16 @@ function opeka_admin_settings_form($form, &$form_state) {
 
   $form['opeka_schedule'] = array(
     '#type' => 'textarea',
-    '#title' => t('Group chat schedule'),
-    '#description' => t('The schedule for the upcoming group chat sessions'),
+    '#title' => t('Chat schedule'),
+    '#description' => t('The schedule for the upcoming chat sessions'),
     '#required' => TRUE,
     '#default_value' => variable_get('opeka_schedule', ''),
   );
 
   $form['opeka_welcome_message'] = array(
-    '#type' => 'textfield',
+    '#type' => 'textarea',
     '#title' => t('Welcome message'),
+    '#maxlength' => 1024,
     '#description' => t('Text shown before user logs into the chat.'),
     '#required' => FALSE,
     '#default_value' => variable_get('opeka_welcome_message', ''),
@@ -125,15 +126,15 @@ function opeka_admin_settings_form($form, &$form_state) {
 }
 
 function opeka_restart_server($form, &$form_state){
- global $base_url;
- $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
- $output = shell_exec($opeka_path . '/scripts/restart_wrapper.sh '. $base_url);
- if ($output == NULL) {
-   drupal_set_message(t('Something went wrong - the chat was not restarted'), 'status');
- }
- else {
-   drupal_set_message($output, 'status');
- }
+  global $base_url;
+  $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
+  $output = shell_exec($opeka_path . '/scripts/restart_wrapper.sh '. $base_url);
+  if ($output == NULL) {
+    drupal_set_message(t('Something went wrong - the chat was not restarted'), 'status');
+  }
+  else {
+    drupal_set_message($output, 'status');
+  }
 }
 
 // function opeka_start_server($form, &$form_state){
