@@ -69,7 +69,7 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#title' => t('Login sound file'),
     '#description' => t('URL to a sound file that is played for the counselor when a client logs in.'),
     '#required' => FALSE,
-    '#default_value' => variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.wav'),
+    '#default_value' => variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3'),
   );
 
   $form['opeka_feedback_url'] = array(
