@@ -33,6 +33,7 @@ To enter the chat, enter your nickname, age and gender and press “Ready to cha
 URL: /opeka#rooms
 Here’s a list of the chatrooms you can join. 
 
+<a name="for-coordinators"></a>
 For coordinators
 -------------------------------
 
@@ -45,7 +46,7 @@ Note that all existing chat rooms will be deleted and users will lose connection
 
 To restart the chat, go to “Chat configuration” and press the “Restart server” button at the bottom.
 
-
+<a name="for-devs-admins"></a>
 For developers and admins
 -------------------------
 
