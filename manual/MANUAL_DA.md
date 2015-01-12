@@ -67,6 +67,49 @@ Skulle chatten mod forventning løbe ind i tekniske vanskeligheder og har du ikk
 
 Bemærk at alle brugere vil miste forbindelsen til chatten og blive logget ud af det chatrum, de var i.
 
+###Brugeradministration
+CuraChats brugersystem er konstrueret således, at der tilknyttes en eller flere koordinatorer og rådgivere til systemet. I vælger selv hvem der skal være koordinatorer. Herudover vil der være en administratorrolle med fulde privilegier, som kan varetages af jer eller CfDP efter aftale.
+
+Koordinatorer og rådgivere kan kun logge på CuraChat fra den/de IP-adresse(r) som chatten er bundet til. 
+
+**Koordinator har adgang til følgende data og funktioner:**
+
+Data:
+
+ - Email og brugernavn på registrerede brugere (rådgivere og
+   koordinatorer)
+
+Funktioner
+
+ - Generelle funktioner 
+ - Administration af brugere (inkl. oprettelse af nye brugere) 
+ - Inspektion af login-historik over registrerede brugere
+ - Diverse systemfunktioner
+ - Chatspecifikke funktioner
+ - Tænd og sluk for chat-systemet
+ - Oprettelse og sletning af chatrum samt diverse chatrådgiverfunktioner
+ - Opret ban code (forbyder en bruger adgang til chatten via blokering af IP) 
+ - Chat konfiguration
+ - Genstart chat server
+   Konfiguration af velkomstbesked og andre avancerede indstillinger
+
+**Rådgivere har adgang til følgende data og funktioner**
+
+Data:
+
+ - Egen brugerprofil (brugernavn og email-adresse)
+
+Funktioner
+
+ - Chatspecifikke funktioner
+ - Oprettelse og sletning af chatrum samt diverse chatrådgiverfunktioner
+
+Koordinator kan altså oprette nye brugere (rådgivere) direkte i administrationen. Brugerne oprettes automatisk med begrænset adgang og har udelukkende adgang til selve samtalechatten fra den oplyste IP-adresse.
+ 
+Koordinator tildeler de enkelte rådgivere unikke brugernavne således at tidspunkt og dato for rådgiverens online tid altid kan logges. Det er kun koordinatoren som har adgang til disse data. 
+
+Data (brugernavne, email og login-historik) gemmes i en database, behandles fortroligt og der tages dagligt backup. Der gemmes ikke andre personrelaterede oplysninger end de nævnte i administrationssystemet.
+
 <a name="for-devs-admins"></a>
 Udviklere og administratorer
 -------------------------
