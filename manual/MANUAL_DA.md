@@ -2,7 +2,6 @@ Kom i gang
 -----------
 *De følgende eksempler tager udgangspunkt i vores demo-installation af chatten. Vejledningen kan også bruges til chat-installationer i drift, her udskiftes blot demo.curachat.com med jeres chat-adresse, f.eks. ditdomæne.curachat.com.*
 
-[TOC]
 ### Koordinatoren logger ind og tænder for chatten
 
 Gå til https://demo.curachat.com/user og log ind med det brugernavn og password du har fået ved at [kontakte CfDP](http://curachat.com#kontakt).
@@ -67,8 +66,6 @@ Her indstiller du den lille meddelelse, som klienterne ser, når de logger på c
 Skulle chatten mod forventning løbe ind i tekniske vanskeligheder og har du ikke kunnet få hjælp i supporten, kan du vælge selv at genstarte chatten.
 
 Bemærk at alle brugere vil miste forbindelsen til chatten og blive logget ud af det chatrum, de var i.
-
-To restart the chat, go to “Chat configuration” and press the “Restart server” button at the bottom.
 
 <a name="for-devs-admins"></a>
 Udviklere og administratorer
