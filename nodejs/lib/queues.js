@@ -47,6 +47,7 @@ var Queue = function (options) {
 
   // Add a user to the queue.
   self.addToQueue = function (user) {
+    util.log('User added to queue ');
     var position;
     _.forEach(self.queue, function (queueUser, index) {
       if (queueUser.clientId === user.clientId) {
