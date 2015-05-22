@@ -14,7 +14,7 @@
   Opeka.Sync = function(method, model, options) {
     if (model instanceof Opeka.Room) {
       if (method === 'create') {
-        now.createRoom(model.toJSON(), function (err, success) {
+        Opeka.remote.createRoom(model.toJSON(), function (err, success) {
           if (err) {
             var errMsg = new Opeka.DialogView({
               content: err
@@ -29,12 +29,12 @@
       //} else if (method === 'read') {
       //} else if (method === 'update') {
       } else if (method === 'delete') {
-        now.deleteRoom(model.id, options.message);
+        Opeka.remote.deleteRoom(model.id, options.message);
       }
     }
     else if (model instanceof Opeka.Queue) {
       if (method === 'create') {
-        now.createQueue(model.toJSON(), function (err, success) {
+        Opeka.remote.createQueue(model.toJSON(), function (err, success) {
           if (err) {
             var errMsg = new Opeka.DialogView({
               content: err

@@ -42,7 +42,7 @@ function opeka_admin_settings_form($form, &$form_state) {
   $form['opeka_nowjs_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Opeka server URL'),
-    '#description' => t('URL to the Spravka webservice JavaScript start point, eg. http://localhost:3000/nowjs/now.js'),
+    '#description' => t('URL to the Opeka webservice, eg. http://localhost:3000/opeka'),
     '#required' => TRUE,
     '#default_value' => variable_get('opeka_nowjs_url', ''),
   );

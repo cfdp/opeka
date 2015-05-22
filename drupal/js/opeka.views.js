@@ -131,7 +131,7 @@
     deleteMessage: function (event) {
       var messageId = $(event.currentTarget).closest('li').attr('data-message-id');
 
-      now.roomDeleteMessage(this.model.id, messageId);
+      Opeka.remote.roomDeleteMessage(this.model.id, messageId);
 
       if (event) {
         event.preventDefault();
@@ -148,7 +148,7 @@
     // Make the user leave the queue for a chat room.
     leaveQueue: function (event) {
       // Remove the user from the Queue.
-      now.removeUserFromQueue(this.model.id, now.core.clientId);
+      Opeka.remote.removeUserFromQueue(this.model.id, Opeka.clientData.clientId);
       Opeka.router.navigate("rooms", {trigger: true});
 
       if (event) {
@@ -167,7 +167,7 @@
       }
       else {
         // Remove the user from the room.
-        now.removeUserFromRoom(this.model.id, now.core.clientId);
+        Opeka.remote.removeUserFromRoom(this.model.id, Opeka.clientData.clientId);
         $(window).trigger('leaveRoom');
         Opeka.router.navigate("rooms", {trigger: true});
       }
@@ -198,7 +198,7 @@
       // Remove the message sent.
       this.$el.find('input.message').val('');
       if (message !== '') {
-        now.sendMessageToRoom(this.model.id, message);
+        Opeka.remote.sendMessageToRoom(this.model.id, message);
       }
 
       if (event) {
@@ -242,7 +242,7 @@
       if (JST.opeka_chat_sidebar_tmpl) {
         this.$el.html(JST.opeka_chat_sidebar_tmpl({
           admin: this.admin,
-          clientId: now.core.clientId,
+          clientId: Opeka.clientData.clientId,
           labels: {
             clearMessages: Drupal.t("Clear messages"),
             deleteRoom: Drupal.t('Delete room'),
@@ -289,9 +289,9 @@
     // For when the pause/unpause button is pressed.
     pauseToggle: function (event) {
       if (!this.model.get('paused')) {
-        now.pauseRoom(this.model.id, function (err) {});
+        Opeka.remote.pauseRoom(this.model.id, function (err) {});
       } else {
-        now.unpauseRoom(this.model.id, function (err) {});
+        Opeka.remote.unpauseRoom(this.model.id, function (err) {});
       }
 
       if (event) {
@@ -316,7 +316,7 @@
     // For when you need to mute a user.
     muteUser: function (event) {
       var clientId = $(event.currentTarget).closest('li').attr('data-client-id');
-      now.mute(this.model.id, clientId);
+      Opeka.remote.mute(this.model.id, clientId);
 
       if (event) {
         event.preventDefault();
@@ -326,7 +326,7 @@
     // For when you need to unmute a user.
     unmuteUser: function (event) {
       var clientId = $(event.currentTarget).closest('li').attr('data-client-id');
-      now.unmute(this.model.id, clientId);
+      Opeka.remote.unmute(this.model.id, clientId);
 
       if (event) {
         event.preventDefault();
@@ -379,7 +379,7 @@
     },
 
     generateBanCode : function (event) {
-      now.getBanCode(function(banCode) {
+      Opeka.remote.getBanCode(function(banCode) {
         var dialog = new Opeka.BanCodeDialogView({banCode: banCode});
 
         dialog.render();
@@ -422,7 +422,7 @@
 
     leaveQueue: function (event) {
       // Remove the user from the room.
-      now.removeUserFromGlobalQueue(this.model.id, now.core.clientId);
+      Opeka.remote.removeUserFromGlobalQueue(this.model.id, Opeka.clientData.clientId);
       Opeka.router.navigate("rooms", {trigger: true});
       this.remove();
 
@@ -627,7 +627,7 @@
     },
 
     clearMessages: function (event) {
-      now.triggerDeleteAllMessages(this.model.id);
+      Opeka.remote.triggerDeleteAllMessages(this.model.id);
       this.remove();
 
       if (event) {
@@ -673,7 +673,7 @@
     deleteRoom: function (event) {
       var finalMessage = this.dialogElement.find('.final-message').val();
 
-      now.deleteRoom(this.model.id, finalMessage);
+      Opeka.remote.deleteRoom(this.model.id, finalMessage);
       this.remove();
 
       if (event) {
@@ -851,7 +851,7 @@
 
     leaveRoom: function (event) {
       // Remove the user from the room.
-      now.removeUserFromRoom(this.options.roomId, now.core.clientId);
+      Opeka.remote.removeUserFromRoom(this.options.roomId, Opeka.clientData.clientId);
       $(window).trigger('leaveRoom');
       Opeka.router.navigate("rooms", {trigger: true});
       this.remove();
@@ -890,7 +890,7 @@
       }
 
       html = JST.opeka_room_list_tmpl({
-        admin: _.isFunction(now.isAdmin),
+        admin: Opeka.clientData.isAdmin,
         labels: {
           createRoom: Drupal.t('Create room'),
           placeholder: Drupal.t('No rooms created'),
@@ -902,12 +902,12 @@
 
       if (hidePairRooms) {
         html += JST.opeka_pair_room_list_tmpl({
-          admin: _.isFunction(now.isAdmin),
+          admin: Opeka.clientData.isAdmin,
           rooms: roomList
         });
       }
 
-      if (_.isFunction(now.isAdmin)) {
+      if (Opeka.clientData.isAdmin) {
         html += JST.opeka_room_list_create_room_tmpl({
           labels: {
             createRoom: Drupal.t('Create room')
@@ -1012,7 +1012,7 @@
 
       // If a ban code was provided, try banning the user.
       if (banCode) {
-        now.banUser(this.clientId, banCode, function (err) {
+        Opeka.remote.banUser(this.clientId, banCode, function (err) {
           if (err) {
             var dialog = new Opeka.DialogView({
               title: Drupal.t('Ban failed'),
@@ -1026,7 +1026,7 @@
       }
 
       // Kick the user.
-      now.kick(this.clientId, message, this.model.id)
+      Opeka.remote.kick(this.clientId, message, this.model.id)
 
       // Prevent event if needed.
       if (event) {
@@ -1074,7 +1074,7 @@
           message = form.find('input.whisper-message').val();
 
       // Whisper the user.
-      now.whisper(this.clientId, message);
+      Opeka.remote.whisper(this.clientId, message);
       this.remove();
       // Prevent event if needed.
       if (event) {

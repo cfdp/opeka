@@ -9,7 +9,19 @@
  */
 /*global now */
 
-var Opeka = { status: {}},
+var Opeka = {
+      'status': {},
+      'clientSideMethods': {},
+      'clientData': {
+        'clientId': null,
+        'isBanned': false,
+        'isAdmin': false,
+        'isSignedIn': false
+      },
+      // Placeholder for remote methods, will be set to the dnode remote object when connected
+      'remote': null,
+      'dnode': null,
+    },
     // Initialise window.JST if it does not exist.
     JST = JST || {};
 
@@ -47,7 +59,7 @@ var Opeka = { status: {}},
     // signIn page.
     checkSignIn: function () {
       // All signed in users are supposed to have the changeRoom method.
-      if (!_.isFunction(now.changeRoom)) {
+      if (!Opeka.clientData.isSignedIn) {
         this.navigate("", {trigger: true});
       }
       else {
@@ -63,8 +75,8 @@ var Opeka = { status: {}},
 
       if (nonce) {
         // Reserve our spot as soon as the Now server is able.
-        now.ready(function () {
-          now.reserveRoomSpot(nonce, function (roomId) {
+        Opeka.dnode.on('remote', function () {
+          Opeka.remote.reserveRoomSpot(nonce, function (roomId) {
             view.roomId = roomId;
           });
         });
@@ -93,7 +105,7 @@ var Opeka = { status: {}},
 
     // The actual chatroom page.
     room: function (roomId) {
-      var admin = _.isFunction(now.isAdmin),
+      var admin = Opeka.clientData.isAdmin,
           room = Opeka.roomList.get(roomId),
           sidebar,
           that = this;
@@ -117,7 +129,7 @@ var Opeka = { status: {}},
         }
 
         // Render the view when the server has confirmed our room change.
-        now.changeRoom(roomId, function (response, url, queueId) {
+        Opeka.remote.changeRoom(roomId, function (response, url, queueId) {
           if (response !== 'OK') {
             // response is false if no queue is used and room is full, redirect to url.
             if (response === false) {
@@ -143,7 +155,7 @@ var Opeka = { status: {}},
     },
 
     queueList: function () {
-      var admin = _.isFunction(now.isAdmin);
+      var admin = Opeka.clientData.isAdmin;
       if (admin) {
         var view = new Opeka.QueueListView({});
 
@@ -170,7 +182,7 @@ var Opeka = { status: {}},
             model: queue
           });
 
-          now.getGlobalQueuePosition(queueId, true, function (position, rooms, roomId) {
+          Opeka.remote.getGlobalQueuePosition(queueId, true, function (position, rooms, roomId) {
             if (roomId && Opeka.roomList.get(roomId)) {
               that.navigate('rooms/' + roomId, {trigger: true});
             }
@@ -188,7 +200,7 @@ var Opeka = { status: {}},
   });
 
   // Recieve the user list from the server.
-  now.receiveUserList = function (roomId, userList) {
+  Opeka.clientSideMethods.receiveUserList = function (roomId, userList) {
     var room = Opeka.roomList.get(roomId);
 
     if (room) {
@@ -196,11 +208,11 @@ var Opeka = { status: {}},
     }
   };
 
-  now.updateQueueStatus = function (roomId) {
+  Opeka.clientSideMethods.updateQueueStatus = function (roomId) {
     var room = Opeka.roomList.get(roomId);
     if (room && room.get('queueSystem') !== 'private') {
       if (Opeka.queueView && Opeka.queueView.model.id === room.get('queueSystem')) {
-        now.getGlobalQueuePosition(room.get('queueSystem'), false, function (position, rooms, roomId) {
+        Opeka.clientSideMethods.getGlobalQueuePosition(room.get('queueSystem'), false, function (position, rooms, roomId) {
           Opeka.queueView.position = position;
           Opeka.queueView.rooms = rooms;
           Opeka.queueView.render();
@@ -209,7 +221,7 @@ var Opeka = { status: {}},
     }
     // This will react for the private queue only - when the user is in the queue on the room page.
     else if (Opeka.chatView && Opeka.chatView.model.id === roomId && Opeka.chatView.inQueue !== false) {
-      now.roomGetQueueNumber(roomId, function(index) {
+      Opeka.remote.roomGetQueueNumber(roomId, function(index) {
         // Error, user is no longer in the queue, maybe he just joined the
         // room or an error happened.
         if (index === null) {
@@ -228,7 +240,7 @@ var Opeka = { status: {}},
   };
 
   // For when the server updates the status attributes.
-  now.updateStatus = function (attributes) {
+  Opeka.clientSideMethods.updateStatus = function (attributes) {
     // Update the status model and view if available.
     // It might not be loaded the first time this function is called.
     if (_.isFunction(Opeka.status.set)) {
@@ -240,21 +252,21 @@ var Opeka = { status: {}},
   };
 
   // Called by the server when the admin deletes a message.
-  now.messageDeleted = function (roomId, messageId) {
+  Opeka.clientSideMethods.messageDeleted = function (roomId, messageId) {
     if (Opeka.chatView) {
       Opeka.chatView.messageDeleted(messageId);
     }
   };
 
   // Called by the server when an admin deletes all the messages.
-  now.deleteAllMessages = function (roomId) {
+  Opeka.clientSideMethods.deleteAllMessages = function (roomId) {
     if (Opeka.chatView) {
       Opeka.chatView.deleteAllMessages();
     }
   };
 
   // Recieve the active user from the server.
-  now.receiveActiveUser = function (roomId, user) {
+  Opeka.clientSideMethods.receiveActiveUser = function (roomId, user) {
     var room = Opeka.roomList.get(roomId);
     if (room) {
       room.set('activeUser', user);
@@ -262,14 +274,14 @@ var Opeka = { status: {}},
   };
 
   // Receive message from the server.
-  now.receiveMessage = function (message) {
+  Opeka.clientSideMethods.receiveMessage = function (message) {
     if (Opeka.chatView) {
       Opeka.chatView.receiveMessage(message);
     }
   };
 
   // Set the member count for a room.
-  now.updateRoomMemberCount = function (roomId, count) {
+  Opeka.clientSideMethods.updateRoomMemberCount = function (roomId, count) {
     var room = Opeka.roomList.get(roomId);
     if (room) {
       room.set('memberCount', count);
@@ -277,21 +289,21 @@ var Opeka = { status: {}},
   };
 
   // For when the server has an updated room list for us.
-  now.receiveRoomList = function (rooms) {
+  Opeka.clientSideMethods.receiveRoomList = function (rooms) {
     // This triggers a reset even on the RoomList instance, so any views
     // that use this list can listen to that for updates.
     Opeka.roomList.reset(rooms);
   };
 
   // For when the server has an updated room list for us.
-  now.receiveQueueList = function (queues) {
+  Opeka.clientSideMethods.receiveQueueList = function (queues) {
     // This triggers a reset even on the RoomList instance, so any views
     // that use this list can listen to that for updates.
     Opeka.queueList.reset(queues);
   };
 
   // Add the new room to our local room list.
-  now.roomCreated = function (room) {
+  Opeka.clientSideMethods.roomCreated = function (room) {
     var roomIsAdded = Opeka.roomList.get(room.id);
     if (!roomIsAdded) {
       Opeka.roomList.add(room);
@@ -299,7 +311,7 @@ var Opeka = { status: {}},
   };
 
   // Reaction for when joining the room.
-  now.roomJoinFromQueue = function (roomId) {
+  Opeka.clientSideMethods.roomJoinFromQueue = function (roomId) {
     var room = Opeka.roomList.get(roomId);
     if (room && room.get('queueSystem') !== 'private') {
       Opeka.router.navigate("rooms/" + roomId, {trigger: true});
@@ -311,7 +323,7 @@ var Opeka = { status: {}},
   };
 
   // Update the room with the changed attributes.
-  now.roomUpdated = function (roomId, attributes) {
+  Opeka.clientSideMethods.roomUpdated = function (roomId, attributes) {
     var room = Opeka.roomList.get(roomId);
 
     if (room) {
@@ -321,7 +333,7 @@ var Opeka = { status: {}},
 
   // Remove the room from the room list and show the final message to
   // any participants in that room.
-  now.roomDeleted = function (roomId, finalMessage) {
+  Opeka.clientSideMethods.roomDeleted = function (roomId, finalMessage) {
     var room = Opeka.roomList.get(roomId), view;
 
     if (room) {
@@ -346,8 +358,8 @@ var Opeka = { status: {}},
   };
 
   // Receive the whisper form an user.
-  now.roomRecieveWhisper = function (clientId, messageText, nickname, receiver, date) {
-    if (now.core.clientId === clientId) {
+  Opeka.clientSideMethods.roomRecieveWhisper = function (clientId, messageText, nickname, receiver, date) {
+    if (Opeka.clientData.clientId === clientId) {
       // A user receiving the whisper.
       var messageObj = {
         receiver: receiver,
@@ -363,7 +375,7 @@ var Opeka = { status: {}},
   };
 
   // Response to a user joining the room.
-  now.roomUserJoined = function (roomId, nickname) {
+  Opeka.clientSideMethods.roomUserJoined = function (roomId, nickname) {
     if (Opeka.chatView && Opeka.chatView.model && Opeka.chatView.model.id === roomId) {
       var messageObj = {
         message: Drupal.t('@user has joined the room.', { '@user': nickname }),
@@ -374,10 +386,10 @@ var Opeka = { status: {}},
   };
 
   // Response to a user being kicked.
-  now.roomUserKicked = function (roomId, clientId, message, user) {
+  Opeka.clientSideMethods.roomUserKicked = function (roomId, clientId, message, user) {
     // If this client is being kicked, navigate to a different page and
     // use a FatalErrorDialog to force them to reload the page.
-    if (now.core.clientId === clientId) {
+    if (Opeka.clientData.clientId === clientId) {
       Opeka.router.navigate("rooms", {trigger: true});
 
       var view = new Opeka.FatalErrorDialogView({
@@ -396,10 +408,10 @@ var Opeka = { status: {}},
   };
 
   // Respond to a queue being flushed.
-  now.queueIsFlushed = function(clientId) {
+  Opeka.clientSideMethods.queueIsFlushed = function(clientId) {
     // The queue is flushed, navigate to a different page and
     // use a FatalErrorDialog to force them to reload the page.
-    if (now.core.clientId === clientId) {
+    if (Opeka.clientData.clientId === clientId) {
       Opeka.router.navigate("rooms", {trigger: true});
 
       var view = new Opeka.FatalErrorDialogView({
@@ -411,7 +423,7 @@ var Opeka = { status: {}},
   }
 
   // Response to a user leaving the room.
-  now.roomUserLeft = function (roomId, nickname) {
+  Opeka.clientSideMethods.roomUserLeft = function (roomId, nickname) {
     if (Opeka.chatView.model.id === roomId) {
       var messageObj = {
         message: Drupal.t('@user has left the room.', { '@user': nickname }),
@@ -422,11 +434,11 @@ var Opeka = { status: {}},
   };
 
   // Repsonse to a user being muted.
-  now.roomUserMuted = function (roomId, clientId, user, nickname) {
+  Opeka.clientSideMethods.roomUserMuted = function (roomId, clientId, user, nickname) {
     var room = Opeka.roomList.get(roomId),
         messageObj = {};
     // Make sure we only mute the correct user and we got the room.
-    if (now.core.clientId === clientId && room) {
+    if (Opeka.clientData.clientId === clientId && room) {
       room.set('activeUser', user);
       if (Opeka.chatView.model.id === roomId) {
         messageObj = {
@@ -448,11 +460,11 @@ var Opeka = { status: {}},
   };
 
   // Repsonse to a user being muted.
-  now.roomUserUnmuted = function (roomId, clientId, user, nickname, messageText) {
+  Opeka.clientSideMethods.roomUserUnmuted = function (roomId, clientId, user, nickname, messageText) {
     var room = Opeka.roomList.get(roomId),
         messageObj = {};
     // Make sure we only mute the correct user and we got the room.
-    if (now.core.clientId === clientId && room) {
+    if (Opeka.clientData.clientId === clientId && room) {
       room.set('activeUser', user);
       if (Opeka.chatView.model.id === roomId) {
         messageObj = {
@@ -475,9 +487,11 @@ var Opeka = { status: {}},
 
   // Sign in to the chat app.
   Opeka.signIn = function (user, callback) {
-    now.signIn(user, function () {
+    Opeka.remote.signIn(user, function (clientData) {
       var destination = 'rooms',
           footer;
+
+      _.extend(Opeka.clientData, clientData);
 
       if (user.roomId) {
         destination = destination + '/' + user.roomId;
@@ -487,10 +501,11 @@ var Opeka = { status: {}},
       }
 
       callback();
+
       Opeka.router.navigate(destination, {trigger: true});
 
       footer = new Opeka.ChatFooterView({
-        banCodeGenerator: _.isFunction(now.getBanCode)
+        banCodeGenerator: Opeka.clientData.canGenerateBanCode
       });
       $('#opeka-app').find('.footer').append(footer.render().el);
     });
@@ -507,6 +522,8 @@ var Opeka = { status: {}},
 
   // Basic setup for the app when the DOM is loaded.
   $(function () {
+    var view;
+
     Opeka.compileTemplates();
 
     // We use a bare Backbone model for containing server status.
@@ -528,10 +545,10 @@ var Opeka = { status: {}},
     $('#opeka-app').html(Opeka.appViewInstance.render().el);
 
     // Handle disconnects.
-    now.core.on('disconnect', function() {
+    Opeka.onDisconnect = function() {
 
       // If the user is banned, tell him to go away.
-      if (now.isBanned) {
+      if (Opeka.clientData.isBanned) {
         view = new Opeka.BannedDialogView().render();
         return;
       }
@@ -539,33 +556,27 @@ var Opeka = { status: {}},
       // Wait five seconds before showing the dialog, in case the
       // disconnect was caused by the user reloading the page.
       window.setTimeout(function () {
-        var view = new Opeka.FatalErrorDialogView({
+        view = new Opeka.FatalErrorDialogView({
           message: Drupal.t('Your connection to the chat server was lost. Please reconnect. Contact support if problem persists.'),
           title: Drupal.t('Disconnected')
         }).render();
       }, 5000);
-    });
+    };
 
     // Once the page is loaded, start our app.
     var nf = new Opeka.NotFoundRouter();
     Opeka.router = new Opeka.MainRouter();
 
-    if (!now) {
-      var view = new Opeka.FatalErrorDialogView({
-        message: Drupal.t('The chat server seems to be offline. Please reload the page to try connecting again or contact support if the problem persists.'),
-        title: Drupal.t('No connection server')
-      });
-
-      view.render();
-    }
+    //if (!now) {
+    //  var view = new Opeka.FatalErrorDialogView({
+    //    message: Drupal.t('The chat server seems to be offline. Please reload the page to try connecting again or contact support if the problem persists.'),
+    //    title: Drupal.t('No connection server')
+    //  });
+    //
+    //  view.render();
+    //}
 
     Backbone.history.start();
   });
 
-  // The now object is ready.
-  now.ready(function() {
-    now.getFeatures(function(features) {
-      Opeka.features = features;
-    });
-  });
 }(jQuery));
