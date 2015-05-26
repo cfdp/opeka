@@ -418,7 +418,8 @@ function Server(config, logger) {
   self.councellors.addServerMethod('banUser', function (clientId, banCode, callback) {
     if (opeka.ban.validCode(banCode)) {
       opeka.groups.getClient(clientId, function () {
-        var stream = this.stream,
+        var client = this,
+            stream = client.stream,
             ip = stream.remoteAddress;
 
         if (!ip) { return; }
@@ -432,7 +433,7 @@ function Server(config, logger) {
         // Close the socket so the banned user is disconnected, after
         // the connection has had its chance to sync.
         setTimeout(function () {
-          stream.disconnect();
+          stream.end();
         }, 500);
 
         // Invalidate the ban code so it can't be used again.
