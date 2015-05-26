@@ -145,10 +145,15 @@ Groups.registerClient = function(client) {
 /**
  * Gets a client by id
  * @param clientId - the id of the client
+ * @param callback - Optional callback that will be called if the client is found
  * @returns {*} - returns null if the specified client is not found
  */
-Groups.getClient = function(clientId) {
-    return clientId ? clients[clientId] : null;
+Groups.getClient = function(clientId, callback) {
+    var client = clientId ? clients[clientId] : null;
+    if(client && callback) {
+        callback.call(client);
+    }
+    return client;
 };
 
 /**
