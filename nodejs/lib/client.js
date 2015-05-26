@@ -70,7 +70,7 @@ var Client = function(server, stream, remote, conn) {
 
             // Close the socket after data has been synced.
             setTimeout(function () {
-                stream.disconnect();
+                stream.end();
             }, 500);
         }
 
