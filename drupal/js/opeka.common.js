@@ -485,6 +485,10 @@ var Opeka = {
     }
   };
 
+  Opeka.clientSideMethods.setIsBanned = function(isBanned) {
+    Opeka.clientData.isBanned = isBanned;
+  }
+
   // Sign in to the chat app.
   Opeka.signIn = function (user, callback) {
     Opeka.remote.signIn(user, function (clientData) {
