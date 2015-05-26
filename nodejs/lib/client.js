@@ -96,7 +96,17 @@ var Client = function(server, stream, remote, conn) {
         // Remove first arg
         args.shift()
 
-        return self.clientSideMethods[functionName].apply(self, args);
+        var fn = self.clientSideMethods[functionName];
+        if(fn) {
+            return fn.apply(self, args);
+        } else {
+            self.server.logger.warning(
+                "Tried to call method '" + functionName + "' for user " +
+                self.clientId + ", but the method does not exist on the client side."
+            );
+            return false;
+        }
+
     };
 
     return self.construct();

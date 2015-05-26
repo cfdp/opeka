@@ -182,6 +182,10 @@ Groups.buildServerSideAPI = function(client) {
             _.each(grp.serverMethods, function(fn, name) {
                 methods[name] = function() {
                     if(!grp.getClient(client.clientId)) {
+                        client.server.logger.warning(
+                            "Client " + client.clientId + " tried to call method '" + name + "' which they " +
+                            "do not have access to."
+                        );
                         client.remote(
                             'displayError',
                             "You do not have permission to access to the method '" + name + "'"
