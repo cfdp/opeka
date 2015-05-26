@@ -9323,6 +9323,7 @@ var shoe = require('shoe'),
 /* global jQuery, Opeka, Drupal */
 
 (function($) {
+    Opeka.serverJSLoaded = true;
     $(function() {
         var server_url = Drupal.settings.opeka.dnode_endpoint ||
                          'http://localhost:3000/opeka';

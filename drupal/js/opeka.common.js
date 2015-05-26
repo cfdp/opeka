@@ -21,6 +21,8 @@ var Opeka = {
       // Placeholder for remote methods, will be set to the dnode remote object when connected
       'remote': null,
       'dnode': null,
+      // Boolean specifying whether the serverside Javascript loaded successfully
+      'serverJSLoaded': false
     },
     // Initialise window.JST if it does not exist.
     JST = JST || {};
@@ -566,6 +568,17 @@ var Opeka = {
         }).render();
       }, 5000);
     };
+
+    // Check whether the serverside javascript has loaded
+    window.setTimeout(function () {
+      if(!Opeka.serverJSLoaded) {
+        view = new Opeka.FatalErrorDialogView({
+          message: Drupal.t('Your connection to the chat server was lost. Please reconnect. Contact support if problem persists.'),
+          title: Drupal.t('Disconnected')
+        }).render();
+      }
+    }, 2000);
+
 
     // Once the page is loaded, start our app.
     var nf = new Opeka.NotFoundRouter();
