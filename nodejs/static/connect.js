@@ -9329,6 +9329,7 @@ var shoe = require('shoe'),
         var stream = shoe(server_url);
         var d = dnode(Opeka.clientSideMethods);
         d.on("remote", function(remote) { Opeka.remote = remote; });
+        d.on("end", Opeka.onDisconnect);
         d.pipe(stream).pipe(d);
     });
 })(jQuery);
