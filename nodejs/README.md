@@ -7,3 +7,4 @@ Built for [Cyberhus][] with [Drupal][] and [nowjs][].
 [Drupal]: http://drupal.org/
 [nowjs]: http://nowjs.com/
 
+[Setup instructions]: https://github.com/cfdp/opeka/wiki/_pages
