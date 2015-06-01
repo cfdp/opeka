@@ -1,7 +1,7 @@
 Opeka – secure anonymous chat system
 ====================================
 
-Built for [Cyberhus][] with [Drupal][] and [nowjs][].
+Built for [Cyberhus][] with [Drupal][] and [nowjs][]. Read the [Setup instructions][].
 
 [Cyberhus]: http://www.cyberhus.dk/
 [Drupal]: http://drupal.org/
