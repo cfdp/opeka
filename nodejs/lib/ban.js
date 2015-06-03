@@ -2,7 +2,8 @@
 "use strict";
 
 var crypto = require("crypto"),
-    drupal = require("drupal");
+    drupal = require("drupal"),
+    util = require("util");
 
 // In-memory cache of current bans.
 var bans = {};

@@ -1,12 +1,16 @@
-/*!
- * Copyright 2012 Cyberhus.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- */
+// Copyright 2012 Cyberhus.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*global now */
 
 var Opeka = {
@@ -49,12 +53,15 @@ var Opeka = {
   Opeka.MainRouter = Backbone.Router.extend({
     routes: {
       '': 'signIn',
-      'signIn/:nonce': 'signIn',
+      'signIn/groupChat': 'signIn',
+      'signIn/:nonce(/:chatType)': 'signIn',
       'signIn/queues/:queueId': 'signInForQueue',
       'rooms/:roomId': 'room',
       'rooms': 'roomList',
       'queues/:queueId': 'queue',
-      'queues': 'queueList'
+      'queues': 'queueList',
+      'feedback': 'feedbackPage',
+      'goodbye': 'goodbye'
     },
 
     // Check that the user is signed in, and if not, redirect to the
@@ -70,9 +77,11 @@ var Opeka = {
     },
 
     // Chat sign in page.
-    signIn: function (nonce) {
+    signIn: function (nonce, chatType) {
       var view = new Opeka.SignInFormView({
-        nonce: nonce
+        nonce: nonce,
+        chatType: chatType,
+        model: Opeka.status
       });
 
       if (nonce) {
@@ -84,7 +93,14 @@ var Opeka = {
         });
       }
 
+      if (chatType) {
+        // The chatType parameter can be set from the chat widget
+        $('body').addClass(chatType);
+      }
+
       Opeka.appViewInstance.replaceContent(view.render().el);
+      Opeka.cleanAfterChat();
+
     },
 
     signInForQueue: function (queueId) {
@@ -101,8 +117,17 @@ var Opeka = {
 
         Opeka.appViewInstance.replaceContent(view.render().el);
       }
-      // Need to make sure the chat view is not set.
-      Opeka.chatView = null;
+      // Need to make sure that chat view is removed and user has been properly removed from
+      // rooms he might have visited (needed in case of browser back navigation)
+      Opeka.cleanAfterChat();
+    },
+
+    // The feedback page
+    feedbackPage: function () {
+        var view = new Opeka.UserFeedback({});
+
+        Opeka.appViewInstance.replaceContent(view.render().el);
+        Opeka.cleanAfterChat();
     },
 
     // The actual chatroom page.
@@ -151,6 +176,7 @@ var Opeka = {
 
           if (sidebar) {
             Opeka.appViewInstance.$el.find('.sidebar').html(sidebar.render().el);
+            Opeka.addRoomSizeToBody();
           }
         });
       }
@@ -163,13 +189,13 @@ var Opeka = {
 
         Opeka.appViewInstance.replaceContent(view.render().el);
       }
-      // Need to make sure the chat view is not set.
-      Opeka.chatView = null;
+      // Need to make sure the chat view is not set. @todo - needs testing
+      Opeka.cleanAfterChat();
     },
 
     queue: function(queueId) {
-      // Need to make sure the chat view is not set.
-      Opeka.chatView = null;
+      // Need to make sure the chat view is not set. @todo - needs testing
+      Opeka.cleanAfterChat();
 
       var queue = Opeka.queueList.get(queueId),
           that = this,
@@ -198,7 +224,16 @@ var Opeka = {
         }
 
       }
-    }
+    },
+
+    goodbye: function () {
+      var view = new Opeka.GoodbyeView({});
+
+      Opeka.appViewInstance.replaceContent(view.render().el);
+
+      // Need to make sure the chat view is not set.
+      Opeka.cleanAfterChat();
+    },
   });
 
   // Recieve the user list from the server.
@@ -297,9 +332,9 @@ var Opeka = {
     Opeka.roomList.reset(rooms);
   };
 
-  // For when the server has an updated room list for us.
+  // For when the server has an updated queue list for us.
   Opeka.clientSideMethods.receiveQueueList = function (queues) {
-    // This triggers a reset even on the RoomList instance, so any views
+    // This triggers a reset even on the queueList instance, so any views
     // that use this list can listen to that for updates.
     Opeka.queueList.reset(queues);
   };
@@ -349,7 +384,8 @@ var Opeka = {
 
         view.render();
 
-        Opeka.router.navigate("rooms", {trigger: true});
+        Opeka.getExitRoute(room);
+
         // Remove the sidebar.
         Opeka.appViewInstance.$el.find('.sidebar').html('');
       }
@@ -377,8 +413,12 @@ var Opeka = {
   };
 
   // Response to a user joining the room.
-  Opeka.clientSideMethods.roomUserJoined = function (roomId, nickname) {
+  Opeka.clientSideMethods.roomUserJoined = function (roomId, nickname, isAdmin) {
     if (Opeka.chatView && Opeka.chatView.model && Opeka.chatView.model.id === roomId) {
+      // If the user logged into the room is admin and the joining user is a client, play a sound
+      if (Opeka.clientData.isAdmin && !isAdmin) {
+        Opeka.userJoinedSound();
+      }
       var messageObj = {
         message: Drupal.t('@user has joined the room.', { '@user': nickname }),
         system: true
@@ -392,7 +432,9 @@ var Opeka = {
     // If this client is being kicked, navigate to a different page and
     // use a FatalErrorDialog to force them to reload the page.
     if (Opeka.clientData.clientId === clientId) {
-      Opeka.router.navigate("rooms", {trigger: true});
+      var room = Opeka.roomList.get(roomId);
+
+      Opeka.getExitRoute(room);
 
       var view = new Opeka.FatalErrorDialogView({
         message: Drupal.t('You have been kicked from the chat with the following reason: @reason.', {'@reason': message}),
@@ -422,20 +464,20 @@ var Opeka = {
       });
       view.render();
     }
-  }
+  };
 
   // Response to a user leaving the room.
-  Opeka.clientSideMethods.roomUserLeft = function (roomId, nickname) {
+  Opeka.clientSideMethods.roomUserLeft = function (roomId, nickname, chatDuration) {
     if (Opeka.chatView.model.id === roomId) {
       var messageObj = {
-        message: Drupal.t('@user has left the room.', { '@user': nickname }),
+        message: Drupal.t('@user has left the room. Chat duration: @chatDuration minutes.', { '@user': nickname, '@chatDuration': chatDuration }),
         system: true
       };
       Opeka.chatView.receiveMessage(messageObj);
     }
   };
 
-  // Repsonse to a user being muted.
+  // Response to a user being muted.
   Opeka.clientSideMethods.roomUserMuted = function (roomId, clientId, user, nickname) {
     var room = Opeka.roomList.get(roomId),
         messageObj = {};
@@ -461,11 +503,11 @@ var Opeka = {
     }
   };
 
-  // Repsonse to a user being muted.
+  // Response to a user being unmuted.
   Opeka.clientSideMethods.roomUserUnmuted = function (roomId, clientId, user, nickname, messageText) {
     var room = Opeka.roomList.get(roomId),
         messageObj = {};
-    // Make sure we only mute the correct user and we got the room.
+    // Make sure we only unmute the correct user and we got the room.
     if (Opeka.clientData.clientId === clientId && room) {
       room.set('activeUser', user);
       if (Opeka.chatView.model.id === roomId) {
@@ -491,6 +533,49 @@ var Opeka = {
     Opeka.clientData.isBanned = isBanned;
   }
 
+  // Response to a user not entering the correct access code
+  Opeka.clientSideMethods.accessDenied = function (clientId) {
+      var view = new Opeka.FatalErrorDialogView({
+        message: Drupal.t("Sorry, you did not enter the correct code."),
+        title: Drupal.t('Wrong code.')
+      });
+
+      view.render();
+  };
+
+  /**
+   * If the client user is leaving a pair room and hidePairRoomsOnRoomList is true
+   * send him to the goodbye page
+   */
+  Opeka.getExitRoute = function(room) {
+    var admin = Opeka.clientData.isAdmin;
+    if (!admin && room.get('maxSize') === 2  && Opeka.features.hidePairRoomsOnRoomList === true) {
+      Opeka.router.navigate("goodbye", {trigger: true});
+    }
+    else {
+      Opeka.router.navigate("rooms", {trigger: true});
+    }
+  };
+
+  /**
+   * Make sure user is properly removed from room
+   */
+  Opeka.cleanAfterChat = function() {
+    // Need to make sure the chat view and sidebar is not set.
+    Opeka.chatView = null;
+    Opeka.appViewInstance.$el.find('.sidebar').html('');
+
+    // Remove room size body class
+    Opeka.removeRoomSizeClass();
+    // We check if the user is signed in
+    if (Opeka.clientData.isSignedIn) {
+      Opeka.remote.cleanAfterChat(Opeka.clientData.clientId, function() {
+        // If we need to take action depending on the results from the server,
+        // it can be done here...
+      });
+    }
+  };
+
   // Sign in to the chat app.
   Opeka.signIn = function (user, callback) {
     Opeka.remote.signIn(user, function (clientData) {
@@ -511,6 +596,7 @@ var Opeka = {
       Opeka.router.navigate(destination, {trigger: true});
 
       footer = new Opeka.ChatFooterView({
+        model: Opeka.status,
         banCodeGenerator: Opeka.clientData.canGenerateBanCode
       });
       $('#opeka-app').find('.footer').append(footer.render().el);
@@ -524,6 +610,27 @@ var Opeka = {
         JST[this.id] = _.template(this.innerHTML);
       }
     });
+  };
+
+  // Adds CSS class to the body element of the page
+  // allows us to style group chats and pair room chats differently
+  Opeka.addRoomSizeToBody = function() {
+    if ($( "#room-size" ).data( "room-size" ) == 2) {
+      $('body').removeClass('room-size-2 groupchat').addClass('room-size-2');
+    }
+    else {
+      $('body').removeClass('room-size-2 groupchat').addClass('groupchat');
+    }
+  };
+
+  // Remove room size info from body tag
+  Opeka.removeRoomSizeClass = function() {
+      $('body').removeClass('room-size-2 groupchat');
+  };
+
+  // Play a sound when a client joins the chat
+  Opeka.userJoinedSound = function() {
+     document.getElementById('audiotag1').play();
   };
 
   // Basic setup for the app when the DOM is loaded.
@@ -549,8 +656,10 @@ var Opeka = {
     });
 
     $('#opeka-app').html(Opeka.appViewInstance.render().el);
+    
+    // If the connection is dropped, advise the user that he has to
+    // reload the page.
 
-    // Handle disconnects.
     Opeka.onDisconnect = function() {
 
       // If the user is banned, tell him to go away.

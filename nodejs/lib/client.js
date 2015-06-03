@@ -33,8 +33,11 @@ var Client = function(server, stream, remote, conn) {
         self.nickname = null;
         self.gender = null;
         self.age = null;
+        self.accessCode = null;
         self.city = null;
         self.state = null;
+
+        self.chatStart_Min = null;
 
         self.activeRoomId = null;
         self.activeQueueRoomId = null;

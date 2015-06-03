@@ -1,0 +1,366 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  opeka.admin.inc: n/a
+#  opeka.module: n/a
+#  opeka.info: n/a
+#  js/opeka.common.js: n/a
+#  js/opeka.views.js: n/a
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Opeka\n"
+"POT-Creation-Date: 2012-04-16 14:36+0200\n"
+"PO-Revision-Date: 2012-04-16 15:43+0100\n"
+"Last-Translator: Benjamin Christensen <benjamin@benway.dk>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: opeka.admin.inc:44
+msgid "Opeka server URL"
+msgstr "Opeka server URL"
+
+#: opeka.admin.inc:45
+msgid "URL to the Spravka webservice JavaScript start point, eg. http://localhost:3000/nowjs/now.js"
+msgstr "URL til Spravka webservice JavaScript start-punktet, f.eks. http://localhost:3000/nowjs/now.js"
+
+#: opeka.module:16
+msgid "Access the chat system"
+msgstr "Tilgå chatsystemet"
+
+#: opeka.module:17
+msgid "Grants a user normal access to the Opeka chat system."
+msgstr "Giver en bruger normal adgang til Opeka chatsystemet."
+
+#: opeka.module:20
+msgid "Administer the chat system"
+msgstr "Administrér chatsystemet"
+
+#: opeka.module:21
+msgid "Grants a user access to the admin backend of the Opeka chat system."
+msgstr "Giver en bruger adgang til administrationsdelen af Opeka chatsystemet."
+
+#: opeka.module:83
+msgid "Opeka web service URL missing."
+msgstr "Opeka web service URL mangler."
+
+#: opeka.module:33;40
+msgid "Chat"
+msgstr "Chat"
+
+#: opeka.module:47
+msgid "Opeka chat system"
+msgstr "Opeka chatsystem"
+
+#: opeka.module:48
+msgid "Provides settings for the chat service."
+msgstr "Tilbyder indstillinger for chatten."
+
+#: opeka.info:0
+msgid "Opeka"
+msgstr "Opeka"
+
+#: opeka.info:0
+msgid "Secure anonymous chat system, built with Drupal and nowjs."
+msgstr "Sikkert, anonymt chatsystem, udviklet med Drupal og nowjs."
+
+#: js/opeka.common.js:0
+msgid "Page @path was not found."
+msgstr "Siden @path blev ikke fundet."
+
+#: js/opeka.common.js:0
+msgid "An error happened and you have lost the queue status, you can reload and join the queue again."
+msgstr "Hov! Der er sket en fejl, og du har mistet din placering i køen. Du kan genindlæse siden og stille dig i kø igen."
+
+#: js/opeka.common.js:0
+msgid "Error"
+msgstr "Fejl"
+
+#: js/opeka.common.js:0
+msgid "Chat ended"
+msgstr "Chat afsluttet"
+
+#: js/opeka.common.js:0
+msgid "@user has joined the room."
+msgstr "@user har logget på chatten."
+
+#: js/opeka.common.js:0
+msgid "You have been kicked from the chat with the following reason: @reason."
+msgstr "Du er blevet udelukket fra chatten af følgende grund: @reason"
+
+#: js/opeka.common.js:0
+msgid "Kicked"
+msgstr "Smidt ud"
+
+#: js/opeka.common.js:0
+msgid "User @user was kicked from the chat."
+msgstr "Brugeren @user blev smidt ud af chatten."
+
+#: js/opeka.common.js:0
+msgid "@user has left the room."
+msgstr "@user har forladt chatten."
+
+#: js/opeka.common.js:0
+msgid "You have been muted by @user."
+msgstr "Du er blevet frataget din ret til at skrive i chatten af @user."
+
+#: js/opeka.common.js:0
+msgid "@user have been muted."
+msgstr "@user er blevet frataget ret til at skrive."
+
+#: js/opeka.common.js:0
+msgid "You have been unmuted by @user."
+msgstr "Du har fået tildelt ret til at skrive af @user."
+
+#: js/opeka.common.js:0
+msgid "@user have been unmuted."
+msgstr "@user har fået tildelt sin ret til at skrive."
+
+#: js/opeka.common.js:0
+msgid "Your connection to the chat server was lost. Please reconnect. Contact support if problem persists."
+msgstr "Forbindelsen til chatserveren blev afbrudt. Forsøg evt. at logge på igen. Kontakt venligst support, hvis problemet opstår igen."
+
+#: js/opeka.common.js:0
+msgid "Disconnected"
+msgstr "Logget af"
+
+#: js/opeka.common.js:0
+msgid "The chat server seems to be offline. Please reload the page to try connecting again or contact support if the problem persists."
+msgstr "Chatserveren ser ud til at være offline. Forsøg evt. at genindlæse siden eller kontakt support hvis problemet ikke forsvinder."
+
+#: js/opeka.common.js:0
+msgid "No connection server"
+msgstr "Ingen forbindelse til serveren"
+
+#: js/opeka.views.js:0
+msgid "Loading chat…"
+msgstr "Chatten indlæses..."
+
+#: js/opeka.views.js:0
+msgid "Chat room is full, you are currently in queue as number: @number. You can stay and wait until you can enter or leave the queue."
+msgstr "Chatten er optaget, du er lige nu i kø som nummer: @number. Du kan blive og vente indtil du kan komme igennem eller forlade køen."
+
+#: js/opeka.views.js:0
+msgid "Leave queue"
+msgstr "Forlad køen"
+
+#: js/opeka.views.js:0
+msgid "Leave chat room"
+msgstr "Forlad chatten"
+
+#: js/opeka.views.js:0
+msgid "Type message here…"
+msgstr "Skriv din besked her..."
+
+#: js/opeka.views.js:0
+msgid "The room is paused"
+msgstr "Rummet er sat på pause"
+
+#: js/opeka.views.js:0
+msgid "Send"
+msgstr "Send"
+
+#: js/opeka.views.js:0
+msgid "Pause chat"
+msgstr "Sæt chatten på pause"
+
+#: js/opeka.views.js:0
+msgid "Unpause chat"
+msgstr "Sæt chatten igang efter pause"
+
+#: js/opeka.views.js:0
+msgid "Clear messages"
+msgstr "Ryd alle beskeder"
+
+#: js/opeka.views.js:0;0
+msgid "Delete room"
+msgstr "Slet chatrum"
+
+#: js/opeka.views.js:0
+msgid "woman"
+msgstr "Pige"
+
+#: js/opeka.views.js:0
+msgid "man"
+msgstr "Dreng"
+
+#: js/opeka.views.js:0
+msgid "Kick"
+msgstr "Kick"
+
+#: js/opeka.views.js:0
+msgid "Mute"
+msgstr "Mute"
+
+#: js/opeka.views.js:0
+msgid "No users"
+msgstr "Ingen brugere"
+
+#: js/opeka.views.js:0
+msgid "Unmute"
+msgstr "Unmute"
+
+#: js/opeka.views.js:0;0
+msgid "Whisper"
+msgstr "Hvisk"
+
+#: js/opeka.views.js:0
+msgid "Reload"
+msgstr "Genindlæs"
+
+#: js/opeka.views.js:0
+msgid "There are !guests guests and !councellors councellors online"
+msgstr "Der er !guests brugere and !councellors rådgivere online"
+
+#: js/opeka.views.js:0
+msgid "Please confirm that all messages in this room should be deleted."
+msgstr "Bekræft venligtst, at alle beskeder i denne chat skal slettes."
+
+#: js/opeka.views.js:0
+msgid "Confirm clear messages"
+msgstr "Bekræft sletning af beskeder"
+
+#: js/opeka.views.js:0
+msgid "Delete messages"
+msgstr "Slet beskeder"
+
+#: js/opeka.views.js:0;0;0;0
+msgid "Cancel"
+msgstr "Fortryd"
+
+#: js/opeka.views.js:0
+msgid "Please confirm the deletion of this room. You can provide a final message that will be shown to all participants when the room is closed."
+msgstr "Bekræft venligst at dette chatrum slettes. Du kan efterlade en slutbesked, som vil blive vist til alle deltagere når rummet lukkes."
+
+#: js/opeka.views.js:0
+msgid "Final message"
+msgstr "Slutbesked"
+
+#: js/opeka.views.js:0
+msgid "Confirm deletion"
+msgstr "Bekræft sletning"
+
+#: js/opeka.views.js:0
+msgid "Any"
+msgstr "Alle"
+
+#: js/opeka.views.js:0
+msgid "Denmark"
+msgstr "Danmark"
+
+#: js/opeka.views.js:0
+msgid "Name"
+msgstr "Navn"
+
+#: js/opeka.views.js:0
+msgid "IP location"
+msgstr "IP placering"
+
+#: js/opeka.views.js:0
+msgid "Outside Denmark/Scandinavia"
+msgstr "Udenfor Danmark/Skandinavien"
+
+#: js/opeka.views.js:0
+msgid "Private room?"
+msgstr "Privat rum?"
+
+#: js/opeka.views.js:0
+msgid "Size limit"
+msgstr "Maks. antal deltagere"
+
+#: js/opeka.views.js:0
+msgid "users"
+msgstr "brugere"
+
+#: js/opeka.views.js:0
+msgid "Create new room"
+msgstr "Opret nyt chatrum"
+
+#: js/opeka.views.js:0;0
+msgid "Create room"
+msgstr "Opret chatrum"
+
+#: js/opeka.views.js:0
+msgid "Discard changes"
+msgstr "Fortryd ændringer"
+
+#: js/opeka.views.js:0
+msgid "No rooms created"
+msgstr "Ingen chatrum oprettet."
+
+#: js/opeka.views.js:0
+msgid "Kick message"
+msgstr "Kick besked"
+
+#: js/opeka.views.js:0
+msgid "Confirm kick"
+msgstr "Bekræft kick"
+
+#: js/opeka.views.js:0
+msgid "Kick user"
+msgstr "Kick bruger"
+
+#: js/opeka.views.js:0
+msgid "Whisper message"
+msgstr "Hviske-besked"
+
+#: js/opeka.views.js:0
+msgid "Whisper @name"
+msgstr "Hvisk til @name"
+
+#: js/opeka.views.js:0
+msgid "Welcome to the chat"
+msgstr "Velkommen til chatten"
+
+#: js/opeka.views.js:0
+msgid "Ready for chat"
+msgstr "Klar til at chatte"
+
+#: js/opeka.views.js:0
+msgid "Age"
+msgstr "Alder"
+
+#: js/opeka.views.js:0
+msgid "Gender"
+msgstr "Køn"
+
+#: js/opeka.views.js:0
+msgid "Female"
+msgstr "Pige"
+
+#: js/opeka.views.js:0
+msgid "Male"
+msgstr "Dreng"
+
+#: js/opeka.views.js:0
+msgid "Nickname"
+msgstr "Navn / alias"
+
+#: js/opeka.views.js:0;0
+msgid "Anonymous"
+msgstr "Anonym"
+
+#: js/opeka.views.js:0
+msgid "Starting chat…"
+msgstr "Chatten starter op..."
+
+#: js/opeka.views.js:0
+msgid "Enter"
+msgstr "Log på"
+
+#: js/opeka.views.js:0
+msgid "Type the name you want to have"
+msgstr "Det navn du vil kaldes"
+
+#: js/opeka.views.js:0
+msgid "It is important that you write a name in the box so you can distinguish each other when chatting. If there are more "Anonymous" users, you will not be able to know the difference."
+msgstr "Det er vigtigt at du skriver et navn i feltet for at I kan kende forskel på hinanden når I chatter. Hvis flere logger ind som "Anonym" vil man ikke kunne kende forskel."
+
+#: js/opeka.views.js:0
+msgid "Registration form"
+msgstr "Registreringsskema"

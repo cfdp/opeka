@@ -4,10 +4,11 @@
 "use strict";
 
 var _ = require("underscore"),
+    util = require("util"),
     drupal = require("drupal");
 
 // Authenticate a user logging on to the chat server.
-module.exports.authenticate = function (clientUser, callback) {
+module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCode, callback) {
   // If the client claims he's logged in, validate that assertion.
   if (clientUser.sid && clientUser.uid) {
     // Validate the user's session.
@@ -31,20 +32,28 @@ module.exports.authenticate = function (clientUser, callback) {
       });
     });
   }
-  // Otherwise, there's little to authenticate.
+  // Otherwise, we need to check if the accessCode feature is enabled
   else {
     var account = {};
     account.isAdmin = false;
+
+    // If the accessCode functionality is activated, make sure the right access code is given
+    if (accessCodeEnabled === true && clientUser.accessCode !== accessCode) {
+      callback(true);
+      throw 'Wrong or no access code given on signIn form';
+    }
 
     callback(null, account);
   }
 };
 
 // Filters the user data and remove personal/security sensitive data and
-// create and new user object.
+// create a new user object.
 module.exports.filterData = function (client) {
   return {
     age: client.age,
+    chatStart_Min: client.chatStart_Min,
+    chatEnd_Min: client.chatEnd_Min,
     clientId: client.clientId,
     gender: client.gender,
     isAdmin: client.isAdmin,

@@ -1,0 +1,57 @@
+/* line 1, ../sass/opeka.base.scss */
+.not-logged-in {
+  /* The sidebar is always visible in a group chat for anonymous clients*/
+}
+/* line 4, ../sass/opeka.base.scss */
+.not-logged-in.groupchat #opeka-app .content.client-sidebar-0 {
+  width: 66%;
+}
+/* line 8, ../sass/opeka.base.scss */
+.not-logged-in #opeka-app {
+  /* Anonymous clients can have the sidebar disabled */
+}
+/* line 10, ../sass/opeka.base.scss */
+.not-logged-in #opeka-app .content.client-sidebar-0 {
+  width: 100%;
+}
+/* line 14, ../sass/opeka.base.scss */
+.not-logged-in #opeka-app .content.client-sidebar-1 {
+  width: 66%;
+}
+/* line 22, ../sass/opeka.base.scss */
+.not-logged-in .groupchat .footer,
+.not-logged-in .room-size-2 .footer {
+  display: none;
+}
+
+/* All users */
+/* line 33, ../sass/opeka.base.scss */
+#opeka-app .header,
+#opeka-app .footer {
+  clear: both;
+}
+/* line 38, ../sass/opeka.base.scss */
+#opeka-app .content,
+#opeka-app .sidebar {
+  float: left;
+}
+/* line 42, ../sass/opeka.base.scss */
+#opeka-app .content {
+  width: 66%;
+}
+/* line 46, ../sass/opeka.base.scss */
+#opeka-app .sidebar {
+  width: 33%;
+}
+/* line 50, ../sass/opeka.base.scss */
+#opeka-app .emoticon {
+  margin-bottom: -6px;
+}
+/* line 54, ../sass/opeka.base.scss */
+#opeka-app .dropdown-menu li {
+  cursor: pointer;
+}
+/* line 57, ../sass/opeka.base.scss */
+#opeka-app .dropdown-menu li:hover {
+  background-color: #e6e6e6;
+}

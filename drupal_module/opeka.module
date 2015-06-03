@@ -48,7 +48,7 @@ function opeka_menu() {
   );
 
   $items['admin/config/services/opeka'] = array(
-    'title' => 'Opeka chat system',
+    'title' => 'Opeka - Chat system',
     'description' => 'Provides settings for the chat service.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('opeka_admin_settings_form'),
@@ -75,7 +75,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
 
   $stylesheets = array_merge(array(
     'opeka.base.css',
-    'opeka.theme.css',
+    /*'opeka.theme.css',
+    'jquery.ui.theme.css',*/
   ), $stylesheets);
   foreach ($stylesheets as $filename) {
     drupal_add_css($path . '/css/' . $filename);
@@ -89,13 +90,34 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
     return $errormsg;
   }
 
+  $welcome_message = variable_get('opeka_welcome_message', '');
+  $feedback_url = variable_get('opeka_feedback_url', '');
+  $reg_pair_url = variable_get('opeka_reg_pair_url', '');
+  $reg_group_url = variable_get('opeka_reg_group_url', '');
+  /* Get the pair chat user list setting */
+  $pairchat_user_list = variable_get('opeka_pairchat_user_list', 0);
+  $client_login_sound = variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3');
+
   // Settings to expose to the JavaScript client.
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
+  $settings['welcome_message'] = $welcome_message;
+  $settings['feedback_url'] = $feedback_url;
+  $settings['reg_pair_url'] = $reg_pair_url;
+  $settings['reg_group_url'] = $reg_group_url;
+  $settings['client_login_sound'] = $client_login_sound;
+  $settings['pairchat_user_list'] = $pairchat_user_list;
   $settings['dnode_endpoint'] = preg_replace('/\/connect[.]js$/', '/opeka', $js_url);
+
   drupal_add_js(array('opeka' => $settings), 'setting');
 
   // Load the required JavaScript libraries.
   drupal_add_library('system', 'ui.dialog');
+
+  // Add the Emoticons JavaScript and css files to the page. They will take care of
+  // replacing text emoticons with images
+  drupal_add_js($path .'/emoticons/lib/emoticons.js');
+  drupal_add_js($path .'/js/emoticons-support.js');
+  drupal_add_css($path . '/emoticons/support/skype/emoticons.css');
 
   // Add our default JavaScript files to the array.
   $scripts = array_merge(array(
@@ -110,7 +132,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
     drupal_add_js($path . '/js/' . $filename);
   }
 
-  // Add the nowjs JavaScript file to the page. It will take care of
+  // Add the dnode JavaScript file to the page. It will take care of
   // connecting to the nowjs server.
   drupal_add_js($js_url, array('type' => 'external'));
 }

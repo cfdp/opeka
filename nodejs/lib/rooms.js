@@ -31,18 +31,26 @@ var _ = require('underscore'),
       }
     };
 
-// Get an open room of a specific type - pair or group.
+/**
+* Get an open room of a specific type - pair or group. 
+* Should not return a paused room and it should (@todo)
+* randomize between the available rooms so counselors will be handed new clients evenly.
+* @todo: test if this works for group chats
+*/
 var getOpenRoom = function (roomType) {
   return _.find(roomList, function (room) {
     var userCount = Object.keys(room.users).length;
 
     if (roomType === 'pair') {
-      return (room.maxSize === 2 && userCount < 2);
+      return (room.maxSize === 2 && userCount < 2 && !room.paused);
     }
   });
 };
 
+
 // Sums together a room list into empty, active and full rooms.
+// @todo: the "full" variable should be renamed to e.g. inaccessible 
+// signaling that it reflects the paused property also
 var sumRoomList = function (rooms) {
   var empty = 0,
       active = 0,
@@ -52,7 +60,8 @@ var sumRoomList = function (rooms) {
     var userCount = Object.keys(room.users).length;
 
     if (userCount > 0) {
-      if (room.isFull()) {
+      // If the room is full or paused, it counts as inaccessible
+      if (room.isFull() || room.paused) {
         full = full + 1;
       }
       else {
@@ -113,6 +122,13 @@ var Room = function (options) {
     self.queueSystem = options.queueSystem || 'private' // Default to private queue system.
     // When a room is created, the creator will join setting the member count to init value to 1.
     self.memberCount = 1;
+    // A room can be paused by the counselor and an autoPauseRoom setting is available as well in config.json
+    self.paused = false;
+    // Is it allowed for clients to be alone in a room without a counselor?
+    self.soloClientsAllowed = false; //@todo: should probably be a setting in config.json
+
+    // Keep track of counselor presence
+    self.counsellorPresent = true;
 
     // Create groups for connected users and councellors.
     self.group = opeka.groups.getGroup(self.id);
@@ -145,6 +161,25 @@ var Room = function (options) {
     }
   };
 
+  // Method used to see if there is a counselor in the room
+  self.hasCounsellor = function() {
+    var count;
+    var setCount = function(response) {
+      count = response;
+    }
+    // the now js count function needs to be passed a callback function into which it feeds the user count (ct)
+    self.counsellorGroup.count(function (ct) {
+      setCount(ct);
+    });
+    if (count >= 1) {
+      self.counsellorPresent = true;
+    }
+    else {
+      self.counsellorPresent = false;
+    }
+    return self.counsellorPresent;
+  };
+
   // Add an user to the group.
   // Returns: 'OK' if the user has been added to the chat, an integer that is stating
   // the user place in the queue if the chat is busy, or a negative
@@ -153,18 +188,22 @@ var Room = function (options) {
     var count = _.size(self.users);
     // When a user enters a room, he is never muted.
     client.muted = false;
-    // If we have both rooms and groups, check that we don't exceed the
-    // room size (if set) before adding the person to the room.
-    if ((client.account.isAdmin || (!self.maxSize || count < self.maxSize)) && client) {
+    // If we have both rooms and groups, check that
+    // - we don't exceed the room size (if set)
+    // - that the room is not paused
+    // - that we have a counselor present (if needed)
+    // before adding the person to the room.
+    if (client.account.isAdmin || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && (self.hasCounsellor() && !self.soloClientsAllowed)) && client) {
       self.users[client.clientId] = opeka.user.filterData(client);
       self.group.addUser(client.clientId);
 
       // Start the timer in order to retrieve at the end the duration of the chat
       if (client.account.isAdmin) {
         self.counsellorGroup.addUser(client.clientId);
+        util.log('Admin user added to room ' + self.id);
       }
       else {
-        self.chatDurationStart_Min = Math.round((new Date()).getTime() / 60000);
+        util.log('Regular user added to room ' + self.id);
       }
 
       updateRoomCounts();
@@ -197,6 +236,9 @@ var Room = function (options) {
       self.group.removeUser(clientId);
       self.counsellorGroup.removeUser(clientId);
       delete self.users[clientId];
+
+      // Update counsellorPresent state
+      self.hasCounsellor();
 
       updateRoomCounts();
     }
@@ -281,7 +323,7 @@ var Room = function (options) {
       name: self.name,
       maxSize: self.maxSize,
       memberCount: self.memberCount,
-      paused: this.paused || false,
+      paused: self.paused || false,
       private: self.private,
       queueSystem: self.queueSystem
     };
@@ -349,6 +391,7 @@ module.exports = {
   counts: roomCounts,
   getOpenRoom: getOpenRoom,
   list: roomList,
-  remove: remove
+  remove: remove,
+  updateRoomCounts: updateRoomCounts
 };
 
