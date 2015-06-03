@@ -196,7 +196,7 @@ function Server(config, logger) {
     opeka.user.authenticate(clientUser, accessCodeEnabled, accessCode, function (err, account) {
       if (err) {
         self.logger.info('Incorrect access code given.');
-        client.now.accessDenied(client.user.clientId);
+        client.remote('accessDenied', client.clientId);
         throw err;
       }
 
@@ -390,7 +390,7 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId];
 
     if (room.paused) {
-      self.logger.error('Brugeren ' + this.user.clientId + ' forsøgte at sætte rummet ' + roomId + ' på pause, selvom det allerede var på pause.');
+      self.logger.error('Brugeren ' + this.clientId + ' forsøgte at sætte rummet ' + roomId + ' på pause, selvom det allerede var på pause.');
       callback("Fejl, pausefunktion: Rummet er allerede sat på pause.");
       return;
     }
@@ -481,9 +481,9 @@ function Server(config, logger) {
   });
 
   // Function used by admins to open or close the chat.
-  self.banCodeGenerator.now.toggleChat = function (callback) {
+  self.banCodeGenerator.addServerMethod('toggleChat', function (callback) {
     callback(self.toggleChat());
-  };
+  });
 
   // Function used by the counselors to kick an user out of a room.
   self.councellors.addServerMethod('kick', function (clientId, messageText, roomId) {
@@ -658,8 +658,8 @@ function Server(config, logger) {
         queueFullUrl = self.config.get('features:queueFullUrl');
 
     // Set the chat start time
-    client.user.chatStart_Min = Math.round((new Date()).getTime() / 60000);
-    self.logger.info('Login: User chat start: ', client.user.chatStart_Min);
+    client.chatStart_Min = Math.round((new Date()).getTime() / 60000);
+    self.logger.info('Login: User chat start: ', client.chatStart_Min);
 
     // Special case when joining from the global Queue.
     // User is already in the room, so fake an OK response.
@@ -891,7 +891,7 @@ function Server(config, logger) {
                 self.everyone.remote('roomDeleted', client.activeRoomId, "Beklager, men rådgiveren mistede internetforbindelsen. Du er velkommen til at logge på igen.");
               }
             }
-            client.user.activeRoomId = null;
+            client.activeRoomId = null;
           }
         });
       });
@@ -917,7 +917,7 @@ function Server(config, logger) {
   // Utility function to remove a user from a room.
   self.removeUserFromRoom = function(room, clientId, activeRoomId, chatStart_Min, callback) {
     var autoPause = self.config.get('features:automaticPausePairRooms'),
-        removedUser = self.everyone.getClient(clientId);
+        removedUser = self.everyone.getClient(clientId),
         chatEnd_Min,
         chatDuration;
 
