@@ -8,5 +8,5 @@
   "use strict";
 
   // Used to check if is admin.
-  now.isAdmin = function () {}
+  Opeka.clientData.isAdmin = true
 }(jQuery));

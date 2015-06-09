@@ -138,7 +138,7 @@ function Server(config, logger) {
         callback(null, opeka.rooms);
       }
     }, function (err, results) {
-      if (results && _.isFunction(context.updateStatus)) {
+      if (results && context && _.isFunction(context.remote)) {
         var roomList = [],
             queueList = {},
             queues = false;
@@ -168,7 +168,7 @@ function Server(config, logger) {
         results.accessCodeEnabled = self.config.get('features:accessCodeEnabled');
         results.chatOpen = opeka.chatOpen;
 
-        context.updateStatus(results);
+        context.remote('updateStatus', results);
       }
     });
   };
@@ -400,7 +400,7 @@ function Server(config, logger) {
     self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
     // Update the room counts and chat status for all users
     opeka.rooms.updateRoomCounts();
-    self.updateUserStatus(self.everyone.now);
+    self.updateUserStatus(self.everyone);
 
     if (callback) {
       callback();
@@ -424,7 +424,7 @@ function Server(config, logger) {
     self.sendSystemMessage('[Pause]: Chat is available again.', room.group);
     // Update the room counts and chat status for all users
     opeka.rooms.updateRoomCounts();
-    self.updateUserStatus(self.everyone.now);
+    self.updateUserStatus(self.everyone);
     // When unpausing a pair room that uses a queue - get the next in queue.
     if (room.maxSize === 2 && !room.isFull() && room.queueSystem !== 'private') {
       var queue = opeka.queues.list[room.queueSystem],
@@ -801,7 +801,7 @@ function Server(config, logger) {
    * Make sure user is properly removed from room
    */
   self.everyone.addServerMethod('cleanAfterChat', function (clientId, callback) {
-    var user = this.user,
+    var user = this,
         room;
     // If the user is leaving a room, make sure he is removed properly
     if (user.activeRoomId) {
@@ -813,7 +813,7 @@ function Server(config, logger) {
         // noSoloClientsAllowed is true...
         self.removeUserFromRoom(room, user.clientId, user.activeRoomId);
         // Update the server status
-        self.updateUserStatus(self.everyone.now);
+        self.updateUserStatus(self.everyone);
         opeka.user.sendUserList(room.group, room.id, room.users);
       }
     }
@@ -993,7 +993,7 @@ function Server(config, logger) {
       opeka.chatOpen = true;
     }
     // Update the server status
-    self.updateUserStatus(self.everyone.now);
+    self.updateUserStatus(self.everyone);
     //return opeka.chatOpen;
   };
 

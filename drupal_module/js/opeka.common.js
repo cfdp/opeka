@@ -705,4 +705,13 @@ var Opeka = {
     Backbone.history.start();
   });
 
+  // Set up connect handler.
+  Opeka.onConnect = function(remote) {
+    Opeka.remote = remote;
+    Opeka.remote.getFeatures(function(features) {
+      Opeka.features = features;
+    });
+    //Opeka.MainRouter.checkSignIn();
+  };
+
 }(jQuery));
