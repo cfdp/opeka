@@ -596,7 +596,7 @@ function Server(config, logger) {
   self.councellors.addServerMethod('deleteRoom', function (roomId, finalMessage) {
     var room = opeka.rooms.list[roomId],
         lastRoom = true,
-        counselor = this.user,
+        counselor = this,
         queue;
 
     if (room) {
