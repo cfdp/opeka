@@ -16,6 +16,8 @@ var _ = require("underscore"),
     path = require('path'),
     dnode = require('dnode'),
     shoe = require('shoe'),
+    io = require('socket.io'),
+    ecstatic = require('ecstatic'),
     util = require("util"),
     uuid = require('node-uuid'),
     opeka = {
@@ -38,23 +40,9 @@ function Server(config, logger) {
 
     self.browser_script_path = path.normalize(path.join(__dirname, '../static/connect.js'));
 
+    var static_dir = path.normalize(path.join(__dirname, '../static'));
     // Configure the main web server.
-    self.server = self.createServer(self.config, function (req, res) {
-      // TODO: Preload the file content when running in production?
-      var js_content = fs.readFileSync(self.browser_script_path);
-      if(req.url == '/connect.js') {
-        res.writeHead(200, {
-          'Content-Type': "text/javascript",
-          'Content-Length': js_content.length
-        });
-        res.write(js_content);
-        res.end();
-      } else {
-        res.writeHead(200);
-        res.write('Welcome to Opeka.');
-        res.end();
-      }
-    });
+    self.server = self.createServer(self.config, ecstatic({'root': static_dir}));
 
     // Log that the server is now listening.
     self.server.listen(self.config.get('server:port'), function () {
@@ -83,6 +71,17 @@ function Server(config, logger) {
     });
     sock.install(self.server, '/opeka');
 
+    self.io_server = io(self.server);
+
+    // When a socket.io user connects, tell them about current room status
+    self.io_server.on("connection", function(socket) {
+      self.updateUserStatus({
+        'remote': function(dummy, results) {
+          socket.emit('chat-status', results);
+        }
+      })
+    });
+
     // Create groups for councellors and guests.
     self.everyone = opeka.groups.getGroup('everyone');
     self.councellors = opeka.groups.getGroup('councellors');
@@ -100,6 +99,13 @@ function Server(config, logger) {
         });
       });
     }
+  };
+
+  /**
+   * Broadcasts a call over socket.io to clients not connected to the chat-interface
+   */
+  self.broadcast =  function(name, data) {
+    self.io_server.sockets.emit(name, data);
   };
 
   /**
@@ -577,6 +583,10 @@ function Server(config, logger) {
       self.logger.info('Room ' + room.name + ' (' + room.id + ') created.');
 
       self.updateUserStatus(self.everyone);
+      self.io_server.sockets.emit("room-created", {
+        'name': room.name,
+        'id': room.id
+      });
     } else {
       callback("Error creating room: room name too short.");
     }
