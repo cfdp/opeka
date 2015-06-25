@@ -42,6 +42,8 @@ var Client = function(server, stream, remote, conn) {
         self.activeRoomId = null;
         self.activeQueueRoomId = null;
 
+        self.drupal_uid = null;
+
         groups.registerClient(self);
         conn.on('ready', function() {
             self.onConnectionReady();

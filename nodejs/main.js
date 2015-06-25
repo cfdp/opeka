@@ -27,7 +27,8 @@ nconf.defaults({
     "hidePairRoomsOnRoomList": false,
     "automaticPausePairRooms": true,
     "queueSystem" : false,
-    "accessCodeEnabled" : false
+    "accessCodeEnabled" : false,
+    "exposeDrupalUIDs": false
   },
   "authentication": {
     "accessCode": ""

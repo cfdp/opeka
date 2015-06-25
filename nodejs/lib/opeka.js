@@ -209,6 +209,11 @@ function Server(config, logger) {
       // Add the user to the signedIn group.
       self.signedIn.addUser(client.clientId);
 
+      // Expose the drupal client drupal uid if they provided one and we're configured to do so
+      if (self.config.get('features:exposeDrupalUIDs') && account.uid) {
+        client.drupal_uid = account.uid
+      }
+
       if (account.canGenerateBanCode) {
         self.banCodeGenerator.addUser(client.clientId);
         self.logger.info('User that can generate ban codes signed in.', client.clientId);

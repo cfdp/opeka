@@ -58,7 +58,8 @@ module.exports.filterData = function (client) {
     gender: client.gender,
     isAdmin: client.isAdmin,
     muted: client.muted,
-    name: client.nickname || client.account.name
+    name: client.nickname || client.account.name,
+    drupal_uid: client.drupal_uid
   };
 };
 
