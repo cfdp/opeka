@@ -206,12 +206,22 @@ function Server(config, logger) {
         throw err;
       }
 
+      // Check whether the user is required to be logged into Drupal
+      if (self.config.get("features:requireDrupalLogin") && !account.uid) {
+        self.logger.info('User without drupal login tried to access the chat.');
+        client.remote('accessDenied', client.clientId);
+        return;
+      }
+
       // Add the user to the signedIn group.
       self.signedIn.addUser(client.clientId);
 
+
       // Expose the drupal client drupal uid if they provided one and we're configured to do so
       if (self.config.get('features:exposeDrupalUIDs') && account.uid) {
-        client.drupal_uid = account.uid
+        if(!clientUser.want_to_be_anonymous) {
+          client.drupal_uid = account.uid
+        }
       }
 
       if (account.canGenerateBanCode) {

@@ -28,7 +28,8 @@ nconf.defaults({
     "automaticPausePairRooms": true,
     "queueSystem" : false,
     "accessCodeEnabled" : false,
-    "exposeDrupalUIDs": false
+    "exposeDrupalUIDs": false,
+    "requireDrupalLogin": false
   },
   "authentication": {
     "accessCode": ""
