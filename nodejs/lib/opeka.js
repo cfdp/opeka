@@ -73,15 +73,6 @@ function Server(config, logger) {
 
     self.io_server = io(self.server);
 
-    // When a socket.io user connects, tell them about current room status
-    self.io_server.on("connection", function(socket) {
-      self.updateUserStatus({
-        'remote': function(dummy, results) {
-          socket.emit('chat-status', results);
-        }
-      })
-    });
-
     // Create groups for councellors and guests.
     self.everyone = opeka.groups.getGroup('everyone');
     self.councellors = opeka.groups.getGroup('councellors');
@@ -99,13 +90,23 @@ function Server(config, logger) {
         });
       });
     }
-  };
 
-  /**
-   * Broadcasts a call over socket.io to clients not connected to the chat-interface
-   */
-  self.broadcast =  function(name, data) {
-    self.io_server.sockets.emit(name, data);
+    // When a socket.io user connects, tell them about current room status
+    self.io_server.on("connection", function(socket) {
+      // Make getDirectSignInURL available through the io_socket server as well
+      socket.on("getDirectSignInURL", function(roomType, callback) {
+        // Fake the clientid since it's used in calculating the nonce
+        var bindObj = {
+          'clientId': "faked:" + parseInt(Math.random()*1000).toString()
+        };
+
+        return self.everyone.serverMethods['getDirectSignInURL'].call(
+            bindObj, roomType, callback
+        );
+      });
+      self.broadcastChatStatus(socket);
+    });
+
   };
 
   /**
@@ -120,6 +121,18 @@ function Server(config, logger) {
     }
 
     return require('http').createServer(callback);
+  };
+
+  self.broadcastChatStatus = function(target) {
+    // Default target is everyone
+    if(!target) {
+      target = self.io_server.sockets;
+    }
+    self.updateUserStatus({
+      'remote': function(dummy, results) {
+        target.emit('chat_status', results);
+      }
+    })
   };
 
   // Update the client side guest/councellor counts.
@@ -426,6 +439,7 @@ function Server(config, logger) {
     if (callback) {
       callback();
     }
+    self.broadcastChatStatus();
   });
 
   // Allow the councellors to unpause a room.
@@ -460,6 +474,7 @@ function Server(config, logger) {
       self.everyone.remote('updateQueueStatus', room.id);
     }
     callback();
+    self.broadcastChatStatus();
   });
 
   // Function used by the counselors to ban a user from the chat.
@@ -582,29 +597,28 @@ function Server(config, logger) {
   self.councellors.addServerMethod('createRoom', function (attributes, callback) {
     attributes.uid = this.account.uid;
     if (attributes.name.length > 0) {
-      var room = new opeka.rooms.Room(attributes);
+      var room = new opeka.rooms.Room(attributes),
+          roomClientData = room.clientData();
 
       if (callback) {
-        callback(null, room.clientData());
+        callback(null, roomClientData);
       }
 
       // Send the new complete room list to connected users.
       if (room.private) {
-        self.councellors.remote('roomCreated', room.clientData());
+        self.councellors.remote('roomCreated', roomClientData);
       } else {
-        self.everyone.remote('roomCreated', room.clientData());
+        self.everyone.remote('roomCreated', roomClientData);
       }
 
       self.logger.info('Room ' + room.name + ' (' + room.id + ') created.');
 
       self.updateUserStatus(self.everyone);
-      self.io_server.sockets.emit("room-created", {
-        'name': room.name,
-        'id': room.id
-      });
+
     } else {
       callback("Error creating room: room name too short.");
     }
+    self.broadcastChatStatus();
   });
 
   // This function is called by the Counsellors in order to delete a room from the system
@@ -642,6 +656,7 @@ function Server(config, logger) {
 
       self.updateUserStatus(self.everyone);
 
+      self.broadcastChatStatus();
     } else {
       // @todo: the line below throws an error (see issue #37)
       // this.remote('displayError', "Error deleting room: a room with the specified ID does not exist.");
@@ -754,6 +769,7 @@ function Server(config, logger) {
 
     self.updateUserStatus(self.everyone);
     self.helperUpdateRoomCount(roomId);
+    self.broadcastChatStatus();
   });
 
   // Get the number you have in the queue.
@@ -998,6 +1014,8 @@ function Server(config, logger) {
         callback(users);
       }
     });
+
+    self.broadcastChatStatus();
   };
 
   self.helperUpdateRoomCount = function(roomId) {
@@ -1019,6 +1037,7 @@ function Server(config, logger) {
     }
     // Update the server status
     self.updateUserStatus(self.everyone);
+    self.broadcastChatStatus();
     //return opeka.chatOpen;
   };
 

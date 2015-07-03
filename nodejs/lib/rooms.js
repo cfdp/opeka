@@ -41,8 +41,17 @@ var getOpenRoom = function (roomType) {
   return _.find(roomList, function (room) {
     var userCount = Object.keys(room.users).length;
 
+    // No empty rooms, no full rooms and no paused rooms
+    if(userCount == 0 || userCount >= room.maxSize || room.paused) {
+      return false;
+    }
+
+    // Pair rooms should be exactly two users
     if (roomType === 'pair') {
-      return (room.maxSize === 2 && userCount < 2 && !room.paused);
+      return (room.maxSize === 2);
+    } else {
+      // And other types of room should _not_ be two users
+      return (room.maxSize !== 2);
     }
   });
 };

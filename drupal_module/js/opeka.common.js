@@ -86,7 +86,7 @@ var Opeka = {
 
       if (nonce) {
         // Reserve our spot as soon as the Now server is able.
-        Opeka.dnode.on('remote', function () {
+        $(Opeka).on('connected', function () {
           Opeka.remote.reserveRoomSpot(nonce, function (roomId) {
             view.roomId = roomId;
           });
@@ -711,6 +711,7 @@ var Opeka = {
     Opeka.remote.getFeatures(function(features) {
       Opeka.features = features;
     });
+    $(Opeka).trigger("connected");
     //Opeka.MainRouter.checkSignIn();
   };
 
