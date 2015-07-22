@@ -172,7 +172,8 @@ function Server(config, logger) {
             var roomData = {
               maxSize: room.maxSize,
               memberCount: room.memberCount,
-              name: room.name
+              name: room.name,
+              id: room.id
             };
             roomList.push(roomData);
           }
@@ -664,9 +665,22 @@ function Server(config, logger) {
     }
   });
 
+  self.councellors.addServerMethod('changeRoomSize', function(roomId, newSize) {
+    if (_.isNumber(newSize) && roomId != null) {
+      newSize = Math.round(newSize);
+      var room = opeka.rooms.list[roomId];
+      if (room && newSize != room.maxSize && newSize > 0) {
+        room.maxSize = newSize;
+        self.updateUserStatus(self.everyone);
+        self.broadcastChatStatus();
+        self.sendSystemMessage("Room size changed to "+newSize, room.group);
+      }
+    }
+  });
+
   /* Function used in order to delete all messages of a single user */
   self.councellors.addServerMethod('deleteAllMsg', function (clientId) {
-    var room = opeka.rooms.get(this.activeRoomId);
+    var room = opeka.rooms.list[this.activeRoomId];
     if (room) {
       room.group.remote('localDeleteAllMsg', clientId);
     }

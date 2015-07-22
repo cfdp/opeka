@@ -275,6 +275,7 @@
 
     events: {
       "click .clear-messages": "clearMessages",
+      "click .change-room-size": "changeRoomSize",
       "click .delete-room": "deleteRoom",
       "click .kick-user": "kickUser",
       "click .ban-user": "banUser",
@@ -311,6 +312,7 @@
             userListHeading: Drupal.t('User list'),
             roomActions: Drupal.t('Room actions'),
             clearMessages: Drupal.t("Clear messages"),
+            changeRoomSize: Drupal.t("Change room size"),
             deleteRoom: Drupal.t('Delete room'),
             gender: { f: Drupal.t('woman'), m: Drupal.t('man') },
             kickUser: Drupal.t('Kick user'),
@@ -334,6 +336,18 @@
 
     clearMessages: function (event) {
       var view = new Opeka.RoomClearView({
+        model: this.model
+      });
+
+      view.render();
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    changeRoomSize: function(event) {
+      var view = new Opeka.changeRoomSizeView({
         model: this.model
       });
 
@@ -794,6 +808,66 @@
       
       Opeka.remote.roomDeleteMessage(this.model.id, this.messageId);
 
+      this.remove();
+
+      if (event) {
+        event.preventDefault();
+      }
+    }
+  });
+
+  Opeka.changeRoomSizeView = Opeka.DialogView.extend({
+    initialize: function () {
+      // Options passed to DialogView.
+      var options = {};
+
+      _.bindAll(this);
+
+      var currentRoomData = null;
+      // Try to get room data from latest status message from server
+      var roomsList = Opeka.status.attributes.roomsList || [];
+      for (var i=0; i<roomsList.length; i++) {
+        var room = roomsList[i];
+        if (room.id === this.model.id) {
+          currentRoomData = room;
+        }
+      }
+      if (!currentRoomData) {
+        // If that didn't work (we haven't got any status messages yet), use initial data
+        var room = Opeka.roomList.get(this.model.id);
+        currentRoomData = room && room.attributes || {};
+      }
+
+      // For changing a room's maxSize.
+      options.content = JST.opeka_room_change_size_tmpl({
+        labels: {
+          inputLabel: Drupal.t('New size:'),
+        },
+        values: {
+          currentSize: currentRoomData.maxSize || null
+        }
+      });
+
+      options.dialogOptions = {
+        buttons: {},
+        title: Drupal.t('Change room size'),
+      };
+
+      options.dialogOptions.buttons[Drupal.t('Ok')] = this.changeRoomSize;
+
+      options.dialogOptions.buttons[Drupal.t('Cancel')] = this.remove;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      this.dialogElement.delegate('form', 'submit', this.changeRoomSize);
+
+      return this;
+    },
+
+    changeRoomSize: function (event) {
+      var newSize = this.dialogElement.find('.new-size').val();
+      Opeka.remote.changeRoomSize(this.model.id, parseInt(newSize, 10) || null);
       this.remove();
 
       if (event) {
