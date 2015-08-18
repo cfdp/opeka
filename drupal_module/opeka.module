@@ -56,6 +56,29 @@ function opeka_menu() {
     'file' => 'opeka.admin.inc',
   );
 
+  $items['opeka-widgets/header'] = array(
+    'title' => 'Header widget',
+    'description' => 'Header widget code for third party sites.',
+    'page callback' => 'opeka_header_widget',
+    'access arguments' => array('access content'),
+    'file' => 'opeka.pages.inc',
+  );
+
+  $items['opeka-widgets/inline'] = array(
+    'title' => 'Inline widget',
+    'description' => 'Inline widget code for third party sites.',
+    'page callback' => 'opeka_inline_widget',
+    'access arguments' => array('access content'),
+    'file' => 'opeka.pages.inc',
+  );
+
+  $items['opeka-widgets/popup'] = array(
+    'title' => 'Popup widget',
+    'description' => 'Popup widget code for third party sites.',
+    'page callback' => 'opeka_popup_widget',
+    'access arguments' => array('access content'),
+    'file' => 'opeka.pages.inc',
+  );
   return $items;
 }
 
@@ -134,4 +157,113 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   foreach ($scripts as $filename) {
     drupal_add_js($path . '/js/' . $filename);
   }
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function opeka_block_info() {
+  $blocks['header_widget'] = array(
+    // The name that will appear in the block list.
+    'info' => t('Header Widget for the chat'),
+    // Default setting.
+    'cache' => DRUPAL_CACHE_PER_ROLE,
+  );
+  return $blocks;
+}
+
+/**
+ * Get the user entered input about chat schedule from opeka admin page
+ *
+ * @return 
+ *   The text entered by user in the schedule field
+ */
+function opeka_schedule_content(){
+
+  // Get the variable with the opening hours
+  $schedule = variable_get('opeka_schedule', '');
+
+   // No content.
+  if (empty($schedule)) {
+    $schedule = t('No schedule info available.');  
+  }
+  return $schedule; 
+}
+
+
+/**
+ * Implements hook_block_view().
+ *
+ * Prepares the contents of the block.
+ */
+function opeka_block_view($delta = '') {
+  switch ($delta) {
+    case 'header_widget':
+      $block['subject'] = t('Header widget');
+      if (user_access('access content')) {
+        $block['content'] = array(
+          '#markup' => opeka_schedule_content(),
+          '#attached' => array(
+            'css' => array(
+              drupal_get_path('module', 'opeka') . '/widgets/css/widget.css',
+              drupal_get_path('module', 'opeka') . '/widgets/header/css/header.css',
+            ),
+            'js' => array(
+              drupal_get_path('module', 'opeka') . '/widgets/js/init.js',
+            ),
+          ),
+        );
+      }
+      break;
+  }
+  return $block;
+}
+
+
+/* Widget related functionality */
+
+function opeka_preprocess_html(&$vars) {
+  $path_array = explode("/",current_path());
+  if (isset($path_array)) {
+    $plain_arg_0 = check_plain($path_array[0]);
+    if ($plain_arg_0 == "opeka-widgets") {
+      $vars['theme_hook_suggestions'][] = 'opeka__widget_html';
+    }
+  }
+}
+
+function opeka_preprocess_page(&$vars) {
+  $vars['opeka_schedule'] = opeka_schedule_content();
+  $path_array = explode("/",current_path());
+  $allowed_widget_types = array("header","inline","popup", "foldout");
+  if (isset($path_array) && (count($path_array) == 2) && ($path_array[0] == "opeka-widgets")) {
+    $plain_arg_0 = check_plain($path_array[0]);
+    $plain_arg_1 = check_plain($path_array[1]);
+    if (in_array($plain_arg_1, $allowed_widget_types)) {
+      $vars['theme_hook_suggestions'][] = 'opeka__'.$plain_arg_1.'_widget_page';
+    }
+  }
+}
+
+/**
+ * Implements hook_custom theme().
+ *
+ * We want the simplest possible theme for the widgets
+ */
+function opeka_custom_theme() {
+  $path_array = explode("/",current_path());
+  
+  if (isset($path_array)) {
+    $plain_arg_0 = check_plain($path_array[0]);
+    if ( (count($path_array) == 2) && ($plain_arg_0 == "opeka-widgets") )  {
+      return 'seven';
+    }
+  }
+}
+
+/**
+ * Implements hook_css_alter().
+ */
+function opeka_css_alter(&$css) {
+  //dpm($css);
 }
