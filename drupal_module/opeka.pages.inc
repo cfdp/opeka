@@ -58,6 +58,7 @@ function opeka_popup_widget(){
  */
 function opeka_widgets(){
   drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/css/widget.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/css/custom.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 101));
   drupal_add_js(drupal_get_path('module', 'opeka') . '/widgets/js/init.js');
   return array();
 }
