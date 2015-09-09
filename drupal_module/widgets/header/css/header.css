@@ -1,0 +1,45 @@
+body {
+  margin: 15px;
+}
+
+/* Buttons */
+.login-button .btn {
+  float: right;
+  margin-top: -30px;
+}
+.chat-open .login-button .btn {
+  background-color: #72d477;
+}
+
+.status-content {
+  margin: 0;
+  width: 160px;
+}
+
+.status-content ul{
+  margin: 0;
+  padding: 0;
+}
+
+.status-content ul li{
+  font-size: 12px;
+  list-style: none;
+}
+
+.status-info {
+  font-size: 12px; 
+}
+.read-more {
+  display: inline-block; 
+  margin: 10px 0 0; 
+  text-align: center; 
+  width: 100%;
+}
+.read-more a {
+  color: #0B5A7C; 
+  font-size: 12px; 
+  text-decoration: none;
+}
+.read-more a:hover{
+  text-decoration: underline;
+}
