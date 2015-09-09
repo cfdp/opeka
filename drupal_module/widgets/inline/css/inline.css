@@ -1,0 +1,11 @@
+.status-wrapper,
+.login-button {
+  height: 100%;
+}
+
+/* Buttons */
+.login-button .btn {
+  background-color: transparent;
+  display: block;
+  height: 100%;
+}
