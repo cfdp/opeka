@@ -17,7 +17,7 @@
     "queueSystem" : true,
     "queueFullUrl" : "http://example.com",
     "fullRoomLink" : "http://example.com",
-    "queueSystem" : false,
+    "accessCodeEnabled" : false,
     "exposeDrupalUIDs": false,
     "requireDrupalLogin": false
   },
