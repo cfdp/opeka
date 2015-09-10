@@ -247,22 +247,6 @@ function opeka_preprocess_page(&$vars) {
 }
 
 /**
- * Implements hook_custom theme().
- *
- * We want the simplest possible theme for the widgets
- */
-function opeka_custom_theme() {
-  $path_array = explode("/",current_path());
-  
-  if (isset($path_array)) {
-    $plain_arg_0 = check_plain($path_array[0]);
-    if ( (count($path_array) == 2) && ($plain_arg_0 == "opeka-widgets") )  {
-      return 'seven';
-    }
-  }
-}
-
-/**
  * Implements hook_css_alter().
  */
 function opeka_css_alter(&$css) {
