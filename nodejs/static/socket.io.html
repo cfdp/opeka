@@ -12,10 +12,10 @@
         var io_socket = io({'reconnection': false}),
             outputElem = document.getElementById('output'),
             buttonEleme = document.getElementById('button');
-        io_socket.on("room-created", function(data) {
+        io_socket.on("room_created", function(data) {
             output.value += "Room created: " + JSON.stringify(data) + "\n\n";
         });
-        io_socket.on("chat-status", function(data) {
+        io_socket.on("chat_status", function(data) {
             output.value += "Room status: " + JSON.stringify(data) + "\n\n";
         });
     })();
