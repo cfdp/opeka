@@ -122,6 +122,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   /* Get the pair chat user list setting */
   $pairchat_user_list = variable_get('opeka_pairchat_user_list', 0);
   $client_login_sound = variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3');
+  $client_url = variable_get('opeka_client_url', '');
 
   // Settings to expose to the JavaScript client.
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
@@ -133,6 +134,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['pairchat_user_list'] = $pairchat_user_list;
   $settings['dnode_endpoint'] = preg_replace('/\/connect[.]js$/', '/opeka', $js_url);
   $settings['socket_io_url'] = preg_replace('/\/connect[.]js$/', '/', $js_url);
+  $settings['client_url'] = $client_url;
+
 
   // Add js files and settings
   drupal_add_js(array('opeka' => $settings), 'setting');

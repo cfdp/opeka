@@ -7,7 +7,7 @@ var Opeka = Opeka || {};
       // Setting the variables
       var chatStatus = {},
           io_socket = null,
-          opekaClientURL = null,
+          opekaClientURL = Drupal.settings.opeka.client_url || null,
           opekaBaseURL = location.protocol + '//' + location.hostname || "https://localhost:3000",
           roomType = "pair",
           textStrings = {

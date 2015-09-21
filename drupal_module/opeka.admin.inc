@@ -104,6 +104,14 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_pairchat_user_list', 0),
   );
 
+  $form['opeka_client_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Popup widget'),
+    '#description' => t('If the popup widget is used, please provide URL of client site, eg. http://mysite.com.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_client_url', ''),
+  );
+
   $form['opeka_custom_css'] = array(
     '#type' => 'textfield',
     '#title' => t('Custom css file for widget styles'),
@@ -118,18 +126,6 @@ function opeka_admin_settings_form($form, &$form_state) {
    '#submit' => array('opeka_restart_server')
   );
 
-  // $form['opeka_server_start'] = array(
-  //   '#type' => 'submit',
-  //   '#value' => 'Start server',
-  //   '#submit' => array('opeka_start_server')
-  // );
-
-  // $form['opeka_server_stop'] = array(
-  //   '#type' => 'submit',
-  //   '#value' => 'Stop server',
-  //   '#submit' => array('opeka_stop_server')
-  //   );
-  
   return system_settings_form($form);
 }
 
@@ -138,33 +134,9 @@ function opeka_restart_server($form, &$form_state){
   $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
   $output = shell_exec($opeka_path . '/scripts/restart_wrapper.sh '. $base_url);
   if ($output == NULL) {
-    drupal_set_message(t('Something went wrong - the chat was not restarted'), 'status');
+    drupal_set_message(t('Something went wrong - the chat was not restarted. Please contact support if problem persists.'), 'status');
   }
   else {
     drupal_set_message($output, 'status');
   }
 }
-
-// function opeka_start_server($form, &$form_state){
-//   global $base_url;
-//   $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
-//   $output = shell_exec($opeka_path . '/scripts/startchat.sh');
-//   if ($output == NULL) {
-//     drupal_set_message(t('Something went wrong - the chat was not started'), 'status');
-//   }
-//   else {
-//     drupal_set_message($output, 'status');
-//   }
-// }
-
-// function opeka_stop_server($form, &$form_state){
-//   global $base_url;
-//   $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
-//   $output = shell_exec($opeka_path . '/scripts/stopchat.sh');
-//   if ($output == NULL) {
-//     drupal_set_message(t('Something went wrong - the chat was not stopped'), 'status');
-//   }
-//   else {
-//     drupal_set_message($output, 'status');
-//   }
-// }
