@@ -39,12 +39,12 @@ function opeka_admin_page() {
 function opeka_admin_settings_form($form, &$form_state) {
   form_load_include($form_state, 'admin.inc', 'lol_queue');
 
-  $form['opeka_nowjs_url'] = array(
+  $form['opeka_connectjs_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Opeka server URL'),
     '#description' => t('URL to the Opeka connect.js javascript, eg. http://localhost:3000/connect.js'),
     '#required' => TRUE,
-    '#default_value' => variable_get('opeka_nowjs_url', ''),
+    '#default_value' => variable_get('opeka_connectjs_url', ''),
   );
 
   $form['opeka_schedule'] = array(
@@ -61,7 +61,7 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#maxlength' => 1024,
     '#description' => t('Text shown before user logs into the chat.'),
     '#required' => FALSE,
-    '#default_value' => variable_get('opeka_welcome_message', ''),
+    '#default_value' => variable_get('opeka_welcome_message', 'Welcome to the chat! You can customize this message at Admin => config => services => opeka'),
   );
 
   $form['opeka_client_login_sound'] = array(
@@ -102,6 +102,14 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#description' => t('Toggle the user list visibility in the pair chat. Check it if the user list should be visible'),
     '#required' => FALSE,
     '#default_value' => variable_get('opeka_pairchat_user_list', 0),
+  );
+
+  $form['opeka_custom_css'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Custom css file for widget styles'),
+    '#description' => t('URL to a custom css file for the widgets.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_custom_css', ''),
   );
 
   $form['opeka_server_restart'] = array(

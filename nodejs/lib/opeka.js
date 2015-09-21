@@ -193,7 +193,7 @@ function Server(config, logger) {
     });
   };
 
-  // The following methods require Nowjs to be instantiated, so we need
+  // The following methods require dnode to be instantiated, so we need
   // to call the constructor here. That is bad form, but it requires
   // more refactoring to change that I care for right now.
   self.construct();

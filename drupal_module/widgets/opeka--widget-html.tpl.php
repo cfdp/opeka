@@ -12,7 +12,7 @@
   <![endif]-->
   <?php print $scripts; ?>
 </head>
-<body class="<?php print $classes . "chat-busy"; ?>" <?php print $attributes;?>>
+<body class="<?php print $classes; if (isset($variables['opeka_widget_roomtype'])) : print " " . render($variables['opeka_widget_roomtype']); endif; ?>" <?php print $attributes;?>>
   <?php print $page_top; ?>
   <?php print $page; ?>
   <?php print $page_bottom; ?>

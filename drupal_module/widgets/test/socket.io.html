@@ -1,0 +1,25 @@
+<html>
+<head>
+<script src="http://dev.demo:3000/socket.io/socket.io.js"></script>
+</head>
+<body>
+<form name="form" id="form" action="" method="get">
+    <div><textarea id="output" cols="72" rows="20"></textarea></div>
+    <input type="button" value="Click!" id="button" />
+</form>
+<script type="text/javascript"><!--
+    (function() {
+        var io_socket = io.connect('http://dev.demo:3000');
+            outputElem = document.getElementById('output'),
+            buttonEleme = document.getElementById('button');
+        io_socket.on("room_created", function(data) {
+            output.value += "Room created: " + JSON.stringify(data) + "\n\n";
+        });
+        io_socket.on("chat_status", function(data) {
+            output.value += "Room status: " + JSON.stringify(data) + "\n\n";
+            console.log('chat status event');
+        });
+    })();
+//--></script>
+</body>
+</html>

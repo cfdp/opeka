@@ -1,6 +1,6 @@
 /**
  * @file
- * Opeka nowjs integration code for the frontend.
+ * Opeka dnode integration code for the frontend.
  */
 /*global now, Opeka */
 

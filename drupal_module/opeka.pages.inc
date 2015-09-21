@@ -20,6 +20,25 @@ function opeka_main_page() {
   return implode("\n", $output);
 }
 
+/**
+ * Checkes whether the current page is rendered using the Opeka chat system.
+ * @return boolean - TRUE if current page is an Opeka page and FALSE otherwise.
+ */
+function is_opeka_chat_page() {
+    $path = current_path();
+    $prefixes = array(
+        "opeka",
+        "opeka-widgets",
+        "admin/opeka"
+    );
+    foreach($prefixes as $prefix) {
+        if(substr($path, 0, strlen($prefix)) === $prefix) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 /*
  * Inline widget page for inclusion on third party sites
  *
@@ -54,41 +73,16 @@ function opeka_popup_widget(){
 /*
  * Common function for the widgets
  *
- * Add needed css and js files
+ * Add needed assets
  */
 function opeka_widgets(){
+  opeka_add_assets(array(), array('opeka.frontend.js'), array(), TRUE);
   drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/css/widget.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
-  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/css/custom.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 101));
-  drupal_add_js(drupal_get_path('module', 'opeka') . '/widgets/js/init.js');
+  // Add custom css - if present
+  $custom_css = check_plain(variable_get('opeka_custom_css', ''));
+  if (strlen($custom_css) > 0) {
+    drupal_add_css($custom_css, array('type' => 'external'));
+  }
+  drupal_add_js(drupal_get_path('module', 'opeka') . '/widgets/js/chatstatus.js', array('weight' => 10));
   return array();
 }
-
-/*
- * Implementation of hook_theme().
- */
-function opeka_theme(){
-  $theme = array();
-  $theme['opeka__header_widget_page'] = array(
-    'template' => 'widgets/header/opeka--header-widget-page',
-    );
-  $theme['opeka__inline_widget_page'] = array(
-    'template' => 'widgets/inline/opeka--inline-widget-page',
-    );
-  $theme['opeka__popup_widget_page'] = array(
-    'template' => 'widgets/popup/opeka--popup-widget-page',
-    );
-  $theme['opeka__widget_html'] = array(
-    'template' => 'widgets/opeka--widget-html',
-  );
-  return $theme;
-}
-
-/*function template_preprocess_opeka__header_widget_html(&$variables) {
-}*/
-
-/**
- * Implements hook_theme_registry_alter().
- */
-/*function opeka_theme_registry_alter(&$theme_registry) {
-
-}*/
