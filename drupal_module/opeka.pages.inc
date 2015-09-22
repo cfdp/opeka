@@ -77,11 +77,11 @@ function opeka_popup_widget(){
  */
 function opeka_widgets(){
   opeka_add_assets(array(), array('opeka.frontend.js'), array(), TRUE);
-  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/css/widget.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/css/widget.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 10));
   // Add custom css - if present
   $custom_css = check_plain(variable_get('opeka_custom_css', ''));
   if (strlen($custom_css) > 0) {
-    drupal_add_css($custom_css, array('type' => 'external'));
+    drupal_add_css($custom_css, array('group' => CSS_THEME, 'type' => 'external', 'weight' => 11));
   }
   drupal_add_js(drupal_get_path('module', 'opeka') . '/widgets/js/chatstatus.js', array('weight' => 10));
   return array();
