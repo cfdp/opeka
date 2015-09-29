@@ -92,6 +92,9 @@ function opeka_menu() {
  * @param array $settings
  *   Additional settings to be exposed to JavaScript via the
  *   Drupal.settings.object.
+ * @param array $widget
+ *   If we are rendering a widget, this should be set to TRUE
+ *
  */
 function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings = array(), $widget = FALSE) {
   $path = drupal_get_path('module', 'opeka');
@@ -107,7 +110,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   }
 
   // Get settings from the admin interface
-  $js_url = variable_get('opeka_connectjs_url', 'https://localhost:3000/connect.js');
+  $js_url = check_plain(variable_get('opeka_connectjs_url', 'https://localhost:3000/connect.js'));
 
   if (!$js_url) {
     $errormsg = t('Opeka web service URL missing.');
@@ -115,14 +118,14 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
     return $errormsg;
   }
 
-  $welcome_message = variable_get('opeka_welcome_message', '');
-  $feedback_url = variable_get('opeka_feedback_url', '');
-  $reg_pair_url = variable_get('opeka_reg_pair_url', '');
-  $reg_group_url = variable_get('opeka_reg_group_url', '');
+  $welcome_message = check_plain(variable_get('opeka_welcome_message', ''));
+  $feedback_url = check_plain(variable_get('opeka_feedback_url', ''));
+  $reg_pair_url = check_plain(variable_get('opeka_reg_pair_url', ''));
+  $reg_group_url = check_plain(variable_get('opeka_reg_group_url', ''));
   /* Get the pair chat user list setting */
   $pairchat_user_list = variable_get('opeka_pairchat_user_list', 0);
-  $client_login_sound = variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3');
-  $client_url = variable_get('opeka_client_url', '');
+  $client_login_sound = check_plain(variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3'));
+  $client_url = check_plain(variable_get('opeka_client_url', ''));
 
   // Settings to expose to the JavaScript client.
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
@@ -268,7 +271,10 @@ function opeka_theme($existing, $type, $theme, $path) {
   return $templates;
 }
 
-/* Add html template suggestion */
+/*
+ * Implements hook_preprocess_html
+ * Add html template suggestions
+ */
 function opeka_preprocess_html(&$vars) {
   $path_array = explode("/",current_path());
   if (isset($path_array)) {
@@ -277,16 +283,24 @@ function opeka_preprocess_html(&$vars) {
       $vars['theme_hook_suggestions'][] = 'opeka__widget_html';
     }
     // Is it a group chat widget?
-    if ((count($path_array) === 3) && (($path_array[2] === "group"))) {
+    if ((count($path_array) >= 3) && (($path_array[2] === "group"))) {
       $plain_arg_2 = check_plain($path_array[2]);
       $vars['opeka_widget_roomtype'] = "group";
+    }
+    // or is it a pair chat widget?
+    else if ((count($path_array) >= 3) && (($path_array[2] === "pair"))) {
+      $plain_arg_2 = check_plain($path_array[2]);
+      $vars['opeka_widget_roomtype'] = "pair";
     }
   }
 }
 
-/* Add page template suggestions based on requested URL  */
+/*
+ * Implements hook_preprocess_page
+ * Add page template suggestions based on requested URL
+ */
 function opeka_preprocess_page(&$vars) {
-  $vars['opeka_schedule'] = opeka_schedule_content();
+  $vars['opeka_schedule'] = check_plain(opeka_schedule_content());
   $path_array = explode("/",current_path());
   $allowed_widget_types = array("header","inline","popup", "foldout");
   if (isset($path_array) && (count($path_array) >= 2) && ($path_array[0] === "opeka-widgets")) {
