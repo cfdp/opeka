@@ -1,16 +1,16 @@
 body.page-opeka-widgets-header {
-    margin: 15px;
+  margin: 15px;
 }
 
 html body.admin-menu.page-opeka-widgets-header {
-    margin-top: 15px !important;
+  margin-top: 15px !important;
 }
 
 /* Buttons */
 .login-button {
-    bottom: 15px;
-    position: absolute;
-    right: 15px;
+  bottom: 30px;
+  position: absolute;
+  right: 15px;
 }
 
 .chat-open .login-button .btn {
