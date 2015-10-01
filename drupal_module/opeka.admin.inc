@@ -126,7 +126,20 @@ function opeka_admin_settings_form($form, &$form_state) {
    '#submit' => array('opeka_restart_server')
   );
 
+  $form['submit']['#validate'][] = 'opeka_admin_settings_form_validate';
   return system_settings_form($form);
+}
+
+/* Validate form input */
+function opeka_admin_settings_form_validate(&$form, &$form_state) {
+  $file = $form_state['input']['opeka_custom_css'];
+  $file_headers = @get_headers($file);
+  if($file_headers[0] == 'HTTP/1.1 404 Not Found') {
+    form_set_error('opeka_custom_css', t('The URL in the custom CSS field returned 404 not found. Please make sure the the URL is correct.'));
+  }
+  else {
+      $exists = true;
+  }
 }
 
 function opeka_restart_server($form, &$form_state){

@@ -1,3 +1,5 @@
+/* General styling applied to all widgets */
+
 html, body {
   color: #fff;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -9,6 +11,15 @@ html, body {
 
 body p {
   color: #fff;
+}
+
+/* Don't show admin menu on the widget pages */
+html body.admin-menu.page-opeka-widgets {
+  margin-top: 0px !important;
+}
+
+html body.admin-menu.page-opeka-widgets #admin-menu {
+  display: none;
 }
 
 /* Status tab */
@@ -35,6 +46,7 @@ body p {
 /* Buttons */
 .login-button .btn {
   border: none;
+  box-shadow: none;
   background-color: #aaa;
   background-image: none;
   color: #fff;
