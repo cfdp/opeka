@@ -1,15 +1,15 @@
 /**
  * Script for controlling the popup chat window
+ * @todo: implement as Drupal behaviors
  */
 
-(function ($, Drupal, undefined) {
-
+(function($) {
   var popupLocation = "body"; // Enter the DOM location for popup
   var opekaChatURL = opekaPopupBaseURL + "/opeka-widgets/popup?client_url=" + opekaPopupClientURL;
-  
+
   addOpekaPopupCss("opeka-popup.css", "/sites/all/modules/custom/opeka/widgets/popup/css/");
   addOpekaPopupCss("custom-opeka-popup.css", "/sites/all/themes/cura-chat-theme/opeka-widgets/css/");
-  
+
   /* Add custom CSS file to HEAD */
   function addOpekaPopupCss(cssId, cssPath) {
     if (!document.getElementById(cssId))
@@ -24,10 +24,10 @@
         head.appendChild(link);
     }
   };
-  
+
   // Insert Iframe element
   $( popupLocation ).append( '<div class="opeka-chat-popup-wrapper"><div id="opeka-chat-iframe"><iframe src="' + opekaChatURL + '" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" height="200"></iframe></div></div>' );
-  
+
   // Add close button
   $( "#opeka-chat-iframe" ).prepend( "<button class='close opeka-chat-popup'>&times;</button>" );
 
@@ -41,7 +41,7 @@
   function popupController(popupAction){
     var pop_exp_w = 10;
     var pop_shr_w = -342;
-  
+
     if ( popupAction === "Activate") {
       $("#opeka-chat-iframe").show();
       $("#opeka-chat-iframe").animate({
@@ -60,7 +60,7 @@
         },1000);
       }
   }
-  
+
   /**
    * Receive activate or deactive messages from the iframe
    * https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
@@ -70,12 +70,11 @@
   function receiveMessage(event)
   {
     if (event.origin !== opekaPopupBaseURL) {
-      console.log("Baad window");
+      console.log("Bad window");
       return;
     }
     else {
       popupController(event.data);
     }
   }
-
-})(jQuery, Drupal);
+})(jQuery);

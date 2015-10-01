@@ -1,19 +1,25 @@
-body {
-  margin: 15px;
+body.page-opeka-widgets-header {
+    margin: 15px;
+}
+
+html body.admin-menu.page-opeka-widgets-header {
+    margin-top: 15px !important;
 }
 
 /* Buttons */
-.login-button .btn {
-  float: right;
-  margin-top: -30px;
+.login-button {
+    bottom: 15px;
+    position: absolute;
+    right: 15px;
 }
+
 .chat-open .login-button .btn {
   background-color: #72d477;
 }
 
 .status-content {
   margin: 0;
-  width: 160px;
+  max-width: 300px;
 }
 
 .status-content ul{

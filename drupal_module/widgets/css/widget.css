@@ -55,13 +55,8 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
   text-decoration: none;
 }
 
-.btn.brevkasser {
-  margin: 10px 0 0 25px;
-}
-
 .status-content{
   margin: 0 8px;
-  width: 160px;
 }
 
 .status-content ul{
