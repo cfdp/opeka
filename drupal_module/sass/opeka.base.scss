@@ -1,3 +1,6 @@
+// Utilities
+@import "variables";
+
 .not-logged-in {
 
   /* The sidebar is always visible in a group chat for anonymous clients*/
@@ -55,7 +58,7 @@
     cursor: pointer;
 
     &:hover {
-      background-color: #e6e6e6;
+      background-color: $ccLightGray;
     }
   }
 

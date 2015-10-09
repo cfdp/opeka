@@ -46,7 +46,7 @@ function is_opeka_chat_page() {
  */
 function opeka_inline_widget(){
   opeka_widgets();
-  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/inline/css/inline.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.inline.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
   return array();
 }
 
@@ -56,7 +56,7 @@ function opeka_inline_widget(){
  */
 function opeka_header_widget(){
   opeka_widgets();
-  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/header/css/header.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.header.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
   return array();
 }
 
@@ -66,7 +66,17 @@ function opeka_header_widget(){
  */
 function opeka_popup_widget(){
   opeka_widgets();
-  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/popup/css/popup.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.popup.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  return array();
+}
+
+/*
+ * Foldout widget page for inclusion on third party sites
+ *
+ */
+function opeka_foldout_widget(){
+  opeka_widgets();
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.foldout.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
   return array();
 }
 
@@ -77,7 +87,7 @@ function opeka_popup_widget(){
  */
 function opeka_widgets(){
   opeka_add_assets(array(), array('opeka.frontend.js'), array(), TRUE);
-  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/css/widget.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 10));
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 10));
   // Add custom css file provided through admin interface - if present
   $custom_css = check_plain(variable_get('opeka_custom_css', ''));
   if (strlen($custom_css) > 0) {

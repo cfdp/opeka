@@ -54,6 +54,30 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#required' => TRUE,
     '#default_value' => variable_get('opeka_schedule', ''),
   );
+  
+  $form['opeka_pair_chat_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Pair chat name'),
+    '#description' => t('The pair chat name can be shown in some chat widgets'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_pair_chat_name', ''),
+  );
+  
+  $form['opeka_group_chat_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Group chat name'),
+    '#description' => t('The group chat name can be shown in some chat widgets'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_group_chat_name', ''),
+  );
+
+  $form['opeka_feedback_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Feedback URL'),
+    '#description' => t('URL to a feedback page, e.g. a Google Form, where clients can enter evaluation data after a chat.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_feedback_url', ''),
+  );
 
   $form['opeka_welcome_message'] = array(
     '#type' => 'textarea',

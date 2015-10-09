@@ -79,6 +79,14 @@ function opeka_menu() {
     'access arguments' => array('access content'),
     'file' => 'opeka.pages.inc',
   );
+
+  $items['opeka-widgets/foldout'] = array(
+    'title' => 'Foldout widget',
+    'description' => 'Foldout widget code for third party sites.',
+    'page callback' => 'opeka_foldout_widget',
+    'access arguments' => array('access content'),
+    'file' => 'opeka.pages.inc',
+  );
   return $items;
 }
 
@@ -126,6 +134,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $pairchat_user_list = variable_get('opeka_pairchat_user_list', 0);
   $client_login_sound = check_plain(variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3'));
   $client_url = check_plain(variable_get('opeka_client_url', ''));
+  $pair_chat_name = check_plain(variable_get('opeka_pair_chat_name', ''));
+  $group_chat_name = check_plain(variable_get('opeka_group_chat_name', ''));
 
   // Settings to expose to the JavaScript client.
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
@@ -138,6 +148,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['dnode_endpoint'] = preg_replace('/\/connect[.]js$/', '/opeka', $js_url);
   $settings['socket_io_url'] = preg_replace('/\/connect[.]js$/', '/', $js_url);
   $settings['client_url'] = $client_url;
+  $settings['pair_chat_name'] = $pair_chat_name;
+  $settings['group_chat_name'] = $group_chat_name;
 
 
   // Add js files and settings
@@ -225,8 +237,8 @@ function opeka_block_view($delta = '') {
           '#markup' => opeka_schedule_content(),
           '#attached' => array(
             'css' => array(
-              drupal_get_path('module', 'opeka') . '/widgets/css/widget.css',
-              drupal_get_path('module', 'opeka') . '/widgets/header/css/header.css',
+              drupal_get_path('module', 'opeka') . '/css/widget.css',
+              drupal_get_path('module', 'opeka') . '/css/widget.header.css',
             ),
             'js' => array(
               drupal_get_path('module', 'opeka') . '/widgets/js/chatstatus.js',
@@ -261,6 +273,12 @@ function opeka_theme($existing, $type, $theme, $path) {
       'template' => 'opeka--popup-widget-page',
       'type' => 'theme',
       'path' => drupal_get_path('module', 'opeka') . '/widgets/popup',
+    );
+  $templates['opeka__foldout_widget_page'] = array(
+      'base hook' => 'page',
+      'template' => 'opeka--foldout-widget-page',
+      'type' => 'theme',
+      'path' => drupal_get_path('module', 'opeka') . '/widgets/foldout',
     );
   $templates['opeka__widget_html'] = array(
       'base hook' => 'page',
@@ -298,9 +316,12 @@ function opeka_preprocess_html(&$vars) {
 /*
  * Implements hook_preprocess_page
  * Add page template suggestions based on requested URL
+ * Add needed variables
  */
 function opeka_preprocess_page(&$vars) {
   $vars['opeka_schedule'] = check_plain(opeka_schedule_content());
+  $vars['opeka_pair_chat_name'] = check_plain(variable_get('opeka_pair_chat_name', ''));
+  $vars['opeka_group_chat_name'] = check_plain(variable_get('opeka_group_chat_name', ''));
   $path_array = explode("/",current_path());
   $allowed_widget_types = array("header","inline","popup", "foldout");
   if (isset($path_array) && (count($path_array) >= 2) && ($path_array[0] === "opeka-widgets")) {

@@ -51,14 +51,14 @@
           width: 360
         },1000);
       }
-      else if (popupAction === "Deactivate") {
-        $("#opeka-chat-iframe").animate({
-          right: pop_shr_w
-        },1000);
-        $(".opeka-chat-popup-wrapper").animate({
-          width: 0
-        },1000);
-      }
+    else if (popupAction === "Deactivate") {
+      $("#opeka-chat-iframe").animate({
+        right: pop_shr_w
+      },1000);
+      $(".opeka-chat-popup-wrapper").animate({
+        width: 0
+      },1000);
+    }
   }
 
   /**
