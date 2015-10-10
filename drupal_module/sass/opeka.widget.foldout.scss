@@ -1,0 +1,12 @@
+/* Styling for the foldout widget
+ * This file is included via embedded javascript client side (popupController.js)
+ */
+// Utilities
+@import "variables";
+
+.opeka-chat-foldout-wrapper {
+  top: 15%;
+  position: fixed;
+  right: -260px;
+  z-index: 10;
+}

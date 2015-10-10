@@ -17,4 +17,4 @@
 /db-template
 /*.komodoproject
 /.idea
-.gitignore
+.ruby-version

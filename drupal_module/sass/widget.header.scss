@@ -1,0 +1,41 @@
+/* Styling for the header widget */
+// Utilities
+@import "variables";
+
+/* Buttons */
+.login-button {
+  bottom: 30px;
+  position: absolute;
+  right: 15px;
+}
+
+.status-content {
+  margin: 0;
+  max-width: 300px;
+  
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+  
+  li {
+    font-size: 12px;
+    list-style: none;
+  }
+}
+
+.status-info {
+  font-size: 12px; 
+}
+.read-more {
+  display: inline-block; 
+  margin: 10px 0 0; 
+  text-align: center; 
+  width: 100%;
+  
+  a {
+    color: $ccBlue; 
+    font-size: 12px; 
+    text-decoration: none;
+  }
+}

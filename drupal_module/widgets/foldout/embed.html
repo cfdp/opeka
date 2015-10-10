@@ -1,0 +1,12 @@
+<script>
+  /* Append on the site where the chat foldout should be active - enter the appropriate URLs for opekaFoldoutBaseURL (baseURL of the chat service) and opekaFoldoutClientURL (client site URL) */
+  var opekaFoldoutBaseURL = "https://demo.curachat.com"; // The URL of the chat site
+  var opekaFoldoutClientURL = "https://demo.curachat.com"; // The URL of the client site
+  // Additional css files can be added to this array if needed
+  var opekaCssFiles = [["opeka.widget.foldout.css","/sites/all/modules/custom/opeka/css/"]];
+  var opekaFoldoutScript=document.createElement('script');
+  opekaFoldoutScript.type='text/javascript';
+  opekaFoldoutScript.src=opekaFoldoutBaseURL+"/sites/all/modules/custom/opeka/widgets/foldout/js/foldoutController.js";
+  document.body.appendChild(opekaFoldoutScript);
+</script>
+

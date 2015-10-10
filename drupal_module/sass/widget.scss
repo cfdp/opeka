@@ -1,0 +1,120 @@
+/* General styling applied to all widgets */
+// Utilities
+@import "variables";
+
+html, body {
+  color: #fff;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 0px;
+
+  p {
+    color: #fff;
+    margin: 0;
+  }
+}
+
+
+/* Don't show admin menu on the widget pages */
+html body.admin-menu.page-opeka-widgets {
+  margin-top: 0px !important;
+
+  #admin-menu {
+    display: none;
+  }
+}
+/* Buttons */
+.login-button .btn {
+  border: none;
+  box-shadow: none;
+  background: darken($ccGray, 15%) none repeat scroll 0% 0%;
+  color: #fff;
+  padding: 10px;
+  text-shadow: none;
+  text-decoration: none;
+  transition: background-color 300ms ease-out 0s;
+  
+  .chat-open & {
+    background-color: darken($ccGreen, 15%);
+    &:hover {
+      background-color: darken($ccGreen, 30%);
+    }
+  }
+  .chat-busy & {
+    background-color: darken($ccOrange, 15%);
+  }
+  .chat-closed & {
+    background-color: darken($ccRed, 15%);
+  }
+}
+
+/* Name tab */
+.name-tab {
+  background-color: $ccGray;
+}
+
+/* Status tab */
+.status-tab {
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+/* Status wrapper */
+.status-wrapper {
+  background-color: $ccGray;
+  height: 100%;
+  padding: 10px;
+}
+
+.chat-open .status-wrapper,
+.chat-open .name-tab {
+  background-color: $ccGreen;
+}
+
+.chat-busy .status-wrapper,
+.chat-busy .name-tab {
+  background-color: $ccOrange;
+}
+
+.chat-closed .status-wrapper,
+.chat-closed .name-tab {
+  background-color: $ccRed;
+}
+
+.status-content{
+  margin: 0 8px;
+}
+
+.status-content ul{
+  margin: 0;
+  padding: 0;
+}
+
+.status-content ul li{
+  font-size: 12px;
+  list-style: none;
+
+}
+
+.status-info {
+  font-size: 12px; 
+}
+.read-more {
+  display: inline-block; 
+  margin: 10px 0 0; 
+  text-align: center; 
+  width: 100%;
+}
+.read-more a {
+  color: $ccBlue; 
+  font-size: 12px; 
+  text-decoration: none;
+}
+.read-more a:hover{
+  text-decoration: underline;
+}

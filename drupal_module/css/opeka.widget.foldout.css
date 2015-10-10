@@ -1,0 +1,11 @@
+/* Styling for the foldout widget
+ * This file is included via embedded javascript client side (popupController.js)
+ */
+/* $green: #72d477; */
+/* line 7, ../sass/opeka.widget.foldout.scss */
+.opeka-chat-foldout-wrapper {
+  top: 15%;
+  position: fixed;
+  right: -260px;
+  z-index: 10;
+}
