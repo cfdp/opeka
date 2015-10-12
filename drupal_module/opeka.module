@@ -126,7 +126,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
     return $errormsg;
   }
 
-  $welcome_message = check_plain(variable_get('opeka_welcome_message', ''));
+  $welcome_message = check_markup(variable_get('opeka_welcome_message', ''), 'full_html');
   $feedback_url = check_plain(variable_get('opeka_feedback_url', ''));
   $reg_pair_url = check_plain(variable_get('opeka_reg_pair_url', ''));
   $reg_group_url = check_plain(variable_get('opeka_reg_group_url', ''));
@@ -211,10 +211,8 @@ function opeka_block_info() {
  *   The text entered by user in the schedule field
  */
 function opeka_schedule_content(){
-
   // Get the variable with the opening hours
-  $schedule = variable_get('opeka_schedule', '');
-
+  $schedule = check_markup(variable_get('opeka_schedule', ''), 'filtered_html');
    // No content.
   if (empty($schedule)) {
     $schedule = t('No schedule info available.');  
@@ -319,7 +317,7 @@ function opeka_preprocess_html(&$vars) {
  * Add needed variables
  */
 function opeka_preprocess_page(&$vars) {
-  $vars['opeka_schedule'] = check_plain(opeka_schedule_content());
+  $vars['opeka_schedule'] = opeka_schedule_content();
   $vars['opeka_pair_chat_name'] = check_plain(variable_get('opeka_pair_chat_name', ''));
   $vars['opeka_group_chat_name'] = check_plain(variable_get('opeka_group_chat_name', ''));
   $path_array = explode("/",current_path());

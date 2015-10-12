@@ -3,7 +3,6 @@
  * @todo: implement as Drupal behaviors
  */
 (function($) {
-  var foldoutLocation = "body"; // Enter the DOM location for foldout
   var opekaChatURL = opekaFoldoutBaseURL + "/opeka-widgets/foldout?client_url=" + opekaFoldoutClientURL;
   
   /* Check if there's any css files to add. The cssFiles global is initialized in embed.html */
@@ -29,7 +28,7 @@
   };
 
   // Insert Iframe element
-  $( foldoutLocation ).append( '<div class="opeka-chat-foldout-wrapper"><div id="opeka-chat-iframe"><iframe src="' + opekaChatURL + '" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" height="200"></iframe></div></div>' );
+  $( opekaFoldoutLocation ).append( '<div class="opeka-chat-foldout-wrapper"><div id="opeka-chat-iframe"><iframe src="' + opekaChatURL + '" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" height="200"></iframe></div></div>' );
 
   /**
    * Foldout animation

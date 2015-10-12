@@ -4,11 +4,15 @@
  */
 
 (function($) {
-  var popupLocation = "body"; // Enter the DOM location for popup
   var opekaChatURL = opekaPopupBaseURL + "/opeka-widgets/popup?client_url=" + opekaPopupClientURL;
-
-  addOpekaPopupCss("opeka-popup.css", "/sites/all/modules/custom/opeka/widgets/popup/css/");
-  addOpekaPopupCss("custom-opeka-popup.css", "/sites/all/themes/cura-chat-theme/opeka-widgets/css/");
+  
+  /* Check if there's any css files to add. The cssFiles global is initialized in embed.html */
+  if (typeof opekaCssFiles !== 'undefined' && opekaCssFiles.length > 0) {
+    // the array is defined and has at least one element
+      $.each( opekaCssFiles, function( i, val ) {
+        addOpekaPopupCss(opekaCssFiles[i][0], opekaCssFiles[i][1]);
+      });
+  }
 
   /* Add custom CSS file to HEAD */
   function addOpekaPopupCss(cssId, cssPath) {
@@ -26,7 +30,7 @@
   };
 
   // Insert Iframe element
-  $( popupLocation ).append( '<div class="opeka-chat-popup-wrapper"><div id="opeka-chat-iframe"><iframe src="' + opekaChatURL + '" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" height="200"></iframe></div></div>' );
+  $( opekaPopupLocation ).append( '<div class="opeka-chat-popup-wrapper"><div id="opeka-chat-iframe"><iframe src="' + opekaChatURL + '" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" height="200"></iframe></div></div>' );
 
   // Add close button
   $( "#opeka-chat-iframe" ).prepend( "<button class='close opeka-chat-popup'>&times;</button>" );
