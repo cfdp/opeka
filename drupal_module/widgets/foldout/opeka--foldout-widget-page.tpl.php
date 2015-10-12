@@ -3,7 +3,7 @@
   <div class="status-tab"></div>
   <div class="status-content">
     <p>
-      <?php print render($variables['opeka_schedule']); print "jeja" . render($vars['opeka_widget_roomtype']); ?>
+      <?php print render($variables['opeka_schedule']); render($vars['opeka_widget_roomtype']); ?>
     </p>
   </div>
   <div class="login-button">
