@@ -1,6 +1,6 @@
 /**
  * Script for controlling the popup chat window
- * @todo: implement as Drupal behaviors
+ * @todo: implement with parameter like foldoutController.js and as Drupal behaviors
  */
 
 (function($) {

@@ -1,20 +1,26 @@
 /**
- * Script for controlling the foldout chat window, to be embedded on client site
- * @todo: implement as Drupal behaviors
+ * Script for controlling the foldout chat widget, to be embedded on client site
+ * @param {Object} $ The jQuery object
+ * @param {Object} opekaFoldout Object containing baseURL, clientURL, embedLocation and cssFiles.
+ * See embed.html for example values
  */
-(function($) {
-  var opekaChatURL = opekaFoldoutBaseURL + "/opeka-widgets/foldout?client_url=" + opekaFoldoutClientURL;
+(function($, opekaFoldout) {
+  var chatURL = opekaFoldout.baseURL + "/opeka-widgets/foldout?client_url=" + opekaFoldout.clientURL;
   
-  /* Check if there's any css files to add. The cssFiles global is initialized in embed.html */
-  if (typeof opekaCssFiles !== 'undefined' && opekaCssFiles.length > 0) {
+  // Check if there's any css files to add. The cssFiles global is initialized in embed.html
+  if (typeof opekaFoldout.cssFiles !== 'undefined' && opekaFoldout.cssFiles.length > 0) {
     // the array is defined and has at least one element
-      $.each( opekaCssFiles, function( i, val ) {
-        addOpekaFoldoutCss(opekaCssFiles[i][0], opekaCssFiles[i][1]);
+      $.each( opekaFoldout.cssFiles, function( i, val ) {
+        addOpekaFoldoutCss(opekaFoldout.cssFiles[i][0], opekaFoldout.cssFiles[i][1]);
       });
   }
 
-  /* Add custom CSS file to HEAD */
-  function addOpekaFoldoutCss(cssId, cssPath) {
+  /**
+    * Add custom CSS file to HEAD
+    * @param {string} cssId Id of the css file - the name of the CSS file
+    * @param {string} cssPath Absolute path to the directory of the CSS file
+    */
+  function addOpekaFoldoutCss(cssId,cssPath) {
     if (!document.getElementById(cssId)) {
         var head  = document.getElementsByTagName('head')[0];
         var link  = document.createElement('link');
@@ -28,11 +34,9 @@
   };
 
   // Insert Iframe element
-  $( opekaFoldoutLocation ).append( '<div class="opeka-chat-foldout-wrapper"><div id="opeka-chat-iframe"><iframe src="' + opekaChatURL + '" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" height="200"></iframe></div></div>' );
+  $( opekaFoldout.embedLocation ).append( '<div class="opeka-chat-foldout-wrapper"><div id="opeka-chat-iframe"><iframe src="' + chatURL + '" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" height="200"></iframe></div></div>' );
 
-  /**
-   * Foldout animation
-   */
+  //Foldout animation
   $(".opeka-chat-foldout-wrapper").hover(
     function() {
       $(this).stop(true,true).animate({
@@ -70,4 +74,4 @@
       foldoutController(event.data);
     }
   }*/
-})(jQuery);
+})(jQuery, opekaFoldout);

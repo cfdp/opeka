@@ -17,13 +17,13 @@ var Opeka = Opeka || {};
             buttonClosed : Drupal.t("Closed"),
             buttonError : Drupal.t("Error connecting."),
             statusFetching : Drupal.t("Connecting..."),
-            statusClosedPair : Drupal.t('@pairChatName is closed', {'@pairChatName': pairChatName}),
-            statusClosedGroup : Drupal.t('@groupChatName is closed', {'@groupChatName': groupChatName}),
+            statusClosed_pair : Drupal.t('@pairChatName is closed', {'@pairChatName': pairChatName}),
+            statusClosed_group : Drupal.t('@groupChatName is closed', {'@groupChatName': groupChatName}),
             statusError : Drupal.t("Error: no connection to server."),
-            statusOccupiedPair: Drupal.t("@pairChatName is occupied", {'@pairChatName': pairChatName}),
-            statusOccupiedGroup : Drupal.t('@groupChatName is occupied', {'@groupChatName': groupChatName}),
-            statusAvailablePair: Drupal.t("@pairChatName is available", {'@pairChatName': pairChatName}),
-            statusAvailableGroup : Drupal.t('@groupChatName is available', {'@groupChatName': groupChatName}),
+            statusOccupied_pair: Drupal.t("@pairChatName is occupied", {'@pairChatName': pairChatName}),
+            statusOccupied_group : Drupal.t('@groupChatName is occupied', {'@groupChatName': groupChatName}),
+            statusAvailable_pair: Drupal.t("@pairChatName is available", {'@pairChatName': pairChatName}),
+            statusAvailable_group : Drupal.t('@groupChatName is available', {'@groupChatName': groupChatName}),
           };
       io_url = Drupal.settings.opeka.socket_io_url || 'https://localhost:3000/opeka';
       
@@ -44,11 +44,11 @@ var Opeka = Opeka || {};
             chatLink = false,
             body = $('body');
         
-        var roomType = "Pair";
+        var roomType = "pair";
         
         // The group class is added to the body tag by requesting the widget URL and appending /group at the end
         // e.g. https://demo.curachat.com/opeka-widgets/header/group
-        if (body.hasClass("group")) { roomType = "Group"; }
+        if (body.hasClass("group")) { roomType = "group"; }
         
         // Set the temporary status text
         statusTab.text(textStrings.statusFetching);
@@ -77,11 +77,11 @@ var Opeka = Opeka || {};
           }
           
           switch(roomType) {
-            case "Pair":
+            case "pair":
               // If chat is open and there are available one-to-one rooms (chat open).
               if (chatStatus.chatOpen && chatStatus.rooms && chatStatus.rooms.pair.active > 0) {
                 body.removeClass('chat-closed chat-busy').addClass('chat-open');
-                statusTab.text(textStrings.statusAvailablePair);
+                statusTab.text(textStrings.statusAvailable_pair);
                 chatLink = true;
                 chatButton.text(textStrings.buttonAvailable);
                 if (opekaClientURL) {
@@ -93,10 +93,10 @@ var Opeka = Opeka || {};
               }
               break;
             // If chat is open and there are available group rooms (chat open).
-            case "Group":
+            case "group":
               if (chatStatus.chatOpen && chatStatus.roomsList && chatStatus.roomsList.length && chatStatus.rooms.group.full == 0) {
                 body.removeClass('chat-closed chat-busy').addClass('chat-open');
-                statusTab.text(textStrings.statusAvailableGroup);
+                statusTab.text(textStrings.statusAvailable_group);
                 chatLink = true;
                 chatButton.text(textStrings.buttonAvailable);
               }
@@ -123,7 +123,7 @@ var Opeka = Opeka || {};
           // If not, it might be busy? Check if chat app is turned on (chat busy).
           else if (chatStatus.chatOpen) {
             body.removeClass('chat-closed chat-open').addClass('chat-busy');
-            statusTab.text(textStrings["statusOccupied"+roomType]);
+            statusTab.text(textStrings["statusOccupied_"+roomType]);
             chatLink = false;
             chatButton.text(textStrings.buttonOccupied);
             if (opekaClientURL) {
@@ -133,7 +133,7 @@ var Opeka = Opeka || {};
           // The chat app not turned on or is not initialized / unreachable.
           else if (chatStatus === 'undefined' || !chatStatus.chatOpen){
             body.removeClass('chat-busy chat-open').addClass('chat-closed');
-            statusTab.text(textStrings["statusClosed"+roomType]);
+            statusTab.text(textStrings["statusClosed_"+roomType]);
             chatLink = false;
             chatButton.text(textStrings.buttonClosed);
             if (opekaClientURL) {
@@ -165,13 +165,18 @@ var Opeka = Opeka || {};
             window.parent.location = opekaBaseURL+'/chat-on-opera';
           }
 
-          var callback = function(signInURL) {
+          var callback = function(err, signInURL) {
+            if (err) {
+              console.log('Opeka error: ' + err);
+              w.location = opekaBaseURL+'/error';
+              return;
+            }
             // Close window if chat is unavailable
             if (!(chatStatus.rooms && chatStatus.rooms.pair.active > 0) && !(chatStatus.rooms && chatStatus.rooms.pair.full > 0)) {
               w.close();
             }
             // Check if it is a group chat
-            else if (roomType == "Group") {
+            else if (roomType == "group") {
               w.location = chatStatus.chatPageURL;
             }
             else {
@@ -180,8 +185,13 @@ var Opeka = Opeka || {};
             }
           };
 
-          io_socket.emit("getDirectSignInURL", roomType, function(result) {
-            callback("/opeka" + result.substr(result.indexOf("#")));
+          io_socket.emit("getDirectSignInURL", roomType, function(err, result) {
+            if (err) {
+              callback(err);
+            }
+            else {
+              callback(err, "/opeka" + result.substr(result.indexOf("#")));
+            }
           });
         });
       });
