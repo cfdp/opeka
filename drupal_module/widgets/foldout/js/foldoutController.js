@@ -49,7 +49,7 @@ foldoutController.prototype = {
   },
 
   addEmbedHTML:function ()  {
-    $( this.embedLocation ).append( '<div class="opeka-chat-foldout-wrapper"><div id="opeka-chat-iframe-'+this.chatName+'"><iframe src="' + this.chatURL + '" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" height="200"></iframe></div></div>' );
+    $( this.embedLocation ).append( '<div class="opeka-chat-foldout-wrapper '+this.chatName+'"><div id="opeka-chat-iframe-'+this.chatName+'"><iframe src="' + this.chatURL + '" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" height="200"></iframe></div></div>' );
   },
   //Foldout animation
   foldoutAnimation: function ()  {
