@@ -1,14 +1,46 @@
 <script>
 /* Append on the site where the chat foldout should be active - enter the appropriate values for opekaFoldout.baseURL (baseURL of the chat service) and opekaFoldout.clientURL (client site URL)  amd opekaFoldout.embedLocation. Additional CSS files can be loaded by adding them to opekaFoldout.cssFiles */
-var opekaFoldout = {
-  baseURL: "https://demo.curachat.com",
-  clientURL: "https://demo.curachat.com",
-  embedLocation: "body",
-  embedScript: document.createElement('script')
-};
-opekaFoldout.cssFiles = [["opeka.widget.foldout.css", opekaFoldout.baseURL+"/sites/all/modules/custom/opeka/css/"]];
-opekaFoldout.embedScript.type='text/javascript';
-opekaFoldout.embedScript.src=opekaFoldout.baseURL+"/sites/all/modules/custom/opeka/widgets/foldout/js/foldoutController.js";
-document.body.appendChild(opekaFoldout.embedScript);
-</script>
+(function($){
+/* Widget specific settings */
+  var opekaFoldout = {
+    chatName: "demo-chat",
+    baseURL: "https://demo.curachat.com",
+    clientURL: "https://demo.curachat.com",
+    embedLocation: "body",
+  };
+/*  var opekaFoldout2 = {
+    chatName: "demo2-chat",
+    baseURL: "https://demo2.curachat.com",
+    clientURL: "https://demo.curachat.com",
+    embedLocation: "body",
+  };*/
+  opekaFoldout.cssFiles = [["opeka.widget.foldout.css", opekaFoldout.baseURL+"/sites/all/modules/custom/opeka/css/"]];
 
+  /* Add the foldoutController script */
+  if(typeof foldoutController == "undefined"){
+    opekaFoldout.embedScript = document.createElement('script');
+    opekaFoldout.embedScript.type='text/javascript';
+    opekaFoldout.embedScript.src = opekaFoldout.baseURL+"/sites/all/modules/custom/opeka/widgets/foldout/js/foldoutController.js";
+    document.body.appendChild(opekaFoldout.embedScript);
+  }
+
+  /**
+   * Wait for the external script to load
+   */
+  function waitForFnc(){
+    if(typeof foldoutController == "undefined"){
+      window.setTimeout(waitForFnc,20);
+    }
+    else{
+      //Add any number of widgets - define additional variables as needed
+      firstChat = new foldoutController(jQuery, opekaFoldout);
+      firstChat.init();
+      /*secondChat = new foldoutController(jQuery, opekaFoldout2);
+      secondChat.init();*/
+    }
+  }
+
+  waitForFnc();
+
+})(jQuery);
+</script>
