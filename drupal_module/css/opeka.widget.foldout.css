@@ -9,3 +9,8 @@
   right: -260px;
   z-index: 10;
 }
+
+/* line 14, ../sass/opeka.widget.foldout.scss */
+.opeka-chat-foldout-wrapper.demo-group-chat {
+  top: 45%;
+}

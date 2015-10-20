@@ -3,17 +3,19 @@
 (function($){
 /* Widget specific settings */
   var opekaFoldout = {
-    chatName: "demo-chat",
+    chatName: "demo-1-1-chat",
+    chatType: "pair", // can be pair or group
     baseURL: "https://demo.curachat.com",
     clientURL: "https://demo.curachat.com",
     embedLocation: "body",
   };
-/*  var opekaFoldout2 = {
-    chatName: "demo2-chat",
-    baseURL: "https://demo2.curachat.com",
+  var opekaFoldout2 = {
+    chatName: "demo-group-chat",
+    chatType: "group", // can be pair or group
+    baseURL: "https://demo.curachat.com",
     clientURL: "https://demo.curachat.com",
     embedLocation: "body",
-  };*/
+  };
   opekaFoldout.cssFiles = [["opeka.widget.foldout.css", opekaFoldout.baseURL+"/sites/all/modules/custom/opeka/css/"]];
 
   /* Add the foldoutController script */
@@ -35,8 +37,8 @@
       //Add any number of widgets - define additional variables as needed
       firstChat = new foldoutController(jQuery, opekaFoldout);
       firstChat.init();
-      /*secondChat = new foldoutController(jQuery, opekaFoldout2);
-      secondChat.init();*/
+      secondChat = new foldoutController(jQuery, opekaFoldout2);
+      secondChat.init();
     }
   }
 

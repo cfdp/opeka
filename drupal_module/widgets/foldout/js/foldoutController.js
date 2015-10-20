@@ -5,7 +5,8 @@
  * See embed.html for example values
  */
 function foldoutController($, opekaFoldout) {
-  this.chatURL = opekaFoldout.baseURL + "/opeka-widgets/foldout?client_url=" + opekaFoldout.clientURL;
+  this.chatType = opekaFoldout.chatType || "pair";
+  this.chatURL = opekaFoldout.baseURL + '/opeka-widgets/foldout/' + this.chatType +'?client_url=' + opekaFoldout.clientURL;
   this.chatName = opekaFoldout.chatName;
   this.cssFiles = opekaFoldout.cssFiles;
   this.embedLocation = opekaFoldout.embedLocation;
