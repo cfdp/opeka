@@ -53,8 +53,8 @@ foldoutController.prototype = {
     $( this.embedLocation ).append( '<div class="opeka-chat-foldout-wrapper '+this.chatName+'"><div id="opeka-chat-iframe-'+this.chatName+'"><iframe src="' + this.chatURL + '" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" height="200"></iframe></div></div>' );
   },
   //Foldout animation
-  foldoutAnimation: function ()  {
-    $(".opeka-chat-foldout-wrapper").hover(
+  foldoutAnimation: function (chatName)  {
+    $(".opeka-chat-foldout-wrapper."+chatName).hover(
       function() {
         $(this).stop(true,true).animate({
           right: 0

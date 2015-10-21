@@ -154,16 +154,34 @@ var Opeka = Opeka || {};
         }
 
         // When the user clicks the button (and a chat room is vacant), ask the chat server to join a room.
-        // If chatLink is false, the chat isn't ready and no link is provided
         chatButton.click(function () {
+          // If chatLink is false, the chat isn't ready and no link is provided
           if (!chatLink) {
             return;
           }
+          // now.js did not work well with Opera @todo check dnode status
+          // https://github.com/substack/dnode/wiki/browser-compatibility
           if (!$.browser.opera){
             var w = openWindow('_blank', opekaBaseURL+'/opeka', 600, 700);
           } else {
             window.parent.location = opekaBaseURL+'/chat-on-opera';
           }
+          
+          switch(roomType) {
+            case "pair":
+              io_socket.emit("getDirectSignInURL", roomType, function(err, result) {
+                if (err) {
+                  callback(err);
+                }
+                else {
+                  callback(err, "/opeka" + result.substr(result.indexOf("#")));
+                }
+              });
+              break;
+            case "group":
+              w.location = chatStatus.chatPageURL;
+              break;
+           }
 
           var callback = function(err, signInURL) {
             if (err) {
@@ -171,13 +189,10 @@ var Opeka = Opeka || {};
               w.location = opekaBaseURL+'/error';
               return;
             }
-            // Close window if chat is unavailable
+            // Double-check chat status - close window if chat is unavailable
             if (!(chatStatus.rooms && chatStatus.rooms.pair.active > 0) && !(chatStatus.rooms && chatStatus.rooms.pair.full > 0)) {
+              console.log('Opeka error: chat unavailable ');
               w.close();
-            }
-            // Check if it is a group chat
-            else if (roomType == "group") {
-              w.location = chatStatus.chatPageURL;
             }
             else {
               // It's a pair chat
@@ -185,14 +200,6 @@ var Opeka = Opeka || {};
             }
           };
 
-          io_socket.emit("getDirectSignInURL", roomType, function(err, result) {
-            if (err) {
-              callback(err);
-            }
-            else {
-              callback(err, "/opeka" + result.substr(result.indexOf("#")));
-            }
-          });
         });
       });
       

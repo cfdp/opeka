@@ -44,9 +44,11 @@ html body.admin-menu.page-opeka-widgets {
   }
   .chat-busy & {
     background-color: darken($ccOrange, 15%);
+    cursor: default;
   }
   .chat-closed & {
     background-color: darken($ccRed, 15%);
+    cursor: default;
   }
 }
 

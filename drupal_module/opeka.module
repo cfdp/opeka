@@ -319,7 +319,7 @@ function opeka_preprocess_page(&$vars) {
     if (in_array($plain_arg_1, $allowed_widget_types)) {
       $vars['theme_hook_suggestions'][] = 'opeka__'.$plain_arg_1.'_widget_page';
     }
-    
+
     // Is it a group chat widget?
     if ((count($path_array) >= 3) && (($path_array[2] === "group"))) {
       $plain_arg_2 = check_plain($path_array[2]);
@@ -336,7 +336,7 @@ function opeka_preprocess_page(&$vars) {
 
 /*
  * A common function for defining variables to be used in various
- * preprocess functions - DRY FTW - ?
+ * preprocess functions
  */
 function _opeka_var($var_name,$new_val = NULL) {
   $vars = &drupal_static(__FUNCTION__, array());
