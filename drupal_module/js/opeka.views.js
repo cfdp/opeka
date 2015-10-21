@@ -1159,6 +1159,7 @@
           closeWindowText: Drupal.t('Close window'),
           queueLink: Drupal.t('Go to queue list'),
           enterRoom: Drupal.t('Enter'),
+          fullRoomText: Drupal.t('Full'),
           fullRoomLinkText: Drupal.t('Busy'),
           fullRoomLink: Opeka.features.fullRoomLink,
           pausedRoomText: Drupal.t('Paused'),

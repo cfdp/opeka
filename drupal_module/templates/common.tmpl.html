@@ -184,10 +184,10 @@
       <div class="room-details badge badge-info <% if (room.get('memberCount') === room.get('maxSize')){%>full<%} %><% if (room.attributes.paused){%> paused<%} %>">
         <span class="room-size"><%- room.get('memberCount') %>/<%- room.get('maxSize') %></span>
         <% if (room.get('memberCount') === room.get('maxSize')){%>
-          <span class="room-status full">Full</span>
+          <span class="room-status full"><%= labels.fullRoomText %></span>
         <%} %>
         <% if (room.attributes.paused){%>
-          <span class="room-status paused">Paused</span>
+          <span class="room-status paused"><%= labels.pausedRoomText %></span>
         <%} %>
       </div>
       <p class="room-description"><%- room.get('name') %></p>
