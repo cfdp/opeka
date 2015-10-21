@@ -330,6 +330,9 @@ function opeka_preprocess_page(&$vars) {
       $plain_arg_2 = check_plain($path_array[2]);
       $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "pair"); // Set the value and retrieve it
     }
+    else {
+      $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "none"); // Set the value and retrieve it
+    }
   }
 }
 

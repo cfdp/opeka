@@ -166,7 +166,7 @@ var Opeka = Opeka || {};
           } else {
             window.parent.location = opekaBaseURL+'/chat-on-opera';
           }
-          
+
           switch(roomType) {
             case "pair":
               io_socket.emit("getDirectSignInURL", roomType, function(err, result) {

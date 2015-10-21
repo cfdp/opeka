@@ -18,13 +18,15 @@
   };
   opekaFoldout.cssFiles = [["opeka.widget.foldout.css", opekaFoldout.baseURL+"/sites/all/modules/custom/opeka/css/"]];
 
-  /* Add the foldoutController script */
-  if(typeof foldoutController == "undefined"){
-    opekaFoldout.embedScript = document.createElement('script');
-    opekaFoldout.embedScript.type='text/javascript';
-    opekaFoldout.embedScript.src = opekaFoldout.baseURL+"/sites/all/modules/custom/opeka/widgets/foldout/js/foldoutController.js";
-    document.body.appendChild(opekaFoldout.embedScript);
-  }
+  $(document).ready(function() {
+    /* Add the foldoutController script */
+    if(typeof foldoutController == "undefined"){
+      opekaFoldout.embedScript = document.createElement('script');
+      opekaFoldout.embedScript.type='text/javascript';
+      opekaFoldout.embedScript.src = opekaFoldout.baseURL+"/sites/all/modules/custom/opeka/widgets/foldout/js/foldoutController.js";
+      document.body.appendChild(opekaFoldout.embedScript);
+    }
+  });
 
   /**
    * Wait for the external script to load
