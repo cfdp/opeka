@@ -15,7 +15,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2015-10-20 16:17+0200\n"
+"POT-Creation-Date: 2015-10-22 11:47+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -238,6 +238,14 @@ msgstr ""
 
 #: js/opeka.common.js:0
 msgid "Wrong code."
+msgstr ""
+
+#: js/opeka.common.js:0
+msgid "To access the chat you must be logged in to the website. Please log in and try again."
+msgstr ""
+
+#: js/opeka.common.js:0
+msgid "Login required"
 msgstr ""
 
 #: js/opeka.common.js:0;0
