@@ -543,6 +543,17 @@ var Opeka = {
       view.render();
   };
 
+  // Response to a user not entering the correct access code
+  Opeka.clientSideMethods.loginRequiredMessage = function (clientId) {
+    var view = new Opeka.FatalErrorDialogView({
+      message: Drupal.t("To access the chat you must be logged in to the website. Please log in and try again."),
+      title: Drupal.t('Login required')
+    });
+
+    view.render();
+  };
+
+
   /**
    * If the client user is leaving a pair room and hidePairRoomsOnRoomList is true
    * send him to the goodbye page

@@ -223,7 +223,7 @@ function Server(config, logger) {
       // Check whether the user is required to be logged into Drupal
       if (self.config.get("features:requireDrupalLogin") && !account.uid) {
         self.logger.info('User without drupal login tried to access the chat.');
-        client.remote('accessDenied', client.clientId);
+        client.remote('loginRequiredMessage', client.clientId);
         return;
       }
 
