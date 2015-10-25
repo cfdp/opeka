@@ -978,7 +978,7 @@ function Server(config, logger) {
 
     // Set room on pause if the room is a pair room.
     if (removedUser) {
-      if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
+      if ((typeof room !== 'undefined') && autoPause === true && room.maxSize === 2 && room.paused !== true) {
         room.paused = true;
         self.everyone.remote('roomUpdated', room.id, { paused: true });
         self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
@@ -990,7 +990,7 @@ function Server(config, logger) {
     // client closes / refreshes the browser window)
     // - also from the snippet/chatwidget. The chat should only pause if the user is leaving an
     // active room.
-    else if (autoPause === true && room.maxSize === 2 && !room.paused && (activeRoomId === room.id)) {
+    else if ((typeof room !== 'undefined') && (autoPause === true) && (room.maxSize === 2) && !room.paused && (activeRoomId === room.id)) {
       room.paused = true;
       self.everyone.remote('roomUpdated', room.id, { paused: true });
       self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
