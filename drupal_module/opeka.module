@@ -334,6 +334,9 @@ function opeka_preprocess_page(&$vars) {
       $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "none"); // Set the value and retrieve it
     }
   }
+  else {
+    $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "none"); // Set the value and retrieve it
+  }
 }
 
 
