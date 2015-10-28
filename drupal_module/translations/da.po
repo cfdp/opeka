@@ -12,7 +12,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Opeka\n"
-"POT-Creation-Date: 2015-10-22 11:47+0200\n"
+"POT-Creation-Date: 2015-10-28 14:29+0100\n"
 "PO-Revision-Date: 2012-04-16 15:43+0100\n"
 "Last-Translator: Benjamin Christensen <benjamin@benway.dk>\n"
 "Language-Team: \n"
@@ -270,8 +270,9 @@ msgstr "Forkert kode."
 msgid ""
 "To access the chat you must be logged in to the website. Please log in and "
 "try again."
-msgstr "Du skal være logget ind for at kunne tilgå chatten. Log venligst "
-"ind og prøv igen."
+msgstr ""
+"Du skal være logget ind for at kunne tilgå chatten. Log venligst ind og prøv "
+"igen."
 
 #: js/opeka.common.js:0
 msgid "Login required"
@@ -324,6 +325,10 @@ msgstr "Hviskede"
 #: js/opeka.views.js:0
 msgid "Whispered to"
 msgstr "Hviskede til"
+
+#: js/opeka.views.js:0
+msgid "Reply to whisper"
+msgstr "Svar på hvisk"
 
 #: js/opeka.views.js:0;0
 msgid "Leave queue"

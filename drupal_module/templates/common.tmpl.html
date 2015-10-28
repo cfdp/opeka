@@ -258,6 +258,13 @@
             <div class="sender-name pull-left"><%= labels.whisperedTo %> - <%- message.sender.name %></div>
             <% } %>
             <div class="time pull-right"><%= formatTimestamp(message.date) %></div>
+            <% if (message.receiver) { %>
+            <div class="actions pull-right">
+              <button class="reply-to-whisper btn-link pull-right" data-reply-to="<%- message.sender.name %>">
+                <%= labels.replyToWhisper %>
+              </button>
+            </div>
+            <% } %>
           </div>
         <div class="message"><%- message.message %></div>
       </li>
@@ -327,4 +334,13 @@
 <script id="opeka_goodbye_tmpl" type="application/template">
   <p><%= labels.message %></p>
   <p><a class="btn btn-success" href="#" onclick="javascript: window.close();"><%= labels.closeWindowText %></a></p>
+</script>
+
+<script id="opeka_whisper_tmpl" type="application/template">
+  <form action="#" class="whisper-form">
+    <label><%= labels.whisperMessage %></label>
+    <!--<input class="form-text whisper-message" name="name" type="textfield" />-->
+    <textarea class="form-text whisper-message" name="name" rows=3 cols=32></textarea>
+    <span class="help-text"><%= labels.whisperHelpText %></span>
+  </form>
 </script>

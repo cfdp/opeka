@@ -50,7 +50,8 @@
       "submit .message-form": "sendMessage",
       "keyup .form-text": "sendMessageonEnter",
       "submit .leave-queue-form": "leaveQueue",
-      "submit .leave-room-form": "leaveRoom"
+      "submit .leave-room-form": "leaveRoom",
+      "click .reply-to-whisper": "whisperReply"
     },
 
     initialize: function (options) {
@@ -116,6 +117,7 @@
           deleteMessage: Drupal.t('Delete'),
           whispered: Drupal.t('Whispered'),
           whisperedTo: Drupal.t('Whispered to'),
+          replyToWhisper: Drupal.t("Reply to whisper")
         },
         messages: this.messages,
       }));
@@ -266,6 +268,30 @@
         }
       }
 
+    },
+
+    whisperReply: function(event) {
+      var nickname = $(event.currentTarget).attr("data-reply-to"),
+          room = this.model;
+
+      // Loop through the userlist and send whisper to first user matching the name
+      _.each(room.get("userList"), function (user) {
+        if(user.name == nickname) {
+          var view = new Opeka.RoomWhisperView({
+            clientId: user.clientId,
+            model: room,
+            name: user.name
+          });
+
+          view.render();
+
+          if (event) {
+            event.preventDefault();
+          }
+
+          return true;
+        }
+      });
     }
   });// END ChatView
 

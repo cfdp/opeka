@@ -580,12 +580,21 @@ function Server(config, logger) {
   });
 
   /* Function used by the counselors in order to whisper to an user */
-  self.councellors.addServerMethod('whisper', function (clientId, messageText) {
+  self.everyone.addServerMethod('whisper', function (clientId, messageText) {
     var whisperClientId = this.clientId,
         whisperName = this.nickname,
         recipient = self.everyone.getClient(clientId),
         recieverName = recipient.nickname,
         date = new Date();
+
+    // Check if we're allowed to whiser to the
+    if(!self.councellors.getClient(whisperClientId) && !this.whisperPartners[clientId]) {
+      self.sendSystemMessage("You are not allowed to whisper to user " + recieverName, this);
+      return;
+    }
+
+    // Allow the recipient to whisper back
+    recipient.whisperPartners[whisperClientId] = true;
 
     // Send to user being whispered.
     recipient.remote('roomRecieveWhisper', clientId, messageText, whisperName, true, date);
@@ -713,6 +722,8 @@ function Server(config, logger) {
 
     // Set the chat start time
     client.chatStart_Min = Math.round((new Date()).getTime() / 60000);
+    // Reset list of whisper partners
+    client.whisperPartners = {};
     self.logger.info('Login: User chat start: ', client.chatStart_Min);
 
     // Special case when joining from the global Queue.

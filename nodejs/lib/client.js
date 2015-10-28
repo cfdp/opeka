@@ -30,6 +30,8 @@ var Client = function(server, stream, remote, conn) {
 
         self.account = {};
 
+        self.whisperPartners = {};
+
         self.nickname = null;
         self.gender = null;
         self.age = null;
