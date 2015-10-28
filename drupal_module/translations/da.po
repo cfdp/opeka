@@ -12,7 +12,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Opeka\n"
-"POT-Creation-Date: 2015-10-28 14:29+0100\n"
+"POT-Creation-Date: 2015-10-28 15:47+0100\n"
 "PO-Revision-Date: 2012-04-16 15:43+0100\n"
 "Last-Translator: Benjamin Christensen <benjamin@benway.dk>\n"
 "Language-Team: \n"
@@ -333,6 +333,10 @@ msgstr "Svar på hvisk"
 #: js/opeka.views.js:0;0
 msgid "Leave queue"
 msgstr "Forlad køen"
+
+#: js/opeka.views.js:0
+msgid "Leave chat room and close it if no other councillors are present"
+msgstr "Forlad chatten og luk rummet, hvis du er den sidste rådgiver til stede"
 
 #: js/opeka.views.js:0
 msgid "Leave chat room"

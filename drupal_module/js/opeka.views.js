@@ -130,7 +130,9 @@
           labels: {
             inQueueMessage: inQueueMessage,
             leaveQueueButton: Drupal.t('Leave queue'),
-            leaveRoomButton: Drupal.t('Leave chat room'),
+            leaveRoomButton: this.admin ?
+                             Drupal.t("Leave chat room and close it if no other councillors are present") :
+                             Drupal.t('Leave chat room'),
             placeholder: Drupal.t('Type message here…'),
             mutehelptext: Drupal.t('When you are muted, you are not allowed to send any messages until the counselor decides to unmute you. You can see all the other messages and receive whispers.'),
             roomPaused: Drupal.t('The room is paused'),

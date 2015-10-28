@@ -15,7 +15,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2015-10-28 14:29+0100\n"
+"POT-Creation-Date: 2015-10-28 15:47+0100\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -290,6 +290,10 @@ msgstr ""
 
 #: js/opeka.views.js:0;0
 msgid "Leave queue"
+msgstr ""
+
+#: js/opeka.views.js:0
+msgid "Leave chat room and close it if no other councillors are present"
 msgstr ""
 
 #: js/opeka.views.js:0
