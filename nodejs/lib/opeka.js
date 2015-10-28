@@ -985,26 +985,20 @@ function Server(config, logger) {
     var autoPause = self.config.get('features:automaticPausePairRooms'),
         removedUser = self.everyone.getClient(clientId),
         chatEnd_Min,
-        chatDuration;
+        chatDuration,
+        checkPause = false;
 
     // Set room on pause if the room is a pair room.
     if (removedUser) {
-      if ((typeof room !== 'undefined') && autoPause === true && room.maxSize === 2 && room.paused !== true) {
-        room.paused = true;
-        self.everyone.remote('roomUpdated', room.id, { paused: true });
-        self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
-      }
       chatStart_Min = removedUser.chatStart_Min;
       removedUser.activeRoomId = null;
-    }
-    // In this case we don't have a valid reference to a signed in client (happens when
-    // client closes / refreshes the browser window)
-    // - also from the snippet/chatwidget. The chat should only pause if the user is leaving an
-    // active room.
-    else if ((typeof room !== 'undefined') && (autoPause === true) && (room.maxSize === 2) && !room.paused && (activeRoomId === room.id)) {
-      room.paused = true;
-      self.everyone.remote('roomUpdated', room.id, { paused: true });
-      self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+      checkPause = true;
+    } else {
+      // In this case we don't have a valid reference to a signed in client (happens when
+      // client closes / refreshes the browser window)
+      // - also from the snippet/chatwidget. The chat should only pause if the user is leaving an
+      // active room.
+      checkPause = (activeRoomId === room.id);
     }
 
     // Calculate the duration of the chat session of the user being removed
@@ -1016,29 +1010,36 @@ function Server(config, logger) {
       chatDuration = chatEnd_Min - chatStart_Min;
     }
 
-
-    room.removeUser(clientId, function (users, queueClientId, removedUserNickname) {
-      // The user has been removed from the queue and should join the chat.
-      if (queueClientId) {
-        self.everyone.getClient(queueClientId).remote('changeRoom', room.id);
-        self.everyone.getClient(queueClientId).remote('roomJoinFromQueue', room.id);
-        self.everyone.remote('updateQueueStatus', room.id);
+    if(room) {
+      if (checkPause && (autoPause === true) && (room.maxSize === 2) && !room.paused) {
+        room.paused = true;
+        self.everyone.remote('roomUpdated', room.id, { paused: true });
+        self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
       }
 
-      // We always need to update the room count after a user has tried to
-      // leave the queue
-      self.helperUpdateRoomCount(room.id);
+      room.removeUser(clientId, function (users, queueClientId, removedUserNickname) {
+        // The user has been removed from the queue and should join the chat.
+        if (queueClientId) {
+          self.everyone.getClient(queueClientId).remote('changeRoom', room.id);
+          self.everyone.getClient(queueClientId).remote('roomJoinFromQueue', room.id);
+          self.everyone.remote('updateQueueStatus', room.id);
+        }
 
-      // Notify the chat room if we know who left.
-      if (removedUserNickname) {
-        room.group.remote('roomUserLeft', room.id, removedUserNickname, chatDuration);
-      }
+        // We always need to update the room count after a user has tried to
+        // leave the queue
+        self.helperUpdateRoomCount(room.id);
 
-      // Call the callback.
-      if (callback) {
-        callback(users);
-      }
-    });
+        // Notify the chat room if we know who left.
+        if (removedUserNickname) {
+          room.group.remote('roomUserLeft', room.id, removedUserNickname, chatDuration);
+        }
+
+        // Call the callback.
+        if (callback) {
+          callback(users);
+        }
+      });
+    }
 
     self.broadcastChatStatus();
   };
