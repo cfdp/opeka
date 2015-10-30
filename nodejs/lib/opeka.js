@@ -120,7 +120,18 @@ function Server(config, logger) {
       };
       var ca_path = config.get('server:https:ca-bundle');
       if (ca_path) {
-        https_opts['ca'] = fs.readFileSync(ca_path);
+        var ca_bundle = [];
+        var chain = fs.readFileSync(ca_path, "utf-8");
+        chain = chain.split(/\n/);
+        var buf = [];
+        _.each(chain, function(line) {
+          buf.push(line);
+          if(line.match(/-END CERTIFICATE-/)) {
+            ca_bundle.push(buf.join("\n"));
+            buf = []
+          }
+        });
+        https_opts['ca'] = ca_bundle;
       }
       return require('https').createServer(https_opts, callback);
     }
