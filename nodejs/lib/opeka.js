@@ -114,10 +114,26 @@ function Server(config, logger) {
    */
   self.createServer = function (config, callback) {
     if (config.get('server:https:enabled')) {
-      return require('https').createServer({
+      var https_opts = {
         cert: fs.readFileSync(self.config.get('server:https:cert')),
         key: fs.readFileSync(self.config.get('server:https:key'))
-      }, callback);
+      };
+      var ca_path = config.get('server:https:ca-bundle');
+      if (ca_path) {
+        var ca_bundle = [];
+        var chain = fs.readFileSync(ca_path, 'utf8');
+        chain = chain.split("\n");
+        var buf = [];
+        for (var line in chain) {
+          buf.push(line);
+          if(line.match(/-END CERTIFICATE-/)) {
+            ca_bundle.push(buf.join("\n"));
+            buf = []
+          }
+        }
+        https_opts['ca'] = ca_bundle;
+      }
+      return require('https').createServer(https_opts, callback);
     }
 
     return require('http').createServer(callback);
