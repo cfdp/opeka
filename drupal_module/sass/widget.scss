@@ -88,20 +88,33 @@ html body.admin-menu.page-opeka-widgets {
   background-color: $ccRed;
 }
 
-.status-content{
+.status-content {
   margin: 0 8px;
+
+  a {
+    color: white;
+    text-decoration: underline;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    li {
+      font-size: 12px;
+      list-style: none;
+    }
+  }
+
+  .opening-hours {
+    margin-bottom: 10px;
+  }
+
+  .opeka-multi-widget-iframe {
+    margin-bottom: 10px;
+  }
 }
 
-.status-content ul{
-  margin: 0;
-  padding: 0;
-}
 
-.status-content ul li{
-  font-size: 12px;
-  list-style: none;
 
-}
 
 .status-info {
   font-size: 12px; 
@@ -113,9 +126,8 @@ html body.admin-menu.page-opeka-widgets {
   width: 100%;
 }
 .read-more a {
-  color: $ccBlue; 
   font-size: 12px; 
-  text-decoration: none;
+  text-decoration: underline;
 }
 .read-more a:hover{
   text-decoration: underline;
