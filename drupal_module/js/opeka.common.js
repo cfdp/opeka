@@ -11,7 +11,6 @@
 
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-/*global now */
 
 var Opeka = {
       'status': {},
@@ -60,7 +59,7 @@ var Opeka = {
       'rooms': 'roomList',
       'queues/:queueId': 'queue',
       'queues': 'queueList',
-      'feedback': 'feedbackPage',
+      'feedback/:chatType': 'feedbackPage',
       'goodbye': 'goodbye'
     },
 
@@ -123,8 +122,10 @@ var Opeka = {
     },
 
     // The feedback page
-    feedbackPage: function () {
-        var view = new Opeka.UserFeedback({});
+    feedbackPage: function (chatType) {
+        var view = new Opeka.UserFeedback({
+          chatType: chatType
+        });
 
         Opeka.appViewInstance.replaceContent(view.render().el);
         Opeka.cleanAfterChat();
@@ -543,7 +544,7 @@ var Opeka = {
       view.render();
   };
 
-  // Response to a user not entering the correct access code
+  // Response to a user not being logged in when required
   Opeka.clientSideMethods.loginRequiredMessage = function (clientId) {
     var view = new Opeka.FatalErrorDialogView({
       message: Drupal.t("To access the chat you must be logged in to the website. Please log in and try again."),

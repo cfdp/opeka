@@ -324,8 +324,13 @@
     <p>The chat session has ended.</p>
   <% }else{ %>
     <p><%= labels.farewellMessage %></p>
-    <% if (Drupal.settings.opeka.feedback_url != '') { %>
+    <% if (Drupal.settings.opeka.feedback_auto_redirect) { %>
+      <p><%= labels.feedbackRedirectText %> </p>
+    <% } %>
+    <% if ((Drupal.settings.opeka.feedback_url != '') && ( chatType == "pair") && !autoRedirect) { %>
       <p><a href="<%= Drupal.settings.opeka.feedback_url %>" target="_blank"><%= labels.feedbackLinkText %></a></p>
+    <% } else if ((Drupal.settings.opeka.groupchat_feedback_url != '') && ( chatType == "group") && !autoRedirect) { %>
+      <p><a href="<%= Drupal.settings.opeka.groupchat_feedback_url %>" target="_blank"><%= labels.feedbackLinkText %></a></p>
     <% } %>
     <p><a class="btn btn-success" href="#" onclick="javascript: window.close();"><%= labels.closeWindowText %></a></p>
   <% } %>

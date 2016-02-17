@@ -115,6 +115,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
 
   $welcome_message = variable_get('opeka_welcome_message', '');
   $feedback_url = variable_get('opeka_feedback_url', '');
+  $groupchat_feedback_url = variable_get('opeka_groupchat_feedback_url', '');
+  $feedback_auto_redirect = variable_get('opeka_feedback_auto_redirect', '');
   $reg_pair_url = variable_get('opeka_reg_pair_url', '');
   $reg_group_url = variable_get('opeka_reg_group_url', '');
   /* Get the pair chat user list setting */
@@ -125,6 +127,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
   $settings['welcome_message'] = $welcome_message;
   $settings['feedback_url'] = $feedback_url;
+  $settings['groupchat_feedback_url'] = $groupchat_feedback_url;
+  $settings['feedback_auto_redirect'] = $feedback_auto_redirect;
   $settings['reg_pair_url'] = $reg_pair_url;
   $settings['reg_group_url'] = $reg_group_url;
   $settings['client_login_sound'] = $client_login_sound;

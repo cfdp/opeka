@@ -144,7 +144,6 @@
         }));
       }
 
-      // @daniel
       // Keep the scrollbar at the bottom of the .chat-message-list
       var message_list = this.$el.find('.chat-message-list');
       message_list.scrollTop(message_list.prop("scrollHeight"));
@@ -185,9 +184,11 @@
 
     // Make the user leave the chat room.
     leaveRoom: function (event) {
+      var maxSize = this.model.get('maxSize');
+      var chatType = "pair";
 
       // Special case for owner leaving the room.
-      if (this.model.get('maxSize') === 2 && (Drupal.settings.opeka.user && this.model.get('uid') === Drupal.settings.opeka.user.uid)) {
+      if (maxSize === 2 && (Drupal.settings.opeka.user && this.model.get('uid') === Drupal.settings.opeka.user.uid)) {
         var dialog = new Opeka.RoomLeaveOwnPairRoomDialogView({
           roomId: this.model.id
         });
@@ -198,10 +199,15 @@
         Opeka.remote.removeUserFromRoom(this.model.id, Opeka.clientData.clientId);
         $(window).trigger('leaveRoom');
       
-        //Opeka.router.navigate("rooms", {trigger: true});
-        //@daniel
-        //reroute the user to the feedback page
-        Opeka.router.navigate("feedback", {trigger: true});
+        // @todo: Going to a feedback page should be an option
+        // default: go back to the room list after the chat has ended
+
+        if (maxSize > 2) {
+          chatType = "group";
+        }
+
+        // Reroute the user to the feedback page
+        Opeka.router.navigate("feedback/" + chatType, {trigger: true});
       }
 
       if (event) {
@@ -250,7 +256,6 @@
       }
     },
 
-    // @daniel
     // Enable sending messages when pressing the ENTER(return) key
     sendMessageonEnter: function(event) {
       var message = this.$el.find('textarea.message').val();
@@ -426,7 +431,6 @@
       }
     },
 
-    //@daniel
     // For when a user needs to be banned.
     banUser: function (event) {
       var view = new Opeka.RoomBanUserView({
@@ -461,7 +465,6 @@
       }
     },
 
-    // @daniel
     // For toggling visibility on chat room menu items
     sidebarBlocktoggle: function (event) {
       var head = $(event.currentTarget),
@@ -1225,19 +1228,33 @@
     className: 'user-feedback-view well',
     initialize: function (options) {
       _.bindAll(this);
+      this.chatType = options.chatType;
 
       return this;
     },
     render: function () {
-      this.$el.html(JST.opeka_user_feedback_tmpl({
-        
-        admin: Opeka.clientData.isAdmin,
-        labels: {
-          farewellMessage: Drupal.t('Thanks for using our chat!'),
-          feedbackLinkText: Drupal.t('Open the feedback form.'),
-          closeWindowText: Drupal.t('Close the window')
+      // Auto redirect to questionnaire
+      if (Drupal.settings.opeka.feedback_auto_redirect) {
+        if ((Drupal.settings.opeka.feedback_url != '') && (this.chatType == 'pair')) {
+          window.opener.location.href = Drupal.settings.opeka.feedback_url;
         }
-      }));
+        else if ((Drupal.settings.opeka.groupchat_feedback_url != '') && (this.chatType == 'group')) {
+          window.opener.location.href = Drupal.settings.opeka.groupchat_feedback_url;
+        }
+        // Close the chat window after a few seconds
+        setTimeout(function() { window.close() }, 3000);
+      }
+        this.$el.html(JST.opeka_user_feedback_tmpl({
+          admin: Opeka.clientData.isAdmin,
+          labels: {
+            farewellMessage: Drupal.t('Thanks for using our chat!'),
+            feedbackRedirectText: Drupal.t('You are now being redirected to a questionnaire.'),
+            feedbackLinkText: Drupal.t('Open the feedback form.'),
+            closeWindowText: Drupal.t('Close the window')
+          },
+          chatType: this.chatType,
+          autoRedirect: Drupal.settings.opeka.feedback_auto_redirect
+        }));
       
       return this;
     }
