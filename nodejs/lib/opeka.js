@@ -101,7 +101,7 @@ function Server(config, logger) {
         };
 
         return self.everyone.serverMethods['getDirectSignInURL'].call(
-            bindObj, roomType, callback
+          bindObj, roomType, callback
         );
       });
       self.broadcastChatStatus(socket);
@@ -209,7 +209,7 @@ function Server(config, logger) {
     });
   };
 
-  // The following methods require Nowjs to be instantiated, so we need
+  // The following methods require dnode to be instantiated, so we need
   // to call the constructor here. That is bad form, but it requires
   // more refactoring to change that I care for right now.
   self.construct();
@@ -319,12 +319,19 @@ function Server(config, logger) {
         nonce = crypto.createHash('sha256').update(this.clientId + rightNow.getTime()).digest('hex'),
         signInURL = self.config.get('chatPage');
 
+    // Check if the requested room type is valid
+    if ((roomType !== "pair") && (roomType !== "group")) {
+      console.log('Bad Request: invalid roomType');
+      callback('Bad Request: invalid roomType');
+      return;
+    }
+
     self.signInNonces[nonce] = {
       date: rightNow,
       roomType: roomType
     };
 
-    callback(signInURL + '#signIn/' + nonce + '/' + roomType);
+    callback(null, signInURL + '#signIn/' + nonce + '/' + roomType);
   });
 
 // -------- GLOBAL QUEUE FUNCTIONS START -----------

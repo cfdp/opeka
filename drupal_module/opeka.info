@@ -1,5 +1,5 @@
 name = Opeka
-description = Secure anonymous chat system, built with Drupal and nowjs. 
+description = Secure anonymous chat system, built with Drupal and dnode.
 core = 7.x
 files[] = opeka.module
 files[] = opeka.admin.inc

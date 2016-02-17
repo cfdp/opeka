@@ -19,3 +19,4 @@
 /db-template
 /*.komodoproject
 /.idea
+.ruby-version

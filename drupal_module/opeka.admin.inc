@@ -39,12 +39,12 @@ function opeka_admin_page() {
 function opeka_admin_settings_form($form, &$form_state) {
   form_load_include($form_state, 'admin.inc', 'lol_queue');
 
-  $form['opeka_nowjs_url'] = array(
+  $form['opeka_connectjs_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Opeka server URL'),
     '#description' => t('URL to the Opeka connect.js javascript, eg. http://localhost:3000/connect.js'),
     '#required' => TRUE,
-    '#default_value' => variable_get('opeka_nowjs_url', ''),
+    '#default_value' => variable_get('opeka_connectjs_url', ''),
   );
 
   $form['opeka_schedule'] = array(
@@ -54,6 +54,30 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#required' => TRUE,
     '#default_value' => variable_get('opeka_schedule', ''),
   );
+  
+  $form['opeka_pair_chat_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Pair chat name'),
+    '#description' => t('The pair chat name can be shown in some chat widgets'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_pair_chat_name', ''),
+  );
+  
+  $form['opeka_group_chat_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Group chat name'),
+    '#description' => t('The group chat name can be shown in some chat widgets'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_group_chat_name', ''),
+  );
+
+  $form['opeka_feedback_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Feedback URL'),
+    '#description' => t('URL to a feedback page, e.g. a Google Form, where clients can enter evaluation data after a chat.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_feedback_url', ''),
+  );
 
   $form['opeka_welcome_message'] = array(
     '#type' => 'textarea',
@@ -61,7 +85,7 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#maxlength' => 1024,
     '#description' => t('Text shown before user logs into the chat.'),
     '#required' => FALSE,
-    '#default_value' => variable_get('opeka_welcome_message', ''),
+    '#default_value' => variable_get('opeka_welcome_message', 'Welcome to the chat! You can customize this message at Admin => config => services => opeka'),
   );
 
   $form['opeka_client_login_sound'] = array(
@@ -120,25 +144,42 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_pairchat_user_list', 0),
   );
 
+  $form['opeka_client_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Popup widget'),
+    '#description' => t('If the popup widget is used, please provide URL of client site, eg. http://mysite.com.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_client_url', ''),
+  );
+
+  $form['opeka_custom_css'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Custom css file for widget styles'),
+    '#description' => t('URL to a custom css file for the widgets.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_custom_css', ''),
+  );
+
   $form['opeka_server_restart'] = array(
    '#type' => 'submit',
    '#value' => 'Restart server',
    '#submit' => array('opeka_restart_server')
   );
 
-  // $form['opeka_server_start'] = array(
-  //   '#type' => 'submit',
-  //   '#value' => 'Start server',
-  //   '#submit' => array('opeka_start_server')
-  // );
-
-  // $form['opeka_server_stop'] = array(
-  //   '#type' => 'submit',
-  //   '#value' => 'Stop server',
-  //   '#submit' => array('opeka_stop_server')
-  //   );
-  
+  $form['submit']['#validate'][] = 'opeka_admin_settings_form_validate';
   return system_settings_form($form);
+}
+
+/* Validate form input */
+function opeka_admin_settings_form_validate(&$form, &$form_state) {
+  $file = $form_state['input']['opeka_custom_css'];
+  $file_headers = @get_headers($file);
+  if($file_headers[0] == 'HTTP/1.1 404 Not Found') {
+    form_set_error('opeka_custom_css', t('The URL in the custom CSS field returned 404 not found. Please make sure the the URL is correct.'));
+  }
+  else {
+      $exists = true;
+  }
 }
 
 function opeka_restart_server($form, &$form_state){
@@ -146,33 +187,9 @@ function opeka_restart_server($form, &$form_state){
   $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
   $output = shell_exec($opeka_path . '/scripts/restart_wrapper.sh '. $base_url);
   if ($output == NULL) {
-    drupal_set_message(t('Something went wrong - the chat was not restarted'), 'status');
+    drupal_set_message(t('Something went wrong - the chat was not restarted. Please contact support if problem persists.'), 'status');
   }
   else {
     drupal_set_message($output, 'status');
   }
 }
-
-// function opeka_start_server($form, &$form_state){
-//   global $base_url;
-//   $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
-//   $output = shell_exec($opeka_path . '/scripts/startchat.sh');
-//   if ($output == NULL) {
-//     drupal_set_message(t('Something went wrong - the chat was not started'), 'status');
-//   }
-//   else {
-//     drupal_set_message($output, 'status');
-//   }
-// }
-
-// function opeka_stop_server($form, &$form_state){
-//   global $base_url;
-//   $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
-//   $output = shell_exec($opeka_path . '/scripts/stopchat.sh');
-//   if ($output == NULL) {
-//     drupal_set_message(t('Something went wrong - the chat was not stopped'), 'status');
-//   }
-//   else {
-//     drupal_set_message($output, 'status');
-//   }
-// }

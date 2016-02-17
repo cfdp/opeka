@@ -20,6 +20,25 @@ function opeka_main_page() {
   return implode("\n", $output);
 }
 
+/**
+ * Checkes whether the current page is rendered using the Opeka chat system.
+ * @return boolean - TRUE if current page is an Opeka page and FALSE otherwise.
+ */
+function is_opeka_chat_page() {
+    $path = current_path();
+    $prefixes = array(
+        "opeka",
+        "opeka-widgets",
+        "admin/opeka"
+    );
+    foreach($prefixes as $prefix) {
+        if(substr($path, 0, strlen($prefix)) === $prefix) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 /*
  * Inline widget page for inclusion on third party sites
  *
@@ -27,7 +46,7 @@ function opeka_main_page() {
  */
 function opeka_inline_widget(){
   opeka_widgets();
-  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/inline/css/inline.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.inline.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
   return array();
 }
 
@@ -37,7 +56,7 @@ function opeka_inline_widget(){
  */
 function opeka_header_widget(){
   opeka_widgets();
-  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/header/css/header.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.header.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
   return array();
 }
 
@@ -47,48 +66,33 @@ function opeka_header_widget(){
  */
 function opeka_popup_widget(){
   opeka_widgets();
-  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/popup/css/popup.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.popup.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  return array();
+}
+
+/*
+ * Foldout widget page for inclusion on third party sites
+ *
+ */
+function opeka_foldout_widget(){
+  opeka_widgets();
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.foldout.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
   return array();
 }
 
 /*
  * Common function for the widgets
  *
- * Add needed css and js files
+ * Add needed assets
  */
 function opeka_widgets(){
-  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/css/widget.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
-  drupal_add_css(drupal_get_path('module', 'opeka') . '/widgets/css/custom.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 101));
-  drupal_add_js(drupal_get_path('module', 'opeka') . '/widgets/js/init.js');
+  opeka_add_assets(array(), array('opeka.frontend.js'), array(), TRUE);
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 10));
+  // Add custom css file provided through admin interface - if present
+  $custom_css = check_plain(variable_get('opeka_custom_css', ''));
+  if (strlen($custom_css) > 0) {
+    drupal_add_css($custom_css, array('group' => CSS_THEME, 'type' => 'external', 'weight' => 11));
+  }
+  drupal_add_js(drupal_get_path('module', 'opeka') . '/widgets/js/chatstatus.js', array('weight' => 10));
   return array();
 }
-
-/*
- * Implementation of hook_theme().
- */
-function opeka_theme(){
-  $theme = array();
-  $theme['opeka__header_widget_page'] = array(
-    'template' => 'widgets/header/opeka--header-widget-page',
-    );
-  $theme['opeka__inline_widget_page'] = array(
-    'template' => 'widgets/inline/opeka--inline-widget-page',
-    );
-  $theme['opeka__popup_widget_page'] = array(
-    'template' => 'widgets/popup/opeka--popup-widget-page',
-    );
-  $theme['opeka__widget_html'] = array(
-    'template' => 'widgets/opeka--widget-html',
-  );
-  return $theme;
-}
-
-/*function template_preprocess_opeka__header_widget_html(&$variables) {
-}*/
-
-/**
- * Implements hook_theme_registry_alter().
- */
-/*function opeka_theme_registry_alter(&$theme_registry) {
-
-}*/

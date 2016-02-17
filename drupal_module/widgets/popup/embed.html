@@ -1,10 +1,15 @@
-<!-- Append on the site where the chat popup should be active - replace opekaPopupBaseURL with the baseURL of the chat service -->
 <script>
-  var opekaPopupBaseURL = "https://demo.curachat.com"; // The URL of the chat site
-  var opekaPopupClientURL = "http://someclientsite.com"; // The URL of the client site
-  var opekaPopupScript=document.createElement('script');
-  opekaPopupScript.type='text/javascript';
-  opekaPopupScript.src=opekaPopupBaseURL+"/sites/all/modules/custom/opeka/widgets/popup/js/popupController.js";
-  document.body.appendChild(opekaPopupScript);
+/* @todo: make common external css script for popup and foldout */
+
+  var opekaPopup = {
+    baseURL: "https://demo.curachat.com",
+    clientURL: "https://demo.curachat.com",
+    embedLocation: "body",
+    cssFiles: [["opeka.widgets.external.css", opekaPopup.baseURL+"/sites/all/modules/custom/opeka/css/"]],
+    embedScript: document.createElement('script')
+  };
+
+  opekaPopup.embedScript.type='text/javascript';   opekaPopup.embedScript.src=opekaPopup.baseURL+"/sites/all/modules/custom/opeka/widgets/popup/js/popupController.js";
+  document.body.appendChild(opekaPopup.embedScript);
 </script>
 

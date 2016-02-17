@@ -4,7 +4,7 @@
  * Drupal module for Opeka project.
  *
  * Provides user-facing and admin-targeted pages including the JavaScript
- * needed for communication with nowjs.
+ * needed for communication with dnode.
  */
 
 /**
@@ -79,6 +79,14 @@ function opeka_menu() {
     'access arguments' => array('access content'),
     'file' => 'opeka.pages.inc',
   );
+
+  $items['opeka-widgets/foldout'] = array(
+    'title' => 'Foldout widget',
+    'description' => 'Foldout widget code for third party sites.',
+    'page callback' => 'opeka_foldout_widget',
+    'access arguments' => array('access content'),
+    'file' => 'opeka.pages.inc',
+  );
   return $items;
 }
 
@@ -92,10 +100,14 @@ function opeka_menu() {
  * @param array $settings
  *   Additional settings to be exposed to JavaScript via the
  *   Drupal.settings.object.
+ * @param array $widget
+ *   If we are rendering a widget, this should be set to TRUE
+ *
  */
-function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings = array()) {
+function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings = array(), $widget = FALSE) {
   $path = drupal_get_path('module', 'opeka');
 
+  // Add stylesheets
   $stylesheets = array_merge(array(
     'opeka.base.css',
     /*'opeka.theme.css',
@@ -105,7 +117,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
     drupal_add_css($path . '/css/' . $filename);
   }
 
-  $js_url = variable_get('opeka_nowjs_url', 'https://localhost:3000/connect.js');
+  // Get settings from the admin interface
+  $js_url = check_plain(variable_get('opeka_connectjs_url', 'https://localhost:3000/connect.js'));
 
   if (!$js_url) {
     $errormsg = t('Opeka web service URL missing.');
@@ -121,7 +134,10 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $reg_group_url = variable_get('opeka_reg_group_url', '');
   /* Get the pair chat user list setting */
   $pairchat_user_list = variable_get('opeka_pairchat_user_list', 0);
-  $client_login_sound = variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3');
+  $client_login_sound = check_plain(variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3'));
+  $client_url = check_plain(variable_get('opeka_client_url', ''));
+  $pair_chat_name = check_plain(variable_get('opeka_pair_chat_name', ''));
+  $group_chat_name = check_plain(variable_get('opeka_group_chat_name', ''));
 
   // Settings to expose to the JavaScript client.
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
@@ -134,34 +150,49 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['client_login_sound'] = $client_login_sound;
   $settings['pairchat_user_list'] = $pairchat_user_list;
   $settings['dnode_endpoint'] = preg_replace('/\/connect[.]js$/', '/opeka', $js_url);
+  $settings['socket_io_url'] = preg_replace('/\/connect[.]js$/', '/', $js_url);
+  $settings['client_url'] = $client_url;
+  $settings['pair_chat_name'] = $pair_chat_name;
+  $settings['group_chat_name'] = $group_chat_name;
 
+
+  // Add js files and settings
   drupal_add_js(array('opeka' => $settings), 'setting');
 
   // Load the required JavaScript libraries.
   drupal_add_library('system', 'ui.dialog');
 
-  // Add the Emoticons JavaScript and css files to the page. They will take care of
-  // replacing text emoticons with images
-  drupal_add_js($path .'/emoticons/lib/emoticons.js');
-  drupal_add_js($path .'/js/emoticons-support.js');
-  drupal_add_css($path . '/emoticons/support/skype/emoticons.css');
+  // We need backbone files, connect.js etc unless rendering a widget
+  if (!$widget) {
+    // Add the Emoticons JavaScript and css files to the page. They will take care of
+    // replacing text emoticons with images
+    drupal_add_js($path .'/emoticons/lib/emoticons.js');
+    drupal_add_js($path .'/js/emoticons-support.js');
+    drupal_add_css($path . '/emoticons/support/skype/emoticons.css');
 
-  // Add our default JavaScript files to the array.
-  $scripts = array_merge(array(
-    'underscore.js',
-    'backbone.js',
-    'opeka.common.js',
-    'opeka.models.js',
-    'opeka.views.js',
-  ), $scripts);
+    // Add our default JavaScript files to the array.
+    $scripts = array_merge(array(
+      'underscore.js',
+      'backbone.js',
+      'opeka.common.js',
+      'opeka.models.js',
+      'opeka.views.js',
+    ), $scripts);
+  }
 
   foreach ($scripts as $filename) {
     drupal_add_js($path . '/js/' . $filename);
   }
 
-  // Add the dnode JavaScript file to the page. It will take care of
-  // connecting to the nowjs server.
-  drupal_add_js($js_url, array('type' => 'external'));
+  // We need dnode unless rendering a widget
+  if (!$widget) {
+    // Add the connect.js JavaScript file to the page. It will take care of
+    // connecting to the dnode server.
+    drupal_add_js($js_url, array('type' => 'external'));
+  }
+
+  // Add socket.io resource
+  drupal_add_js('https://cdn.socket.io/socket.io-1.3.5.js', array('type' => 'external'));
 }
 
 /**
@@ -184,13 +215,11 @@ function opeka_block_info() {
  *   The text entered by user in the schedule field
  */
 function opeka_schedule_content(){
-
   // Get the variable with the opening hours
-  $schedule = variable_get('opeka_schedule', '');
-
+  $schedule = check_markup(variable_get('opeka_schedule', ''), 'filtered_html');
    // No content.
   if (empty($schedule)) {
-    $schedule = t('No schedule info available.');  
+    $schedule = t('No schedule info available.');
   }
   return $schedule; 
 }
@@ -210,11 +239,11 @@ function opeka_block_view($delta = '') {
           '#markup' => opeka_schedule_content(),
           '#attached' => array(
             'css' => array(
-              drupal_get_path('module', 'opeka') . '/widgets/css/widget.css',
-              drupal_get_path('module', 'opeka') . '/widgets/header/css/header.css',
+              drupal_get_path('module', 'opeka') . '/css/widget.css',
+              drupal_get_path('module', 'opeka') . '/css/widget.header.css',
             ),
             'js' => array(
-              drupal_get_path('module', 'opeka') . '/widgets/js/init.js',
+              drupal_get_path('module', 'opeka') . '/widgets/js/chatstatus.js',
             ),
           ),
         );
@@ -224,35 +253,108 @@ function opeka_block_view($delta = '') {
   return $block;
 }
 
-
 /* Widget related functionality */
 
+/* Register the widget templates */
+function opeka_theme($existing, $type, $theme, $path) {
+  $templates = array();
+  $templates['opeka__header_widget_page'] = array(
+      'base hook' => 'page',
+      'template' => 'opeka--header-widget-page',
+      'type' => 'theme',
+      'path' => drupal_get_path('module', 'opeka') . '/widgets/header',
+    );
+  $templates['opeka__inline_widget_page'] = array(
+      'base hook' => 'page',
+      'template' => 'opeka--inline-widget-page',
+      'type' => 'theme',
+      'path' => drupal_get_path('module', 'opeka') . '/widgets/inline',
+    );
+  $templates['opeka__popup_widget_page'] = array(
+      'base hook' => 'page',
+      'template' => 'opeka--popup-widget-page',
+      'type' => 'theme',
+      'path' => drupal_get_path('module', 'opeka') . '/widgets/popup',
+    );
+  $templates['opeka__foldout_widget_page'] = array(
+      'base hook' => 'page',
+      'template' => 'opeka--foldout-widget-page',
+      'type' => 'theme',
+      'path' => drupal_get_path('module', 'opeka') . '/widgets/foldout',
+    );
+  $templates['opeka__widget_html'] = array(
+      'base hook' => 'page',
+      'template' => 'opeka--widget-html',
+      'type' => 'theme',
+      'path' => drupal_get_path('module', 'opeka') . '/widgets',
+  );
+  return $templates;
+}
+
+/*
+ * Implements hook_preprocess_html
+ * Add html template suggestions
+ */
 function opeka_preprocess_html(&$vars) {
   $path_array = explode("/",current_path());
   if (isset($path_array)) {
     $plain_arg_0 = check_plain($path_array[0]);
     if ($plain_arg_0 == "opeka-widgets") {
       $vars['theme_hook_suggestions'][] = 'opeka__widget_html';
+      $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype'); // Get the value
     }
   }
 }
 
+/*
+ * Implements hook_preprocess_page
+ * Add page template suggestions based on requested URL
+ * Add needed variables
+ */
 function opeka_preprocess_page(&$vars) {
   $vars['opeka_schedule'] = opeka_schedule_content();
+  $vars['opeka_pair_chat_name'] = check_plain(variable_get('opeka_pair_chat_name', ''));
+  $vars['opeka_group_chat_name'] = check_plain(variable_get('opeka_group_chat_name', ''));
   $path_array = explode("/",current_path());
   $allowed_widget_types = array("header","inline","popup", "foldout");
-  if (isset($path_array) && (count($path_array) == 2) && ($path_array[0] == "opeka-widgets")) {
+  if (isset($path_array) && (count($path_array) >= 2) && ($path_array[0] === "opeka-widgets")) {
     $plain_arg_0 = check_plain($path_array[0]);
     $plain_arg_1 = check_plain($path_array[1]);
     if (in_array($plain_arg_1, $allowed_widget_types)) {
       $vars['theme_hook_suggestions'][] = 'opeka__'.$plain_arg_1.'_widget_page';
     }
+
+    // Is it a group chat widget?
+    if ((count($path_array) >= 3) && (($path_array[2] === "group"))) {
+      $plain_arg_2 = check_plain($path_array[2]);
+      $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "group"); // Set the value and retrieve it
+    }
+    // or is it a pair chat widget?
+    else if ((count($path_array) >= 3) && (($path_array[2] === "pair"))) {
+      $plain_arg_2 = check_plain($path_array[2]);
+      $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "pair"); // Set the value and retrieve it
+    }
+    else {
+      $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "none"); // Set the value and retrieve it
+    }
+  }
+  else {
+    $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "none"); // Set the value and retrieve it
   }
 }
 
-/**
- * Implements hook_css_alter().
+
+/*
+ * A common function for defining variables to be used in various
+ * preprocess functions
  */
-function opeka_css_alter(&$css) {
-  //dpm($css);
+function _opeka_var($var_name,$new_val = NULL) {
+  $vars = &drupal_static(__FUNCTION__, array());
+
+  // If a new value has been passed
+  if ($new_val) {
+    $vars[$var_name] = $new_val;
+  }
+
+  return isset($vars[$var_name]) ? $vars[$var_name] : NULL;
 }

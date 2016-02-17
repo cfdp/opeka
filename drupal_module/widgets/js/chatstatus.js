@@ -1,155 +1,227 @@
-/* This script is called when the connection to the chat server (now.js) has been established */
-(function ($, Drupal, undefined) {
+var Opeka = Opeka || {};
 
-  var chatStatus = {},
-    textStrings = {
-      buttonAvailable : Drupal.t("Start chat"),
-      buttonOccupied : Drupal.t("Wait..."),
-      buttonClosed : Drupal.t("Closed"),
-      statusFetching : Drupal.t("Fetching chat status..."),
-      statusClosed : Drupal.t("The chat is closed at the moment"),
-      statusOccupied: Drupal.t("The chat is occupied"),
-      statusAvailable: Drupal.t("The chat is available"),
-    };
+(function (Drupal, Opeka, $, undefined) {
+  
+  Drupal.behaviors.opeka = {
+    attach: function (context, settings) {
+      // Setting the variables
+      var chatStatus = {},
+          io_socket = null,
+          opekaClientURL = Drupal.settings.opeka.client_url || null,
+          opekaBaseURL = location.protocol + '//' + location.hostname || "https://localhost:3000",
+          pairChatName = Drupal.settings.opeka.pair_chat_name || Drupal.t("The 1-to-1 chat"),
+          groupChatName = Drupal.settings.opeka.group_chat_name || Drupal.t("The group chat"),
+          textStrings = {
+            buttonAvailable : Drupal.t("Start chat"),
+            buttonOccupied : Drupal.t("Occupied"),
+            buttonClosed : Drupal.t("Closed"),
+            buttonError : Drupal.t("Error connecting."),
+            statusFetching : Drupal.t("Connecting..."),
+            statusClosed_pair : Drupal.t('@pairChatName is closed', {'@pairChatName': pairChatName}),
+            statusClosed_group : Drupal.t('@groupChatName is closed', {'@groupChatName': groupChatName}),
+            statusError : Drupal.t("Error: no connection to server."),
+            statusOccupied_pair: Drupal.t("@pairChatName is occupied", {'@pairChatName': pairChatName}),
+            statusOccupied_group : Drupal.t('@groupChatName is occupied', {'@groupChatName': groupChatName}),
+            statusAvailable_pair: Drupal.t("@pairChatName is available", {'@pairChatName': pairChatName}),
+            statusAvailable_group : Drupal.t('@groupChatName is available', {'@groupChatName': groupChatName}),
+          };
+      io_url = Drupal.settings.opeka.socket_io_url || 'https://localhost:3000/opeka';
+      
+      io_socket = io(io_url, {'reconnection': false});
 
-  // The following callback is called by the server in order to
-  // advertise its status.
-  now.updateStatus = function (attributes) {
-    chatStatus = attributes;
-    $(window).trigger('opekaChatStatusUpdate', [attributes]);
-  };
-
-  // When the DOM is ready, set up the widget.
-  $(function () {
-    var statusTab = $('.status-tab'),
-        chatButton = $('.login-button .chat'),
-        chatLink = false,
-        body = $('body');
-
-    // Updates the actual status text.
-    var updateDisplay = function (attributes) {
-
-     //For debugging...
-      var debugchat = false;
-      if (debugchat) {
-        body.removeClass('chat-busy chat-open').addClass('chat-closed');
-        statusTab.text(textStrings.statusClosed);
-        chatButton.text(textStrings.buttonClosed);
-        chatLink = false;
-        return;
-      }
-
-      // If chat is open and there are active one-to-one rooms (chat open).
-      if (chatStatus.chatOpen && chatStatus.rooms && chatStatus.rooms.pair.active > 0) {
-        body.removeClass('chat-closed chat-busy').addClass('chat-open');
-        statusTab.text(textStrings.statusAvailable);
-        chatLink = true;
-        chatButton.text(textStrings.buttonAvailable);
-        if (opekaClientURL) {
-          opekaChatPopup("Activate");
-        }
-      }
-      // The chat app is not initialized yet
-      else if ($.isEmptyObject(chatStatus)) {
-        body.removeClass('chat-closed chat-open').addClass('chat-busy');
-        statusTab.text(textStrings.statusFetching);
-        chatLink = false;
-        chatButton.text(textStrings.buttonOccupied);
-      }
-      // If not, it might be busy? Check if chat app is turned on (chat busy).
-      else if (chatStatus.chatOpen) {
-        body.removeClass('chat-closed chat-open').addClass('chat-busy');
-        statusTab.text(textStrings.statusOccupied);
-        chatLink = false;
-        chatButton.text(textStrings.buttonOccupied);
-        if (opekaClientURL) {
-          opekaChatPopup("Deactivate");
-        }
-      }
-      // The chat app not turned on or is not initialized / unreachable (no now.js).
-      else if (chatStatus === 'undefined' || !chatStatus.chatOpen){
-        body.removeClass('chat-busy chat-open').addClass('chat-closed');
-        statusTab.text(textStrings.statusClosed);
-        chatLink = false;
-        chatButton.text(textStrings.buttonClosed);
-        if (opekaClientURL) {
-          opekaChatPopup("Deactivate");
-        }
-        //console.log('Opeka chat app is not turned on or chatStatus is undefined, chatStatus: ', chatStatus);
-      }
-      // If all fails - probably the server is down...
-      else {
-        body.removeClass('chat-busy chat-open').addClass('chat-closed');
-        statusTab.text(textStrings.statusClosed);
-        chatLink = false;
-        chatButton.text(textStrings.buttonClosed);
-        if (opekaClientURL) {
-          opekaChatPopup("Deactivate");
-        }
-        console.log('Opeka chat app error. Server might be down. chatStatus: ', chatStatus);
-      }
-
-     };
-
-    // When the document is ready, update the status, and bind the event
-    // to have it update automatically later.
-    $(window).bind('opekaChatStatusUpdate', updateDisplay);
-
-    // When the user clicks the button (and a chat room is vacant), ask the chat server to join a room.
-    chatButton.click(function () {
-      if (!chatLink) {
-        return;
-      }
-      if (!$.browser.opera){
-        var w = openWindow('_blank', opekaBaseURL+'/opeka', 600, 700);
-      } else {
-        window.parent.location = opekaBaseURL+'/chat-on-opera';
-      }
-
-      now.getDirectSignInURL('pair', function (signInURL) {
-      if (!(chatStatus.rooms && chatStatus.rooms.pair.active > 0) && !(chatStatus.rooms && chatStatus.rooms.pair.full > 0)) {
-        w.close();
-        //window.location = baseURL;
-      }
-      else {
-        w.location = signInURL;
-      }
+      // The following callback is called by the server in order to
+      // advertise its status.
+      io_socket.on("chat_status", function(data) {
+        chatStatus = data;
+        $(window).trigger('opekaChatStatusUpdate', data);
       });
-    });
+      
 
-    // Run updateDisplay once manually so we have the initial text
-    // nailed down.
-    updateDisplay();
-  });
-  
-    // Build pop-up window
-  function openWindow(window_name,file_name,width,height) {
-    parameters = "width=" + width;
-    parameters = parameters + ",height=" + height;
-    parameters = parameters + ",status=no";
-    parameters = parameters + ",resizable=no";
-    parameters = parameters + ",scrollbars=no";
-    parameters = parameters + ",menubar=no";
-    parameters = parameters + ",toolbar=no";
-    parameters = parameters + ",directories=no";
-    parameters = parameters + ",location=no";
+      // When the DOM is ready, set up the widget.
+      $(function () {
+        var statusTab = $('.status-tab'),
+            chatButton = $('.login-button .chat'),
+            chatLink = false,
+            body = $('body');
+        
+        var roomType = "pair";
+        
+        // The group class is added to the body tag by requesting the widget URL and appending /group at the end
+        // e.g. https://demo.curachat.com/opeka-widgets/header/group
+        if (body.hasClass("group")) { roomType = "group"; }
+        
+        // Set the temporary status text
+        statusTab.text(textStrings.statusFetching);
+        chatButton.text(textStrings.statusFetching);
 
-    vindue = window.open(file_name,window_name,parameters);
-    return vindue;
-  }
-  
-  /* This will successfully queue a message to be sent to the parent window */
-  function opekaChatPopup(popupAction) {
-    parent.postMessage(popupAction, opekaClientURL);
-  }
+        // Update status text if no connection could be made to server after 10 sec
+        function checkConnection(){
+          if (!io_socket.connected) {
+            console.log('No connection to Opeka chat server');
+            statusTab.text(textStrings.statusError);
+            chatButton.text(textStrings.buttonError);
+          }
+        }
+        setTimeout( checkConnection, 10000 );
+        
+        // Updates the actual status text.
+        var updateDisplay = function (attributes) {
+         //For debugging set debugchat to true...
+          var debugchat = false;
+          if (debugchat) {
+            body.removeClass('chat-busy chat-open').addClass('chat-closed');
+            statusTab.text(textStrings.statusClosed);
+            chatButton.text(textStrings.buttonClosed);
+            chatLink = false;
+            return;
+          }
+          
+          switch(roomType) {
+            case "pair":
+              // If chat is open and there are available one-to-one rooms (chat open).
+              if (chatStatus.chatOpen && chatStatus.rooms && chatStatus.rooms.pair.active > 0) {
+                body.removeClass('chat-closed chat-busy').addClass('chat-open');
+                statusTab.text(textStrings.statusAvailable_pair);
+                chatLink = true;
+                chatButton.text(textStrings.buttonAvailable);
+                if (opekaClientURL) {
+                  opekaChatPopup("Activate");
+                }
+              }
+              else {
+                calculatePassiveState();
+              }
+              break;
+            // If chat is open and there are available group rooms (chat open).
+            case "group":
+              if (chatStatus.chatOpen && chatStatus.roomsList && chatStatus.roomsList.length && chatStatus.rooms.group.full == 0) {
+                body.removeClass('chat-closed chat-busy').addClass('chat-open');
+                statusTab.text(textStrings.statusAvailable_group);
+                chatLink = true;
+                chatButton.text(textStrings.buttonAvailable);
+              }
+              else {
+                calculatePassiveState();
+              }
+              break;
+            }
+         };
 
-/*  function receiveMessage(event)   {
-    // Do we trust the sender of this message?  (might be
-    // different from what we originally opened, for example).
-    // This implementation does not receive messages from client, so this is not needed
-    if (event.origin !== "insert validated client url here")
-      return;
-  }
-  window.addEventListener("message", receiveMessage, false);*/
+        // When the document is ready, update the status, and bind the event
+        // to have it update automatically later.
+        $(window).on('opekaChatStatusUpdate', updateDisplay);
+        
+        /* Figure out the exact passive state of the chat and set properties */
+        function calculatePassiveState() {
+          // The chat app is not initialized yet
+          if ($.isEmptyObject(chatStatus)) {
+            body.removeClass('chat-closed chat-open').addClass('chat-busy');
+            statusTab.text(textStrings.statusFetching);
+            chatLink = false;
+            chatButton.text(textStrings.buttonOccupied);
+          }
+          // If not, it might be busy? Check if chat app is turned on (chat busy).
+          else if (chatStatus.chatOpen) {
+            body.removeClass('chat-closed chat-open').addClass('chat-busy');
+            statusTab.text(textStrings["statusOccupied_"+roomType]);
+            chatLink = false;
+            chatButton.text(textStrings.buttonOccupied);
+            if (opekaClientURL) {
+              opekaChatPopup("Deactivate");
+            }
+          }
+          // The chat app not turned on or is not initialized / unreachable.
+          else if (chatStatus === 'undefined' || !chatStatus.chatOpen){
+            body.removeClass('chat-busy chat-open').addClass('chat-closed');
+            statusTab.text(textStrings["statusClosed_"+roomType]);
+            chatLink = false;
+            chatButton.text(textStrings.buttonClosed);
+            if (opekaClientURL) {
+              opekaChatPopup("Deactivate");
+            }
+          }
+          // If all fails - probably the server is down...
+          else {
+            body.removeClass('chat-busy chat-open').addClass('chat-closed');
+            statusTab.text(textStrings.statusError);
+            chatLink = false;
+            chatButton.text(textStrings.buttonError);
+            if (opekaClientURL) {
+              opekaChatPopup("Deactivate");
+            }
+            console.log('Opeka chat app error. Server might be down. chatStatus: ', chatStatus);
+          }
+        }
 
-})(jQuery, Drupal);
+        // When the user clicks the button (and a chat room is vacant), ask the chat server to join a room.
+        chatButton.click(function () {
+          // If chatLink is false, the chat isn't ready and no link is provided
+          if (!chatLink) {
+            return;
+          }
+          // now.js did not work well with Opera @todo check dnode status
+          // https://github.com/substack/dnode/wiki/browser-compatibility
+          if (!$.browser.opera){
+            var w = openWindow('_blank', opekaBaseURL+'/opeka', 600, 700);
+          } else {
+            window.parent.location = opekaBaseURL+'/chat-on-opera';
+          }
+
+          switch(roomType) {
+            case "pair":
+              io_socket.emit("getDirectSignInURL", roomType, function(err, result) {
+                if (err) {
+                  callback(err);
+                }
+                else {
+                  callback(err, "/opeka" + result.substr(result.indexOf("#")));
+                }
+              });
+              break;
+            case "group":
+              w.location = chatStatus.chatPageURL;
+              break;
+           }
+
+          var callback = function(err, signInURL) {
+            if (err) {
+              console.log('Opeka error: ' + err);
+              w.location = opekaBaseURL+'/error';
+              return;
+            }
+            // Double-check chat status - close window if chat is unavailable
+            if (!(chatStatus.rooms && chatStatus.rooms.pair.active > 0) && !(chatStatus.rooms && chatStatus.rooms.pair.full > 0)) {
+              console.log('Opeka error: chat unavailable ');
+              w.close();
+            }
+            else {
+              // It's a pair chat
+              w.location = signInURL;
+            }
+          };
+
+        });
+      });
+      
+      /* Build pop-up window */
+      function openWindow(window_name,file_name,width,height) {
+        parameters = "width=" + width;
+        parameters = parameters + ",height=" + height;
+        parameters = parameters + ",status=no";
+        parameters = parameters + ",resizable=no";
+        parameters = parameters + ",scrollbars=no";
+        parameters = parameters + ",menubar=no";
+        parameters = parameters + ",toolbar=no";
+        parameters = parameters + ",directories=no";
+        parameters = parameters + ",location=no";
+        myWindow = window.open(file_name,window_name,parameters);
+        return myWindow;
+      };
+
+       /* This will successfully queue a message to be sent to the parent window */
+      function opekaChatPopup(popupAction) {
+        parent.postMessage(popupAction, opekaClientURL);
+      };
+    },
+  };
+})(Drupal, Opeka, jQuery);
