@@ -1234,7 +1234,7 @@
     },
     render: function () {
       // Auto redirect to questionnaire
-      if (Drupal.settings.opeka.feedback_auto_redirect) {
+      if (Drupal.settings.opeka.feedback_auto_redirect && window.opener) {
         if ((Drupal.settings.opeka.feedback_url != '') && (this.chatType == 'pair')) {
           window.opener.location.href = Drupal.settings.opeka.feedback_url;
         }
