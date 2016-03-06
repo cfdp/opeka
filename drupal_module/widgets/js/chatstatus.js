@@ -85,7 +85,7 @@ var Opeka = Opeka || {};
                 chatLink = true;
                 chatButton.text(textStrings.buttonAvailable);
                 if (opekaClientURL) {
-                  opekaChatPopup("Activate");
+                  opekaChatPopup("Open");
                 }
               }
               else {
@@ -127,7 +127,7 @@ var Opeka = Opeka || {};
             chatLink = false;
             chatButton.text(textStrings.buttonOccupied);
             if (opekaClientURL) {
-              opekaChatPopup("Deactivate");
+              opekaChatPopup("Occupied");
             }
           }
           // The chat app not turned on or is not initialized / unreachable.
@@ -137,7 +137,7 @@ var Opeka = Opeka || {};
             chatLink = false;
             chatButton.text(textStrings.buttonClosed);
             if (opekaClientURL) {
-              opekaChatPopup("Deactivate");
+              opekaChatPopup("Closed");
             }
           }
           // If all fails - probably the server is down...
@@ -147,7 +147,7 @@ var Opeka = Opeka || {};
             chatLink = false;
             chatButton.text(textStrings.buttonError);
             if (opekaClientURL) {
-              opekaChatPopup("Deactivate");
+              opekaChatPopup("Closed");
             }
             console.log('Opeka chat app error. Server might be down. chatStatus: ', chatStatus);
           }

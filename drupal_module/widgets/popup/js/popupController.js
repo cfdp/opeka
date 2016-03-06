@@ -46,7 +46,7 @@
     var pop_exp_w = 10;
     var pop_shr_w = -342;
 
-    if ( popupAction === "Activate") {
+    if ( popupAction === "Open") {
       $("#opeka-chat-iframe").show();
       $("#opeka-chat-iframe").animate({
           right: pop_exp_w
@@ -55,7 +55,7 @@
           width: 360
         },1000);
       }
-    else if (popupAction === "Deactivate") {
+    else if ((popupAction === "Closed") || popupAction === "Occupied") {
       $("#opeka-chat-iframe").animate({
         right: pop_shr_w
       },1000);

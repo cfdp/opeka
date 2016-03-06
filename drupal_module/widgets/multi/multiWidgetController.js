@@ -1,4 +1,5 @@
 /**
+ * Warning: not ready for use!
  * Script for controlling the foldout chat widget, to be embedded on client site
  * @param {Object} $ The jQuery object
  * @param {Object} opekaMultiWidget Object containing various settings

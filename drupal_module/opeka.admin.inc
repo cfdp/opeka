@@ -139,7 +139,7 @@ function opeka_admin_settings_form($form, &$form_state) {
   $form['opeka_client_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Popup widget'),
-    '#description' => t('If the popup widget is used, please provide URL of client site, eg. http://mysite.com.'),
+    '#description' => t('If the popup or the multi widgets are used, please provide the URL of the client site, eg. http://mysite.com.'),
     '#required' => FALSE,
     '#default_value' => variable_get('opeka_client_url', ''),
   );
