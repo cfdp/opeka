@@ -71,14 +71,6 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_group_chat_name', ''),
   );
 
-  $form['opeka_feedback_url'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Feedback URL'),
-    '#description' => t('URL to a feedback page, e.g. a Google Form, where clients can enter evaluation data after a chat.'),
-    '#required' => FALSE,
-    '#default_value' => variable_get('opeka_feedback_url', ''),
-  );
-
   $form['opeka_welcome_message'] = array(
     '#type' => 'textarea',
     '#title' => t('Welcome message'),
@@ -114,8 +106,8 @@ function opeka_admin_settings_form($form, &$form_state) {
 
   $form['opeka_feedback_auto_redirect'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Automatic redirection to form external window?'),
-    '#description' => t('Check this box if the feedback form should be opened automatically in the parent window of the chat user'),
+    '#title' => t('Automatic redirection to questionnaire in external window?'),
+    '#description' => t('Check this box if the feedback form should be opened automatically for clients.'),
     '#required' => FALSE,
     '#default_value' => variable_get('opeka_feedback_auto_redirect', 0),
   );

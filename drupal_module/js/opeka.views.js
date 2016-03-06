@@ -1229,20 +1229,39 @@
     initialize: function (options) {
       _.bindAll(this);
       this.chatType = options.chatType;
-
+      this.autoRedirect = Drupal.settings.opeka.feedback_auto_redirect;
       return this;
     },
     render: function () {
-      // Auto redirect to questionnaire
-      if (Drupal.settings.opeka.feedback_auto_redirect && window.opener) {
+      var baseWindow; // The window where the chat was initiated
+
+      // The chat was not opened in a new window
+      if (!window.opener) {
+        baseWindow = window;
+      }
+      // The chat was opened via an embedded iframe
+      else if (window.opener.parent) {
+        baseWindow = window.opener.parent;
+      }
+      // The chat was not opened via an iframe and the opener window is still open
+      else if (window.opener && !window.opener.closed) {
+        baseWindow = window.opener;
+      }
+
+      // Auto redirect baseWindow to questionnaire if it exists and close chat window
+      if (this.autoRedirect && baseWindow) {
         if ((Drupal.settings.opeka.feedback_url != '') && (this.chatType == 'pair')) {
-          window.opener.location.href = Drupal.settings.opeka.feedback_url;
+          baseWindow.location.href = Drupal.settings.opeka.feedback_url;
         }
         else if ((Drupal.settings.opeka.groupchat_feedback_url != '') && (this.chatType == 'group')) {
-          window.opener.location.href = Drupal.settings.opeka.groupchat_feedback_url;
+          baseWindow.location.href = Drupal.settings.opeka.groupchat_feedback_url;
         }
         // Close the chat window after a few seconds
         setTimeout(function() { window.close() }, 3000);
+      }
+      // If window.opener has been closed, just redirect the window itself
+      else if (this.autoRedirect && (baseWindow == null)) {
+        // @todo: implement this
       }
         this.$el.html(JST.opeka_user_feedback_tmpl({
           admin: Opeka.clientData.isAdmin,
