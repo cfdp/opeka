@@ -7,7 +7,7 @@
 (function ($) {
   window.addEventListener("message", receiveMessage, false);
   var chatStates = {}, // Object holding the state of the embedded chat services
-    validOrigins = ['https://demo.curachat.com','https://dev.demo'], // Add the valid URLs of the embedded services, eg. ['https://demo.curachat.com','https://demo2.curachat.com']
+    validOrigins = ['https://demo.curachat.com','https://dev.demo','https://dev.ch' ], // Add the valid URLs of the embedded services, eg. ['https://demo.curachat.com','https://demo2.curachat.com']
     opekaMultiWidgetState = 'chat-closed';
 
   /**
@@ -17,7 +17,8 @@
    * @param {Object} event
    */
   function receiveMessage(event) {
-    console.log('message received');
+    console.log(event);
+
     if (validOrigins.indexOf(event.origin) !== -1) {
       // Update status of the messaging chat
       chatStates[event.origin] = event.data;
@@ -53,15 +54,14 @@
   * @returns {Boolean} Returns true if the value was found, else false
   */
   function searchObject(needle) {
-    for (var prop in chatStates) {
-      if (chatStates.hasOwnProperty(prop)) {
-        if (chatStates[prop] === needle) {
+    for (var key in chatStates) {
+      if (chatStates.hasOwnProperty(key)) {
+        if (chatStates[key] == needle) {
           return true;
-        }
-        else {
-          return false;
         }
       }
     }
+    // The key wasn't found
+    return false;
   }
 }(jQuery));
