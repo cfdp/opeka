@@ -49,6 +49,7 @@
       "click .delete-message": "deleteMessage",
       "submit .message-form": "sendMessage",
       "keyup .form-text": "sendMessageonEnter",
+      "click .return-sends-msg": "toggleReturnSendsMessage",
       "submit .leave-queue-form": "leaveQueue",
       "submit .leave-room-form": "leaveRoom",
       "click .reply-to-whisper": "whisperReply"
@@ -60,6 +61,7 @@
       this.admin = options.admin;
       this.messages = [];
       this.inQueue = options.inQueue;
+      this.returnSendsMessage = ''; // Variable tied to user defined behaviour of input text area
 
       this.model.on('change', this.render, this);
       
@@ -137,10 +139,12 @@
             mutehelptext: Drupal.t('When you are muted, you are not allowed to send any messages until the counselor decides to unmute you. You can see all the other messages and receive whispers.'),
             roomPaused: Drupal.t('The room is paused'),
             userMuted: Drupal.t('You are muted'),
-            messageButton: Drupal.t('Send')
+            messageButton: Drupal.t('Send'),
+            returnSendsMessageLabel: Drupal.t('Press ENTER to send.')
           },
           inQueue: this.inQueue,
-          room: this.model
+          room: this.model,
+          returnSendsMessage: this.returnSendsMessage
         }));
       }
 
@@ -244,6 +248,7 @@
 
       // Input with a textarea to have multiple writing lines available
       var message = this.$el.find('textarea.message').val();
+
       // Remove the message sent and regain focus
       this.$el.find('textarea.message').val('').focus();
       
@@ -256,25 +261,38 @@
       }
     },
 
-    // Enable sending messages when pressing the ENTER(return) key
+    // Enable sending messages when pressing the ENTER (return) key
     sendMessageonEnter: function(event) {
       var message = this.$el.find('textarea.message').val();
       var code = (event.keyCode || event.which);
-      
+      var returnSendsMessage = this.returnSendsMessage;
+
       // Listen for the key code
       if(code == 13) {
-        
         // On pressing ENTER there is a new line element inserted in the textarea,
         // that we have to ignore and clear the value of the textarea
-        if (message.length == 1) {
-          this.$el.find('textarea.message').val('');
-        }
+        if (returnSendsMessage == 'checked') {
+          if (message.length == 1) {
+            this.$el.find('textarea.message').val('');
+          }
 
-        if (message !== '') {
-          this.$el.find('.message-form').submit();
+          if (message !== '') {
+            this.$el.find('.message-form').submit();
+          }
         }
       }
 
+    },
+
+    toggleReturnSendsMessage: function(event) {
+      // $this will contain a reference to the checkbox
+      if (this.$el.find('.return-sends-msg').is(':checked')) {
+        // the checkbox was checked
+        this.returnSendsMessage = 'checked';
+      } else {
+        // the checkbox was unchecked
+        this.returnSendsMessage = '';
+      }
     },
 
     whisperReply: function(event) {
