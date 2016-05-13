@@ -8,14 +8,13 @@
 #  opeka.info: n/a
 #  js/opeka.common.js: n/a
 #  js/opeka.views.js: n/a
-#  widgets/js/init.js: n/a
 #  widgets/js/chatstatus.js: n/a
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2015-10-28 15:47+0100\n"
+"POT-Creation-Date: 2016-05-13 11:01+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -41,55 +40,107 @@ msgid "The schedule for the upcoming chat sessions"
 msgstr ""
 
 #: opeka.admin.inc:60
-msgid "Welcome message"
+msgid "Pair chat name"
 msgstr ""
 
-#: opeka.admin.inc:62
-msgid "Text shown before user logs into the chat."
+#: opeka.admin.inc:61
+msgid "The pair chat name can be shown in some chat widgets"
+msgstr ""
+
+#: opeka.admin.inc:68
+msgid "Group chat name"
 msgstr ""
 
 #: opeka.admin.inc:69
-msgid "Login sound file"
+msgid "The group chat name can be shown in some chat widgets"
 msgstr ""
 
-#: opeka.admin.inc:70
-msgid "URL to a sound file that is played for the counselor when a client logs in."
-msgstr ""
-
-#: opeka.admin.inc:77
-msgid "Feedback URL"
+#: opeka.admin.inc:76
+msgid "Welcome message"
 msgstr ""
 
 #: opeka.admin.inc:78
-msgid "URL to a feedback page, e.g. a Google Form, where clients can enter evaluation data after a chat."
+msgid "Text shown before user logs into the chat."
 msgstr ""
 
 #: opeka.admin.inc:85
-msgid "1-to-1 chat registration form"
+msgid "Login sound file"
 msgstr ""
 
 #: opeka.admin.inc:86
-msgid "URL to a registration form, where counselors can enter data after a 1-to-1 chat."
+msgid "URL to a sound file that is played for the counselor when a client logs in."
 msgstr ""
 
 #: opeka.admin.inc:93
-msgid "Group chat registration form"
+msgid "Feedback URL"
 msgstr ""
 
 #: opeka.admin.inc:94
-msgid "URL to a registration form, where counselors can enter data after a group chat."
+msgid "URL to a feedback page, e.g. a Google Form, where clients can enter evaluation data after a chat."
 msgstr ""
 
 #: opeka.admin.inc:101
-msgid "Pair chat user list visibility"
+msgid "Group Chat feedback URL"
 msgstr ""
 
 #: opeka.admin.inc:102
-msgid "Toggle the user list visibility in the pair chat. Check it if the user list should be visible"
+msgid "URL to a feedback page, e.g. a Google Form, where group chat clients can enter evaluation data after a chat."
+msgstr ""
+
+#: opeka.admin.inc:109
+msgid "Automatic redirection to questionnaire in external window?"
+msgstr ""
+
+#: opeka.admin.inc:110
+msgid "Check this box if the feedback form should be opened automatically for clients."
+msgstr ""
+
+#: opeka.admin.inc:117
+msgid "1-to-1 chat registration form"
+msgstr ""
+
+#: opeka.admin.inc:118
+msgid "URL to a registration form, where counselors can enter data after a 1-to-1 chat."
+msgstr ""
+
+#: opeka.admin.inc:125
+msgid "Group chat registration form"
+msgstr ""
+
+#: opeka.admin.inc:126
+msgid "URL to a registration form, where counselors can enter data after a group chat."
 msgstr ""
 
 #: opeka.admin.inc:133
-msgid "Something went wrong - the chat was not restarted"
+msgid "Pair chat user list visibility"
+msgstr ""
+
+#: opeka.admin.inc:134
+msgid "Toggle the user list visibility in the pair chat. Check it if the user list should be visible"
+msgstr ""
+
+#: opeka.admin.inc:141 opeka.module:76
+msgid "Popup widget"
+msgstr ""
+
+#: opeka.admin.inc:142
+msgid "If the popup or the multi widgets are used, please provide the URL of the client site, eg. http://mysite.com."
+msgstr ""
+
+#: opeka.admin.inc:149
+msgid "Custom css file for widget styles"
+msgstr ""
+
+#: opeka.admin.inc:150
+msgid "URL to a custom css file for the widgets."
+msgstr ""
+
+#: opeka.admin.inc:170
+msgid "The URL in the custom CSS field returned 404 not found. Please make sure the the URL is correct."
+msgstr ""
+
+#: opeka.admin.inc:182
+msgid "Something went wrong - the chat was not restarted. Please contact support if problem persists."
 msgstr ""
 
 #: opeka.module:16
@@ -116,19 +167,19 @@ msgstr ""
 msgid "Grants a user access to generate opeka chat ban codes."
 msgstr ""
 
-#: opeka.module:111
+#: opeka.module:124
 msgid "Opeka web service URL missing."
 msgstr ""
 
-#: opeka.module:169
+#: opeka.module:204
 msgid "Header Widget for the chat"
 msgstr ""
 
-#: opeka.module:189
+#: opeka.module:222
 msgid "No schedule info available."
 msgstr ""
 
-#: opeka.module:203;60
+#: opeka.module:236;60
 msgid "Header widget"
 msgstr ""
 
@@ -156,12 +207,16 @@ msgstr ""
 msgid "Inline widget code for third party sites."
 msgstr ""
 
-#: opeka.module:76
-msgid "Popup widget"
-msgstr ""
-
 #: opeka.module:77
 msgid "Popup widget code for third party sites."
+msgstr ""
+
+#: opeka.module:84
+msgid "Foldout widget"
+msgstr ""
+
+#: opeka.module:85
+msgid "Foldout widget code for third party sites."
 msgstr ""
 
 #: opeka.info:0
@@ -169,7 +224,7 @@ msgid "Opeka"
 msgstr ""
 
 #: opeka.info:0
-msgid "Secure anonymous chat system, built with Drupal and nowjs."
+msgid "Secure anonymous chat system, built with Drupal and dnode."
 msgstr ""
 
 #: js/opeka.common.js:0
@@ -318,6 +373,10 @@ msgstr ""
 
 #: js/opeka.views.js:0
 msgid "Send"
+msgstr ""
+
+#: js/opeka.views.js:0
+msgid "Press ENTER to send."
 msgstr ""
 
 #: js/opeka.views.js:0
@@ -593,6 +652,10 @@ msgid "Thanks for using our chat!"
 msgstr ""
 
 #: js/opeka.views.js:0
+msgid "You are now being redirected to a questionnaire."
+msgstr ""
+
+#: js/opeka.views.js:0
 msgid "Open the feedback form."
 msgstr ""
 
@@ -688,7 +751,7 @@ msgstr ""
 msgid "Access code"
 msgstr ""
 
-#: js/opeka.views.js:0 widgets/js/init.js:0
+#: js/opeka.views.js:0
 msgid "The chat is closed"
 msgstr ""
 
@@ -700,12 +763,20 @@ msgstr ""
 msgid "Starting chat…"
 msgstr ""
 
-#: widgets/js/chatstatus.js:0 widgets/js/init.js:0
+#: widgets/js/chatstatus.js:0
+msgid "The 1-to-1 chat"
+msgstr ""
+
+#: widgets/js/chatstatus.js:0
+msgid "The group chat"
+msgstr ""
+
+#: widgets/js/chatstatus.js:0
 msgid "Start chat"
 msgstr ""
 
 #: widgets/js/chatstatus.js:0
-msgid "Wait..."
+msgid "Occupied"
 msgstr ""
 
 #: widgets/js/chatstatus.js:0
@@ -713,26 +784,38 @@ msgid "Closed"
 msgstr ""
 
 #: widgets/js/chatstatus.js:0
-msgid "Fetching chat status..."
+msgid "Error connecting."
 msgstr ""
 
 #: widgets/js/chatstatus.js:0
-msgid "The chat is closed at the moment"
+msgid "Connecting..."
 msgstr ""
 
 #: widgets/js/chatstatus.js:0
-msgid "The chat is occupied"
+msgid "@pairChatName is closed"
 msgstr ""
 
 #: widgets/js/chatstatus.js:0
-msgid "The chat is available"
+msgid "@groupChatName is closed"
 msgstr ""
 
-#: widgets/js/init.js:0
-msgid "Fetching status..."
+#: widgets/js/chatstatus.js:0
+msgid "Error: no connection to server."
 msgstr ""
 
-#: widgets/js/init.js:0
-msgid "now.js could not be loaded. Check if the Node server is running and verify port number."
+#: widgets/js/chatstatus.js:0
+msgid "@pairChatName is occupied"
+msgstr ""
+
+#: widgets/js/chatstatus.js:0
+msgid "@groupChatName is occupied"
+msgstr ""
+
+#: widgets/js/chatstatus.js:0
+msgid "@pairChatName is available"
+msgstr ""
+
+#: widgets/js/chatstatus.js:0
+msgid "@groupChatName is available"
 msgstr ""
 
