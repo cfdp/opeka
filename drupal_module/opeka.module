@@ -192,7 +192,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   }
 
   // Add socket.io resource
-  drupal_add_js('https://cdn.socket.io/socket.io-1.3.5.js', array('type' => 'external'));
+  drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.6/socket.io.min.js', array('type' => 'external'));
 }
 
 /**
