@@ -32,7 +32,9 @@ module.exports.create = function (ip, salt) {
   bans[digest] = true;
 
   // Add the ban to the database for persistance.
-  drupal.db.query('INSERT INTO opeka_bans (ip_hash) VALUES (?)', [digest]);
+  drupal.db.query('INSERT INTO opeka_bans (ip_hash) VALUES (?)', [digest], function (err, result) {
+    util.log('Info: User banned by admin.');
+  });
 };
 
 // Check if an IP adress is banned.
