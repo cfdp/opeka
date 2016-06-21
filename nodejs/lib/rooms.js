@@ -5,10 +5,10 @@
 "use strict";
 
 var _ = require('underscore'),
-    nowjs = require("now"),
     uuid = require('node-uuid'),
     util = require("util"),
     opeka = {
+      groups: require('./groups'),
       user: require("./user"),
       queues: require("./queues"),
     },
@@ -41,8 +41,17 @@ var getOpenRoom = function (roomType) {
   return _.find(roomList, function (room) {
     var userCount = Object.keys(room.users).length;
 
+    // No empty rooms, no full rooms and no paused rooms
+    if(userCount == 0 || userCount >= room.maxSize || room.paused) {
+      return false;
+    }
+
+    // Pair rooms should be exactly two users
     if (roomType === 'pair') {
-      return (room.maxSize === 2 && userCount < 2 && !room.paused);
+      return (room.maxSize === 2);
+    } else {
+      // And other types of room should _not_ be two users
+      return (room.maxSize !== 2);
     }
   });
 };
@@ -130,9 +139,9 @@ var Room = function (options) {
     // Keep track of counselor presence
     self.counsellorPresent = true;
 
-    // Create Now.js groups for connected users and councellors.
-    self.group = nowjs.getGroup(self.id);
-    self.counsellorGroup = nowjs.getGroup("counsellors-" + self.id);
+    // Create groups for connected users and councellors.
+    self.group = opeka.groups.getGroup(self.id);
+    self.counsellorGroup = opeka.groups.getGroup("counsellors-" + self.id);
 
     // A hash of the users currently in the room.
     self.users = {};
@@ -184,24 +193,23 @@ var Room = function (options) {
   // Returns: 'OK' if the user has been added to the chat, an integer that is stating
   // the user place in the queue if the chat is busy, or a negative
   // integer if the user cannot join the chat.
-  self.addUser = function (user, callback) {
+  self.addUser = function (client, callback) {
     var count = _.size(self.users);
     // When a user enters a room, he is never muted.
-    user.muted = false;
+    client.muted = false;
     // If we have both rooms and groups, check that
     // - we don't exceed the room size (if set)
     // - that the room is not paused
     // - that we have a counselor present (if needed)
     // before adding the person to the room.
-    if (user.account.isAdmin || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && (self.hasCounsellor() && !self.soloClientsAllowed)) && user) {
-      self.users[user.clientId] = opeka.user.filterData(user);
-      self.group.addUser(user.clientId);
+    if (client.account.isAdmin || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && (self.hasCounsellor() && !self.soloClientsAllowed)) && client) {
+      self.users[client.clientId] = opeka.user.filterData(client);
+      self.group.addUser(client.clientId);
 
       // Start the timer in order to retrieve at the end the duration of the chat
-      if (user.account.isAdmin) {
-        self.counsellorGroup.addUser(user.clientId);
+      if (client.account.isAdmin) {
+        self.counsellorGroup.addUser(client.clientId);
         util.log('Admin user added to room ' + self.id);
-
       }
       else {
         util.log('Regular user added to room ' + self.id);
@@ -222,7 +230,7 @@ var Room = function (options) {
       return 'OK';
     } else {
       // Put in queue and return queue number.
-      return self.addToQueue(user);
+      return self.addToQueue(client);
     }
   };
 

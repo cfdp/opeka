@@ -1,6 +1,6 @@
 /**
  * @file
- * Opeka nowjs integration code for the frontend.
+ * Opeka dnode integration code for the frontend.
  */
 /*global now, Opeka */
 
@@ -8,5 +8,5 @@
   "use strict";
 
   // Used to check if is admin.
-  now.isAdmin = function () {}
+  Opeka.clientData.isAdmin = true
 }(jQuery));

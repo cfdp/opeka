@@ -49,8 +49,10 @@
       "click .delete-message": "deleteMessage",
       "submit .message-form": "sendMessage",
       "keyup .form-text": "sendMessageonEnter",
+      "click .return-sends-msg": "toggleReturnSendsMessage",
       "submit .leave-queue-form": "leaveQueue",
-      "submit .leave-room-form": "leaveRoom"
+      "submit .leave-room-form": "leaveRoom",
+      "click .reply-to-whisper": "whisperReply"
     },
 
     initialize: function (options) {
@@ -59,6 +61,7 @@
       this.admin = options.admin;
       this.messages = [];
       this.inQueue = options.inQueue;
+      this.returnSendsMessage = ''; // Variable tied to user defined behaviour of input text area
 
       this.model.on('change', this.render, this);
       
@@ -116,6 +119,7 @@
           deleteMessage: Drupal.t('Delete'),
           whispered: Drupal.t('Whispered'),
           whisperedTo: Drupal.t('Whispered to'),
+          replyToWhisper: Drupal.t("Reply to whisper")
         },
         messages: this.messages,
       }));
@@ -128,19 +132,22 @@
           labels: {
             inQueueMessage: inQueueMessage,
             leaveQueueButton: Drupal.t('Leave queue'),
-            leaveRoomButton: Drupal.t('Leave chat room'),
+            leaveRoomButton: this.admin ?
+                             Drupal.t("Leave chat room and close it if no other councillors are present") :
+                             Drupal.t('Leave chat room'),
             placeholder: Drupal.t('Type message here…'),
             mutehelptext: Drupal.t('When you are muted, you are not allowed to send any messages until the counselor decides to unmute you. You can see all the other messages and receive whispers.'),
             roomPaused: Drupal.t('The room is paused'),
             userMuted: Drupal.t('You are muted'),
-            messageButton: Drupal.t('Send')
+            messageButton: Drupal.t('Send'),
+            returnSendsMessageLabel: Drupal.t('Press ENTER to send.')
           },
           inQueue: this.inQueue,
-          room: this.model
+          room: this.model,
+          returnSendsMessage: this.returnSendsMessage
         }));
       }
 
-      // @daniel
       // Keep the scrollbar at the bottom of the .chat-message-list
       var message_list = this.$el.find('.chat-message-list');
       message_list.scrollTop(message_list.prop("scrollHeight"));
@@ -171,7 +178,7 @@
     // Make the user leave the queue for a chat room.
     leaveQueue: function (event) {
       // Remove the user from the Queue.
-      now.removeUserFromQueue(this.model.id, now.core.clientId);
+      Opeka.remote.removeUserFromQueue(this.model.id, Opeka.clientData.clientId);
       Opeka.router.navigate("rooms", {trigger: true});
 
       if (event) {
@@ -181,9 +188,11 @@
 
     // Make the user leave the chat room.
     leaveRoom: function (event) {
+      var maxSize = this.model.get('maxSize');
+      var chatType = "pair";
 
       // Special case for owner leaving the room.
-      if (this.model.get('maxSize') === 2 && (Drupal.settings.opeka.user && this.model.get('uid') === Drupal.settings.opeka.user.uid)) {
+      if (maxSize === 2 && (Drupal.settings.opeka.user && this.model.get('uid') === Drupal.settings.opeka.user.uid)) {
         var dialog = new Opeka.RoomLeaveOwnPairRoomDialogView({
           roomId: this.model.id
         });
@@ -191,13 +200,18 @@
       }
       else {
         // Remove the user from the room.
-        now.removeUserFromRoom(this.model.id, now.core.clientId);
+        Opeka.remote.removeUserFromRoom(this.model.id, Opeka.clientData.clientId);
         $(window).trigger('leaveRoom');
       
-        //Opeka.router.navigate("rooms", {trigger: true});
-        //@daniel
-        //reroute the user to the feedback page
-        Opeka.router.navigate("feedback", {trigger: true});
+        // @todo: Going to a feedback page should be an option
+        // default: go back to the room list after the chat has ended
+
+        if (maxSize > 2) {
+          chatType = "group";
+        }
+
+        // Reroute the user to the feedback page
+        Opeka.router.navigate("feedback/" + chatType, {trigger: true});
       }
 
       if (event) {
@@ -234,11 +248,12 @@
 
       // Input with a textarea to have multiple writing lines available
       var message = this.$el.find('textarea.message').val();
+
       // Remove the message sent and regain focus
       this.$el.find('textarea.message').val('').focus();
       
       if (message !== '') {
-        now.sendMessageToRoom(this.model.id, message);
+        Opeka.remote.sendMessageToRoom(this.model.id, message);
       }
 
       if (event) {
@@ -246,26 +261,62 @@
       }
     },
 
-    // @daniel
-    // Enable sending messages when pressing the ENTER(return) key
+    // Enable sending messages when pressing the ENTER (return) key
     sendMessageonEnter: function(event) {
       var message = this.$el.find('textarea.message').val();
       var code = (event.keyCode || event.which);
-      
+      var returnSendsMessage = this.returnSendsMessage;
+
       // Listen for the key code
       if(code == 13) {
-        
         // On pressing ENTER there is a new line element inserted in the textarea,
         // that we have to ignore and clear the value of the textarea
-        if (message.length == 1) {
-          this.$el.find('textarea.message').val('');
-        }
+        if (returnSendsMessage == 'checked') {
+          if (message.length == 1) {
+            this.$el.find('textarea.message').val('');
+          }
 
-        if (message !== '') {
-          this.$el.find('.message-form').submit();
+          if (message !== '') {
+            this.$el.find('.message-form').submit();
+          }
         }
       }
 
+    },
+
+    toggleReturnSendsMessage: function(event) {
+      // $this will contain a reference to the checkbox
+      if (this.$el.find('.return-sends-msg').is(':checked')) {
+        // the checkbox was checked
+        this.returnSendsMessage = 'checked';
+      } else {
+        // the checkbox was unchecked
+        this.returnSendsMessage = '';
+      }
+    },
+
+    whisperReply: function(event) {
+      var nickname = $(event.currentTarget).attr("data-reply-to"),
+          room = this.model;
+
+      // Loop through the userlist and send whisper to first user matching the name
+      _.each(room.get("userList"), function (user) {
+        if(user.name == nickname) {
+          var view = new Opeka.RoomWhisperView({
+            clientId: user.clientId,
+            model: room,
+            name: user.name
+          });
+
+          view.render();
+
+          if (event) {
+            event.preventDefault();
+          }
+
+          return true;
+        }
+      });
     }
   });// END ChatView
 
@@ -275,6 +326,7 @@
 
     events: {
       "click .clear-messages": "clearMessages",
+      "click .change-room-size": "changeRoomSize",
       "click .delete-room": "deleteRoom",
       "click .kick-user": "kickUser",
       "click .ban-user": "banUser",
@@ -306,11 +358,12 @@
       if (JST.opeka_chat_sidebar_tmpl) {
         this.$el.html(JST.opeka_chat_sidebar_tmpl({
           admin: this.admin,
-          clientId: now.core.clientId,
+          clientId: Opeka.clientData.clientId,
           labels: {
             userListHeading: Drupal.t('User list'),
             roomActions: Drupal.t('Room actions'),
             clearMessages: Drupal.t("Clear messages"),
+            changeRoomSize: Drupal.t("Change room size"),
             deleteRoom: Drupal.t('Delete room'),
             gender: { f: Drupal.t('woman'), m: Drupal.t('man') },
             kickUser: Drupal.t('Kick user'),
@@ -344,6 +397,18 @@
       }
     },
 
+    changeRoomSize: function(event) {
+      var view = new Opeka.changeRoomSizeView({
+        model: this.model
+      });
+
+      view.render();
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
     deleteRoom: function (event) {
       var view = new Opeka.RoomDeletionView({
         model: this.model
@@ -359,9 +424,9 @@
     // For when the pause/unpause button is pressed.
     pauseToggle: function (event) {
       if (!this.model.get('paused')) {
-        now.pauseRoom(this.model.id, function (err) {});
+        Opeka.remote.pauseRoom(this.model.id, function (err) {});
       } else {
-        now.unpauseRoom(this.model.id, function (err) {});
+        Opeka.remote.unpauseRoom(this.model.id, function (err) {});
       }
 
       if (event) {
@@ -384,7 +449,6 @@
       }
     },
 
-    //@daniel
     // For when a user needs to be banned.
     banUser: function (event) {
       var view = new Opeka.RoomBanUserView({
@@ -402,7 +466,7 @@
     // For when you need to mute a user.
     muteUser: function (event) {
       var clientId = $(event.currentTarget).closest('.user-list-item').attr('data-client-id');
-      now.mute(this.model.id, clientId);
+      Opeka.remote.mute(this.model.id, clientId);
       
       if (event) {
         event.preventDefault();
@@ -412,14 +476,13 @@
     // For when you need to unmute a user.
     unmuteUser: function (event) {
       var clientId = $(event.currentTarget).closest('.user-list-item').attr('data-client-id');
-      now.unmute(this.model.id, clientId);
+      Opeka.remote.unmute(this.model.id, clientId);
 
       if (event) {
         event.preventDefault();
       }
     },
 
-    // @daniel
     // For toggling visibility on chat room menu items
     sidebarBlocktoggle: function (event) {
       var head = $(event.currentTarget),
@@ -491,7 +554,7 @@
     },
 
     generateBanCode : function (event) {
-      now.getBanCode(function(banCode) {
+      Opeka.remote.getBanCode(function(banCode) {
         var dialog = new Opeka.BanCodeDialogView({banCode: banCode});
 
         dialog.render();
@@ -503,7 +566,7 @@
     },
 
     toggleChat: function (event) {
-        now.toggleChat(function(newChatState) {
+        Opeka.remote.toggleChat(function(newChatState) {
       });
 
       if (event) {
@@ -543,7 +606,7 @@
 
     leaveQueue: function (event) {
       // Remove the user from the room.
-      now.removeUserFromGlobalQueue(this.model.id, now.core.clientId);
+      Opeka.remote.removeUserFromGlobalQueue(this.model.id, Opeka.clientData.clientId);
       Opeka.router.navigate("rooms", {trigger: true});
       this.remove();
 
@@ -748,7 +811,7 @@
     },
 
     clearMessages: function (event) {
-      now.triggerDeleteAllMessages(this.model.id);
+      Opeka.remote.triggerDeleteAllMessages(this.model.id);
       this.remove();
 
       if (event) {
@@ -792,8 +855,68 @@
 
     removeMessage: function (event) {
       
-      now.roomDeleteMessage(this.model.id, this.messageId);
+      Opeka.remote.roomDeleteMessage(this.model.id, this.messageId);
 
+      this.remove();
+
+      if (event) {
+        event.preventDefault();
+      }
+    }
+  });
+
+  Opeka.changeRoomSizeView = Opeka.DialogView.extend({
+    initialize: function () {
+      // Options passed to DialogView.
+      var options = {};
+
+      _.bindAll(this);
+
+      var currentRoomData = null;
+      // Try to get room data from latest status message from server
+      var roomsList = Opeka.status.attributes.roomsList || [];
+      for (var i=0; i<roomsList.length; i++) {
+        var room = roomsList[i];
+        if (room.id === this.model.id) {
+          currentRoomData = room;
+        }
+      }
+      if (!currentRoomData) {
+        // If that didn't work (we haven't got any status messages yet), use initial data
+        var room = Opeka.roomList.get(this.model.id);
+        currentRoomData = room && room.attributes || {};
+      }
+
+      // For changing a room's maxSize.
+      options.content = JST.opeka_room_change_size_tmpl({
+        labels: {
+          inputLabel: Drupal.t('New size:'),
+        },
+        values: {
+          currentSize: currentRoomData.maxSize || null
+        }
+      });
+
+      options.dialogOptions = {
+        buttons: {},
+        title: Drupal.t('Change room size'),
+      };
+
+      options.dialogOptions.buttons[Drupal.t('Ok')] = this.changeRoomSize;
+
+      options.dialogOptions.buttons[Drupal.t('Cancel')] = this.remove;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      this.dialogElement.delegate('form', 'submit', this.changeRoomSize);
+
+      return this;
+    },
+
+    changeRoomSize: function (event) {
+      var newSize = this.dialogElement.find('.new-size').val();
+      Opeka.remote.changeRoomSize(this.model.id, parseInt(newSize, 10) || null);
       this.remove();
 
       if (event) {
@@ -840,7 +963,7 @@
     deleteRoom: function (event) {
       var finalMessage = this.dialogElement.find('.final-message').val();
 
-      now.deleteRoom(this.model.id, finalMessage);
+      Opeka.remote.deleteRoom(this.model.id, finalMessage);
       this.remove();
 
       if (event) {
@@ -1032,7 +1155,7 @@
 
     leaveRoom: function (event) {
       // Remove the user from the room.
-      now.removeUserFromRoom(this.options.roomId, now.core.clientId);
+      Opeka.remote.removeUserFromRoom(this.options.roomId, Opeka.clientData.clientId);
       $(window).trigger('leaveRoom');
       Opeka.router.navigate("rooms", {trigger: true});
       this.remove();
@@ -1078,13 +1201,14 @@
       }
 
       html = JST.opeka_room_list_tmpl({
-        admin: _.isFunction(now.isAdmin),
+        admin: Opeka.clientData.isAdmin,
         labels: {
           createRoom: Drupal.t('Create new room'),
           placeholder: Drupal.t('No rooms created'),
           closeWindowText: Drupal.t('Close window'),
           queueLink: Drupal.t('Go to queue list'),
           enterRoom: Drupal.t('Enter'),
+          fullRoomText: Drupal.t('Full'),
           fullRoomLinkText: Drupal.t('Busy'),
           fullRoomLink: Opeka.features.fullRoomLink,
           pausedRoomText: Drupal.t('Paused'),
@@ -1096,7 +1220,7 @@
         chatOpen: chatOpen
       });
 
-      if (_.isFunction(now.isAdmin)) {
+      if (Opeka.clientData.isAdmin) {
         html += JST.opeka_room_list_create_room_tmpl({
           labels: {
             createRoom: Drupal.t('Create room')
@@ -1122,19 +1246,52 @@
     className: 'user-feedback-view well',
     initialize: function (options) {
       _.bindAll(this);
-
+      this.chatType = options.chatType;
+      this.autoRedirect = Drupal.settings.opeka.feedback_auto_redirect;
       return this;
     },
     render: function () {
-      this.$el.html(JST.opeka_user_feedback_tmpl({
-        
-        admin: _.isFunction(now.isAdmin),
-        labels: {
-          farewellMessage: Drupal.t('Thanks for using our chat!'),
-          feedbackLinkText: Drupal.t('Open the feedback form.'),
-          closeWindowText: Drupal.t('Close the window')
+      var baseWindow; // The window where the chat was initiated
+
+      // The chat was not opened in a new window
+      if (!window.opener) {
+        baseWindow = window;
+      }
+      // The chat was opened via an embedded iframe
+      else if (window.opener.parent) {
+        baseWindow = window.opener.parent;
+      }
+      // The chat was not opened via an iframe and the opener window is still open
+      else if (window.opener && !window.opener.closed) {
+        baseWindow = window.opener;
+      }
+
+      // Auto redirect baseWindow to questionnaire if it exists and close chat window
+      if (this.autoRedirect && baseWindow) {
+        if ((Drupal.settings.opeka.feedback_url != '') && (this.chatType == 'pair')) {
+          baseWindow.location.href = Drupal.settings.opeka.feedback_url;
         }
-      }));
+        else if ((Drupal.settings.opeka.groupchat_feedback_url != '') && (this.chatType == 'group')) {
+          baseWindow.location.href = Drupal.settings.opeka.groupchat_feedback_url;
+        }
+        // Close the chat window after a few seconds
+        setTimeout(function() { window.close() }, 3000);
+      }
+      // If window.opener has been closed, just redirect the window itself
+      else if (this.autoRedirect && (baseWindow == null)) {
+        // @todo: implement this
+      }
+        this.$el.html(JST.opeka_user_feedback_tmpl({
+          admin: Opeka.clientData.isAdmin,
+          labels: {
+            farewellMessage: Drupal.t('Thanks for using our chat!'),
+            feedbackRedirectText: Drupal.t('You are now being redirected to a questionnaire.'),
+            feedbackLinkText: Drupal.t('Open the feedback form.'),
+            closeWindowText: Drupal.t('Close the window')
+          },
+          chatType: this.chatType,
+          autoRedirect: Drupal.settings.opeka.feedback_auto_redirect
+        }));
       
       return this;
     }
@@ -1241,7 +1398,7 @@
           message = form.find('input.kick-message').val();
 
       // Kick the user.
-      now.kick(this.clientId, message, this.model.id);
+      Opeka.remote.kick(this.clientId, message, this.model.id);
       this.remove();
       // Prevent event if needed.
       if (event) {
@@ -1292,7 +1449,7 @@
 
       // If a ban code was provided, try banning the user.
       if (banCode) {
-        now.banUser(this.clientId, banCode, function (err) {
+        Opeka.remote.banUser(this.clientId, banCode, function (err) {
           if (err) {
             var dialog = new Opeka.DialogView({
               title: Drupal.t('Ban failed'),
@@ -1306,7 +1463,7 @@
       }
 
       // Kick the user.
-      now.kick(this.clientId, message, this.model.id);
+      Opeka.remote.kick(this.clientId, message, this.model.id);
 
       // Prevent event if needed.
       if (event) {
@@ -1357,7 +1514,7 @@
       message = form.find('textarea.whisper-message').val();
           
       // Whisper the user.
-      now.whisper(this.clientId, message);
+      Opeka.remote.whisper(this.clientId, message);
       this.remove();
 
       // Prevent event if needed.

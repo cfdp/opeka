@@ -5,7 +5,6 @@
 "use strict";
 
 var _ = require('underscore'),
-    nowjs = require("now"),
     uuid = require('node-uuid'),
     util = require("util"),
     opeka = {
@@ -97,8 +96,8 @@ var Queue = function (options) {
   self.flushQueue = function (users) {
     var user;
     while (user = self.queue.shift()) {
-      if (users[user.clientId] && users[user.clientId].now.queueIsFlushed) {
-        users[user.clientId].now.queueIsFlushed(user.clientId);
+      if (users[user.clientId]) {
+        users[user.clientId].remote('queueIsFlushed', user.clientId);
       }
     }
   }

@@ -1,3 +1,6 @@
+// Utilities
+@import "variables";
+
 .not-logged-in {
 
   /* The sidebar is always visible in a group chat for anonymous clients*/
@@ -51,11 +54,23 @@
     margin-bottom: -6px;
   }
 
+  .message {
+    white-space: pre-wrap;
+  }
+
+  .return-sends-msg {
+    margin: 0 2px 0 10px;
+  }
+
+  label[for="return-sends-msg"] {
+    display: inline-block;
+  }
+
   .dropdown-menu li {
     cursor: pointer;
 
     &:hover {
-      background-color: #e6e6e6;
+      background-color: $ccLightGray;
     }
   }
 

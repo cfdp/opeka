@@ -61,6 +61,7 @@
       <div class="sidebar-block-content room-actions btn-group"  style="display: block;">
         <button class="pause-toggle btn btn-small"><%= labels.pauseToggle %></button>
         <button class="clear-messages btn btn-small"><%= labels.clearMessages %></button>
+        <button class="change-room-size btn btn-small"><%= labels.changeRoomSize %></button>
         <button class="delete-room btn btn-small"><%= labels.deleteRoom %></button>
       </div>
     </div>
@@ -102,7 +103,7 @@
 </script>
 
 <script id="opeka_connect_form_tmpl" type="application/template">
- <p class="welcome-message"><%= Drupal.settings.opeka.welcome_message %></p>
+ <div class="welcome-message"><%= Drupal.settings.opeka.welcome_message %></div>
  <form action="#" class="form-horizontal well">
     <div class="control-group">
       <label class="control-label nickname-label">
@@ -183,10 +184,10 @@
       <div class="room-details badge badge-info <% if (room.get('memberCount') === room.get('maxSize')){%>full<%} %><% if (room.attributes.paused){%> paused<%} %>">
         <span class="room-size"><%- room.get('memberCount') %>/<%- room.get('maxSize') %></span>
         <% if (room.get('memberCount') === room.get('maxSize')){%>
-          <span class="room-status full">Full</span>
+          <span class="room-status full"><%= labels.fullRoomText %></span>
         <%} %>
         <% if (room.attributes.paused){%>
-          <span class="room-status paused">Paused</span>
+          <span class="room-status paused"><%= labels.pausedRoomText %></span>
         <%} %>
       </div>
       <p class="room-description"><%- room.get('name') %></p>
@@ -257,6 +258,13 @@
             <div class="sender-name pull-left"><%= labels.whisperedTo %> - <%- message.sender.name %></div>
             <% } %>
             <div class="time pull-right"><%= formatTimestamp(message.date) %></div>
+            <% if (message.receiver) { %>
+            <div class="actions pull-right">
+              <button class="reply-to-whisper btn-link pull-right" data-reply-to="<%- message.sender.name %>">
+                <%= labels.replyToWhisper %>
+              </button>
+            </div>
+            <% } %>
           </div>
         <div class="message"><%- message.message %></div>
       </li>
@@ -287,6 +295,8 @@
       <textarea autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" ></textarea>
     </div>
     <input class="form-submit send btn btn-success" type="submit" value="<%= labels.messageButton %>" />
+    <input class="return-sends-msg" name="return-sends-msg" id="return-sends-msg" type="checkbox" <%= returnSendsMessage %> >
+    <label for="return-sends-msg"><%= labels.returnSendsMessageLabel %></label>
   </form>
   <% } else if (activeUser.muted) { %>
     <div class="userMuted">
@@ -316,8 +326,13 @@
     <p>The chat session has ended.</p>
   <% }else{ %>
     <p><%= labels.farewellMessage %></p>
-    <% if (Drupal.settings.opeka.feedback_url != '') { %>
+    <% if (Drupal.settings.opeka.feedback_auto_redirect) { %>
+      <p><%= labels.feedbackRedirectText %> </p>
+    <% } %>
+    <% if ((Drupal.settings.opeka.feedback_url != '') && ( chatType == "pair") && !autoRedirect) { %>
       <p><a href="<%= Drupal.settings.opeka.feedback_url %>" target="_blank"><%= labels.feedbackLinkText %></a></p>
+    <% } else if ((Drupal.settings.opeka.groupchat_feedback_url != '') && ( chatType == "group") && !autoRedirect) { %>
+      <p><a href="<%= Drupal.settings.opeka.groupchat_feedback_url %>" target="_blank"><%= labels.feedbackLinkText %></a></p>
     <% } %>
     <p><a class="btn btn-success" href="#" onclick="javascript: window.close();"><%= labels.closeWindowText %></a></p>
   <% } %>
@@ -326,4 +341,13 @@
 <script id="opeka_goodbye_tmpl" type="application/template">
   <p><%= labels.message %></p>
   <p><a class="btn btn-success" href="#" onclick="javascript: window.close();"><%= labels.closeWindowText %></a></p>
+</script>
+
+<script id="opeka_whisper_tmpl" type="application/template">
+  <form action="#" class="whisper-form">
+    <label><%= labels.whisperMessage %></label>
+    <!--<input class="form-text whisper-message" name="name" type="textfield" />-->
+    <textarea class="form-text whisper-message" name="name" rows=3 cols=32></textarea>
+    <span class="help-text"><%= labels.whisperHelpText %></span>
+  </form>
 </script>

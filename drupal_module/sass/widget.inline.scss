@@ -1,0 +1,20 @@
+/* Styling for the inline widget */
+// Utilities
+@import "variables";
+
+/* Status wrapper inline widget */
+body.page-opeka-widgets-inline {
+  .status-wrapper {
+    height: 100%;
+    padding: 0;
+  }
+
+  .login-button {
+    height: 100%;
+    .btn {
+      background-color: transparent;
+      display: block;
+      height: 100%;
+    }
+  }
+}

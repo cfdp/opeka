@@ -7,11 +7,16 @@
 /nodejs/certs/*
 /drupal/img/*
 /drupal_module/.sass-cache
+/drupal_module/.ruby-version
 /drupal_module/widgets/css/custom.css
 /drupal_module/scripts/startchat.sh
 /drupal_module/scripts/start_ch_chat.sh
 /drupal_module/scripts/stopchat.sh
 /drupal_module/scripts/restart_wrapper.sh
+/drupal_module/translations/*.po~
 /logs
 .brackets.json
 /db-template
+/*.komodoproject
+/.idea
+.ruby-version

@@ -24,8 +24,8 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
         if (err) { callback(err); }
         drupal.user.access('administer opeka chat', account, function (err, isAdmin) {
           account.isAdmin = isAdmin;
-          drupal.user.access('generate opeka chat ban codes', account, function (err, canGenerateCanCode) {
-            account.canGenerateCanCode = canGenerateCanCode;
+          drupal.user.access('generate opeka chat ban codes', account, function (err, canGenerateBanCode) {
+            account.canGenerateBanCode = canGenerateBanCode;
             callback(null, account);
           });
         });
@@ -49,25 +49,26 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
 
 // Filters the user data and remove personal/security sensitive data and
 // create a new user object.
-module.exports.filterData = function (user) {
+module.exports.filterData = function (client) {
   return {
-    age: user.age,
-    chatStart_Min: user.chatStart_Min,
-    chatEnd_Min: user.chatEnd_Min,
-    clientId: user.clientId,
-    gender: user.gender,
-    isAdmin: user.isAdmin,
-    muted: user.muted,
-    name: user.nickname || user.account.name
+    age: client.age,
+    chatStart_Min: client.chatStart_Min,
+    chatEnd_Min: client.chatEnd_Min,
+    clientId: client.clientId,
+    gender: client.gender,
+    isAdmin: client.isAdmin,
+    muted: client.muted,
+    name: client.nickname || client.account.name,
+    drupal_uid: client.drupal_uid
   };
 };
 
 // Send the user list of a room to client-side.
 module.exports.sendUserList = function (context, roomId, users) {
-  context.now.receiveUserList(roomId, users);
+  context.remote('receiveUserList', roomId, users);
 };
 
 // Send the active user object to a room.
 module.exports.sendActiveUser = function (context, roomId, user) {
-  context.now.receiveActiveUser(roomId, user);
+  context.remote('receiveActiveUser', roomId, user);
 };

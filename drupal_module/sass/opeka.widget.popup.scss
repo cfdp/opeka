@@ -1,0 +1,29 @@
+/* Styling for the popup widget
+ * This file is included via embedded javascript client side (popupController.js)
+ */
+// Utilities
+@import "variables";
+
+.opeka-chat-popup-wrapper {
+  position: absolute;
+  height: 220px;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+#opeka-chat-iframe {
+  background-color: #fff;
+  margin: 10px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+button.close {
+  padding: 8px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}

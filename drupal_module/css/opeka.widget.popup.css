@@ -1,4 +1,8 @@
-/* This file is included via embedded javascript client side (popupController.js) */
+/* Styling for the popup widget
+ * This file is included via embedded javascript client side (popupController.js)
+ */
+/* $green: #72d477; */
+/* line 7, ../sass/opeka.widget.popup.scss */
 .opeka-chat-popup-wrapper {
   position: absolute;
   height: 220px;
@@ -8,6 +12,7 @@
   overflow: hidden;
 }
 
+/* line 16, ../sass/opeka.widget.popup.scss */
 #opeka-chat-iframe {
   background-color: #fff;
   margin: 10px;
@@ -16,6 +21,7 @@
   right: 0;
 }
 
+/* line 24, ../sass/opeka.widget.popup.scss */
 button.close {
   padding: 8px;
   position: absolute;

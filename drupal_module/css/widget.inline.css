@@ -1,0 +1,18 @@
+/* Styling for the inline widget */
+/* $green: #72d477; */
+/* Status wrapper inline widget */
+/* line 7, ../sass/widget.inline.scss */
+body.page-opeka-widgets-inline .status-wrapper {
+  height: 100%;
+  padding: 0;
+}
+/* line 12, ../sass/widget.inline.scss */
+body.page-opeka-widgets-inline .login-button {
+  height: 100%;
+}
+/* line 14, ../sass/widget.inline.scss */
+body.page-opeka-widgets-inline .login-button .btn {
+  background-color: transparent;
+  display: block;
+  height: 100%;
+}
