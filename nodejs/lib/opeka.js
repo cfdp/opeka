@@ -20,6 +20,7 @@ var _ = require("underscore"),
     ecstatic = require('ecstatic'),
     util = require("util"),
     uuid = require('node-uuid'),
+    validator = require('validator'),
     opeka = {
       ban: require('./ban'),
       groups: require("./groups"),
@@ -227,7 +228,10 @@ function Server(config, logger) {
         clientData = {
           'isSignedIn': true,
           'clientId': client.clientId
-        };
+        },
+        nicknameRange = {min: 1, max: 25},
+        genderRange = {min: 1, max: 25},
+        ageRange = {min: 0, max: 99};
 
     opeka.user.authenticate(clientUser, accessCodeEnabled, accessCode, function (err, account) {
       if (err) {
@@ -285,9 +289,27 @@ function Server(config, logger) {
 
       // Store the account and nickname for later use.
       client.account = account;
-      client.nickname = clientUser.nickname;
-      client.gender = clientUser.gender;
-      client.age = clientUser.age;
+      // Validate user input to prevent abuse (e.g. very long usernames)
+      // @todo: find better way of handling invalid input and log abuse attempts
+      if ((clientUser.nickname != null) && validator.isLength(clientUser.nickname, nicknameRange)) {
+        client.nickname = clientUser.nickname;
+      }
+      else {
+        client.nickname = "Anonymous";
+      }
+      if ((clientUser.gender != null) && validator.isLength(clientUser.gender, genderRange)) {
+        client.gender = clientUser.gender;
+      }
+      else {
+        client.gender = "";
+      }
+      if ((clientUser.age != null) && validator.isInt(clientUser.age, ageRange)) {
+        client.age = clientUser.age;
+      }
+      else {
+        client.age = "";
+      }
+
       client.accessCode = clientUser.accessCode;
 
       // Update online users count for all clients.
