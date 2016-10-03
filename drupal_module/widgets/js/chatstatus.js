@@ -159,13 +159,8 @@ var Opeka = Opeka || {};
           if (!chatLink) {
             return;
           }
-          // now.js did not work well with Opera @todo check dnode status
-          // https://github.com/substack/dnode/wiki/browser-compatibility
-          if (!$.browser.opera){
-            var w = openWindow('_blank', opekaBaseURL+'/opeka', 600, 700);
-          } else {
-            window.parent.location = opekaBaseURL+'/chat-on-opera';
-          }
+
+          var w = window.open(opekaBaseURL+'/opeka');
 
           switch(roomType) {
             case "pair":
@@ -202,21 +197,6 @@ var Opeka = Opeka || {};
 
         });
       });
-      
-      /* Build pop-up window */
-      function openWindow(window_name,file_name,width,height) {
-        parameters = "width=" + width;
-        parameters = parameters + ",height=" + height;
-        parameters = parameters + ",status=no";
-        parameters = parameters + ",resizable=no";
-        parameters = parameters + ",scrollbars=no";
-        parameters = parameters + ",menubar=no";
-        parameters = parameters + ",toolbar=no";
-        parameters = parameters + ",directories=no";
-        parameters = parameters + ",location=no";
-        myWindow = window.open(file_name,window_name,parameters);
-        return myWindow;
-      };
 
        /* This will successfully queue a message to be sent to the parent window */
       function opekaChatPopup(popupAction) {
