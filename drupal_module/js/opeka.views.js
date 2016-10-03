@@ -1259,7 +1259,7 @@
       }
       // The chat was opened via an embedded iframe
       else if (window.opener.parent) {
-        baseWindow = window.opener.parent;
+        baseWindow = window;
       }
       // The chat was not opened via an iframe and the opener window is still open
       else if (window.opener && !window.opener.closed) {
@@ -1274,8 +1274,6 @@
         else if ((Drupal.settings.opeka.groupchat_feedback_url != '') && (this.chatType == 'group')) {
           baseWindow.location.href = Drupal.settings.opeka.groupchat_feedback_url;
         }
-        // Close the chat window after a few seconds
-        setTimeout(function() { window.close() }, 3000);
       }
       // If window.opener has been closed, just redirect the window itself
       else if (this.autoRedirect && (baseWindow == null)) {
