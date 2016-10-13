@@ -1,5 +1,6 @@
 /* Styling for the header widget */
 /* $green: #72d477; */
+/* Typography */
 /* Buttons */
 /* line 6, ../sass/widget.header.scss */
 .login-button {
@@ -20,25 +21,18 @@
 }
 /* line 21, ../sass/widget.header.scss */
 .status-content li {
-  font-size: 12px;
   list-style: none;
 }
 
-/* line 27, ../sass/widget.header.scss */
-.status-info {
-  font-size: 12px;
-}
-
-/* line 30, ../sass/widget.header.scss */
+/* line 28, ../sass/widget.header.scss */
 .read-more {
   display: inline-block;
   margin: 10px 0 0;
   text-align: center;
   width: 100%;
 }
-/* line 36, ../sass/widget.header.scss */
+/* line 34, ../sass/widget.header.scss */
 .read-more a {
   color: #3a404c;
-  font-size: 12px;
   text-decoration: none;
 }
