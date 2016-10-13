@@ -26,29 +26,32 @@ html body.admin-menu.page-opeka-widgets {
   }
 }
 /* Buttons */
-.login-button .btn {
-  border: none;
-  box-shadow: none;
-  background: darken($ccGray, 15%) none repeat scroll 0% 0%;
-  color: #fff;
-  padding: 10px;
-  text-shadow: none;
-  text-decoration: none;
-  transition: background-color 300ms ease-out 0s;
-  
-  .chat-open & {
-    background-color: darken($ccGreen, 15%);
-    &:hover {
-      background-color: darken($ccGreen, 30%);
+.login-button {
+  .btn {
+    border: none;
+    box-shadow: none;
+    background: darken($ccGray, 15%) none repeat scroll 0% 0%;
+    color: #fff;
+    font-size: $font-std;
+    padding: .7em 0;
+    text-shadow: none;
+    text-decoration: none;
+    transition: background-color 300ms ease-out 0s;
+
+    .chat-open & {
+      background-color: $ccGreen;
+      &:hover {
+        background-color: darken($ccGreen, 10%);
+      }
     }
-  }
-  .chat-busy & {
-    background-color: darken($ccOrange, 15%);
-    cursor: default;
-  }
-  .chat-closed & {
-    background-color: darken($ccRed, 15%);
-    cursor: default;
+    .chat-busy & {
+      background-color: $ccOrange;
+      cursor: default;
+    }
+    .chat-closed & {
+      background-color: $ccRed;
+      cursor: default;
+    }
   }
 }
 
@@ -61,7 +64,7 @@ html body.admin-menu.page-opeka-widgets {
 .status-tab {
   color: #fff;
   font-weight: bold;
-  font-size: 20px;
+  font-size: $font-large;
   margin-bottom: 5px;
   width: 100%;
 }
@@ -69,6 +72,7 @@ html body.admin-menu.page-opeka-widgets {
 /* Status wrapper */
 .status-wrapper {
   background-color: $ccGray;
+  font-size: $font-std;
   height: 100%;
   padding: 10px;
 }
@@ -99,7 +103,6 @@ html body.admin-menu.page-opeka-widgets {
     margin: 0;
     padding: 0;
     li {
-      font-size: 12px;
       list-style: none;
     }
   }
@@ -113,11 +116,7 @@ html body.admin-menu.page-opeka-widgets {
   }
 }
 
-
-
-
 .status-info {
-  font-size: 12px; 
 }
 .read-more {
   display: inline-block; 
@@ -125,8 +124,7 @@ html body.admin-menu.page-opeka-widgets {
   text-align: center; 
   width: 100%;
 }
-.read-more a {
-  font-size: 12px; 
+.read-more a { 
   text-decoration: underline;
 }
 .read-more a:hover{

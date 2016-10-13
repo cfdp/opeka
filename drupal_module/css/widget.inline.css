@@ -1,18 +1,23 @@
 /* Styling for the inline widget */
 /* $green: #72d477; */
+/* Typography */
 /* Status wrapper inline widget */
 /* line 7, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline .status-wrapper {
+  background-color: #fff;
   height: 100%;
   padding: 0;
+  text-align: center;
 }
 /* line 12, ../sass/widget.inline.scss */
-body.page-opeka-widgets-inline .login-button {
-  height: 100%;
+body.page-opeka-widgets-inline .status-wrapper.chat-open, body.page-opeka-widgets-inline .status-wrapper.chat-busy, body.page-opeka-widgets-inline .status-wrapper.chat-closed {
+  background-color: #fff;
 }
-/* line 14, ../sass/widget.inline.scss */
+/* line 20, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline .login-button .btn {
-  background-color: transparent;
-  display: block;
+  display: inline-block;
   height: 100%;
+  line-height: 24px;
+  width: 100%;
+  max-width: 300px;
 }
