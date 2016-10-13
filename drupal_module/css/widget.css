@@ -34,7 +34,7 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
   background: #939393 none repeat scroll 0% 0%;
   color: #fff;
   font-size: 1em;
-  padding: .7em 0;
+  padding: .7em 1em;
   text-shadow: none;
   text-decoration: none;
   transition: background-color 300ms ease-out 0s;
