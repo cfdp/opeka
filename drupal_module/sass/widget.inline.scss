@@ -5,16 +5,24 @@
 /* Status wrapper inline widget */
 body.page-opeka-widgets-inline {
   .status-wrapper {
+    background-color: $ccWhite;
     height: 100%;
     padding: 0;
+    text-align: center;
+    &.chat-open,
+    &.chat-busy,
+    &.chat-closed {
+      background-color: $ccWhite;
+    }
   }
 
   .login-button {
-    height: 100%;
     .btn {
-      background-color: transparent;
-      display: block;
+      display: inline-block;
       height: 100%;
+      line-height: 24px;
+      width: 100%;
+      max-width: 300px;
     }
   }
 }
