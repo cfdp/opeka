@@ -31,7 +31,7 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
 .login-button .btn {
   border: none;
   box-shadow: none;
-  background: #939393 none repeat scroll 0% 0%;
+  background: #999999 none repeat scroll 0% 0%;
   color: #fff;
   font-size: 1em;
   padding: .7em 1em;
@@ -60,7 +60,7 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
 /* Name tab */
 /* line 58, ../sass/widget.scss */
 .name-tab {
-  background-color: #b9b9b9;
+  background-color: #BFBFBF;
 }
 
 /* Status tab */
@@ -76,7 +76,7 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
 /* Status wrapper */
 /* line 72, ../sass/widget.scss */
 .status-wrapper {
-  background-color: #b9b9b9;
+  background-color: #BFBFBF;
   font-size: 1em;
   height: 100%;
   padding: 10px;
