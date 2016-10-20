@@ -39,9 +39,9 @@ html body.admin-menu.page-opeka-widgets {
     transition: background-color 300ms ease-out 0s;
 
     .chat-open & {
-      background-color: $ccGreen;
+      background-color: darken($ccGreen, 10%);
       &:hover {
-        background-color: darken($ccGreen, 10%);
+        background-color: darken($ccGreen, 20%);
       }
     }
     .chat-busy & {
@@ -49,7 +49,6 @@ html body.admin-menu.page-opeka-widgets {
       cursor: default;
     }
     .chat-closed & {
-      background-color: $ccRed;
       cursor: default;
     }
   }
@@ -89,7 +88,7 @@ html body.admin-menu.page-opeka-widgets {
 
 .chat-closed .status-wrapper,
 .chat-closed .name-tab {
-  background-color: $ccRed;
+  background-color: $ccOrange;
 }
 
 .status-content {
