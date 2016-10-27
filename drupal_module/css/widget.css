@@ -3,6 +3,7 @@
 /* Typography */
 /* line 5, ../sass/widget.scss */
 html, body {
+  background: none transparent;
   color: #fff;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size: 100%;
@@ -10,24 +11,24 @@ html, body {
   overflow: hidden;
   padding: 0px;
 }
-/* line 13, ../sass/widget.scss */
+/* line 14, ../sass/widget.scss */
 html p, body p {
   color: #fff;
   margin: 0;
 }
 
 /* Don't show admin menu on the widget pages */
-/* line 21, ../sass/widget.scss */
+/* line 22, ../sass/widget.scss */
 html body.admin-menu.page-opeka-widgets {
   margin-top: 0px !important;
 }
-/* line 24, ../sass/widget.scss */
+/* line 25, ../sass/widget.scss */
 html body.admin-menu.page-opeka-widgets #admin-menu {
   display: none;
 }
 
 /* Buttons */
-/* line 30, ../sass/widget.scss */
+/* line 31, ../sass/widget.scss */
 .login-button .btn {
   border: none;
   box-shadow: none;
@@ -39,32 +40,33 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
   text-decoration: none;
   transition: background-color 300ms ease-out 0s;
 }
-/* line 41, ../sass/widget.scss */
+/* line 42, ../sass/widget.scss */
 .chat-open .login-button .btn {
-  background-color: #1e844a;
+  background-color: #27ae61;
 }
-/* line 43, ../sass/widget.scss */
+/* line 44, ../sass/widget.scss */
 .chat-open .login-button .btn:hover {
   background-color: #145b33;
 }
-/* line 47, ../sass/widget.scss */
+/* line 48, ../sass/widget.scss */
 .chat-busy .login-button .btn {
   background-color: #e67e22;
   cursor: default;
 }
-/* line 51, ../sass/widget.scss */
+/* line 52, ../sass/widget.scss */
 .chat-closed .login-button .btn {
+  background-color: #BFBFBF;
   cursor: default;
 }
 
 /* Name tab */
-/* line 58, ../sass/widget.scss */
+/* line 60, ../sass/widget.scss */
 .name-tab {
   background-color: #BFBFBF;
 }
 
 /* Status tab */
-/* line 63, ../sass/widget.scss */
+/* line 65, ../sass/widget.scss */
 .status-tab {
   color: #fff;
   font-weight: bold;
@@ -74,7 +76,7 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
 }
 
 /* Status wrapper */
-/* line 72, ../sass/widget.scss */
+/* line 74, ../sass/widget.scss */
 .status-wrapper {
   background-color: #BFBFBF;
   font-size: 1em;
@@ -82,52 +84,52 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
   padding: 10px;
 }
 
-/* line 79, ../sass/widget.scss */
+/* line 81, ../sass/widget.scss */
 .chat-open .status-wrapper,
 .chat-open .name-tab {
   background-color: #27ae61;
 }
 
-/* line 84, ../sass/widget.scss */
+/* line 86, ../sass/widget.scss */
 .chat-busy .status-wrapper,
 .chat-busy .name-tab {
   background-color: #e67e22;
 }
 
-/* line 89, ../sass/widget.scss */
+/* line 91, ../sass/widget.scss */
 .chat-closed .status-wrapper,
 .chat-closed .name-tab {
   background-color: #e67e22;
 }
 
-/* line 94, ../sass/widget.scss */
+/* line 96, ../sass/widget.scss */
 .status-content {
   margin: 0 8px;
 }
-/* line 97, ../sass/widget.scss */
+/* line 99, ../sass/widget.scss */
 .status-content a {
   color: white;
   text-decoration: underline;
 }
-/* line 101, ../sass/widget.scss */
+/* line 103, ../sass/widget.scss */
 .status-content ul {
   margin: 0;
   padding: 0;
 }
-/* line 104, ../sass/widget.scss */
+/* line 106, ../sass/widget.scss */
 .status-content ul li {
   list-style: none;
 }
-/* line 109, ../sass/widget.scss */
+/* line 111, ../sass/widget.scss */
 .status-content .opening-hours {
   margin-bottom: 10px;
 }
-/* line 113, ../sass/widget.scss */
+/* line 115, ../sass/widget.scss */
 .status-content .opeka-multi-widget-iframe {
   margin-bottom: 10px;
 }
 
-/* line 120, ../sass/widget.scss */
+/* line 122, ../sass/widget.scss */
 .read-more {
   display: inline-block;
   margin: 10px 0 0;
@@ -135,12 +137,12 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
   width: 100%;
 }
 
-/* line 126, ../sass/widget.scss */
+/* line 128, ../sass/widget.scss */
 .read-more a {
   text-decoration: underline;
 }
 
-/* line 129, ../sass/widget.scss */
+/* line 131, ../sass/widget.scss */
 .read-more a:hover {
   text-decoration: underline;
 }
