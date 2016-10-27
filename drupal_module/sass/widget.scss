@@ -3,6 +3,7 @@
 @import "variables";
 
 html, body {
+  background: none transparent;
   color: #fff;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size: 100%;
@@ -39,7 +40,7 @@ html body.admin-menu.page-opeka-widgets {
     transition: background-color 300ms ease-out 0s;
 
     .chat-open & {
-      background-color: darken($ccGreen, 10%);
+      background-color: $ccGreen;
       &:hover {
         background-color: darken($ccGreen, 20%);
       }
@@ -49,6 +50,7 @@ html body.admin-menu.page-opeka-widgets {
       cursor: default;
     }
     .chat-closed & {
+      background-color: $ccGray;
       cursor: default;
     }
   }
