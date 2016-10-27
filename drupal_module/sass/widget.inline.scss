@@ -3,13 +3,14 @@
 // Utilities
 @import "variables";
 
-/* Status wrapper inline widget */
+/* inline widget */
 
 body.page-opeka-widgets-inline {
   background: none transparent;
   .login-button {
     text-align: center;
     .btn {
+      background-color: $ccGreen;
       display: inline-block;
       height: 100%;
       line-height: 24px;
@@ -17,6 +18,10 @@ body.page-opeka-widgets-inline {
       width: 100%;
       max-width: 300px;
     }
+  }
+  &.chat-closed .login-button .btn {
+    background-color: $ccGray;
+    cursor: default;
   }
 }
 

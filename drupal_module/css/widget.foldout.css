@@ -45,7 +45,7 @@ body.page-opeka-widgets-foldout .login-button {
 }
 /* line 47, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout .multi-widget-chat-label {
-  padding: .5em 0;
+  padding: 0 0 .2em 0;
 }
 /* line 50, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout .curachat-widgets-multi {
