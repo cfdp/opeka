@@ -1,7 +1,7 @@
 /* Styling for the inline widget */
 /* $green: #72d477; */
 /* Typography */
-/* Status wrapper inline widget */
+/* inline widget */
 /* line 8, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline {
   background: none transparent;
@@ -12,6 +12,7 @@ body.page-opeka-widgets-inline .login-button {
 }
 /* line 12, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline .login-button .btn {
+  background-color: #27ae61;
   display: inline-block;
   height: 100%;
   line-height: 24px;
@@ -19,13 +20,18 @@ body.page-opeka-widgets-inline .login-button .btn {
   width: 100%;
   max-width: 300px;
 }
+/* line 22, ../sass/widget.inline.scss */
+body.page-opeka-widgets-inline.chat-closed .login-button .btn {
+  background-color: #BFBFBF;
+  cursor: default;
+}
 
 @media (max-width: 180px) {
-  /* line 26, ../sass/widget.inline.scss */
+  /* line 31, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline .login-button .btn {
     padding: .4em 0;
   }
-  /* line 30, ../sass/widget.inline.scss */
+  /* line 35, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline.chat-closed .login-button .btn, body.page-opeka-widgets-inline.chat-busy .login-button .btn {
     background-color: #e67e22;
     cursor: default;
