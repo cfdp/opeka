@@ -57,7 +57,8 @@ var Opeka = Opeka || {};
         // Update status text if no connection could be made to server after 10 sec
         function checkConnection(){
           if (!io_socket.connected) {
-            console.log('No connection to Opeka chat server');
+            console.log('Error: No connection to Opeka chat server');
+            body.removeClass('chat-busy chat-open').addClass('chat-closed');
             statusTab.text(textStrings.statusError);
             chatButton.text(textStrings.buttonError);
           }
