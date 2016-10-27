@@ -10,7 +10,7 @@ body.page-opeka-widgets-inline {
   .login-button {
     text-align: center;
     .btn {
-      background-color: $ccGreen;
+      background-color: $ccGray;
       display: inline-block;
       height: 100%;
       line-height: 24px;
@@ -22,6 +22,16 @@ body.page-opeka-widgets-inline {
   &.chat-closed .login-button .btn {
     background-color: $ccGray;
     cursor: default;
+  }
+  &.chat-busy .login-button .btn {
+    background-color: $ccOrange;
+    cursor: default;
+  }
+  &.chat-open .login-button .btn {
+    background-color: $ccGreen;
+    &:hover {
+      background-color: darken($ccGreen, 10%);
+    }
   }
 }
 
@@ -36,6 +46,12 @@ body.page-opeka-widgets-inline {
     &.chat-busy .login-button .btn {
       background-color: $ccOrange;
       cursor: default;
+    }
+    &.chat-open .login-button .btn {
+      background-color: $ccGreen;
+      &:hover {
+        background-color: darken($ccGreen, 10%);
+      }
     }
   }
 }
