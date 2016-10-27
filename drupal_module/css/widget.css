@@ -40,23 +40,24 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
   text-decoration: none;
   transition: background-color 300ms ease-out 0s;
 }
-/* line 42, ../sass/widget.scss */
+
+/* line 43, ../sass/widget.scss */
 .chat-open .login-button .btn {
   background-color: #1e844a;
 }
-/* line 44, ../sass/widget.scss */
+/* line 45, ../sass/widget.scss */
 .chat-open .login-button .btn:hover {
   background-color: #145b33;
 }
 
 /* Name tab */
-/* line 52, ../sass/widget.scss */
+/* line 51, ../sass/widget.scss */
 .name-tab {
   background-color: #BFBFBF;
 }
 
 /* Status tab */
-/* line 57, ../sass/widget.scss */
+/* line 56, ../sass/widget.scss */
 .status-tab {
   color: #fff;
   font-weight: bold;
@@ -66,7 +67,7 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
 }
 
 /* Status wrapper */
-/* line 66, ../sass/widget.scss */
+/* line 65, ../sass/widget.scss */
 .status-wrapper {
   background-color: #BFBFBF;
   font-size: 1em;
@@ -74,52 +75,52 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
   padding: 10px;
 }
 
-/* line 73, ../sass/widget.scss */
+/* line 72, ../sass/widget.scss */
 .chat-open .status-wrapper,
 .chat-open .name-tab {
   background-color: #27ae61;
 }
 
-/* line 78, ../sass/widget.scss */
+/* line 77, ../sass/widget.scss */
 .chat-busy .status-wrapper,
 .chat-busy .name-tab {
   background-color: #e67e22;
 }
 
-/* line 83, ../sass/widget.scss */
+/* line 82, ../sass/widget.scss */
 .chat-closed .status-wrapper,
 .chat-closed .name-tab {
   background-color: #e67e22;
 }
 
-/* line 88, ../sass/widget.scss */
+/* line 87, ../sass/widget.scss */
 .status-content {
   margin: 0 8px;
 }
-/* line 91, ../sass/widget.scss */
+/* line 90, ../sass/widget.scss */
 .status-content a {
   color: white;
   text-decoration: underline;
 }
-/* line 95, ../sass/widget.scss */
+/* line 94, ../sass/widget.scss */
 .status-content ul {
   margin: 0;
   padding: 0;
 }
-/* line 98, ../sass/widget.scss */
+/* line 97, ../sass/widget.scss */
 .status-content ul li {
   list-style: none;
 }
-/* line 103, ../sass/widget.scss */
+/* line 102, ../sass/widget.scss */
 .status-content .opening-hours {
   margin-bottom: 10px;
 }
-/* line 107, ../sass/widget.scss */
+/* line 106, ../sass/widget.scss */
 .status-content .opeka-multi-widget-iframe {
   margin-bottom: 0;
 }
 
-/* line 114, ../sass/widget.scss */
+/* line 113, ../sass/widget.scss */
 .read-more {
   display: inline-block;
   margin: 10px 0 0;
@@ -127,12 +128,12 @@ html body.admin-menu.page-opeka-widgets #admin-menu {
   width: 100%;
 }
 
-/* line 120, ../sass/widget.scss */
+/* line 119, ../sass/widget.scss */
 .read-more a {
   text-decoration: underline;
 }
 
-/* line 123, ../sass/widget.scss */
+/* line 122, ../sass/widget.scss */
 .read-more a:hover {
   text-decoration: underline;
 }

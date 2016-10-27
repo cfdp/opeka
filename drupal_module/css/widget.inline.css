@@ -12,7 +12,7 @@ body.page-opeka-widgets-inline .login-button {
 }
 /* line 12, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline .login-button .btn {
-  background-color: #27ae61;
+  background-color: #BFBFBF;
   display: inline-block;
   height: 100%;
   line-height: 24px;
@@ -25,15 +25,36 @@ body.page-opeka-widgets-inline.chat-closed .login-button .btn {
   background-color: #BFBFBF;
   cursor: default;
 }
+/* line 26, ../sass/widget.inline.scss */
+body.page-opeka-widgets-inline.chat-busy .login-button .btn {
+  background-color: #e67e22;
+  cursor: default;
+}
+/* line 30, ../sass/widget.inline.scss */
+body.page-opeka-widgets-inline.chat-open .login-button .btn {
+  background-color: #27ae61;
+}
+/* line 32, ../sass/widget.inline.scss */
+body.page-opeka-widgets-inline.chat-open .login-button .btn:hover {
+  background-color: #1e844a;
+}
 
 @media (max-width: 180px) {
-  /* line 31, ../sass/widget.inline.scss */
+  /* line 41, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline .login-button .btn {
     padding: .4em 0;
   }
-  /* line 35, ../sass/widget.inline.scss */
+  /* line 45, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline.chat-closed .login-button .btn, body.page-opeka-widgets-inline.chat-busy .login-button .btn {
     background-color: #e67e22;
     cursor: default;
+  }
+  /* line 50, ../sass/widget.inline.scss */
+  body.page-opeka-widgets-inline.chat-open .login-button .btn {
+    background-color: #27ae61;
+  }
+  /* line 52, ../sass/widget.inline.scss */
+  body.page-opeka-widgets-inline.chat-open .login-button .btn:hover {
+    background-color: #1e844a;
   }
 }
