@@ -28,9 +28,9 @@ body.page-opeka-widgets-inline {
     cursor: default;
   }
   &.chat-open .login-button .btn {
-    background-color: darken($ccGreen, 10%);
+    background-color: $ccGreen;
     &:hover {
-      background-color: darken($ccGreen, 20%);
+      background-color: darken($ccGreen, 10%);
     }
   }
 }
@@ -48,9 +48,9 @@ body.page-opeka-widgets-inline {
       cursor: default;
     }
     &.chat-open .login-button .btn {
-      background-color: $ccGreen;
+      background-color: darken($ccGreen, 10%);
       &:hover {
-        background-color: darken($ccGreen, 10%);
+        background-color: darken($ccGreen, 20%);
       }
     }
   }
