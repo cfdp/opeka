@@ -32,11 +32,11 @@ body.page-opeka-widgets-inline.chat-busy .login-button .btn {
 }
 /* line 30, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline.chat-open .login-button .btn {
-  background-color: #1e844a;
+  background-color: #27ae61;
 }
 /* line 32, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline.chat-open .login-button .btn:hover {
-  background-color: #145b33;
+  background-color: #1e844a;
 }
 
 @media (max-width: 180px) {
@@ -51,10 +51,10 @@ body.page-opeka-widgets-inline.chat-open .login-button .btn:hover {
   }
   /* line 50, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline.chat-open .login-button .btn {
-    background-color: #27ae61;
+    background-color: #1e844a;
   }
   /* line 52, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline.chat-open .login-button .btn:hover {
-    background-color: #1e844a;
+    background-color: #145b33;
   }
 }
