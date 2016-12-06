@@ -27,7 +27,7 @@ body.page-opeka-widgets-inline.chat-closed .login-button .btn {
 }
 /* line 26, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline.chat-busy .login-button .btn {
-  background-color: #e67e22;
+  background-color: #bf6516;
   cursor: default;
 }
 /* line 30, ../sass/widget.inline.scss */
@@ -45,15 +45,10 @@ body.page-opeka-widgets-inline.chat-open .login-button .btn:hover {
     padding: .4em 0;
   }
   /* line 45, ../sass/widget.inline.scss */
-  body.page-opeka-widgets-inline.chat-closed .login-button .btn, body.page-opeka-widgets-inline.chat-busy .login-button .btn {
-    background-color: #e67e22;
-    cursor: default;
-  }
-  /* line 50, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline.chat-open .login-button .btn {
     background-color: #1e844a;
   }
-  /* line 52, ../sass/widget.inline.scss */
+  /* line 47, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline.chat-open .login-button .btn:hover {
     background-color: #145b33;
   }

@@ -24,7 +24,7 @@ body.page-opeka-widgets-inline {
     cursor: default;
   }
   &.chat-busy .login-button .btn {
-    background-color: $ccOrange;
+    background-color: darken($ccOrange, 10%);
     cursor: default;
   }
   &.chat-open .login-button .btn {
@@ -41,11 +41,6 @@ body.page-opeka-widgets-inline {
       .btn {
         padding: .4em 0;
       }
-    }
-    &.chat-closed .login-button .btn,
-    &.chat-busy .login-button .btn {
-      background-color: $ccOrange;
-      cursor: default;
     }
     &.chat-open .login-button .btn {
       background-color: darken($ccGreen, 10%);
