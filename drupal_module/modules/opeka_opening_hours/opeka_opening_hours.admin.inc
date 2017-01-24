@@ -45,12 +45,13 @@ function opeka_opening_hours_admin_form($form, &$form_state) {
         '#type' => 'textfield',
         '#default_value' => $opeka_opening_hours_datetime['times_from'],
         '#size' => 5,
-        '#attributes' => array('class' => array('pull-left')),
+        '#attributes' => array('class' => array('pull-left'), 'placeholder' => t('From')),
       ),
       'times_to' => array(
         '#type' => 'textfield',
         '#default_value' => $opeka_opening_hours_datetime['times_to'],
         '#size' => 5,
+        '#attributes' => array('placeholder' => t('To')),
       ),
       '#prefix' => '<div id="' . $element_name . '_' . $idx . '">',
       '#suffix' => '</div>',
@@ -65,11 +66,12 @@ function opeka_opening_hours_admin_form($form, &$form_state) {
     'times_from' => array(
       '#type' => 'textfield',
       '#size' => 5,
-      '#attributes' => array('class' => array('pull-left')),
+      '#attributes' => array('class' => array('pull-left'), 'placeholder' => t('From')),
     ),
     'times_to' => array(
       '#type' => 'textfield',
       '#size' => 5,
+      '#attributes' => array('placeholder' => t('To')),
     ),
   );
 
