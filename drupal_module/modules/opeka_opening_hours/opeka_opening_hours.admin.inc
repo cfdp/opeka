@@ -18,7 +18,7 @@ function opeka_opening_hours_admin_form($form, &$form_state) {
   $datetimes_input_values = isset($form_state['input'][$element_name]) ? $form_state['input'][$element_name] : [];
   $opeka_opening_hours_datetimes_array = $datetimes_input_values ?: variable_get('opeka_opening_hours_datetimes', []);
   $opeka_opening_hours_datetimes_array = array_filter($opeka_opening_hours_datetimes_array, function($array_el) {
-    return !empty($array_el['times']);
+    return !(empty($array_el['times_from']) && empty($array_el['times_to']));
   });
   // Add the fieldset that will wrap our datetimes widget list.
   $form[$element_name] = array(
@@ -30,7 +30,7 @@ function opeka_opening_hours_admin_form($form, &$form_state) {
     '#suffix' => '</div>',
     '#description' => '',
     '#collapsible' => TRUE,
-    '#collapsed' => FALSE
+    '#collapsed' => FALSE,
   );
   // Add as many datetimes widgets as the values we have, and one more.
   foreach ($opeka_opening_hours_datetimes_array as $idx=>$opeka_opening_hours_datetime) {
@@ -39,23 +39,38 @@ function opeka_opening_hours_admin_form($form, &$form_state) {
         '#type' => 'select',
         '#options' => $weekdays_options,
         '#default_value' => $opeka_opening_hours_datetime['day'],
+        '#attributes' => array('class' => array('pull-left')),
       ),
-      'times' => array(
+      'times_from' => array(
         '#type' => 'textfield',
-        '#description' => t('Times'),
-        '#default_value' => $opeka_opening_hours_datetime['times'],
+        '#default_value' => $opeka_opening_hours_datetime['times_from'],
+        '#size' => 5,
+        '#attributes' => array('class' => array('pull-left')),
       ),
+      'times_to' => array(
+        '#type' => 'textfield',
+        '#default_value' => $opeka_opening_hours_datetime['times_to'],
+        '#size' => 5,
+      ),
+      '#prefix' => '<div id="' . $element_name . '_' . $idx . '">',
+      '#suffix' => '</div>',
     );
   }
   $form[$element_name][] = array(
     'day' =>  array(
       '#type' => 'select',
       '#options' => $weekdays_options,
+      '#attributes' => array('class' => array('pull-left')),
     ),
-    'times' => array(
+    'times_from' => array(
       '#type' => 'textfield',
-      '#description' => t('Times'),
-    )
+      '#size' => 5,
+      '#attributes' => array('class' => array('pull-left')),
+    ),
+    'times_to' => array(
+      '#type' => 'textfield',
+      '#size' => 5,
+    ),
   );
 
   // Add an "add more" button with ajax capabilities.
@@ -107,6 +122,6 @@ function opeka_fapi_multifield_submit_add_more($form, &$form_state, $arg) {
 function opeka_opening_hours_admin_form_submit($form, &$form_state) {
   $element_name = $form['#opeka_multified_element_name'];
   $form_state['values'][$element_name] = array_filter($form_state['values'][$element_name], function($array_el) {
-    return !empty($array_el['times']);
+    return !(empty($array_el['times_from']) && empty($array_el['times_to']));
   });
 }
