@@ -55,7 +55,7 @@ function opeka_opening_hours_preprocess_page(&$vars) {
   // Collapse all times into the same days.
   $opeka_opening_hours_datetimes_merged_days_array = [];
   foreach ($opeka_opening_hours_datetimes_array as $array_el) {
-    $opeka_opening_hours_datetimes_merged_days_array[$array_el['day']][] = $array_el['times'];
+    $opeka_opening_hours_datetimes_merged_days_array[$array_el['day']][] = $array_el['times_from'] . '-' . $array_el['times_to'];
   }
   // Sort days following the order of the opeka_opening_hours_weekdays() array.
   $opeka_opening_hours_datetimes_merged_days_array = 
