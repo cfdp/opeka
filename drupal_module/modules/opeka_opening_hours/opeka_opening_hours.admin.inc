@@ -24,13 +24,10 @@ function opeka_opening_hours_admin_form($form, &$form_state) {
   $form[$element_name] = array(
     '#type' => 'fieldset',
     '#tree' => TRUE,
-    '#title' => t('Opeka opening hours'),
     '#id' => $fieldset_id,
     '#prefix' => '<div id="' . $fieldset_id . '">',
     '#suffix' => '</div>',
     '#description' => '',
-    '#collapsible' => TRUE,
-    '#collapsed' => FALSE,
   );
   // Add as many datetimes widgets as the values we have, and one more.
   foreach ($opeka_opening_hours_datetimes_array as $idx=>$opeka_opening_hours_datetime) {
