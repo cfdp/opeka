@@ -25,20 +25,25 @@ function opeka_opening_hours_permission() {
  */
 function opeka_opening_hours_menu_alter(&$items) {
   if (isset($items['admin/config/services/opeka'])) {
-    $items['admin/config/services/opeka/main_tab'] = array(
-      'title' => t('General settings'),
-      'type' => MENU_DEFAULT_LOCAL_TASK,
-    );
-    $items['admin/config/services/opeka/opening_hours'] = array(
-      'title' => t('Opening hours'),
+    // Moving the existing main route into a tab.
+    $items['admin/config/services/opeka/general_settings'] = $items['admin/config/services/opeka'];
+    $items['admin/config/services/opeka/general_settings']['type'] = MENU_LOCAL_TASK;
+    $items['admin/config/services/opeka/general_settings']['weight'] = 2;
+
+    // Creating a default route and tab for opening hours.
+    $items['admin/config/services/opeka'] = array(
       'description' => 'Provides management options for the Opeka opening hours.',
       'page callback' => 'drupal_get_form',
-      'type' => MENU_LOCAL_TASK,
       'page callback' => 'drupal_get_form',
       'page arguments' => array('opeka_opening_hours_admin_form'),
       'access arguments' => array('administer opeka opening hours'),
       'file' => 'opeka_opening_hours.admin.inc',
       'file path' => drupal_get_path('module', 'opeka_opening_hours'),
+    );
+    $items['admin/config/services/opeka/main_tab'] = array(
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+      'title' => t('Opening hours'),
+      'weight' => 1,
     );
   }
 }
