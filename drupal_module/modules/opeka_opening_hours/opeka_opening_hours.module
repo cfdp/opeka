@@ -76,7 +76,7 @@ function opeka_opening_hours_preprocess_page(&$vars) {
   $vars['opeka_schedule'] = array(
     'message' => array(
       '#tag' => 'h2',
-      '#value' => variable_get('opeka_opening_hours_message', t('You can chat with the counselors from Aarhus according to the following schedule.')),
+      '#value' => variable_get('opeka_opening_hours_message', t('You can chat with the counselors according to the following schedule.')),
       '#theme' => 'html_tag',
     ),
     'list' => array(
