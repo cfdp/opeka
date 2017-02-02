@@ -75,7 +75,7 @@ function opeka_opening_hours_preprocess_page(&$vars) {
   // replace the opeka_schedule theme variable with our own render array.
   $vars['opeka_schedule'] = array(
     'message' => array(
-      '#tag' => 'h2',
+      '#tag' => 'p',
       '#value' => variable_get('opeka_opening_hours_message', t('You can chat with the counselors according to the following schedule.')),
       '#theme' => 'html_tag',
     ),

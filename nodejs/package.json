@@ -22,6 +22,7 @@
     "dnode": "^1.2.2",
     "drupal": "git+https://git@github.com/benjamin-dk/node-drupal.git",
     "ecstatic": "^2.1.0",
+    "emoticons": "^0.1.8",
     "nconf": "^0.8.4",
     "node-uuid": "^1.4.7",
     "shoe": "0.0.15",

@@ -21,3 +21,5 @@
 /.idea
 .ruby-version
 VERSION
+/drupal_module/bin/
+/drupal_module/node_modules/
