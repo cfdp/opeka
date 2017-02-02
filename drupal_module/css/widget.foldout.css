@@ -1,55 +1,45 @@
 /* Styling for the foldout widget */
+/* Mixin */
+/* Variables */
 /* $green: #72d477; */
 /* Typography */
-/* line 5, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout {
   background: transparent;
   position: relative;
-  /* Name tab */
-}
-/* line 10, ../sass/widget.foldout.scss */
-body.page-opeka-widgets-foldout .name-tab {
-  background-image: url(../img/chat_icon.svg);
-  background-position: 5px 5px;
-  background-repeat: no-repeat;
-  background-size: 42px 30px;
-  display: inline-block;
-  height: 20px;
-  left: 40px;
-  padding: 10px 10px 10px 55px;
-  position: absolute;
-  /* we rotate the text in the name tab */
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
-  transform: rotate(90deg);
-  /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
-  -webkit-transform-origin: left top;
-  -moz-transform-origin: left top;
-  -ms-transform-origin: left top;
-  -o-transform-origin: left top;
-  transform-origin: left top;
-}
-/* line 36, ../sass/widget.foldout.scss */
-body.page-opeka-widgets-foldout .status-wrapper {
-  display: inline-block;
-  margin-left: 40px;
-  position: absolute;
-  width: 240px;
-}
-/* line 43, ../sass/widget.foldout.scss */
-body.page-opeka-widgets-foldout .login-button {
-  margin: 10px 0;
-  text-align: center;
-}
-/* line 47, ../sass/widget.foldout.scss */
-body.page-opeka-widgets-foldout .multi-widget-chat-label {
-  padding: 0 0 .2em 0;
-}
-/* line 50, ../sass/widget.foldout.scss */
-body.page-opeka-widgets-foldout .curachat-widgets-multi {
-  height: 50px;
-  width: 175px;
-  border: 0;
-}
+  /* Name tab */ }
+  body.page-opeka-widgets-foldout .name-tab {
+    background-image: url(../img/chat_icon.svg);
+    background-position: 5px 5px;
+    background-repeat: no-repeat;
+    background-size: 42px 30px;
+    display: inline-block;
+    height: 20px;
+    left: 40px;
+    padding: 10px 10px 10px 55px;
+    position: absolute;
+    /* we rotate the text in the name tab */
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+    /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
+    -webkit-transform-origin: left top;
+    -moz-transform-origin: left top;
+    -ms-transform-origin: left top;
+    -o-transform-origin: left top;
+    transform-origin: left top; }
+  body.page-opeka-widgets-foldout .status-wrapper {
+    display: inline-block;
+    margin-left: 40px;
+    position: absolute;
+    width: 240px; }
+  body.page-opeka-widgets-foldout .login-button {
+    margin: 10px 0;
+    text-align: center; }
+  body.page-opeka-widgets-foldout .multi-widget-chat-label {
+    padding: 0 0 .2em 0; }
+  body.page-opeka-widgets-foldout .curachat-widgets-multi {
+    height: 50px;
+    width: 175px;
+    border: 0; }

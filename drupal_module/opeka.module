@@ -48,8 +48,8 @@ function opeka_menu() {
   );
 
   $items['admin/config/services/opeka'] = array(
-    'title' => 'Opeka - Chat system',
-    'description' => 'Provides settings for the chat service.',
+    'title' => 'Advanced settings',
+    'description' => 'Provides advanced settings for the chat service.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('opeka_admin_settings_form'),
     'access arguments' => array('administer site configuration'),

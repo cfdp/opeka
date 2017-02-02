@@ -5,7 +5,7 @@ files[] = opeka.module
 files[] = opeka.admin.inc
 files[] = opeka.pages.inc
 
-version = "7.x-1.0"
+version = "7.x-2.3"
 core = "7.x"
 project = "opeka"
 
