@@ -46,14 +46,6 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#required' => TRUE,
     '#default_value' => variable_get('opeka_connectjs_url', ''),
   );
-
-  $form['opeka_schedule'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Chat schedule'),
-    '#description' => t('The schedule for the upcoming chat sessions'),
-    '#required' => TRUE,
-    '#default_value' => variable_get('opeka_schedule', ''),
-  );
   
   $form['opeka_pair_chat_name'] = array(
     '#type' => 'textfield',
@@ -152,12 +144,6 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_custom_css', ''),
   );
 
-  $form['opeka_server_restart'] = array(
-   '#type' => 'submit',
-   '#value' => 'Restart server',
-   '#submit' => array('opeka_restart_server')
-  );
-
   $form['submit']['#validate'][] = 'opeka_admin_settings_form_validate';
   return system_settings_form($form);
 }
@@ -171,17 +157,5 @@ function opeka_admin_settings_form_validate(&$form, &$form_state) {
   }
   else {
       $exists = true;
-  }
-}
-
-function opeka_restart_server($form, &$form_state){
-  global $base_url;
-  $opeka_path = DRUPAL_ROOT . "/" . drupal_get_path('module', 'opeka');
-  $output = shell_exec($opeka_path . '/scripts/restart_wrapper.sh '. $base_url);
-  if ($output == NULL) {
-    drupal_set_message(t('Something went wrong - the chat was not restarted. Please contact support if problem persists.'), 'status');
-  }
-  else {
-    drupal_set_message($output, 'status');
   }
 }
