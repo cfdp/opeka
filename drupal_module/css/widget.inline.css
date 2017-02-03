@@ -10,7 +10,7 @@ body.page-opeka-widgets-inline {
     display: inline-block;
     margin: 0; }
     body.page-opeka-widgets-inline .status-content p, body.page-opeka-widgets-inline .status-content li {
-      color: #000; }
+      color: #231e19; }
   body.page-opeka-widgets-inline .login-button {
     display: inline-block;
     text-align: center; }
@@ -19,7 +19,7 @@ body.page-opeka-widgets-inline {
       display: inline-block;
       height: 100%;
       line-height: 24px;
-      padding: .7em 0;
+      padding: .7em;
       width: 100%;
       max-width: 300px; }
   body.page-opeka-widgets-inline.chat-closed .login-button .btn {
@@ -45,7 +45,7 @@ body.page-opeka-widgets-inline {
 
 @media (min-width: 480px) {
   body.page-opeka-widgets-inline .status-content {
-    max-width: 50%; }
+    width: 50%; }
   body.page-opeka-widgets-inline .login-button {
     position: relative;
     top: 50%;
