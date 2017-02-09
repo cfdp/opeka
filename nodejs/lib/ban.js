@@ -69,8 +69,10 @@ module.exports.validCode = function (banCode) {
 // Load all current bans from the database.
 module.exports.loadAll = function () {
   drupal.db.query('SELECT ip_hash FROM opeka_bans WHERE expiry IS NULL OR expiry > UNIX_TIMESTAMP()', [], function (err, result, fields) {
-    result.forEach(function (row) {
-      bans[row.ip_hash] = true;
-    });
+    if (result){
+      result.forEach(function (row) {
+        bans[row.ip_hash] = true;
+      });
+    }
   });
 };
