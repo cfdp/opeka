@@ -1,3 +1,14 @@
+/* Mixin */
+@mixin vertical-align($position: relative) {
+  position: $position;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+/* Variables */
+$ccBlack: rgb(35, 30, 25);
 $ccGreen: #27ae61;
 /* $green: #72d477; */
 $ccOrange: #e67e22;

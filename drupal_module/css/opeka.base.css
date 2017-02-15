@@ -1,73 +1,51 @@
+/* Mixin */
+/* Variables */
 /* $green: #72d477; */
 /* Typography */
-/* line 4, ../sass/opeka.base.scss */
 .not-logged-in {
-  /* The sidebar is always visible in a group chat for anonymous clients*/
-}
-/* line 7, ../sass/opeka.base.scss */
-.not-logged-in.groupchat #opeka-app .content.client-sidebar-0 {
-  width: 66%;
-}
-/* line 11, ../sass/opeka.base.scss */
-.not-logged-in #opeka-app {
-  /* Anonymous clients can have the sidebar disabled */
-}
-/* line 13, ../sass/opeka.base.scss */
-.not-logged-in #opeka-app .content.client-sidebar-0 {
-  width: 100%;
-}
-/* line 17, ../sass/opeka.base.scss */
-.not-logged-in #opeka-app .content.client-sidebar-1 {
-  width: 66%;
-}
-/* line 25, ../sass/opeka.base.scss */
-.not-logged-in .groupchat .footer,
-.not-logged-in .room-size-2 .footer {
-  display: none;
-}
+  /* The sidebar is always visible in a group chat for anonymous clients*/ }
+  .not-logged-in.groupchat #opeka-app .content.client-sidebar-0 {
+    width: 66%; }
+  .not-logged-in #opeka-app {
+    /* Anonymous clients can have the sidebar disabled */ }
+    .not-logged-in #opeka-app .content.client-sidebar-0 {
+      width: 100%; }
+    .not-logged-in #opeka-app .content.client-sidebar-1 {
+      width: 66%; }
+  .not-logged-in .groupchat .footer,
+  .not-logged-in .room-size-2 .footer {
+    display: none; }
 
 /* All users */
-/* line 35, ../sass/opeka.base.scss */
 #opeka-app .header,
 #opeka-app .footer {
-  clear: both;
-}
-/* line 40, ../sass/opeka.base.scss */
+  clear: both; }
+
 #opeka-app .content,
 #opeka-app .sidebar {
-  float: left;
-}
-/* line 45, ../sass/opeka.base.scss */
+  float: left; }
+
 #opeka-app .content {
-  width: 66%;
-}
-/* line 49, ../sass/opeka.base.scss */
+  width: 66%; }
+
 #opeka-app .sidebar {
-  width: 33%;
-}
-/* line 53, ../sass/opeka.base.scss */
+  width: 33%; }
+
 #opeka-app .emoticon {
-  margin-bottom: -6px;
-}
-/* line 57, ../sass/opeka.base.scss */
+  margin-bottom: -6px; }
+
 #opeka-app .message {
-  white-space: pre-wrap;
-}
-/* line 61, ../sass/opeka.base.scss */
+  white-space: pre-wrap;  }
+
 #opeka-app .return-writers-msg,
 #opeka-app .return-sends-msg {
-  margin: 0 2px 0 10px;
-}
-/* line 65, ../sass/opeka.base.scss */
+  margin: 0 2px 0 10px;  }
+
 #opeka-app label[for="return-writers-msg"],
 #opeka-app label[for="return-sends-msg"] {
-  display: inline-block;
-}
-/* line 69, ../sass/opeka.base.scss */
+  display: inline-block; }
+
 #opeka-app .dropdown-menu li {
-  cursor: pointer;
-}
-/* line 72, ../sass/opeka.base.scss */
-#opeka-app .dropdown-menu li:hover {
-  background-color: #e6e6e6;
-}
+  cursor: pointer; }
+  #opeka-app .dropdown-menu li:hover {
+    background-color: #e6e6e6; }
