@@ -63,7 +63,7 @@
       this.messages = [];
       this.inQueue = options.inQueue;
       this.returnSendsMessage = ''; // Variable tied to user defined behaviour of input text area
-      this.dontAutoScroll = ''; // Variable tied to user defined behaviour of input text area
+      this.dontAutoScroll = -1; // Variable tied to user defined behaviour of input text area
 
       this.model.on('change', this.render, this);
       
@@ -152,12 +152,10 @@
         }));
       }
 
+      // Keep the scrollbar at the bottom of the .chat-message-list
+      var message_list = this.$el.find('.chat-message-list');
+      message_list.scrollTop(this.dontAutoScroll > 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
 
-      if (this.dontAutoScroll != 'checked') {
-        // Keep the scrollbar at the bottom of the .chat-message-list
-        var message_list = this.$el.find('.chat-message-list');
-        message_list.scrollTop(message_list.prop("scrollHeight"));
-      }
       return this;
     },
 
@@ -243,11 +241,10 @@
         this.messages.push(message);
         this.render();
 
-        if (this.dontAutoScroll != 'checked') {
-          // Keep the scrollbar at the bottom of the .chat-message-list
-          var message_list = this.$el.find('.chat-message-list');
-          message_list.scrollTop(message_list.prop("scrollHeight"));
-        }
+        // Keep the scrollbar at the bottom of the .chat-message-list
+        var message_list = this.$el.find('.chat-message-list');
+        message_list.scrollTop(this.dontAutoScroll > 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
+
         $.event.trigger({ type: "messageRender", chat: this });
       }
     },
@@ -307,10 +304,11 @@
       // $this will contain a reference to the checkbox
       if (this.$el.find('.dont-auto-scroll').is(':checked')) {
         // the checkbox was checked
-        this.dontAutoScroll = 'checked';
+        var message_list = this.$el.find('.chat-message-list');
+        this.dontAutoScroll = message_list.scrollTop();
       } else {
         // the checkbox was unchecked
-        this.dontAutoScroll = '';
+        this.dontAutoScroll = -1;
       }
     },
 
