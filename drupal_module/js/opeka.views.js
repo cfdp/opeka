@@ -50,6 +50,7 @@
       "submit .message-form": "sendMessage",
       "keyup .form-text": "sendMessageonEnter",
       "click .return-sends-msg": "toggleReturnSendsMessage",
+      "click .dont-auto-scroll": "toggleDontAutoScroll",
       "submit .leave-queue-form": "leaveQueue",
       "submit .leave-room-form": "leaveRoom",
       "click .reply-to-whisper": "whisperReply"
@@ -62,6 +63,7 @@
       this.messages = [];
       this.inQueue = options.inQueue;
       this.returnSendsMessage = ''; // Variable tied to user defined behaviour of input text area
+      this.dontAutoScroll = -1; // Variable tied to user defined behaviour of input text area
 
       this.model.on('change', this.render, this);
       
@@ -140,17 +142,20 @@
             roomPaused: Drupal.t('The room is paused'),
             userMuted: Drupal.t('You are muted'),
             messageButton: Drupal.t('Send'),
-            returnSendsMessageLabel: Drupal.t('Press ENTER to send.')
+            returnSendsMessageLabel: Drupal.t('Press ENTER to send.'),
+            dontAutoScroll: Drupal.t('Pause auto-scrolling.')
           },
           inQueue: this.inQueue,
           room: this.model,
-          returnSendsMessage: this.returnSendsMessage
+          returnSendsMessage: this.returnSendsMessage,
+          dontAutoScroll: this.dontAutoScroll
         }));
       }
 
       // Keep the scrollbar at the bottom of the .chat-message-list
       var message_list = this.$el.find('.chat-message-list');
-      message_list.scrollTop(message_list.prop("scrollHeight"));
+      message_list.scrollTop(this.dontAutoScroll > 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
+
       return this;
     },
 
@@ -227,7 +232,7 @@
 
       this.render();
       // Trigger the messageRender event for the Emoticons script to react upon
-      $.event.trigger({ type: "messageRender" });
+      $.event.trigger({ type: "messageRender", chat: this });
     },
 
     receiveMessage: function (message) {
@@ -238,9 +243,9 @@
 
         // Keep the scrollbar at the bottom of the .chat-message-list
         var message_list = this.$el.find('.chat-message-list');
-        message_list.scrollTop(message_list.prop("scrollHeight"));
+        message_list.scrollTop(this.dontAutoScroll > 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
 
-        $.event.trigger({ type: "messageRender" });
+        $.event.trigger({ type: "messageRender", chat: this });
       }
     },
 
@@ -292,6 +297,18 @@
       } else {
         // the checkbox was unchecked
         this.returnSendsMessage = '';
+      }
+    },
+
+    toggleDontAutoScroll: function(event) {
+      // $this will contain a reference to the checkbox
+      if (this.$el.find('.dont-auto-scroll').is(':checked')) {
+        // the checkbox was checked
+        var message_list = this.$el.find('.chat-message-list');
+        this.dontAutoScroll = message_list.scrollTop();
+      } else {
+        // the checkbox was unchecked
+        this.dontAutoScroll = -1;
       }
     },
 

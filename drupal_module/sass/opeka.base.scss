@@ -58,11 +58,11 @@
     white-space: pre-wrap;
   }
 
-  .return-sends-msg {
+  .return-sends-msg, .dont-auto-scroll {
     margin: 0 2px 0 10px;
   }
 
-  label[for="return-sends-msg"] {
+  label[for="return-sends-msg"], label[for="dont-auto-scroll"] {
     display: inline-block;
   }
 

@@ -9,7 +9,7 @@
       $.emoticons.define(definition);
 
       /* If a new message has been added, check for emoticons */
-      $( document ).on( 'messageRender' , function(){
+      $( document ).on( 'messageRender' , function(event){
 
         /* We only insert emoticons in the last 10 messages */
         $visibleMessages = $('li.chat-message, li.whisper-message').slice(-9);
@@ -20,10 +20,11 @@
           $messageArea.html($.emoticons.replace($messageText));
         });
 
+
         // Keep the scrollbar at the bottom of the .chat-message-list
         var message_list = $('.chat-message-list');
         // message_list.scrollTop(message_list.prop("scrollHeight"));
-        var height = message_list.prop("scrollHeight");
+        var height = event.chat.dontAutoScroll > 0 ? event.chat.dontAutoScroll : message_list.prop("scrollHeight");
         message_list.animate({scrollTop: height}, '800', 'linear');
       });
 

@@ -20,29 +20,21 @@
 #opeka-app .header,
 #opeka-app .footer {
   clear: both; }
-
 #opeka-app .content,
 #opeka-app .sidebar {
   float: left; }
-
 #opeka-app .content {
   width: 66%; }
-
 #opeka-app .sidebar {
   width: 33%; }
-
 #opeka-app .emoticon {
   margin-bottom: -6px; }
-
 #opeka-app .message {
   white-space: pre-wrap; }
-
-#opeka-app .return-sends-msg {
+#opeka-app .return-sends-msg, #opeka-app .dont-auto-scroll {
   margin: 0 2px 0 10px; }
-
-#opeka-app label[for="return-sends-msg"] {
+#opeka-app label[for="return-sends-msg"], #opeka-app label[for="dont-auto-scroll"] {
   display: inline-block; }
-
 #opeka-app .dropdown-menu li {
   cursor: pointer; }
   #opeka-app .dropdown-menu li:hover {
