@@ -29,6 +29,10 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
             callback(null, account);
           });
         });
+        drupal.user.access('hide typing message', account, function (err, hideTypingMessage) {
+          account.hideTypingMessage = hideTypingMessage;
+          callback(null, account);
+        });
       });
     });
   }
@@ -57,6 +61,7 @@ module.exports.filterData = function (client) {
     clientId: client.clientId,
     gender: client.gender,
     isAdmin: client.isAdmin,
+    hideTypingMessage: client.hideTypingMessage,
     muted: client.muted,
     name: client.nickname || client.account.name,
     drupal_uid: client.drupal_uid

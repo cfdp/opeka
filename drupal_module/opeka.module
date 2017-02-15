@@ -24,6 +24,10 @@ function opeka_permission() {
       'title' => t('Generate opeka chat ban codes'),
       'description' => t('Grants a user access to generate opeka chat ban codes.'),
     ),
+    'hide typing message' => array(
+      'title' => t('Hide typing message'),
+      'description' => t('Grants a user access to hide typing message.'),
+    ),
   );
 }
 
