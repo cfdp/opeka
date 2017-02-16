@@ -488,8 +488,8 @@ function Server(config, logger) {
     self.broadcastChatStatus();
   });
 
-  // Allow the councellors to update writingMessage.
-  self.councellors.addServerMethod('writingMessage', function (roomId, callback) {
+  // Allow the everyone to update writingMessage.
+  self.everyone.addServerMethod('writingMessage', function (roomId, callback) {
     var room = opeka.rooms.list[roomId.room],
     client = this;
     var userInRoom = room.users[client.clientId];
