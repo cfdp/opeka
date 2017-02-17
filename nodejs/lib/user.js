@@ -50,7 +50,13 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
       throw 'Wrong or no access code given on signIn form';
     }
 
-    callback(null, account);
+    drupal.user.load(0, function (err, account) {
+      drupal.user.access('pause opeka chat autoscroll', account, function (err, allowPauseAutoScroll) {
+        util.log("Allow pausing autoscroll: " + allowPauseAutoScroll);
+        account.allowPauseAutoScroll = allowPauseAutoScroll;
+        callback(null, account);
+      });
+    });
   }
 
 };
