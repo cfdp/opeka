@@ -4,8 +4,8 @@
 "use strict";
 
 var _ = require("underscore"),
-    util = require("util"),
-    drupal = require("drupal");
+util = require("util"),
+drupal = require("drupal");
 
 // Authenticate a user logging on to the chat server.
 module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCode, callback) {
@@ -38,6 +38,14 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
   }
   // Otherwise, we need to check if the accessCode feature is enabled
   else {
+
+    drupal.user.load(0, function (err, account) {
+      drupal.user.access('hide typing message', account, function (err, hideTypingMessage) {
+        account.hideTypingMessage = hideTypingMessage;
+        callback(null, account);
+      });
+    });
+
     var account = {};
     account.isAdmin = false;
 
