@@ -298,8 +298,10 @@
     <input class="form-submit send btn btn-success" type="submit" value="<%= labels.messageButton %>" />
     <input class="return-sends-msg" name="return-sends-msg" id="return-sends-msg" type="checkbox" <%= returnSendsMessage %> >
     <label for="return-sends-msg"><%= labels.returnSendsMessageLabel %></label>
-    <input class="dont-auto-scroll" name="dont-auto-scroll" id="dont-auto-scroll" type="checkbox" <%= dontAutoScroll %> >
-    <label for="dont-auto-scroll"><%= labels.dontAutoScroll %></label>
+    <% if (activeUser.allowPauseAutoScroll) { %>
+      <input class="dont-auto-scroll" name="dont-auto-scroll" id="dont-auto-scroll" type="checkbox" <%= dontAutoScroll %> >
+      <label for="dont-auto-scroll"><%= labels.dontAutoScroll %></label>
+    <% } %>
   </form>
   <% } else if (activeUser.muted) { %>
     <div class="userMuted">

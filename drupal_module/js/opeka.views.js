@@ -92,8 +92,10 @@
           hideForm = false,
           formPresent = true;
       if (!activeUser) {
-        activeUser = {muted:false, allowPauseAutoScroll: false};
+        activeUser = {muted:false};
       }
+
+      activeUser.allowPauseAutoScroll = Opeka.clientData.allowPauseAutoScroll;
       
       // If user is in the queue, show it to him.
       if (this.inQueue !== false) {
@@ -1578,7 +1580,7 @@
       //@todo: the visibility of the name should probably be a setting somewhere
       //Replace the Drupal username with rådgiver(counselor), not using the actual user name
       //name = Drupal.settings.opeka.user.name;
-      if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.name) {
+      if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.admin) {
         name = Drupal.t('Counselor');
       }
 
