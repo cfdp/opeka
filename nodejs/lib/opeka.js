@@ -233,6 +233,8 @@ function Server(config, logger) {
         genderRange = {min: 1, max: 25},
         ageRange = {min: 0, max: 99};
 
+    self.logger.info("Drupal user ID:", clientUser.uid);
+
     opeka.user.authenticate(clientUser, accessCodeEnabled, accessCode, function (err, account) {
       if (err) {
         self.logger.info('Incorrect access code given.');
@@ -320,7 +322,7 @@ function Server(config, logger) {
 
       // Only copy safe values from the account-data to the callback object
       _.each(
-        ['canGenerateBanCode', 'isAdmin', 'language', 'name', 'nickname', 'sid', 'uid'],
+        ['canGenerateBanCode', 'isAdmin', 'language', 'name', 'nickname', 'sid', 'uid', 'allowPauseAutoScroll'],
         function(k) {
           if(k in account) {
             clientData[k] = account[k]

@@ -53,7 +53,8 @@
       "click .dont-auto-scroll": "toggleDontAutoScroll",
       "submit .leave-queue-form": "leaveQueue",
       "submit .leave-room-form": "leaveRoom",
-      "click .reply-to-whisper": "whisperReply"
+      "click .reply-to-whisper": "whisperReply",
+      "scroll": "updateScrollPosition"
     },
 
     initialize: function (options) {
@@ -66,7 +67,7 @@
       this.dontAutoScroll = -1; // Variable tied to user defined behaviour of input text area
 
       this.model.on('change', this.render, this);
-      
+
       return this;
     },
 
@@ -93,6 +94,8 @@
       if (!activeUser) {
         activeUser = {muted:false};
       }
+
+      activeUser.allowPauseAutoScroll = Opeka.clientData.allowPauseAutoScroll;
       
       // If user is in the queue, show it to him.
       if (this.inQueue !== false) {
@@ -112,7 +115,6 @@
         this.$el.html('<div class="chat-view-window"></div><div class="chat-view-form"></div>');
       }
 
-
       // Always render the chat window.
       this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
@@ -125,6 +127,11 @@
         },
         messages: this.messages,
       }));
+
+      var view = this;
+      this.$el.find(".chat-message-list").scroll(function(){
+        view.updateScrollPosition();
+      });
 
       // Conditionally render the message form.
       if (hideForm !== formPresent || this.inQueue !== false) {
@@ -309,6 +316,14 @@
       } else {
         // the checkbox was unchecked
         this.dontAutoScroll = -1;
+      }
+    },
+
+    updateScrollPosition: function(event) {
+      // Update scroll position on manual scroll.
+      if (this.dontAutoScroll >= 0){
+        var message_list = this.$el.find('.chat-message-list');
+        this.dontAutoScroll = message_list.scrollTop();
       }
     },
 
@@ -1565,7 +1580,7 @@
       //@todo: the visibility of the name should probably be a setting somewhere
       //Replace the Drupal username with rådgiver(counselor), not using the actual user name
       //name = Drupal.settings.opeka.user.name;
-      if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.name) {
+      if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.admin) {
         name = Drupal.t('Counselor');
       }
 
