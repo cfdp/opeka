@@ -37,6 +37,11 @@
     clear: both;
   }
 
+  .app-view .footer {
+    display: inline-block;
+    margin-left: 5px;
+  }
+
   .content,
   .sidebar {
     float: left;
@@ -58,11 +63,32 @@
     white-space: pre-wrap;
   }
 
-  .return-sends-msg, .dont-auto-scroll {
+  .chat-message-list-wrapper {
+    position: relative;
+  }
+
+  .form-submit.send {
+    vertical-align: top;
+  }
+
+  .chat-flow-controls {
+    display: inline-block;
+  }
+
+ .writers-message.label {
+    font-weight: normal;
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+  }
+
+  .return-sends-msg, .dont-auto-scroll, .return-writers-msg {
     margin: 0 2px 0 10px;
   }
 
-  label[for="return-sends-msg"], label[for="dont-auto-scroll"] {
+  label[for="return-sends-msg"],
+  label[for="dont-auto-scroll"],
+  label[for="return-writers-msg"]  {
     display: inline-block;
   }
 

@@ -296,16 +296,18 @@
       <textarea autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" ></textarea>
     </div>
     <input class="form-submit send btn btn-success" type="submit" value="<%= labels.messageButton %>" />
-    <input class="return-sends-msg" name="return-sends-msg" id="return-sends-msg" type="checkbox" <%= returnSendsMessage %> >
-    <label for="return-sends-msg"><%= labels.returnSendsMessageLabel %></label>
-    <% if (hideTypingMessage) { %>
-      <input class="return-writers-msg" name="return-writers-msg" id="return-writers-msg" type="checkbox" <%= returnWritersMessage %> >
-      <label for="return-writers-msg"><%= labels.returnWritersMessageLabel %></label>
-    <% } %>
-    <% if (activeUser.allowPauseAutoScroll) { %>
-      <input class="dont-auto-scroll" name="dont-auto-scroll" id="dont-auto-scroll" type="checkbox" <%= dontAutoScroll %> >
-      <label for="dont-auto-scroll"><%= labels.dontAutoScroll %></label>
-    <% } %>
+    <div class="chat-flow-controls">
+      <div class="chat-flow-control-item"><input class="return-sends-msg" name="return-sends-msg" id="return-sends-msg" type="checkbox" <%= returnSendsMessage %> >
+      <label for="return-sends-msg"><%= labels.returnSendsMessageLabel %></label></div>
+      <% if (hideTypingMessage) { %>
+        <div class="chat-flow-control-item"><input class="return-writers-msg" name="return-writers-msg" id="return-writers-msg" type="checkbox" <%= returnWritersMessage %> >
+        <label for="return-writers-msg"><%= labels.returnWritersMessageLabel %></label></div>
+      <% } %>
+      <% if (activeUser.allowPauseAutoScroll) { %>
+        <div class="chat-flow-control-item"><input class="dont-auto-scroll" name="dont-auto-scroll" id="dont-auto-scroll" type="checkbox" <%= dontAutoScroll %> >
+        <label for="dont-auto-scroll"><%= labels.dontAutoScroll %></label></div>
+      <% } %>
+    </div>
   </form>
   <% } else if (activeUser.muted) { %>
     <div class="userMuted">
