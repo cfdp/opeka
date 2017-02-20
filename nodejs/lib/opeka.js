@@ -492,15 +492,20 @@ function Server(config, logger) {
   self.everyone.addServerMethod('writingMessage', function (roomId, callback) {
     var room = opeka.rooms.list[roomId.room],
     client = this;
-    var userInRoom = room.users[client.clientId];
-    if (!_.isEmpty(userInRoom)) {
-      userInRoom.writes = roomId.status;
+    if (room) {
+      var userInRoom = room.users[client.clientId];
+      if (!_.isEmpty(userInRoom)) {
+        userInRoom.writes = roomId.status;
+      }
+      var writers = _.where(room.users, {'writes' : true});
+      writers = _.map(writers, function (keys, value) {
+        return keys.name;
+      });
+      self.sendWritesMessage(writers, room.group);
     }
-    var writers = _.where(room.users, {'writes' : true});
-    writers = _.map(writers, function (keys, value) {
-      return keys.name;
-    });
-    self.sendWritesMessage(writers, room.group);
+    else {
+      self.logger.info('@debug: room not defined (writingMessage)');
+    }
   });
 
   // Allow the councellors to unpause a room.

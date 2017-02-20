@@ -45,6 +45,17 @@
 #opeka-app label[for="return-sends-msg"] {
   display: inline-block; }
 
+#opeka-app .chat-message-list-wrapper {
+  position: relative;
+}
+
+#opeka-app .writers-message.label {
+  font-weight: normal;
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+}
+
 #opeka-app .dropdown-menu li {
   cursor: pointer; }
   #opeka-app .dropdown-menu li:hover {
