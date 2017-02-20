@@ -492,8 +492,8 @@ function Server(config, logger) {
 
   // Allow the everyone to update writingMessage.
   self.everyone.addServerMethod('writingMessage', function (roomId, callback) {
-    var room = opeka.rooms.list[roomId.room],
-    client = this;
+    var client = this,
+    room = opeka.rooms.list[client.activeRoomId];
     if (room) {
       var userInRoom = room.users[client.clientId];
       if (!_.isEmpty(userInRoom)) {
