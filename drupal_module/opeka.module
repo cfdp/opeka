@@ -28,6 +28,10 @@ function opeka_permission() {
       'title' => t('Hide typing message'),
       'description' => t('Grants a user access to hide typing message.'),
     ),
+    'pause opeka chat autoscroll' => array(
+      'title' => t('Pause opeka chat auto-scroll'),
+      'description' => t('Grants a user access to pause opeka chat auto-scrolling.'),
+    ),
   );
 }
 
@@ -52,8 +56,8 @@ function opeka_menu() {
   );
 
   $items['admin/config/services/opeka'] = array(
-    'title' => 'Advanced settings',
-    'description' => 'Provides advanced settings for the chat service.',
+    'title' => 'Opeka - Chat system',
+    'description' => 'Provides settings for the chat service.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('opeka_admin_settings_form'),
     'access arguments' => array('administer site configuration'),

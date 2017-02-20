@@ -9,6 +9,8 @@ drupal = require("drupal");
 
 // Authenticate a user logging on to the chat server.
 module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCode, callback) {
+  util.log("clientUser.sid: " + clientUser.sid);
+  util.log("clientUser.uid: " + clientUser.uid);
   // If the client claims he's logged in, validate that assertion.
   if (clientUser.sid && clientUser.uid) {
     // Validate the user's session.
@@ -26,13 +28,18 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
           account.isAdmin = isAdmin;
           drupal.user.access('generate opeka chat ban codes', account, function (err, canGenerateBanCode) {
             account.canGenerateBanCode = canGenerateBanCode;
-            callback(null, account);
+            drupal.user.access('pause opeka chat autoscroll', account, function (err, allowPauseAutoScroll) {
+              util.log("Allow pausing autoscroll: " + allowPauseAutoScroll);
+              account.allowPauseAutoScroll = allowPauseAutoScroll;
+              callback(null, account);
+            });
           });
         });
         drupal.user.access('hide typing message', account, function (err, hideTypingMessage) {
           account.hideTypingMessage = hideTypingMessage;
           callback(null, account);
         });
+        util.log("Drupal user id: " + session.uid);
       });
     });
   }
@@ -55,8 +62,15 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
       throw 'Wrong or no access code given on signIn form';
     }
 
-    callback(null, account);
+    drupal.user.load(0, function (err, account) {
+      drupal.user.access('pause opeka chat autoscroll', account, function (err, allowPauseAutoScroll) {
+        util.log("Allow pausing autoscroll: " + allowPauseAutoScroll);
+        account.allowPauseAutoScroll = allowPauseAutoScroll;
+        callback(null, account);
+      });
+    });
   }
+
 };
 
 // Filters the user data and remove personal/security sensitive data and
@@ -71,6 +85,7 @@ module.exports.filterData = function (client) {
     isAdmin: client.isAdmin,
     hideTypingMessage: client.hideTypingMessage,
     muted: client.muted,
+    allowPauseAutoScroll: client.allowPauseAutoScroll,
     name: client.nickname || client.account.name,
     drupal_uid: client.drupal_uid
   };

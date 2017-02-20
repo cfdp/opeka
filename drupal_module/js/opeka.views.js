@@ -61,11 +61,13 @@
       "submit .message-form": "sendMessage",
       "keyup .form-text": "sendMessageonEnter",
       "click .return-sends-msg": "toggleReturnSendsMessage",
+      "click .dont-auto-scroll": "toggleDontAutoScroll",
       "submit .leave-queue-form": "leaveQueue",
       "submit .leave-room-form": "leaveRoom",
       "click .reply-to-whisper": "whisperReply",
       'keypress .form-text': "sendUserWriting",
-      "click .return-writers-msg": "toggleWritersMessage"
+      "click .return-writers-msg": "toggleWritersMessage",
+      "scroll": "updateScrollPosition"
     },
 
     initialize: function (options) {
@@ -76,8 +78,8 @@
       this.inQueue = options.inQueue;
       this.returnSendsMessage = ''; // Variable tied to user defined behaviour of input text area
       this.writersMessage = '';
+      this.dontAutoScroll = -1; // Variable tied to user defined behaviour of input text area
       this.model.on('change', this.render, this);
-      
       return this;
     },
 
@@ -104,6 +106,8 @@
       if (!activeUser) {
         activeUser = {muted:false};
       }
+
+      activeUser.allowPauseAutoScroll = Opeka.clientData.allowPauseAutoScroll;
       
       // If user is in the queue, show it to him.
       if (this.inQueue !== false) {
@@ -123,7 +127,6 @@
         this.$el.html('<div class="chat-view-window"></div><div class="chat-view-form"></div>');
       }
 
-
       // Always render the chat window.
       this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
@@ -136,6 +139,11 @@
         },
         messages: this.messages,
       }));
+
+      var view = this;
+      this.$el.find(".chat-message-list").scroll(function(){
+        view.updateScrollPosition();
+      });
 
       // Conditionally render the message form.
       if (hideForm !== formPresent || this.inQueue !== false) {
@@ -154,13 +162,15 @@
             userMuted: Drupal.t('You are muted'),
             messageButton: Drupal.t('Send'),
             returnSendsMessageLabel: Drupal.t('Press ENTER to send.'),
-            returnWritersMessageLabel: Drupal.t('Hide typing messages.')
+            returnWritersMessageLabel: Drupal.t('Hide typing messages.'),
+            dontAutoScroll: Drupal.t('Pause auto-scrolling.')
           },
           inQueue: this.inQueue,
           room: this.model,
           returnSendsMessage: this.returnSendsMessage,
           returnWritersMessage: true,
-          hideTypingMessage: Opeka.clientData.hideTypingMessage
+          hideTypingMessage: Opeka.clientData.hideTypingMessage,
+          dontAutoScroll: this.dontAutoScroll
         }));
       }
 
@@ -179,7 +189,8 @@
 
       // Keep the scrollbar at the bottom of the .chat-message-list
       var message_list = this.$el.find('.chat-message-list');
-      message_list.scrollTop(message_list.prop("scrollHeight"));
+      message_list.scrollTop(this.dontAutoScroll > 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
+
       return this;
     },
 
@@ -256,7 +267,7 @@
 
       this.render();
       // Trigger the messageRender event for the Emoticons script to react upon
-      $.event.trigger({ type: "messageRender" });
+      $.event.trigger({ type: "messageRender", chat: this });
     },
 
     receiveMessage: function (message) {
@@ -267,9 +278,9 @@
 
         // Keep the scrollbar at the bottom of the .chat-message-list
         var message_list = this.$el.find('.chat-message-list');
-        message_list.scrollTop(message_list.prop("scrollHeight"));
+        message_list.scrollTop(this.dontAutoScroll > 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
 
-        $.event.trigger({ type: "messageRender" });
+        $.event.trigger({ type: "messageRender", chat: this });
       }
     },
     receiveWritesMessage: function (message) {
@@ -364,6 +375,25 @@
       } else {
         // the checkbox was unchecked
         this.returnWritersMessage = true;
+      }
+    },
+    toggleDontAutoScroll: function(event) {
+      // $this will contain a reference to the checkbox
+      if (this.$el.find('.dont-auto-scroll').is(':checked')) {
+        // the checkbox was checked
+        var message_list = this.$el.find('.chat-message-list');
+        this.dontAutoScroll = message_list.scrollTop();
+      } else {
+        // the checkbox was unchecked
+        this.dontAutoScroll = -1;
+      }
+    },
+
+    updateScrollPosition: function(event) {
+      // Update scroll position on manual scroll.
+      if (this.dontAutoScroll >= 0){
+        var message_list = this.$el.find('.chat-message-list');
+        this.dontAutoScroll = message_list.scrollTop();
       }
     },
 
@@ -1620,7 +1650,7 @@
       //@todo: the visibility of the name should probably be a setting somewhere
       //Replace the Drupal username with rådgiver(counselor), not using the actual user name
       //name = Drupal.settings.opeka.user.name;
-      if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.name) {
+      if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.admin) {
         name = Drupal.t('Counselor');
       }
 

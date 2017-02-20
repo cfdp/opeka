@@ -302,6 +302,10 @@
       <input class="return-writers-msg" name="return-writers-msg" id="return-writers-msg" type="checkbox" <%= returnWritersMessage %> >
       <label for="return-writers-msg"><%= labels.returnWritersMessageLabel %></label>
     <% } %>
+    <% if (activeUser.allowPauseAutoScroll) { %>
+      <input class="dont-auto-scroll" name="dont-auto-scroll" id="dont-auto-scroll" type="checkbox" <%= dontAutoScroll %> >
+      <label for="dont-auto-scroll"><%= labels.dontAutoScroll %></label>
+    <% } %>
   </form>
   <% } else if (activeUser.muted) { %>
     <div class="userMuted">
