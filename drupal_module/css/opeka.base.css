@@ -35,13 +35,26 @@
   margin-bottom: -6px; }
 
 #opeka-app .message {
-  white-space: pre-wrap; }
+  white-space: pre-wrap;  }
 
+#opeka-app .return-writers-msg,
 #opeka-app .return-sends-msg {
-  margin: 0 2px 0 10px; }
+  margin: 0 2px 0 10px;  }
 
+#opeka-app label[for="return-writers-msg"],
 #opeka-app label[for="return-sends-msg"] {
   display: inline-block; }
+
+#opeka-app .chat-message-list-wrapper {
+  position: relative;
+}
+
+#opeka-app .writers-message.label {
+  font-weight: normal;
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+}
 
 #opeka-app .dropdown-menu li {
   cursor: pointer; }

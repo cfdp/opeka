@@ -43,6 +43,17 @@
   });//END AppView
 
 
+  // Global sender object, to avoid spam to the server.
+  var sender = {};
+  setInterval(function () {
+    // With 1000 will be not very hard for server to handle this.
+    // Every time we'll check if user is writing and change sender flag if it is.
+    if (!_.isEmpty(sender)) {
+      Opeka.remote.writingMessage(sender, function (err) {});
+      sender.status = false;
+    }
+  }, 1000);
+
   // The actual chat window.
   Opeka.ChatView = Backbone.View.extend({
     events: {
@@ -52,7 +63,9 @@
       "click .return-sends-msg": "toggleReturnSendsMessage",
       "submit .leave-queue-form": "leaveQueue",
       "submit .leave-room-form": "leaveRoom",
-      "click .reply-to-whisper": "whisperReply"
+      "click .reply-to-whisper": "whisperReply",
+      'keypress .form-text': "sendUserWriting",
+      "click .return-writers-msg": "toggleWritersMessage"
     },
 
     initialize: function (options) {
@@ -62,7 +75,7 @@
       this.messages = [];
       this.inQueue = options.inQueue;
       this.returnSendsMessage = ''; // Variable tied to user defined behaviour of input text area
-
+      this.writersMessage = '';
       this.model.on('change', this.render, this);
       
       return this;
@@ -140,13 +153,29 @@
             roomPaused: Drupal.t('The room is paused'),
             userMuted: Drupal.t('You are muted'),
             messageButton: Drupal.t('Send'),
-            returnSendsMessageLabel: Drupal.t('Press ENTER to send.')
+            returnSendsMessageLabel: Drupal.t('Press ENTER to send.'),
+            returnWritersMessageLabel: Drupal.t('Hide typing messages.')
           },
           inQueue: this.inQueue,
           room: this.model,
-          returnSendsMessage: this.returnSendsMessage
+          returnSendsMessage: this.returnSendsMessage,
+          returnWritersMessage: true,
+          hideTypingMessage: Opeka.clientData.hideTypingMessage
         }));
       }
+
+      if (this.writersMessage) {
+        if (this.$el.find('.writers-message').length) {
+          this.$el.find('.writers-message').text(this.writersMessage)
+        }
+        else {
+          this.$el.find('.chat-message-list-wrapper').append('<div class="writers-message label label-default">' + this.writersMessage + '</div>');
+        }
+      }
+      else {
+        this.$el.find('.writers-message').remove();
+      }
+
 
       // Keep the scrollbar at the bottom of the .chat-message-list
       var message_list = this.$el.find('.chat-message-list');
@@ -243,6 +272,32 @@
         $.event.trigger({ type: "messageRender" });
       }
     },
+    receiveWritesMessage: function (message) {
+      // Exclude current users
+      message.writers = _.without(message.writers, Opeka.clientData.nickname);
+
+      if (_.isEmpty(message.writers)) {
+        this.writersMessage = '';
+      }
+      else {
+        if (this.returnWritersMessage || _.isUndefined(this.returnWritersMessage)) {
+          if (message.writers.length == 1) {
+            this.writersMessage = Drupal.t('@writers is typing...', {'@writers': _.values(message.writers).join(', ')});
+          }
+          else {
+
+            //After 5 users let's type just count, to avoid div overstack and make this message more readable.
+            if (message.writers.length < 6) {
+              this.writersMessage = Drupal.t('@writers are typing...', {'@writers': _.values(message.writers).join(', ')});
+            }
+            else {
+              this.writersMessage = Drupal.t('@writers people are typing...', {'@writers': message.writers.length});
+            }
+          }
+        }
+      }
+      this.render();
+    },
 
     sendMessage: function (event) {
 
@@ -284,6 +339,12 @@
 
     },
 
+    // Enable sending messages when pressing the ENTER (return) key
+    sendUserWriting: function(event) {
+      // Sender for optimisation, we don't want to sand not important messages every keypress event, so let's bundle it.
+      sender = {'room' : this.model.id, 'status': true};
+    },
+
     toggleReturnSendsMessage: function(event) {
       // $this will contain a reference to the checkbox
       if (this.$el.find('.return-sends-msg').is(':checked')) {
@@ -292,6 +353,17 @@
       } else {
         // the checkbox was unchecked
         this.returnSendsMessage = '';
+      }
+    },
+
+    toggleWritersMessage: function(event) {
+      // $this will contain a reference to the checkbox
+      if (this.$el.find('.return-writers-msg').is(':checked')) {
+        // the checkbox was checked
+        this.returnWritersMessage = false;
+      } else {
+        // the checkbox was unchecked
+        this.returnWritersMessage = true;
       }
     },
 
