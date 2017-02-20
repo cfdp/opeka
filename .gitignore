@@ -20,6 +20,7 @@
 /*.komodoproject
 /.idea
 .ruby-version
+.DS_Store
 VERSION
 /drupal_module/bin/
 /drupal_module/node_modules/

@@ -318,6 +318,13 @@ var Opeka = {
     }
   };
 
+  // Receive typing message update from the server.
+  Opeka.clientSideMethods.receiveWritesMessage = function (message) {
+    if (Opeka.chatView) {
+      Opeka.chatView.receiveWritesMessage(message);
+    }
+  };
+
   // Set the member count for a room.
   Opeka.clientSideMethods.updateRoomMemberCount = function (roomId, count) {
     var room = Opeka.roomList.get(roomId);
@@ -611,7 +618,19 @@ var Opeka = {
         model: Opeka.status,
         banCodeGenerator: Opeka.clientData.canGenerateBanCode
       });
-      $('#opeka-app').find('.footer').append(footer.render().el);
+
+      /**
+       * @todo sometimes this function runs twice, it's going from user.authenticate function.
+       * let's check if '.opeka-chat-footer' not created yet.
+       */
+      var footerblock = $('#opeka-app .footer');
+      if (footerblock.find('.opeka-chat-footer').length) {
+        footerblock.html(footer.render().el);
+      }
+      else {
+        footerblock.append(footer.render().el);
+      }
+
     });
   };
 
