@@ -492,21 +492,18 @@ function Server(config, logger) {
 
   // Allow the everyone to update writingMessage.
   self.everyone.addServerMethod('writingMessage', function (roomId, callback) {
-    var room = opeka.rooms.list[roomId.room],
-    client = this;
-    if (room) {
+    var client = this,
+    room = opeka.rooms.list[client.activeRoomId];
+    if (room && _.has(room, 'users')) {
       var userInRoom = room.users[client.clientId];
       if (!_.isEmpty(userInRoom)) {
         userInRoom.writes = roomId.status;
       }
-      var writers = _.where(room.users, {'writes' : true});
+      var writers = _.where(room.users, {'writes': true});
       writers = _.map(writers, function (keys, value) {
         return keys.name;
       });
       self.sendWritesMessage(writers, room.group);
-    }
-    else {
-      self.logger.info('@debug: room not defined (writingMessage)');
     }
   });
 
