@@ -31,6 +31,10 @@
 #opeka-app .sidebar {
   width: 33%; }
 
+#opeka-app .sidebar-block .room-actions .btn {
+  clear: both;
+  margin-bottom: .5em; }
+
 #opeka-app .emoticon {
   margin-bottom: -6px; }
 
