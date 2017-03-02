@@ -1,10 +1,10 @@
 Opeka – secure anonymous chat system
 ====================================
 
-Built for [Cyberhus][] with [Drupal][] and [nowjs][]. Read the [Setup instructions][].
+Built for [CfDP][] with [Drupal][] and [dnode][]. Read the [Setup instructions][].
 
-[Cyberhus]: http://www.cyberhus.dk/
+[CfDP]: http://www.cfdp.dk/
 [Drupal]: http://drupal.org/
-[nowjs]: http://nowjs.com/
+[dnode]: https://github.com/substack/dnode/
 
 [Setup instructions]: https://github.com/cfdp/opeka/wiki/_pages
