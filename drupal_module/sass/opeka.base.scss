@@ -2,22 +2,18 @@
 @import "variables";
 
 .not-logged-in {
-
   /* The sidebar is always visible in a group chat for anonymous clients*/
-    &.groupchat #opeka-app .content.client-sidebar-0 {
-      width: 66%;
+  &.groupchat #opeka-app .content.client-sidebar-0 {
+    width: 66%;
   }
-
   #opeka-app {
     /* Anonymous clients can have the sidebar disabled */
     .content.client-sidebar-0 {
       width: 100%;
     }
-
     .content.client-sidebar-1 {
       width: 66%;
     }
-
   }
 
   .groupchat,
@@ -26,7 +22,6 @@
       display: none;
     }
   }
-
 }
 
 /* All users */
@@ -35,11 +30,6 @@
   .header,
   .footer {
     clear: both;
-  }
-
-  .app-view .footer {
-    display: inline-block;
-    margin-left: 5px;
   }
 
   .content,
@@ -65,6 +55,7 @@
 
   .chat-message-list-wrapper {
     position: relative;
+    padding-bottom: 12px;
   }
 
   .form-submit.send {
@@ -75,7 +66,11 @@
     display: inline-block;
   }
 
- .writers-message.label {
+ .writers-message {
+    width:100%;
+    padding: .2em .5em;
+    box-sizing: border-box;
+    font-size: .8em;
     font-weight: normal;
     position: absolute;
     bottom: 0px;

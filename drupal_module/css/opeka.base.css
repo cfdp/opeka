@@ -21,10 +21,6 @@
 #opeka-app .footer {
   clear: both; }
 
-#opeka-app .app-view .footer {
-  display: inline-block;
-  margin-left: 5px; }
-
 #opeka-app .content,
 #opeka-app .sidebar {
   float: left; }
@@ -42,7 +38,8 @@
   white-space: pre-wrap; }
 
 #opeka-app .chat-message-list-wrapper {
-  position: relative; }
+  position: relative;
+  padding-bottom: 12px; }
 
 #opeka-app .form-submit.send {
   vertical-align: top; }
@@ -50,7 +47,11 @@
 #opeka-app .chat-flow-controls {
   display: inline-block; }
 
-#opeka-app .writers-message.label {
+#opeka-app .writers-message {
+  width: 100%;
+  padding: .2em .5em;
+  box-sizing: border-box;
+  font-size: .8em;
   font-weight: normal;
   position: absolute;
   bottom: 0px;

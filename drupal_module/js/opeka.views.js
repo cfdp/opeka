@@ -179,7 +179,7 @@
           this.$el.find('.writers-message').text(this.writersMessage)
         }
         else {
-          this.$el.find('.chat-message-list-wrapper').append('<div class="writers-message label label-default">' + this.writersMessage + '</div>');
+          this.$el.find('.chat-message-list-wrapper').append('<div class="writers-message">' + this.writersMessage + '</div>');
         }
       }
       else {
