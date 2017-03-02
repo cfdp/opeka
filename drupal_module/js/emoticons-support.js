@@ -24,7 +24,7 @@
         // Keep the scrollbar at the bottom of the .chat-message-list
         var message_list = $('.chat-message-list');
         // message_list.scrollTop(message_list.prop("scrollHeight"));
-        var height = event.chat.dontAutoScroll > 0 ? event.chat.dontAutoScroll : message_list.prop("scrollHeight");
+        var height = event.chat.dontAutoScroll >= 0 ? event.chat.dontAutoScroll : message_list.prop("scrollHeight");
         message_list.animate({scrollTop: height}, '800', 'linear');
       });
 

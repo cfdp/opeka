@@ -189,7 +189,7 @@
 
       // Keep the scrollbar at the bottom of the .chat-message-list
       var message_list = this.$el.find('.chat-message-list');
-      message_list.scrollTop(this.dontAutoScroll > 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
+      message_list.scrollTop(this.dontAutoScroll >= 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
 
       return this;
     },
@@ -278,7 +278,7 @@
 
         // Keep the scrollbar at the bottom of the .chat-message-list
         var message_list = this.$el.find('.chat-message-list');
-        message_list.scrollTop(this.dontAutoScroll > 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
+        message_list.scrollTop(this.dontAutoScroll >= 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
 
         $.event.trigger({ type: "messageRender", chat: this });
       }
