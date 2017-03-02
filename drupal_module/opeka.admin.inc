@@ -63,15 +63,6 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_group_chat_name', ''),
   );
 
-  $form['opeka_welcome_message'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Welcome message'),
-    '#maxlength' => 1024,
-    '#description' => t('Text shown before user logs into the chat.'),
-    '#required' => FALSE,
-    '#default_value' => variable_get('opeka_welcome_message', 'Welcome to the chat! You can customize this message at Admin => config => services => opeka'),
-  );
-
   $form['opeka_client_login_sound'] = array(
     '#type' => 'textfield',
     '#title' => t('Login sound file'),
