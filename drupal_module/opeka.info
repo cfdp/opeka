@@ -1,11 +1,13 @@
 name = Opeka
 description = Secure anonymous chat system, built with Drupal and dnode.
 core = 7.x
+dependencies[] = jquery_update
 files[] = opeka.module
 files[] = opeka.admin.inc
 files[] = opeka.pages.inc
 
-version = "7.x-2.3"
-core = "7.x"
+configure = admin/config/services/opeka
+
+version = "7.x-1.0"
 project = "opeka"
 
