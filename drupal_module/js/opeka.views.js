@@ -98,7 +98,7 @@
     },
 
     render: function () {
-      if (!this.messages && this.scrolling) { return this; }
+      if (!this.messages || this.scrolling) { return this; }
 
       var activeUser = this.model.get('activeUser'),
           inQueueMessage = '',
