@@ -702,6 +702,7 @@ var Opeka = {
       // Wait five seconds before showing the dialog, in case the
       // disconnect was caused by the user reloading the page.
       window.setTimeout(function () {
+        $(window).unbind('beforeunload.opeka');
         view = new Opeka.FatalErrorDialogView({
           message: Drupal.t('Your connection to the chat server was lost. Please reconnect. Contact support if problem persists.'),
           title: Drupal.t('Disconnected')
@@ -712,6 +713,7 @@ var Opeka = {
     // Check whether the serverside javascript has loaded
     window.setTimeout(function () {
       if(!Opeka.serverJSLoaded) {
+        $(window).unbind('beforeunload.opeka');
         view = new Opeka.FatalErrorDialogView({
           message: Drupal.t('Your connection to the chat server was lost. Please reconnect. Contact support if problem persists.'),
           title: Drupal.t('Disconnected')
