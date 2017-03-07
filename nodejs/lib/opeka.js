@@ -237,7 +237,7 @@ function Server(config, logger) {
 
     opeka.user.authenticate(clientUser, accessCodeEnabled, accessCode, function (err, account) {
       if (err) {
-        self.logger.info('Incorrect access code given.');
+        self.logger.info('Authentication failed. Try reloading the page.');
         client.remote('accessDenied', client.clientId);
         throw err;
       }

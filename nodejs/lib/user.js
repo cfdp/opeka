@@ -12,10 +12,16 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
   util.log("clientUser.sid: " + clientUser.sid);
   util.log("clientUser.uid: " + clientUser.uid);
   // If the client claims he's logged in, validate that assertion.
+  util.log("User authenticating, Drupal sid: " + clientUser.sid);
+  util.log("User authenticating, Drupal uid: " + clientUser.uid);
+
   if (clientUser.sid && clientUser.uid) {
     // Validate the user's session.
     drupal.user.session_load(clientUser.sid, function (err, session) {
-      if (err) { callback(err); }
+      if (err) {
+        util.log("Error: Could not load user session.");
+        callback(err);
+      }
 
       if (session.uid !== clientUser.uid) {
         throw 'Possible hacking attempt. sid/uid mismatch.';
@@ -23,7 +29,10 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
 
       // Load the user object from Drupal.
       drupal.user.load(session.uid, function (err, account) {
-        if (err) { callback(err); }
+        if (err) {
+          util.log("Error: Could not load user object.");
+          callback(err);
+        }
         drupal.user.access('administer opeka chat', account, function (err, isAdmin) {
           account.isAdmin = isAdmin;
           drupal.user.access('generate opeka chat ban codes', account, function (err, canGenerateBanCode) {
@@ -55,9 +64,10 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
 
     var account = {};
     account.isAdmin = false;
-
+    util.log("AccessCodeEnabled: " + accessCodeEnabled);
     // If the accessCode functionality is activated, make sure the right access code is given
-    if (accessCodeEnabled === true && clientUser.accessCode !== accessCode) {
+    if (accessCodeEnabled && clientUser.accessCode !== accessCode) {
+      util.log("Error: Could not load user session.");
       callback(true);
       throw 'Wrong or no access code given on signIn form';
     }
