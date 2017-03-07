@@ -79,6 +79,7 @@
       this.returnSendsMessage = ''; // Variable tied to user defined behaviour of input text area
       this.writersMessage = '';
       this.dontAutoScroll = -1; // Variable tied to user defined behaviour of input text area
+      this.scrolling = false;
       this.model.on('change', this.render, this);
       return this;
     },
@@ -97,7 +98,7 @@
     },
 
     render: function () {
-      if (!this.messages) { return this; }
+      if (!this.messages || this.scrolling) { return this; }
 
       var activeUser = this.model.get('activeUser'),
           inQueueMessage = '',
@@ -137,12 +138,19 @@
           whisperedTo: Drupal.t('Whispered to'),
           replyToWhisper: Drupal.t("Reply to whisper")
         },
-        messages: this.messages,
+        messages: this.messages
       }));
 
       var view = this;
-      this.$el.find(".chat-message-list").scroll(function(){
+      this.$el.find(".chat-message-list").scroll(function () {
+        view.scrolling = true;
+        clearTimeout($.data(view, "scrollCheck"));
+
         view.updateScrollPosition();
+
+        $.data(view, "scrollCheck", setTimeout(function () {
+          view.scrolling = false;
+        }, 250));
       });
 
       // Conditionally render the message form.
@@ -271,7 +279,7 @@
     },
 
     receiveMessage: function (message) {
-      if (!this.inQueue) {
+      if (!this.inQueue && !this.scrolling) {
 
         this.messages.push(message);
         this.render();
