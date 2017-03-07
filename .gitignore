@@ -21,3 +21,5 @@
 /.idea
 .ruby-version
 VERSION
+node_modules
+npm-debug.log
