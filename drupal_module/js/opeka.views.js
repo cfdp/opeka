@@ -1714,6 +1714,9 @@
 
       Opeka.signIn(user, function () {
         view.$el.fadeOut();
+        $(window).bind('beforeunload.opeka', function(){
+          return Drupal.t('Do you really want to leave this page?');
+        });
       });
 
       if (event) {
