@@ -95,7 +95,7 @@
       if ((this.$el.find('.writers-message').length) && (this.writersMessage !== this.$el.find('.writers-message').text)) {
         writersMessageChanged = true;
       }
-      if (!writersMessageChanged && (!this.messages || this.scrolling)) {
+      if (!writersMessageChanged && !this.messages ) {
         return this;
       }
 
