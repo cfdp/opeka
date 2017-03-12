@@ -42,17 +42,9 @@
     }
   });//END AppView
 
-
   // Global sender object, to avoid spam to the server.
+  // Records the "User is typing" state.
   var sender = {};
-  setInterval(function () {
-    // With 1000 will be not very hard for server to handle this.
-    // Every time we'll check if user is writing and change sender flag if it is.
-    if (!_.isEmpty(sender)) {
-      Opeka.remote.writingMessage(sender, function (err) {});
-      sender.status = false;
-    }
-  }, 1000);
 
   // The actual chat window.
   Opeka.ChatView = Backbone.View.extend({
@@ -65,7 +57,6 @@
       "submit .leave-queue-form": "leaveQueue",
       "submit .leave-room-form": "leaveRoom",
       "click .reply-to-whisper": "whisperReply",
-      'keypress .form-text': "sendUserWriting",
       "click .return-writers-msg": "toggleWritersMessage",
       "scroll": "updateScrollPosition"
     },
@@ -98,7 +89,15 @@
     },
 
     render: function () {
-      if (!this.messages || this.scrolling) { return this; }
+      // We need to make sure that the writersMessage is rendered
+      // if it changed state
+      var writersMessageChanged = false;
+      if ((this.$el.find('.writers-message').length) && (this.writersMessage !== this.$el.find('.writers-message').text)) {
+        writersMessageChanged = true;
+      }
+      if (!writersMessageChanged && (!this.messages || this.scrolling)) {
+        return this;
+      }
 
       var activeUser = this.model.get('activeUser'),
           inQueueMessage = '',
@@ -181,7 +180,7 @@
           dontAutoScroll: this.dontAutoScroll
         }));
       }
-
+      // Render the writersMessage
       if (this.writersMessage) {
         if (this.$el.find('.writers-message').length) {
           this.$el.find('.writers-message').text(this.writersMessage)
@@ -193,7 +192,6 @@
       else {
         this.$el.find('.writers-message').remove();
       }
-
 
       // Keep the scrollbar at the bottom of the .chat-message-list
       var message_list = this.$el.find('.chat-message-list');
@@ -294,7 +292,6 @@
     receiveWritesMessage: function (message) {
       // Exclude current users
       message.writers = _.without(message.writers, Opeka.clientData.nickname);
-
       if (_.isEmpty(message.writers)) {
         this.writersMessage = '';
       }
@@ -325,9 +322,12 @@
 
       // Remove the message sent and regain focus
       this.$el.find('textarea.message').val('').focus();
-      
+
+
       if (message !== '') {
         Opeka.remote.sendMessageToRoom(this.model.id, message);
+        sender = {'room' : this.model.id, 'status': false};
+        Opeka.remote.writingMessage(sender, function (err) {});
       }
 
       if (event) {
@@ -343,8 +343,8 @@
 
       // Listen for the key code
       if(code == 13) {
-        // On pressing ENTER there is a new line element inserted in the textarea,
-        // that we have to ignore and clear the value of the textarea
+        // On pressing ENTER there is a new line element inserted in the
+        // textarea that we have to ignore and clear the value of the textarea
         if (returnSendsMessage == 'checked') {
           if (message.length == 1) {
             this.$el.find('textarea.message').val('');
@@ -355,13 +355,21 @@
           }
         }
       }
-
-    },
-
-    // Enable sending messages when pressing the ENTER (return) key
-    sendUserWriting: function(event) {
-      // Sender for optimisation, we don't want to sand not important messages every keypress event, so let's bundle it.
-      sender = {'room' : this.model.id, 'status': true};
+      // "User is writing" feature
+      // The "sender"-object is for optimisation,
+      // we don't want to send unimportant messages every keyup event.
+      // If the textarea has content, set status to true
+      var oldstatus = sender.status;
+      // todo: check for empty space
+      if ($(event.currentTarget).val() !== "") {
+        sender = {'room' : this.model.id, 'status': true};
+      }
+      else {
+        sender = {'room' : this.model.id, 'status': false};
+      };
+      if (!_.isEmpty(sender) && oldstatus !== sender.status) {
+        Opeka.remote.writingMessage(sender, function (err) {});
+      };
     },
 
     toggleReturnSendsMessage: function(event) {
@@ -1034,7 +1042,6 @@
       }
     }
   });
-
 
   // Dialog to delete rooms with.
   Opeka.RoomDeletionView = Opeka.DialogView.extend({

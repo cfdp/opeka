@@ -495,6 +495,7 @@ function Server(config, logger) {
     var client = this,
     room = opeka.rooms.list[client.activeRoomId];
     if (room && _.has(room, 'users')) {
+
       var userInRoom = room.users[client.clientId];
       if (!_.isEmpty(userInRoom)) {
         userInRoom.writes = roomId.status;
@@ -503,6 +504,7 @@ function Server(config, logger) {
       writers = _.map(writers, function (keys, value) {
         return keys.name;
       });
+
       self.sendWritesMessage(writers, room.group);
     }
   });
@@ -1045,7 +1047,7 @@ function Server(config, logger) {
   };
 
   /**
-   * Function used in order to send a typing message.
+   * Function used in order to send "User is typing" message.
    */
   self.sendWritesMessage = function(messageToSend, to) {
     var messageObj = {
