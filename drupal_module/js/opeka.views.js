@@ -89,15 +89,7 @@
     },
 
     render: function () {
-      // We need to make sure that the writersMessage is rendered
-      // if it changed state
-      var writersMessageChanged = false;
-      if ((this.$el.find('.writers-message').length) && (this.writersMessage !== this.$el.find('.writers-message').text)) {
-        writersMessageChanged = true;
-      }
-      if (!writersMessageChanged && !this.messages ) {
-        return this;
-      }
+      if (!this.messages || this.scrolling) { return this; }
 
       var activeUser = this.model.get('activeUser'),
           inQueueMessage = '',
