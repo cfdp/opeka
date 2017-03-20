@@ -237,9 +237,9 @@ function Server(config, logger) {
 
     opeka.user.authenticate(clientUser, accessCodeEnabled, accessCode, function (err, account) {
       if (err) {
-        self.logger.info('Authentication failed. Try reloading the page.');
+        self.logger.info('Authentication failed: ' + err.message);
         client.remote('accessDenied', client.clientId);
-        throw err;
+        return;
       }
 
       // Check whether the user is required to be logged into Drupal
