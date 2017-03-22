@@ -269,16 +269,13 @@
     },
 
     receiveMessage: function (message) {
-      if (!this.inQueue && !this.scrolling) {
-
+      if (!this.inQueue) {
         this.messages.push(message);
-        this.render();
 
-        // Keep the scrollbar at the bottom of the .chat-message-list
-        var message_list = this.$el.find('.chat-message-list');
-        message_list.scrollTop(this.dontAutoScroll >= 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
-
-        $.event.trigger({ type: "messageRender", chat: this });
+        if (!this.scrolling) {
+          this.render();
+          $.event.trigger({ type: "messageRender", chat: this });
+        }
       }
     },
     receiveWritesMessage: function (message) {
