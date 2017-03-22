@@ -21,6 +21,7 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
       if (err) {
         util.log("Error: Could not load user session.");
         callback(err);
+        return;
       }
 
       if (session.uid !== clientUser.uid) {
@@ -32,6 +33,7 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
         if (err) {
           util.log("Error: Could not load user object.");
           callback(err);
+          return;
         }
         drupal.user.access('administer opeka chat', account, function (err, isAdmin) {
           account.isAdmin = isAdmin;
