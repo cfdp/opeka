@@ -42,6 +42,9 @@
     }
   });//END AppView
 
+  // Global sender object, to avoid spam to the server.
+  // Records the "User is typing" state.
+  var sender = {};
 
   // The actual chat window.
   Opeka.ChatView = Backbone.View.extend({
@@ -50,9 +53,12 @@
       "submit .message-form": "sendMessage",
       "keyup .form-text": "sendMessageonEnter",
       "click .return-sends-msg": "toggleReturnSendsMessage",
+      "click .dont-auto-scroll": "toggleDontAutoScroll",
       "submit .leave-queue-form": "leaveQueue",
       "submit .leave-room-form": "leaveRoom",
-      "click .reply-to-whisper": "whisperReply"
+      "click .reply-to-whisper": "whisperReply",
+      "click .return-writers-msg": "toggleWritersMessage",
+      "scroll": "updateScrollPosition"
     },
 
     initialize: function (options) {
@@ -62,9 +68,10 @@
       this.messages = [];
       this.inQueue = options.inQueue;
       this.returnSendsMessage = ''; // Variable tied to user defined behaviour of input text area
-
+      this.writersMessage = '';
+      this.dontAutoScroll = -1; // Variable tied to user defined behaviour of input text area
+      this.scrolling = false;
       this.model.on('change', this.render, this);
-      
       return this;
     },
 
@@ -82,7 +89,15 @@
     },
 
     render: function () {
-      if (!this.messages) { return this; }
+      // We need to make sure that the writersMessage is rendered
+      // if it changed state
+      var writersMessageChanged = false;
+      if ((this.$el.find('.writers-message').length) && (this.writersMessage !== this.$el.find('.writers-message').text)) {
+        writersMessageChanged = true;
+      }
+      if (!writersMessageChanged && (!this.messages || this.scrolling) ) {
+        return this;
+      }
 
       var activeUser = this.model.get('activeUser'),
           inQueueMessage = '',
@@ -91,6 +106,8 @@
       if (!activeUser) {
         activeUser = {muted:false};
       }
+
+      activeUser.allowPauseAutoScroll = Opeka.clientData.allowPauseAutoScroll;
       
       // If user is in the queue, show it to him.
       if (this.inQueue !== false) {
@@ -110,7 +127,6 @@
         this.$el.html('<div class="chat-view-window"></div><div class="chat-view-form"></div>');
       }
 
-
       // Always render the chat window.
       this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
@@ -121,8 +137,20 @@
           whisperedTo: Drupal.t('Whispered to'),
           replyToWhisper: Drupal.t("Reply to whisper")
         },
-        messages: this.messages,
+        messages: this.messages
       }));
+
+      var view = this;
+      this.$el.find(".chat-message-list").scroll(function () {
+        view.scrolling = true;
+        clearTimeout($.data(view, "scrollCheck"));
+
+        view.updateScrollPosition();
+
+        $.data(view, "scrollCheck", setTimeout(function () {
+          view.scrolling = false;
+        }, 250));
+      });
 
       // Conditionally render the message form.
       if (hideForm !== formPresent || this.inQueue !== false) {
@@ -140,17 +168,35 @@
             roomPaused: Drupal.t('The room is paused'),
             userMuted: Drupal.t('You are muted'),
             messageButton: Drupal.t('Send'),
-            returnSendsMessageLabel: Drupal.t('Press ENTER to send.')
+            returnSendsMessageLabel: Drupal.t('Press ENTER to send.'),
+            returnWritersMessageLabel: Drupal.t('Hide typing messages.'),
+            dontAutoScroll: Drupal.t('Pause auto-scrolling.')
           },
           inQueue: this.inQueue,
           room: this.model,
-          returnSendsMessage: this.returnSendsMessage
+          returnSendsMessage: this.returnSendsMessage,
+          returnWritersMessage: true,
+          hideTypingMessage: Opeka.clientData.hideTypingMessage,
+          dontAutoScroll: this.dontAutoScroll
         }));
+      }
+      // Render the writersMessage
+      if (this.writersMessage) {
+        if (this.$el.find('.writers-message').length) {
+          this.$el.find('.writers-message').text(this.writersMessage)
+        }
+        else {
+          this.$el.find('.chat-message-list-wrapper').append('<div class="writers-message">' + this.writersMessage + '</div>');
+        }
+      }
+      else {
+        this.$el.find('.writers-message').remove();
       }
 
       // Keep the scrollbar at the bottom of the .chat-message-list
       var message_list = this.$el.find('.chat-message-list');
-      message_list.scrollTop(message_list.prop("scrollHeight"));
+      message_list.scrollTop(this.dontAutoScroll >= 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
+
       return this;
     },
 
@@ -227,21 +273,43 @@
 
       this.render();
       // Trigger the messageRender event for the Emoticons script to react upon
-      $.event.trigger({ type: "messageRender" });
+      $.event.trigger({ type: "messageRender", chat: this });
     },
 
     receiveMessage: function (message) {
       if (!this.inQueue) {
-
         this.messages.push(message);
-        this.render();
 
-        // Keep the scrollbar at the bottom of the .chat-message-list
-        var message_list = this.$el.find('.chat-message-list');
-        message_list.scrollTop(message_list.prop("scrollHeight"));
-
-        $.event.trigger({ type: "messageRender" });
+        if (!this.scrolling) {
+          this.render();
+          $.event.trigger({ type: "messageRender", chat: this });
+        }
       }
+    },
+    receiveWritesMessage: function (message) {
+      // Exclude current users
+      message.writers = _.without(message.writers, Opeka.clientData.nickname);
+      if (_.isEmpty(message.writers)) {
+        this.writersMessage = '';
+      }
+      else {
+        if (this.returnWritersMessage || _.isUndefined(this.returnWritersMessage)) {
+          if (message.writers.length == 1) {
+            this.writersMessage = Drupal.t('@writers is typing...', {'@writers': _.values(message.writers).join(', ')});
+          }
+          else {
+
+            //After 5 users let's type just count, to avoid div overstack and make this message more readable.
+            if (message.writers.length < 6) {
+              this.writersMessage = Drupal.t('@writers are typing...', {'@writers': _.values(message.writers).join(', ')});
+            }
+            else {
+              this.writersMessage = Drupal.t('@writers people are typing...', {'@writers': message.writers.length});
+            }
+          }
+        }
+      }
+      this.render();
     },
 
     sendMessage: function (event) {
@@ -251,9 +319,12 @@
 
       // Remove the message sent and regain focus
       this.$el.find('textarea.message').val('').focus();
-      
+
+
       if (message !== '') {
         Opeka.remote.sendMessageToRoom(this.model.id, message);
+        sender = {'room' : this.model.id, 'status': false};
+        Opeka.remote.writingMessage(sender, function (err) {});
       }
 
       if (event) {
@@ -269,8 +340,8 @@
 
       // Listen for the key code
       if(code == 13) {
-        // On pressing ENTER there is a new line element inserted in the textarea,
-        // that we have to ignore and clear the value of the textarea
+        // On pressing ENTER there is a new line element inserted in the
+        // textarea that we have to ignore and clear the value of the textarea
         if (returnSendsMessage == 'checked') {
           if (message.length == 1) {
             this.$el.find('textarea.message').val('');
@@ -281,7 +352,21 @@
           }
         }
       }
-
+      // "User is writing" feature
+      // The "sender"-object is for optimisation,
+      // we don't want to send unimportant messages every keyup event.
+      // If the textarea has content, set status to true
+      var oldstatus = sender.status;
+      // todo: check for empty space
+      if ($(event.currentTarget).val() !== "") {
+        sender = {'room' : this.model.id, 'status': true};
+      }
+      else {
+        sender = {'room' : this.model.id, 'status': false};
+      };
+      if (!_.isEmpty(sender) && oldstatus !== sender.status) {
+        Opeka.remote.writingMessage(sender, function (err) {});
+      };
     },
 
     toggleReturnSendsMessage: function(event) {
@@ -292,6 +377,36 @@
       } else {
         // the checkbox was unchecked
         this.returnSendsMessage = '';
+      }
+    },
+
+    toggleWritersMessage: function(event) {
+      // $this will contain a reference to the checkbox
+      if (this.$el.find('.return-writers-msg').is(':checked')) {
+        // the checkbox was checked
+        this.returnWritersMessage = false;
+      } else {
+        // the checkbox was unchecked
+        this.returnWritersMessage = true;
+      }
+    },
+    toggleDontAutoScroll: function(event) {
+      // $this will contain a reference to the checkbox
+      if (this.$el.find('.dont-auto-scroll').is(':checked')) {
+        // the checkbox was checked
+        var message_list = this.$el.find('.chat-message-list');
+        this.dontAutoScroll = message_list.scrollTop();
+      } else {
+        // the checkbox was unchecked
+        this.dontAutoScroll = -1;
+      }
+    },
+
+    updateScrollPosition: function(event) {
+      // Update scroll position on manual scroll.
+      if (this.dontAutoScroll >= 0){
+        var message_list = this.$el.find('.chat-message-list');
+        this.dontAutoScroll = message_list.scrollTop();
       }
     },
 
@@ -925,7 +1040,6 @@
     }
   });
 
-
   // Dialog to delete rooms with.
   Opeka.RoomDeletionView = Opeka.DialogView.extend({
     initialize: function () {
@@ -1548,7 +1662,7 @@
       //@todo: the visibility of the name should probably be a setting somewhere
       //Replace the Drupal username with rådgiver(counselor), not using the actual user name
       //name = Drupal.settings.opeka.user.name;
-      if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.name) {
+      if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.admin) {
         name = Drupal.t('Counselor');
       }
 
@@ -1604,6 +1718,9 @@
 
       Opeka.signIn(user, function () {
         view.$el.fadeOut();
+        $(window).bind('beforeunload.opeka', function(){
+          return Drupal.t('Do you really want to leave this page?');
+        });
       });
 
       if (event) {

@@ -2,22 +2,18 @@
 @import "variables";
 
 .not-logged-in {
-
   /* The sidebar is always visible in a group chat for anonymous clients*/
-    &.groupchat #opeka-app .content.client-sidebar-0 {
-      width: 66%;
+  &.groupchat #opeka-app .content.client-sidebar-0 {
+    width: 66%;
   }
-
   #opeka-app {
     /* Anonymous clients can have the sidebar disabled */
     .content.client-sidebar-0 {
       width: 100%;
     }
-
     .content.client-sidebar-1 {
       width: 66%;
     }
-
   }
 
   .groupchat,
@@ -26,7 +22,6 @@
       display: none;
     }
   }
-
 }
 
 /* All users */
@@ -50,6 +45,11 @@
     width: 33%;
   }
 
+  .sidebar-block .room-actions .btn {
+    clear: both;
+    margin-bottom: .5em;
+  }
+
   .emoticon {
     margin-bottom: -6px;
   }
@@ -58,11 +58,37 @@
     white-space: pre-wrap;
   }
 
-  .return-sends-msg {
+  .chat-message-list-wrapper {
+    position: relative;
+    padding-bottom: 12px;
+  }
+
+  .form-submit.send {
+    vertical-align: top;
+  }
+
+  .chat-flow-controls {
+    display: inline-block;
+  }
+
+ .writers-message {
+    width:100%;
+    padding: .2em .5em;
+    box-sizing: border-box;
+    font-size: .8em;
+    font-weight: normal;
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+  }
+
+  .return-sends-msg, .dont-auto-scroll, .return-writers-msg {
     margin: 0 2px 0 10px;
   }
 
-  label[for="return-sends-msg"] {
+  label[for="return-sends-msg"],
+  label[for="dont-auto-scroll"],
+  label[for="return-writers-msg"]  {
     display: inline-block;
   }
 

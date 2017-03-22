@@ -31,16 +31,42 @@
 #opeka-app .sidebar {
   width: 33%; }
 
+#opeka-app .sidebar-block .room-actions .btn {
+  clear: both;
+  margin-bottom: .5em; }
+
 #opeka-app .emoticon {
   margin-bottom: -6px; }
 
 #opeka-app .message {
   white-space: pre-wrap; }
 
-#opeka-app .return-sends-msg {
+#opeka-app .chat-message-list-wrapper {
+  position: relative;
+  padding-bottom: 12px; }
+
+#opeka-app .form-submit.send {
+  vertical-align: top; }
+
+#opeka-app .chat-flow-controls {
+  display: inline-block; }
+
+#opeka-app .writers-message {
+  width: 100%;
+  padding: .2em .5em;
+  box-sizing: border-box;
+  font-size: .8em;
+  font-weight: normal;
+  position: absolute;
+  bottom: 0px;
+  left: 0; }
+
+#opeka-app .return-sends-msg, #opeka-app .dont-auto-scroll, #opeka-app .return-writers-msg {
   margin: 0 2px 0 10px; }
 
-#opeka-app label[for="return-sends-msg"] {
+#opeka-app label[for="return-sends-msg"],
+#opeka-app label[for="dont-auto-scroll"],
+#opeka-app label[for="return-writers-msg"] {
   display: inline-block; }
 
 #opeka-app .dropdown-menu li {

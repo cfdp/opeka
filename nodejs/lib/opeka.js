@@ -233,11 +233,13 @@ function Server(config, logger) {
         genderRange = {min: 1, max: 25},
         ageRange = {min: 0, max: 99};
 
+    self.logger.info("Drupal user ID:", clientUser.uid);
+
     opeka.user.authenticate(clientUser, accessCodeEnabled, accessCode, function (err, account) {
       if (err) {
-        self.logger.info('Authentication failed. Try reloading the page.');
+        self.logger.info('Authentication failed: ' + err.message);
         client.remote('accessDenied', client.clientId);
-        throw err;
+        return;
       }
 
       // Check whether the user is required to be logged into Drupal
@@ -320,7 +322,7 @@ function Server(config, logger) {
 
       // Only copy safe values from the account-data to the callback object
       _.each(
-        ['canGenerateBanCode', 'isAdmin', 'language', 'name', 'nickname', 'sid', 'uid'],
+        ['canGenerateBanCode', 'isAdmin', 'language', 'name', 'nickname', 'sid', 'uid', 'hideTypingMessage', 'allowPauseAutoScroll'],
         function(k) {
           if(k in account) {
             clientData[k] = account[k]
@@ -486,6 +488,25 @@ function Server(config, logger) {
       callback();
     }
     self.broadcastChatStatus();
+  });
+
+  // Allow the everyone to update writingMessage.
+  self.everyone.addServerMethod('writingMessage', function (roomId, callback) {
+    var client = this,
+    room = opeka.rooms.list[client.activeRoomId];
+    if (room && _.has(room, 'users')) {
+
+      var userInRoom = room.users[client.clientId];
+      if (!_.isEmpty(userInRoom)) {
+        userInRoom.writes = roomId.status;
+      }
+      var writers = _.where(room.users, {'writes': true});
+      writers = _.map(writers, function (keys, value) {
+        return keys.name;
+      });
+
+      self.sendWritesMessage(writers, room.group);
+    }
   });
 
   // Allow the councellors to unpause a room.
@@ -1025,6 +1046,16 @@ function Server(config, logger) {
     to.remote('receiveMessage', messageObj);
   };
 
+  /**
+   * Function used in order to send "User is typing" message.
+   */
+  self.sendWritesMessage = function(messageToSend, to) {
+    var messageObj = {
+      writers: messageToSend
+    };
+    to.remote('receiveWritesMessage', messageObj);
+  };
+
   // Utility function to remove a user from a room.
   self.removeUserFromRoom = function(room, clientId, activeRoomId, chatStart_Min, callback) {
     var autoPause = self.config.get('features:automaticPausePairRooms'),
@@ -1077,6 +1108,13 @@ function Server(config, logger) {
         // Notify the chat room if we know who left.
         if (removedUserNickname) {
           room.group.remote('roomUserLeft', room.id, removedUserNickname, chatDuration);
+
+          //Update typing message if user left.
+          var writers = _.where(room.users, {'writes' : true});
+          writers = _.map(writers, function (keys, value) {
+            return keys.name;
+          });
+          self.sendWritesMessage(writers, room.group);
         }
 
         // Call the callback.

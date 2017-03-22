@@ -46,6 +46,8 @@ var Client = function(server, stream, remote, conn) {
 
         self.drupal_uid = null;
 
+        self.allowPauseAutoScroll = null;
+
         groups.registerClient(self);
         conn.on('ready', function() {
             self.onConnectionReady();

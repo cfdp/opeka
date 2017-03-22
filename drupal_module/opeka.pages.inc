@@ -8,7 +8,14 @@
  * The main, user-facing, chat-page.
  */
 function opeka_main_page() {
-  opeka_add_assets(array(), array('opeka.frontend.js', 'jquery.geowidget-1.0.js'));
+  global $user;
+  opeka_add_assets(array(), array('opeka.frontend.js', 'jquery.geowidget-1.0.js'), array(
+    'user' => array(
+      'name' => isset($user->name) ? $user->name : '',
+      'uid' => (integer) $user->uid,
+      'sid' => isset($user->sid) ? $user->sid : '',
+      'admin' => FALSE,
+    )));
 
   $output = array();
 

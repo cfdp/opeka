@@ -22,6 +22,8 @@
 /*.komodoproject
 /.idea
 .ruby-version
+.DS_Store
 VERSION
 node_modules
+/node_modules
 npm-debug.log
