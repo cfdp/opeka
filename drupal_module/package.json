@@ -1,0 +1,17 @@
+{
+  "name": "drupal_module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "dependencies": {
+    "node-sass": "^4.4.0",
+    "nodemon": "^1.11.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "build-css": "./bin/build-css",
+    "watch-css": "./bin/watch-css"
+  },
+  "author": "",
+  "license": "ISC"
+}

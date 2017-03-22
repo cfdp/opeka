@@ -1,0 +1,7 @@
+name = Opeka Opening Hours
+description = An Opeka submodule, allowing to manage the opening hours and related info.
+files[] = opeka_opening_hours.module
+
+version = "7.x-2.3"
+core = "7.x"
+project = "opeka"
