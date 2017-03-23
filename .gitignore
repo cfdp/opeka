@@ -2,7 +2,6 @@
 /nodejs/.monitor
 /nodejs/config*
 /nodejs/main_*
-/nodejs/node_modules
 /nodejs/certs
 /nodejs/certs/*
 /drupal/img/*
@@ -22,7 +21,5 @@
 .ruby-version
 .DS_Store
 VERSION
-/drupal_module/bin/
-/drupal_module/node_modules/
-/node_modules
+node_modules
 npm-debug.log

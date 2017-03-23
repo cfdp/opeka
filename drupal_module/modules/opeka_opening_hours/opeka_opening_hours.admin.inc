@@ -92,6 +92,7 @@ function opeka_opening_hours_admin_form($form, &$form_state) {
     '#description' => t('The message for the upcoming chat sessions'),
     '#required' => TRUE,
     '#default_value' => variable_get('opeka_opening_hours_message', t('You can chat with the counselors according to the following schedule.')),
+    '#maxlength' => 85,
   );
 
   // Our submit function will take care of removing empty values, if needed.
