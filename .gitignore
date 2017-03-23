@@ -2,7 +2,6 @@
 /nodejs/.monitor
 /nodejs/config*
 /nodejs/main_*
-/nodejs/node_modules
 /nodejs/certs
 /nodejs/certs/*
 /drupal/img/*
@@ -15,7 +14,6 @@
 /drupal_module/scripts/restart_wrapper.sh
 /drupal_module/translations/*.po~
 /drupal_module/bin/
-/drupal_module/node_modules/
 /logs
 .brackets.json
 /db-template
@@ -25,5 +23,4 @@
 .DS_Store
 VERSION
 node_modules
-/node_modules
 npm-debug.log

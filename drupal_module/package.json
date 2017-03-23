@@ -4,12 +4,10 @@
   "description": "",
   "main": "",
   "dependencies": {
-    "node-sass": "^4.4.0",
-    "nodemon": "^1.11.0"
+    "node-sass": "^4.4.0"
   },
   "devDependencies": {},
   "scripts": {
-    "build-css": "./bin/build-css",
     "watch-css": "./bin/watch-css"
   },
   "author": "",
