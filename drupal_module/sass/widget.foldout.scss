@@ -32,20 +32,28 @@ body.page-opeka-widgets-foldout {
     -o-transform-origin: left top;
     transform-origin: left top;
   }
-  
   .status-wrapper {
     display: inline-block;
     margin-left: 40px;
     position: absolute;
-    width: 240px;
+    width: 370px;
   }
-  
   .login-button {
     margin: 10px 0;
     text-align: center;
   }
+  .opeka-multi-widget-iframe {
+    height: 37px;
+    margin-bottom: .5em;
+    & > * {
+    vertical-align: middle;
+    }
+  }
   .multi-widget-chat-label {
-    padding: 0 0 .2em 0;
+    display: inline-block;
+    height: 37px;
+    padding-top: 5px;
+    width: 140px;
   }
   .curachat-widgets-multi {
     height: 50px;

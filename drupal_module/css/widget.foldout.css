@@ -33,12 +33,20 @@ body.page-opeka-widgets-foldout {
     display: inline-block;
     margin-left: 40px;
     position: absolute;
-    width: 240px; }
+    width: 370px; }
   body.page-opeka-widgets-foldout .login-button {
     margin: 10px 0;
     text-align: center; }
+  body.page-opeka-widgets-foldout .opeka-multi-widget-iframe {
+    height: 37px;
+    margin-bottom: .5em; }
+    body.page-opeka-widgets-foldout .opeka-multi-widget-iframe > * {
+      vertical-align: middle; }
   body.page-opeka-widgets-foldout .multi-widget-chat-label {
-    padding: 0 0 .2em 0; }
+    display: inline-block;
+    height: 37px;
+    padding-top: 5px;
+    width: 140px; }
   body.page-opeka-widgets-foldout .curachat-widgets-multi {
     height: 50px;
     width: 175px;
