@@ -857,8 +857,9 @@ function Server(config, logger) {
       client.activeQueueRoomId = null;
 
       self.addMsgToHistory(newRoom, {
-        message: client.nickname + ' has joined the room.',
-        system: true
+        message:  '@user has joined the room.',
+        system: true,
+        args: { '@user': client.nickname }
       });
 
       newRoom.group.remote('roomUserJoined', newRoom.id, client.nickname, client.account.isAdmin);
@@ -1134,7 +1135,11 @@ function Server(config, logger) {
 
         // Notify the chat room if we know who left.
         if (removedUserNickname) {
-          self.addMsgToHistory(room, {'message': removedUserNickname + ' has left the room. Chat duration: ' + chatDuration + ' minutes.', system: true})
+          self.addMsgToHistory(room, {
+            message: '@user has left the room. Chat duration: @chatDuration minutes.',
+            system: true,
+            args: { '@user': removedUserNickname, '@chatDuration': chatDuration }
+          });
           room.group.remote('roomUserLeft', room.id, removedUserNickname, chatDuration);
 
           //Update typing message if user left.
