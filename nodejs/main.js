@@ -29,7 +29,8 @@ nconf.defaults({
     "queueSystem" : false,
     "accessCodeEnabled" : false,
     "exposeDrupalUIDs": false,
-    "requireDrupalLogin": false
+    "requireDrupalLogin": false,
+    "chatHistory": true
   },
   "authentication": {
     "accessCode": ""

@@ -65,7 +65,7 @@
       _.bindAll(this);
 
       this.admin = options.admin;
-      this.messages = [];
+      this.messages = this.model.attributes.messages;
       this.inQueue = options.inQueue;
       this.returnSendsMessage = ''; // Variable tied to user defined behaviour of input text area
       this.writersMessage = '';

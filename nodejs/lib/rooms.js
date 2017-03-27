@@ -32,7 +32,7 @@ var _ = require('underscore'),
     };
 
 /**
-* Get an open room of a specific type - pair or group. 
+* Get an open room of a specific type - pair or group.
 * Should not return a paused room and it should (@todo)
 * randomize between the available rooms so counselors will be handed new clients evenly.
 * @todo: test if this works for group chats
@@ -58,7 +58,7 @@ var getOpenRoom = function (roomType) {
 
 
 // Sums together a room list into empty, active and full rooms.
-// @todo: the "full" variable should be renamed to e.g. inaccessible 
+// @todo: the "full" variable should be renamed to e.g. inaccessible
 // signaling that it reflects the paused property also
 var sumRoomList = function (rooms) {
   var empty = 0,
@@ -148,6 +148,9 @@ var Room = function (options) {
 
     // A list of users waiting to join the chat.
     self.queue = [];
+
+    // A list group messages.
+    self.messages = [];
 
     // Add our new room to the room list.
     roomList[self.id] = self;
@@ -334,7 +337,8 @@ var Room = function (options) {
       memberCount: self.memberCount,
       paused: self.paused || false,
       private: self.private,
-      queueSystem: self.queueSystem
+      queueSystem: self.queueSystem,
+      messages: self.messages
     };
   };
 
