@@ -1367,6 +1367,9 @@
     render: function () {
       var baseWindow; // The window where the chat was initiated
 
+      // Disable the popup on unload.
+      $(window).unbind('beforeunload.opeka');
+
       // The chat was not opened in a new window
       if (!window.opener) {
         baseWindow = window;
@@ -1393,17 +1396,18 @@
       else if (this.autoRedirect && (baseWindow == null)) {
         // @todo: implement this
       }
-        this.$el.html(JST.opeka_user_feedback_tmpl({
-          admin: Opeka.clientData.isAdmin,
-          labels: {
-            farewellMessage: Drupal.t('Thanks for using our chat!'),
-            feedbackRedirectText: Drupal.t('You are now being redirected to a questionnaire.'),
-            feedbackLinkText: Drupal.t('Open the feedback form.'),
-            closeWindowText: Drupal.t('Close the window')
-          },
-          chatType: this.chatType,
-          autoRedirect: Drupal.settings.opeka.feedback_auto_redirect
-        }));
+
+      this.$el.html(JST.opeka_user_feedback_tmpl({
+        admin: Opeka.clientData.isAdmin,
+        labels: {
+          farewellMessage: Drupal.t('Thanks for using our chat!'),
+          feedbackRedirectText: Drupal.t('You are now being redirected to a questionnaire.'),
+          feedbackLinkText: Drupal.t('Open the feedback form.'),
+          closeWindowText: Drupal.t('Close the window')
+        },
+        chatType: this.chatType,
+        autoRedirect: Drupal.settings.opeka.feedback_auto_redirect
+      }));
       
       return this;
     }
@@ -1418,6 +1422,9 @@
       return this;
     },
     render: function () {
+      // Disable the popup on unload.
+      $(window).unbind('beforeunload.opeka');
+
       this.$el.html(JST.opeka_goodbye_tmpl({
 
         labels: {
