@@ -93,6 +93,7 @@ function Server(config, logger) {
     }
 
     // When a socket.io user connects, tell them about current room status
+    // When a socket.io user connects, tell them about current room status
     self.io_server.on("connection", function(socket) {
       // Make getDirectSignInURL available through the io_socket server as well
       socket.on("getDirectSignInURL", function(roomType, callback) {
@@ -550,7 +551,14 @@ function Server(config, logger) {
       opeka.groups.getClient(clientId, function () {
         var client = this,
             stream = client.stream,
-            ip = stream.remoteAddress;
+            ip;
+
+        if (stream.headers['x-real-ip']) {
+          ip = stream.headers['x-real-ip'];
+        }
+        else {
+          ip = stream.remoteAddress;
+        }
 
         if (!ip) { return; }
 
