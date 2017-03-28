@@ -785,6 +785,14 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId];
 
     if (room) {
+      // Remove the message from the history.
+      for (var n in room.messages) {
+        if (room.messages[n].messageId !== undefined && room.messages[n].messageId == messageId) {
+          room.messages.splice(n, 1);
+          break;
+        }
+      }
+
       room.group.remote('messageDeleted', roomId, messageId);
     }
   });
@@ -793,6 +801,7 @@ function Server(config, logger) {
   self.councellors.addServerMethod('triggerDeleteAllMessages', function (roomId) {
     var room = opeka.rooms.list[roomId];
     if (room) {
+      room.messages = [];
       room.group.remote('deleteAllMessages', roomId);
     }
   });
