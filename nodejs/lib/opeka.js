@@ -211,6 +211,24 @@ function Server(config, logger) {
     });
   };
 
+  /**
+   * Adds messages to given room history.
+   *
+   * @param room
+   *   Room object.
+   *
+   * @param messageObj
+   *   Message object.
+   */
+  self.addMsgToHistory = function(room, messageObj) {
+    if (room !== undefined && self.config.get('features:chatHistory')) {
+      if (messageObj.date === undefined) {
+        messageObj.date = new Date();
+      }
+      room.messages.push(messageObj);
+    }
+  };
+
   // The following methods require dnode to be instantiated, so we need
   // to call the constructor here. That is bad form, but it requires
   // more refactoring to change that I care for right now.
@@ -480,7 +498,7 @@ function Server(config, logger) {
 
     room.paused = true;
     self.everyone.remote('roomUpdated', roomId, { paused: true });
-    self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+    self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
     // Update the room counts and chat status for all users
     opeka.rooms.updateRoomCounts();
     self.updateUserStatus(self.everyone);
@@ -524,7 +542,7 @@ function Server(config, logger) {
 
     room.paused = false;
     self.everyone.remote('roomUpdated', roomId, { paused: false });
-    self.sendSystemMessage('[Pause]: Chat is available again.', room.group);
+    self.sendSystemMessage('[Pause]: Chat is available again.', room.group, room);
     // Update the room counts and chat status for all users
     opeka.rooms.updateRoomCounts();
     self.updateUserStatus(self.everyone);
@@ -604,6 +622,7 @@ function Server(config, logger) {
         client = self.everyone.getClient(clientId);
     // Tell that the user is being removed.
     if (client) {
+      self.addMsgToHistory(room, {message: messageText, system: true});
       roomGroup.remote('roomUserKicked', roomId, clientId, messageText, client.nickname);
     }
     // Remove the user.
@@ -756,7 +775,7 @@ function Server(config, logger) {
         room.maxSize = newSize;
         self.updateUserStatus(self.everyone);
         self.broadcastChatStatus();
-        self.sendSystemMessage("Room size changed to "+newSize, room.group);
+        self.sendSystemMessage("Room size changed to "+newSize, room.group, room);
       }
     }
   });
@@ -774,6 +793,14 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId];
 
     if (room) {
+      // Remove the message from the history.
+      for (var n in room.messages) {
+        if (room.messages[n].messageId !== undefined && room.messages[n].messageId == messageId) {
+          room.messages.splice(n, 1);
+          break;
+        }
+      }
+
       room.group.remote('messageDeleted', roomId, messageId);
     }
   });
@@ -782,6 +809,7 @@ function Server(config, logger) {
   self.councellors.addServerMethod('triggerDeleteAllMessages', function (roomId) {
     var room = opeka.rooms.list[roomId];
     if (room) {
+      room.messages = [];
       room.group.remote('deleteAllMessages', roomId);
     }
   });
@@ -844,6 +872,13 @@ function Server(config, logger) {
     if (addedUser === 'OK') {
       client.activeRoomId = roomId;
       client.activeQueueRoomId = null;
+
+      self.addMsgToHistory(newRoom, {
+        message:  '@user has joined the room.',
+        system: true,
+        args: { '@user': client.nickname }
+      });
+
       newRoom.group.remote('roomUserJoined', newRoom.id, client.nickname, client.account.isAdmin);
     }
     else {
@@ -898,7 +933,7 @@ function Server(config, logger) {
       if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
         room.paused = true;
         self.everyone.remote('roomUpdated', room.id, { paused: true });
-        self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+        self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
       }
 
       // Remove the user.
@@ -931,6 +966,7 @@ function Server(config, logger) {
       // Send the message if the sender is in the room.
       room.group.hasClient(client.clientId, function (inRoom) {
         if (inRoom && !client.muted) {
+          self.addMsgToHistory(room, messageObj);
           room.group.remote('receiveMessage', messageObj);
         }
       });
@@ -1045,12 +1081,13 @@ function Server(config, logger) {
   /**
    * Function used in order to send a system message.
    */
-  self.sendSystemMessage = function(messageToSend, to) {
+  self.sendSystemMessage = function(messageToSend, to, room) {
     var messageObj = {
       date: new Date(),
       message: messageToSend,
       system: true
     };
+    self.addMsgToHistory(room, messageObj);
     to.remote('receiveMessage', messageObj);
   };
 
@@ -1098,7 +1135,7 @@ function Server(config, logger) {
       if (checkPause && (autoPause === true) && (room.maxSize === 2) && !room.paused) {
         room.paused = true;
         self.everyone.remote('roomUpdated', room.id, { paused: true });
-        self.sendSystemMessage('[Pause]: Chat has been paused.', room.group);
+        self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
       }
 
       room.removeUser(clientId, function (users, queueClientId, removedUserNickname) {
@@ -1115,6 +1152,11 @@ function Server(config, logger) {
 
         // Notify the chat room if we know who left.
         if (removedUserNickname) {
+          self.addMsgToHistory(room, {
+            message: '@user has left the room. Chat duration: @chatDuration minutes.',
+            system: true,
+            args: { '@user': removedUserNickname, '@chatDuration': chatDuration }
+          });
           room.group.remote('roomUserLeft', room.id, removedUserNickname, chatDuration);
 
           //Update typing message if user left.

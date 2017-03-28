@@ -65,7 +65,7 @@
       _.bindAll(this);
 
       this.admin = options.admin;
-      this.messages = [];
+      this.messages = this.translateMessages(this.model.attributes.messages);
       this.inQueue = options.inQueue;
       this.returnSendsMessage = ''; // Variable tied to user defined behaviour of input text area
       this.writersMessage = '';
@@ -73,6 +73,17 @@
       this.scrolling = false;
       this.model.on('change', this.render, this);
       return this;
+    },
+
+    translateMessages: function (messages) {
+      if (messages.length) {
+        for (var n in messages) {
+          if (messages[n].args !== undefined) {
+            messages[n].message = Drupal.t(messages[n].message, messages[n].args);
+          }
+        }
+      }
+      return messages;
     },
 
     formatTimestamp: function (date) {
