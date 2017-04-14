@@ -73,3 +73,22 @@
   cursor: pointer; }
   #opeka-app .dropdown-menu li:hover {
     background-color: #e6e6e6; }
+
+body.page-admin-config-services-opeka-screening .btn.btn-info {
+  margin-bottom: 1em; }
+
+/* Login page */
+body.page-opeka select.form-select.gender {
+  height: 28px; }
+
+body.page-opeka label.screening-label {
+  display: none;
+  line-height: inherit;
+  padding-top: 0; }
+
+body.page-opeka input.screening {
+  margin-top: 0; }
+
+body.page-opeka span.screening-option {
+  line-height: 25px;
+  padding-left: 8px; }

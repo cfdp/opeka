@@ -94,6 +94,7 @@ module.exports.filterData = function (client) {
     chatEnd_Min: client.chatEnd_Min,
     clientId: client.clientId,
     gender: client.gender,
+    screening: client.screening,
     isAdmin: client.isAdmin,
     hideTypingMessage: client.hideTypingMessage,
     muted: client.muted,

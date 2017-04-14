@@ -484,6 +484,7 @@
             kickUser: Drupal.t('Kick user'),
             banUser: Drupal.t('Ban user'),
             muteUser: Drupal.t('Mute user'),
+            screeningInfo: Drupal.t('Screening info'),
             pauseToggle: pauseLabel,
             placeholder: Drupal.t('No users'),
             unmuteUser: Drupal.t('Unmute user'),
@@ -1679,6 +1680,8 @@
             male: Drupal.t('Male'),
             nick: Drupal.t('Nickname'),
             placeholder: Drupal.t('Anonymous'),
+            screening: Drupal.t('Screening questions'),
+            screeningNoParticipation: Drupal.t('I do not want to answer this.'),
             accessCode: Drupal.t('Access code'),
           },
           name: name
@@ -1709,10 +1712,15 @@
       //add a random number to each anonymous user to help in distinguishing them
       var x = Math.floor((Math.random()*50)+1);
 
-      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous'+x);
+      var questions = this.$el.find('.screening-question').text();
+      var answers = this.$el.find('input[name=screening]:checked').val();
+      // @todo: save other answer options as well
+      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous!x', {'!x':x});
       user.age = this.$el.find('.age').val();
       user.gender = this.$el.find('.gender').val();
       user.accessCode = this.$el.find('.accesscode').val();
+      user.screening = { questions , answers };
+console.log("user screening: ", user.screening);
       user.roomId = this.roomId;
       user.queueId = this.queueId;
 

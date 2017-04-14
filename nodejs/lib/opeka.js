@@ -26,6 +26,7 @@ var _ = require("underscore"),
       groups: require("./groups"),
       queues: require('./queues'),
       rooms: require('./rooms'),
+      screening: require('./screening'),
       user: require('./user'),
       Client: require('./client'),
       chatOpen: false
@@ -314,6 +315,7 @@ function Server(config, logger) {
       }
 
       client.accessCode = clientUser.accessCode;
+      client.screening = clientUser.screening;
 
       // Update online users count for all clients.
       self.updateUserStatus(self.everyone);
@@ -493,6 +495,25 @@ function Server(config, logger) {
 
   // Allow the everyone to update writingMessage.
   self.everyone.addServerMethod('writingMessage', function (roomId, callback) {
+    var client = this,
+    room = opeka.rooms.list[client.activeRoomId];
+    if (room && _.has(room, 'users')) {
+
+      var userInRoom = room.users[client.clientId];
+      if (!_.isEmpty(userInRoom)) {
+        userInRoom.writes = roomId.status;
+      }
+      var writers = _.where(room.users, {'writes': true});
+      writers = _.map(writers, function (keys, value) {
+        return keys.name;
+      });
+
+      self.sendWritesMessage(writers, room.group);
+    }
+  });
+  
+  // Allow the everyone submit responses to screening questions, if the feature is enabled.
+  self.everyone.addServerMethod('submitScreeningQuestions', function (response, callback) {
     var client = this,
     room = opeka.rooms.list[client.activeRoomId];
     if (room && _.has(room, 'users')) {
