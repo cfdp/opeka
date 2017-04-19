@@ -320,7 +320,7 @@ function Server(config, logger) {
         var q = clientUser.screening['questions'];
         var a = clientUser.screening['answers'];
 
-        opeka.screening.save(clientUser.screening);
+        opeka.screening.save(clientUser.age, clientUser.gender, clientUser.screening);
       }
 
       client.accessCode = clientUser.accessCode;

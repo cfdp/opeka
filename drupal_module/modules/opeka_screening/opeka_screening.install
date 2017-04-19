@@ -19,8 +19,27 @@ function opeka_screening_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
-      'responses' => array(
-        'description' => 'A serialized associative array containing user info (gender and age) along with the questions and responses.',
+      'age' => array(
+        'description' => 'User age.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'gender' => array(
+        'description' => 'User gender.',
+        'type' => 'varchar',
+        'length' => 12,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'question' => array(
+        'description' => 'Screening question.',
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'answer' => array(
+        'description' => 'Screening answer.',
         'type' => 'text',
         'not null' => TRUE,
       ),
@@ -41,6 +60,14 @@ function opeka_screening_schema() {
  * Install our new database schema.
  */
 function opeka_screening_update_7000(&$sandbox) {
+  drupal_install_schema('opeka_screening');
+}
+
+/**
+ * Update database schema.
+ */
+function opeka_screening_update_7001(&$sandbox) {
+  db_drop_table('opeka_screening_submissions');
   drupal_install_schema('opeka_screening');
 }
 
