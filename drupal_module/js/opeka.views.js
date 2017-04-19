@@ -1728,14 +1728,14 @@
       //add a random number to each anonymous user to help in distinguishing them
       var x = Math.floor((Math.random()*50)+1);
 
-      var questions = this.$el.find('.screening-question').text();
-      var answers = this.$el.find('input[name=screening]:checked').val();
+      var question = this.$el.find('.screening-question').text();
+      var answer = this.$el.find('input[name=screening]:checked').val();
       // @todo: save other answer options as well
       user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous!x', {'!x':x});
       user.age = this.$el.find('.age').val();
       user.gender = this.$el.find('.gender').val();
       user.accessCode = this.$el.find('.accesscode').val();
-      user.screening = { questions , answers };
+      user.screening = { question: question , answer: answer };
       user.roomId = this.roomId;
       user.queueId = this.queueId;
 

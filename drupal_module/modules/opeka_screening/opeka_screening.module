@@ -72,6 +72,7 @@ function opeka_screening_preprocess_page(&$vars) {
     //$opeka_screening_options_merged_days_array[$array_el['day']][] = $array_el['times_from'] . '-' . $array_el['times_to'];
   }
   // Sort days following the order of the opeka_screening_weekdays() array.
+  $weekdays_options = opeka_screening_weekdays();
   $opeka_screening_options_merged_days_array = 
     array_replace(array_flip(array_keys($weekdays_options)), $opeka_screening_options_merged_days_array);
   // Render days and times into a simple list.
@@ -85,7 +86,8 @@ function opeka_screening_preprocess_page(&$vars) {
   $vars['opeka_screening_main'] = array(
     'main' => array(
       '#tag' => 'p',
-      '#value' => variable_get('opeka_screening_main', t('Question...')),
+      '#value' => variable_get('opeka_screening_main', ''),
+      '#attributes' => array('placeholder' => t('Question...')),
       '#theme' => 'html_tag',
     ),
     'list' => array(
