@@ -1,0 +1,111 @@
+<?php
+
+/**
+ * @file
+ * Drupal screening submodule for the Opeka project.
+ *
+ * Provides the screening questions management and rendering
+ * functionality.
+ */
+
+/**
+  * Add assets - stylesheets etc.
+  */
+
+function opeka_screening_add_assets() {
+
+  $path = drupal_get_path('module', 'opeka');
+  //$filename = "opeka.screeningquestions.css";
+  // Add stylesheets
+  //drupal_add_css($path . '/css/' . $filename);
+
+  $opeka_screening_main = check_plain(variable_get('opeka_screening_main', ''));
+  $opeka_screening_options_array = variable_get('opeka_screening_options', []);
+
+  $opeka_screening_options_text_array = [];
+  foreach ($opeka_screening_options_array as $array_el) {
+    //$opeka_screening_options_merged_days_array[$array_el['day']][] = $array_el['times_from'] . '-' . $array_el['times_to'];
+    $opeka_screening_options_text_array[] = check_plain($array_el['answer_option']);
+  }
+
+  // Settings to expose to the JavaScript client.
+  $settings['opeka_screening_main'] = $opeka_screening_main;
+  $settings['opeka_screening_options'] = $opeka_screening_options_text_array;
+  // Add js files and settings
+  drupal_add_js(array('opeka_screening' => $settings), 'setting');
+}
+
+/**
+ * Implements hook_menu().
+ */
+function opeka_screening_menu() {
+  
+  $items['admin/config/services/opeka/screening'] = array(
+    'title' => 'Screening Questions',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+    'description' => 'Provides settings for the screening questions.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('opeka_screening_admin_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'opeka_screening.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function opeka_screening_preprocess_page(&$vars) {
+  $path = current_path();
+  
+  if (($path == "admin/opeka") || ($path == "opeka")) {
+    opeka_screening_add_assets();
+  }
+  //$weekdays_options = opeka_screening_weekdays();
+
+  // Get the opening hours from the variables table.
+  $opeka_screening_options_array = variable_get('opeka_screening_options', []);
+  // Collapse all times into the same days.
+  $opeka_screening_options_merged_days_array = [];
+  foreach ($opeka_screening_options_array as $array_el) {
+    //$opeka_screening_options_merged_days_array[$array_el['day']][] = $array_el['times_from'] . '-' . $array_el['times_to'];
+  }
+  // Sort days following the order of the opeka_screening_weekdays() array.
+  $opeka_screening_options_merged_days_array = 
+    array_replace(array_flip(array_keys($weekdays_options)), $opeka_screening_options_merged_days_array);
+  // Render days and times into a simple list.
+  $opeka_screening_options_list_array = [];
+  foreach ($opeka_screening_options_merged_days_array as $day=>$times) {
+    if (is_array($times)) {
+      //$opeka_screening_options_list_array[] = $weekdays_options[$day] . ": " . implode(', ', $times);
+    }
+  }
+  // replace the opeka_schedule theme variable with our own render array.
+  $vars['opeka_screening_main'] = array(
+    'main' => array(
+      '#tag' => 'p',
+      '#value' => variable_get('opeka_screening_main', t('Question...')),
+      '#theme' => 'html_tag',
+    ),
+    'list' => array(
+      '#items' => $opeka_screening_options_list_array,
+      '#theme' => 'item_list',
+      '#type' => 'ul',
+    )
+  );
+}
+
+/**
+ * @return string[]
+ *   An array of all weekdays, localized.
+ */
+function opeka_screening_weekdays() {
+  return array(
+    'monday' => t('Monday'),
+    'tuesday' => t('Tuesday'),
+    'wednesday' => t('Wednesday'),
+    'thursday' => t('Thursday'),
+    'friday' => t('Friday'),
+  );
+}

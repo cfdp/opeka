@@ -28,7 +28,7 @@
     "shoe": "0.0.15",
     "socket.io": "^1.7.2",
     "underscore": "^1.8.3",
-    "validator": "^6.2.0",
+    "validator": "^7.0.0",
     "winston": "^2.3.0"
   },
   "devDependencies": {

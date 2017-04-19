@@ -108,23 +108,30 @@ body.page-admin-config-services-opeka-screening .btn.btn-info {
 }
 
 /* Logged in users */
-body.page-opeka.logged-in {
-  /* Screening */
-  .screening-wrapper {
+body.page-admin-opeka {
+  .app-view {
+     /* Screening */
+    .screening-wrapper {
+      display: inline-block;
+      position: relative;
+    }
+    .screening-question {
+      position: absolute;
+      left: 0;
+      top: 30px;
+      width: 225px;
+      background-color: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      @include border-radius(6px);
+      @include box-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+      display: none;
+      padding: 2px;
+      white-space: normal;
+      z-index: 1010;
+    }
     
   }
-  .screening-question {
-    position: absolute;
-    width: 250px;
-    background-color: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    @include border-radius(6px);
-    @include box-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
-    //display: none;
-    padding: 1px;
-    white-space: normal;
-    z-index: 1010;
-  }
+ 
 }
 /* Login page */
 body.page-opeka {

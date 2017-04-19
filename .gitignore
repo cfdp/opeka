@@ -1,6 +1,6 @@
 /modules/contrib
 /nodejs/.monitor
-/nodejs/config*
+/nodejs/config.json
 /nodejs/main_*
 /nodejs/certs
 /nodejs/certs/*

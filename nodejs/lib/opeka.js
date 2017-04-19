@@ -205,6 +205,7 @@ function Server(config, logger) {
         results.fullRoomLink = self.config.get('features:fullRoomLink');
         results.chatPageURL = self.config.get('chatPage');
         results.accessCodeEnabled = self.config.get('features:accessCodeEnabled');
+        results.screeningQuestions = self.config.get('features:screeningQuestions');
         results.chatOpen = opeka.chatOpen;
 
         context.remote('updateStatus', results);
@@ -313,9 +314,17 @@ function Server(config, logger) {
       else {
         client.age = "";
       }
+      // Save screening questions and answers from the clients
+      if (self.config.get('features:screeningQuestions') && !account.uid) {
+        // @todo: check for valid input
+        var q = clientUser.screening['questions'];
+        var a = clientUser.screening['answers'];
+
+        opeka.screening.save(clientUser.screening);
+      }
 
       client.accessCode = clientUser.accessCode;
-      client.screening = clientUser.screening;
+      
 
       // Update online users count for all clients.
       self.updateUserStatus(self.everyone);
@@ -511,25 +520,7 @@ function Server(config, logger) {
       self.sendWritesMessage(writers, room.group);
     }
   });
-  
-  // Allow the everyone submit responses to screening questions, if the feature is enabled.
-  self.everyone.addServerMethod('submitScreeningQuestions', function (response, callback) {
-    var client = this,
-    room = opeka.rooms.list[client.activeRoomId];
-    if (room && _.has(room, 'users')) {
 
-      var userInRoom = room.users[client.clientId];
-      if (!_.isEmpty(userInRoom)) {
-        userInRoom.writes = roomId.status;
-      }
-      var writers = _.where(room.users, {'writes': true});
-      writers = _.map(writers, function (keys, value) {
-        return keys.name;
-      });
-
-      self.sendWritesMessage(writers, room.group);
-    }
-  });
 
   // Allow the councellors to unpause a room.
   self.councellors.addServerMethod('unpauseRoom', function (roomId, callback) {

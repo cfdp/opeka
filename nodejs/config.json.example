@@ -19,7 +19,9 @@
     "fullRoomLink" : "http://example.com",
     "accessCodeEnabled" : false,
     "exposeDrupalUIDs": false,
-    "requireDrupalLogin": false
+    "requireDrupalLogin": false,
+    "screeningQuestions": false
+
   },
   "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
   "server": {
