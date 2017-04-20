@@ -20,12 +20,8 @@
     "accessCodeEnabled" : false,
     "exposeDrupalUIDs": false,
     "requireDrupalLogin": false,
-<<<<<<< HEAD
-    "chatHistory": true
-=======
+    "chatHistory": true,
     "screeningQuestions": false
-
->>>>>>> feature/58-screening-questions-on-login-form
   },
   "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
   "server": {
