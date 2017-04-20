@@ -460,7 +460,8 @@
       "click .pause-toggle": "pauseToggle",
       "click .unmute-user": "unmuteUser",
       "click .sidebar-block-heading": "sidebarBlocktoggle",
-      "click .whisper": "whisper"
+      "click .whisper": "whisper",
+      "click .screening-wrapper": "screeningToggle"
     },
 
     initialize: function (options) {
@@ -476,7 +477,9 @@
     },
 
     render: function () {
-      var pauseLabel = Drupal.t('Pause chat');
+      var pauseLabel = Drupal.t('Pause chat'),
+          screeningQuestions = Opeka.status.attributes.screeningQuestions;
+
       if (this.model.get('paused')) {
         pauseLabel = Drupal.t('Unpause chat');
       }
@@ -495,6 +498,7 @@
             kickUser: Drupal.t('Kick user'),
             banUser: Drupal.t('Ban user'),
             muteUser: Drupal.t('Mute user'),
+            screeningInfo: Drupal.t('Screening info'),
             pauseToggle: pauseLabel,
             placeholder: Drupal.t('No users'),
             unmuteUser: Drupal.t('Unmute user'),
@@ -503,6 +507,7 @@
             registrationFormLink: Drupal.t('Open registration form'),
             noRegistrationForm: Drupal.t('No registration form entered'),
           },
+          screeningQuestions: screeningQuestions,
           room: this.model,
           users: this.model.get('userList')
         }));
@@ -623,6 +628,18 @@
         arrow.removeClass('up').addClass('down');
       }
       
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    // For toggling visibility of screening questions
+    screeningToggle: function (event) {
+      var btn = $(event.currentTarget),
+          content = btn.children('.screening-question');
+
+      content.toggle();
+
       if (event) {
         event.preventDefault();
       }
@@ -1570,7 +1587,7 @@
       return this;
     },
 
-    // Utility function for kicking the user.
+    // Utility function for banning the user.
     banUser: function (event) {
       var form = $(this.dialogElement).find('form'),
           banCode = $.trim(form.find('input.ban-code').val()),
@@ -1683,11 +1700,11 @@
       if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.admin) {
         name = Drupal.t('Counselor');
       }
-
       // If the chat is closed, only authenticated Drupal users is presented with the sign in form
       if (Drupal.settings.opeka.user || this.model.get('chatOpen')) {
         var form = JST.opeka_connect_form_tmpl({
           accessCodeEnabled: Opeka.status.attributes.accessCodeEnabled,
+          screeningQuestions: Opeka.status.attributes.screeningQuestions,
           labels: {
             action: Drupal.t('Ready for chat'),
             age: Drupal.t('Age'),
@@ -1697,6 +1714,8 @@
             male: Drupal.t('Male'),
             nick: Drupal.t('Nickname'),
             placeholder: Drupal.t('Anonymous'),
+            screening: Drupal.t('Screening questions'),
+            screeningNoParticipation: Drupal.t('I do not want to answer this.'),
             accessCode: Drupal.t('Access code'),
           },
           name: name
@@ -1727,10 +1746,14 @@
       //add a random number to each anonymous user to help in distinguishing them
       var x = Math.floor((Math.random()*50)+1);
 
-      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous'+x);
+      var question = this.$el.find('.screening-question').text();
+      var answer = this.$el.find('input[name=screening]:checked').val();
+      // @todo: save other answer options as well
+      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous!x', {'!x':x});
       user.age = this.$el.find('.age').val();
       user.gender = this.$el.find('.gender').val();
       user.accessCode = this.$el.find('.accesscode').val();
+      user.screening = { question: question , answer: answer };
       user.roomId = this.roomId;
       user.queueId = this.queueId;
 

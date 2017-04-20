@@ -26,6 +26,7 @@ var _ = require("underscore"),
       groups: require("./groups"),
       queues: require('./queues'),
       rooms: require('./rooms'),
+      screening: require('./screening'),
       user: require('./user'),
       Client: require('./client'),
       chatOpen: false
@@ -204,6 +205,7 @@ function Server(config, logger) {
         results.fullRoomLink = self.config.get('features:fullRoomLink');
         results.chatPageURL = self.config.get('chatPage');
         results.accessCodeEnabled = self.config.get('features:accessCodeEnabled');
+        results.screeningQuestions = self.config.get('features:screeningQuestions');
         results.chatOpen = opeka.chatOpen;
 
         context.remote('updateStatus', results);
@@ -330,8 +332,12 @@ function Server(config, logger) {
       else {
         client.age = "";
       }
+      if (clientUser.screening !=  null) {
+        client.screening = clientUser.screening;
+      }
 
       client.accessCode = clientUser.accessCode;
+
 
       // Update online users count for all clients.
       self.updateUserStatus(self.everyone);
@@ -527,6 +533,7 @@ function Server(config, logger) {
       self.sendWritesMessage(writers, room.group);
     }
   });
+
 
   // Allow the councellors to unpause a room.
   self.councellors.addServerMethod('unpauseRoom', function (roomId, callback) {
@@ -827,6 +834,11 @@ function Server(config, logger) {
     // Reset list of whisper partners
     client.whisperPartners = {};
     self.logger.info('Login: User chat start: ', client.chatStart_Min);
+
+    // add the screening questions to the db if present
+    if (self.config.get('features:screeningQuestions') && !client.account.isAdmin && client.screening) {
+      opeka.screening.save(client.age, client.gender, client.screening);
+    }
 
     // Special case when joining from the global Queue.
     // User is already in the room, so fake an OK response.

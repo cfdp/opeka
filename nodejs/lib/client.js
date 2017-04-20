@@ -48,6 +48,8 @@ var Client = function(server, stream, remote, conn) {
 
         self.allowPauseAutoScroll = null;
 
+        self.screening = null;
+
         groups.registerClient(self);
         conn.on('ready', function() {
             self.onConnectionReady();
@@ -71,7 +73,17 @@ var Client = function(server, stream, remote, conn) {
     self.onConnectionReady = function() {
         var stream = self.stream,
             server = self.server,
-            banInfo = ban.checkIP(stream.remoteAddress, server.config.get('ban:salt'));
+            ip = null,
+            banInfo = null;
+
+        if (stream.headers['x-real-ip']) {
+          ip = stream.headers['x-real-ip'];
+        }
+        else {
+          ip = stream.remoteAddress;
+        }
+
+        banInfo = ban.checkIP(ip, server.config.get('ban:salt'));
 
         if (banInfo.isBanned) {
             server.logger.warning('User ' + self.clientId + ' tried to connect with banned address ' + banInfo.digest);
