@@ -1,0 +1,80 @@
+<?php
+
+/**
+ * @file
+ * Drupal screening submodule for the Opeka project.
+ *
+ * Provides the screening questions management and rendering
+ * functionality.
+ */
+
+/**
+  * Add assets - stylesheets etc.
+  */
+
+function opeka_screening_add_assets() {
+
+  $path = drupal_get_path('module', 'opeka');
+
+
+  $opeka_screening_main = check_plain(variable_get('opeka_screening_main', ''));
+  $opeka_screening_options_array = variable_get('opeka_screening_options', []);
+
+  $opeka_screening_options_text_array = [];
+  foreach ($opeka_screening_options_array as $array_el) {
+    $opeka_screening_options_text_array[] = check_plain($array_el['answer_option']);
+  }
+
+  // Settings to expose to the JavaScript client.
+  $settings['opeka_screening_main'] = $opeka_screening_main;
+  $settings['opeka_screening_options'] = $opeka_screening_options_text_array;
+  // Add js files and settings
+  drupal_add_js(array('opeka_screening' => $settings), 'setting');
+}
+
+/**
+ * Implements hook_menu().
+ */
+function opeka_screening_menu() {
+
+  $items['admin/config/services/opeka/screening'] = array(
+    'title' => 'Screening Questions',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+    'description' => 'Provides settings for the screening questions.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('opeka_screening_admin_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'opeka_screening.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function opeka_screening_preprocess_page(&$vars) {
+  $path = current_path();
+
+  if (($path == "admin/opeka") || ($path == "opeka")) {
+    opeka_screening_add_assets();
+  }
+
+  // Get the opening hours from the variables table.
+  $opeka_screening_options_array = variable_get('opeka_screening_options', []);
+
+  // Form element for the question
+  $vars['opeka_screening_main'] = array(
+    'main' => array(
+      '#tag' => 'p',
+      '#value' => variable_get('opeka_screening_main', ''),
+      '#attributes' => array('placeholder' => t('Question...')),
+      '#theme' => 'html_tag',
+    ),
+    'list' => array(
+      '#items' => $opeka_screening_options_list_array,
+      '#theme' => 'item_list',
+      '#type' => 'ul',
+    )
+  );
+}

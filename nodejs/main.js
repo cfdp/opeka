@@ -30,7 +30,8 @@ nconf.defaults({
     "accessCodeEnabled" : false,
     "exposeDrupalUIDs": false,
     "requireDrupalLogin": false,
-    "chatHistory": true
+    "chatHistory": true,
+    "screeningQuestions": false
   },
   "authentication": {
     "accessCode": ""
