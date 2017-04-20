@@ -60,8 +60,10 @@ function opeka_screening_preprocess_page(&$vars) {
     opeka_screening_add_assets();
   }
 
-  // Get the opening hours from the variables table.
+  // Get the screening options from the variables table.
   $opeka_screening_options_array = variable_get('opeka_screening_options', []);
+  
+  $opeka_screening_options_list_array = [];
 
   // Form element for the question
   $vars['opeka_screening_main'] = array(
