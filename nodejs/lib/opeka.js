@@ -314,13 +314,8 @@ function Server(config, logger) {
       else {
         client.age = "";
       }
-      // Save screening questions and answers from the clients
-      if (self.config.get('features:screeningQuestions') && !account.uid) {
-        // @todo: check for valid input
-        var q = clientUser.screening['questions'];
-        var a = clientUser.screening['answers'];
-
-        opeka.screening.save(clientUser.age, clientUser.gender, clientUser.screening);
+      if (clientUser.screening !=  null) {
+        client.screening = clientUser.screening;
       }
 
       client.accessCode = clientUser.accessCode;
@@ -811,6 +806,11 @@ function Server(config, logger) {
     // Reset list of whisper partners
     client.whisperPartners = {};
     self.logger.info('Login: User chat start: ', client.chatStart_Min);
+
+    // add the screening questions to the db if present
+    if (self.config.get('features:screeningQuestions') && !client.account.isAdmin && client.screening) {
+      opeka.screening.save(client.age, client.gender, client.screening);
+    }
 
     // Special case when joining from the global Queue.
     // User is already in the room, so fake an OK response.

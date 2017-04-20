@@ -9,8 +9,6 @@ drupal = require("drupal");
 
 // Authenticate a user logging on to the chat server.
 module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCode, callback) {
-  util.log("clientUser.sid: " + clientUser.sid);
-  util.log("clientUser.uid: " + clientUser.uid);
   // If the client claims he's logged in, validate that assertion.
   util.log("User authenticating, Drupal sid: " + clientUser.sid);
   util.log("User authenticating, Drupal uid: " + clientUser.uid);
@@ -50,7 +48,6 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
           account.hideTypingMessage = hideTypingMessage;
           callback(null, account);
         });
-        util.log("Drupal user id: " + session.uid);
       });
     });
   }
@@ -66,10 +63,9 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
 
     var account = {};
     account.isAdmin = false;
-    util.log("AccessCodeEnabled: " + accessCodeEnabled);
     // If the accessCode functionality is activated, make sure the right access code is given
     if (accessCodeEnabled && clientUser.accessCode !== accessCode) {
-      util.log("Error: Could not load user session.");
+      util.log("Error: Wrong or no access code given on signIn form.");
       callback(true);
       throw 'Wrong or no access code given on signIn form';
     }

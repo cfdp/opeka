@@ -8,7 +8,6 @@
  * Admin settings form for Opeka Screening Questions.
  */
 function opeka_screening_admin_form($form, &$form_state) {
-  //$weekdays_options = opeka_screening_weekdays();
 
   $fieldset_id = 'fieldset-opeka-screening-options';
   $element_name = 'opeka_screening_options';
