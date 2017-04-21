@@ -42,7 +42,7 @@ function opeka_opening_hours_menu_alter(&$items) {
     );
     $items['admin/config/services/opeka/main_tab'] = array(
       'type' => MENU_DEFAULT_LOCAL_TASK,
-      'title' => t('Opening hours'),
+      'title' => 'Opening hours',
       'weight' => 1,
     );
   }
