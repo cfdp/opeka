@@ -48,8 +48,8 @@
               <% if (screeningQuestions && Drupal.settings.opeka_screening) { %>
                 <div class="screening-wrapper btn"><%= labels.screeningInfo + ": " %>
                   <dl class="screening-question">
-                    <dt class="popover-title"><%= user.screening.questions %></dt>
-                    <dd class="popover-content"><%= user.screening.answers  %></dd>
+                    <dt class="popover-title"><%= user.screening.question %></dt>
+                    <dd class="popover-content"><%= user.screening.answer  %></dd>
                   </dl>
                 </div>
               <% } %>
