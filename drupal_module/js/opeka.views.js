@@ -645,6 +645,7 @@
       }
     },
 
+
     // Open dialog to whisper to an user.
     whisper: function (event) {
       var view = new Opeka.RoomWhisperView({
