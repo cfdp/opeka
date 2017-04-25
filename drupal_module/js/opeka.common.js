@@ -178,6 +178,7 @@ var Opeka = {
           if (sidebar) {
             Opeka.appViewInstance.$el.find('.sidebar').html(sidebar.render().el);
             Opeka.addRoomSizeToBody();
+            Opeka.screeningPopoverClose();
           }
         });
       }
@@ -657,6 +658,18 @@ var Opeka = {
   // Remove room size info from body tag
   Opeka.removeRoomSizeClass = function() {
       $('body').removeClass('room-size-2 groupchat');
+  };
+  
+  // Handler for closing the screeningPopover upon click outside element    
+  Opeka.screeningPopoverClose = function() {
+    $('body').on('click', function(event) {
+      var content;
+      // if we are clicking somewhere off the button, hide the popover
+      if( !$(event.target).closest('.screening-wrapper').length ) {
+        content = $('.screening-question');
+        content.hide();
+      }
+    });        
   };
 
   // Play a sound when a client joins the chat
