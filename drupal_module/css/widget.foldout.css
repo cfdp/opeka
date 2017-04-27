@@ -3,51 +3,71 @@
 /* Variables */
 /* $green: #72d477; */
 /* Typography */
+/* line 5, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout {
   background: transparent;
   position: relative;
-  /* Name tab */ }
-  body.page-opeka-widgets-foldout .name-tab {
-    background-image: url(../img/chat_icon.svg);
-    background-position: 5px 5px;
-    background-repeat: no-repeat;
-    background-size: 42px 30px;
-    display: inline-block;
-    height: 20px;
-    left: 40px;
-    padding: 10px 10px 10px 55px;
-    position: absolute;
-    /* we rotate the text in the name tab */
-    -webkit-transform: rotate(90deg);
-    -moz-transform: rotate(90deg);
-    -ms-transform: rotate(90deg);
-    -o-transform: rotate(90deg);
-    transform: rotate(90deg);
-    /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
-    -webkit-transform-origin: left top;
-    -moz-transform-origin: left top;
-    -ms-transform-origin: left top;
-    -o-transform-origin: left top;
-    transform-origin: left top; }
-  body.page-opeka-widgets-foldout .status-wrapper {
-    display: inline-block;
-    margin-left: 40px;
-    position: absolute;
-    width: 370px; }
-  body.page-opeka-widgets-foldout .login-button {
-    margin: 10px 0;
-    text-align: center; }
-  body.page-opeka-widgets-foldout .opeka-multi-widget-iframe {
-    height: 37px;
-    margin-bottom: .5em; }
-    body.page-opeka-widgets-foldout .opeka-multi-widget-iframe > * {
-      vertical-align: middle; }
-  body.page-opeka-widgets-foldout .multi-widget-chat-label {
-    display: inline-block;
-    height: 37px;
-    padding-top: 5px;
-    width: 140px; }
-  body.page-opeka-widgets-foldout .curachat-widgets-multi {
-    height: 50px;
-    width: 175px;
-    border: 0; }
+  /* Name tab */
+}
+/* line 9, ../sass/widget.foldout.scss */
+body.page-opeka-widgets-foldout .name-tab {
+  background-image: url(../img/chat_icon.svg);
+  background-position: 5px 5px;
+  background-repeat: no-repeat;
+  background-size: 42px 30px;
+  display: inline-block;
+  height: 20px;
+  left: 40px;
+  padding: 10px 10px 10px 55px;
+  position: absolute;
+  /* we rotate the text in the name tab */
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+  /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
+  -webkit-transform-origin: left top;
+  -moz-transform-origin: left top;
+  -ms-transform-origin: left top;
+  -o-transform-origin: left top;
+  transform-origin: left top;
+}
+/* line 32, ../sass/widget.foldout.scss */
+body.page-opeka-widgets-foldout .status-wrapper {
+  display: inline-block;
+  margin-left: 40px;
+  position: absolute;
+  width: 260px;
+}
+/* line 38, ../sass/widget.foldout.scss */
+body.page-opeka-widgets-foldout .login-button {
+  margin: 10px 0;
+  text-align: center;
+}
+/* line 43, ../sass/widget.foldout.scss */
+body.page-opeka-widgets-foldout .opeka-chat-foldout-wrapper.multi .status-wrapper {
+  width: 370px;
+}
+/* line 47, ../sass/widget.foldout.scss */
+body.page-opeka-widgets-foldout .opeka-multi-widget-iframe {
+  height: 37px;
+  margin-bottom: .5em;
+}
+/* line 50, ../sass/widget.foldout.scss */
+body.page-opeka-widgets-foldout .opeka-multi-widget-iframe > * {
+  vertical-align: middle;
+}
+/* line 54, ../sass/widget.foldout.scss */
+body.page-opeka-widgets-foldout .multi-widget-chat-label {
+  display: inline-block;
+  height: 37px;
+  padding-top: 5px;
+  width: 140px;
+}
+/* line 60, ../sass/widget.foldout.scss */
+body.page-opeka-widgets-foldout .curachat-widgets-multi {
+  height: 50px;
+  width: 175px;
+  border: 0;
+}
