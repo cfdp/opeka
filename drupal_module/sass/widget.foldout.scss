@@ -1,30 +1,27 @@
 /* Styling for the foldout widget */
+
 // Utilities
 @import "variables";
-
 body.page-opeka-widgets-foldout {
   background: transparent;
   position: relative;
-  
   /* Name tab */
   .name-tab {
     background-image: url(../img/chat_icon.svg);
     background-position: 5px 5px;
-    background-repeat:  no-repeat;
+    background-repeat: no-repeat;
     background-size: 42px 30px;
     display: inline-block;
     height: 20px;
     left: 40px;
     padding: 10px 10px 10px 55px;
     position: absolute;
-
     /* we rotate the text in the name tab */
     -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
     -ms-transform: rotate(90deg);
     -o-transform: rotate(90deg);
     transform: rotate(90deg);
-
     /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
     -webkit-transform-origin: left top;
     -moz-transform-origin: left top;
@@ -36,17 +33,22 @@ body.page-opeka-widgets-foldout {
     display: inline-block;
     margin-left: 40px;
     position: absolute;
-    width: 370px;
+    width: 260px;
   }
   .login-button {
     margin: 10px 0;
     text-align: center;
   }
+  .opeka-chat-foldout-wrapper.multi {
+    .status-wrapper {
+      width: 370px;
+    }
+  }
   .opeka-multi-widget-iframe {
     height: 37px;
     margin-bottom: .5em;
-    & > * {
-    vertical-align: middle;
+    &>* {
+      vertical-align: middle;
     }
   }
   .multi-widget-chat-label {
