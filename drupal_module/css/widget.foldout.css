@@ -46,7 +46,7 @@ body.page-opeka-widgets-foldout .login-button {
   text-align: center;
 }
 /* line 43, ../sass/widget.foldout.scss */
-body.page-opeka-widgets-foldout .opeka-chat-foldout-wrapper.multi .status-wrapper {
+body.page-opeka-widgets-foldout.multi .status-wrapper {
   width: 370px;
 }
 /* line 47, ../sass/widget.foldout.scss */
