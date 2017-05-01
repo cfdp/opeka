@@ -39,7 +39,7 @@ body.page-opeka-widgets-foldout {
     margin: 10px 0;
     text-align: center;
   }
-  .opeka-chat-foldout-wrapper.multi {
+  &.multi {
     .status-wrapper {
       width: 370px;
     }
