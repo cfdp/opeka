@@ -4,8 +4,20 @@
 var drupal = require("drupal"),
     util = require("util");
 
-// Save a submission
+// Save a submission if the table exists
 module.exports.save = function (age, gender, screening) {
+  drupal.db.query('SHOW TABLES LIKE ?', ['opeka_screening_submissions'], function(err, result) {
+    if (result) {
+      saveData(age, gender, screening);
+    }
+    else {
+      util.log('Error: The Drupal Opeka Screening module does not appear to be installed.');
+    }
+  });
+};
+
+// Add the submissions to the database.
+function saveData(age, gender, screening) {
   // Get the current UNIX timestamp
   var timestamp = (+new Date()/1000);
 
@@ -17,7 +29,6 @@ module.exports.save = function (age, gender, screening) {
     submission_date: timestamp
   };
 
-  // Add the submissions to the database.
   drupal.db.query('INSERT INTO opeka_screening_submissions SET ?', record, function (err, result) {
     if (result) {
       util.log('Info: Saved screening responses.');
@@ -27,4 +38,4 @@ module.exports.save = function (age, gender, screening) {
       throw err;
     }
   });
-};
+}
