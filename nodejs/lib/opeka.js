@@ -332,8 +332,12 @@ function Server(config, logger) {
       else {
         client.age = "";
       }
-      if (clientUser.screening !=  null) {
+      // If screening questions haven't been defined explicitly, set variable to null
+      if (clientUser.screening.question) {
         client.screening = clientUser.screening;
+      }
+      else {
+        client.screening =  null;
       }
 
       client.accessCode = clientUser.accessCode;
