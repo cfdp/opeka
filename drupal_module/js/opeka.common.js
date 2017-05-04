@@ -669,12 +669,16 @@ var Opeka = {
         content = $('.screening-question');
         content.hide();
       }
-    });        
+    });
   };
 
   // Play a sound when a client joins the chat
   Opeka.userJoinedSound = function() {
-     document.getElementById('audiotag1').play();
+    var sound = new Howl({
+      src: [Drupal.settings.opeka.client_login_sound]
+    });
+
+    sound.play();
   };
 
   // Basic setup for the app when the DOM is loaded.
@@ -739,15 +743,6 @@ var Opeka = {
     var nf = new Opeka.NotFoundRouter();
     Opeka.router = new Opeka.MainRouter();
 
-    //if (!now) {
-    //  var view = new Opeka.FatalErrorDialogView({
-    //    message: Drupal.t('The chat server seems to be offline. Please reload the page to try connecting again or contact support if the problem persists.'),
-    //    title: Drupal.t('No connection server')
-    //  });
-    //
-    //  view.render();
-    //}
-
     Backbone.history.start();
   });
 
@@ -758,7 +753,6 @@ var Opeka = {
       Opeka.features = features;
     });
     $(Opeka).trigger("connected");
-    //Opeka.MainRouter.checkSignIn();
   };
 
 }(jQuery));

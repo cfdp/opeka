@@ -1,6 +1,5 @@
 <div id="opeka-app"></div>
 <script id="opeka_chat_sidebar_tmpl" type="application/template">
-  <audio id="audiotag1" src="<%= Drupal.settings.opeka.client_login_sound %>" preload="auto"></audio>
   <div id="room-size" data-room-size="<%- room.get('maxSize') %>"></div>
   <% /* Only display sidebar for anonymous clients in pair rooms if this settings is set to 1*/ %>
   <% if ((admin) || (!((Drupal.settings.opeka.pairchat_user_list === 0) && (room.get('maxSize') === 2)))) { %>
