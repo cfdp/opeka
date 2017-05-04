@@ -201,6 +201,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
 
   // Add socket.io resource
   drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.6/socket.io.min.js', array('type' => 'external'));
+  // Add howler.js for sound
+  drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.3/howler.min.js', array('type' => 'external'));
 }
 
 /**
