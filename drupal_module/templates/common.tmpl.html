@@ -44,7 +44,7 @@
                 </ul>
               </div>
               <!-- end dropdown btn-group -->
-              <% if (screeningQuestions && Drupal.settings.opeka_screening) { %>
+              <% if (screeningQuestions && Drupal.settings.opeka_screening && Drupal.settings.opeka_screening.opeka_screening_options.length) { %>
                 <div class="screening-wrapper btn"><%= labels.screeningInfo + ": " %>
                   <dl class="screening-question">
                     <dt class="popover-title"><%= user.screening.question %></dt>
@@ -147,7 +147,7 @@
         </div>
       </div>
 
-      <% if (screeningQuestions && Drupal.settings.opeka_screening) { %>
+      <% if (screeningQuestions && Drupal.settings.opeka_screening && Drupal.settings.opeka_screening.opeka_screening_options.length ) { %>
         <div class="control-group">
           <label class="control-label screening-label">
             <%= labels.screening %>
