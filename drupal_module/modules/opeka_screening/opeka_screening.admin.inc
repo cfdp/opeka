@@ -96,7 +96,7 @@ function opeka_fapi_multifield_submit_add_more($form, &$form_state, $arg) {
 
 /**
  * This function will remove empty entries,
- * namely those where times (textfield) is empty.
+ * namely those where answer option (textfield) is empty.
  */
 function opeka_screening_admin_form_submit($form, &$form_state) {
   $element_name = $form['#opeka_multified_element_name'];
