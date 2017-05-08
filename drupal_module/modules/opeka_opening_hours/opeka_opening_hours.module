@@ -29,6 +29,7 @@ function opeka_opening_hours_menu_alter(&$items) {
     $items['admin/config/services/opeka/general_settings'] = $items['admin/config/services/opeka'];
     $items['admin/config/services/opeka/general_settings']['type'] = MENU_LOCAL_TASK;
     $items['admin/config/services/opeka/general_settings']['weight'] = 2;
+    $items['admin/config/services/opeka/general_settings']['title'] = "General settings";
 
     // Creating a default route and tab for opening hours.
     $items['admin/config/services/opeka'] = array(

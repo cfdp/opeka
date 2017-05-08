@@ -9,6 +9,18 @@
  */
 
 /**
+ * Implements hook_permission().
+ */
+function opeka_screening_permission() {
+  return array(
+    'administer opeka screening' => array(
+      'title' => t('Administer the Opeka Screening Questions'),
+      'description' => t('Grants a user access to the admin backend for managing the Opeka Screening Questions.'),
+    ),
+  );
+}
+
+/**
   * Add assets - stylesheets etc.
   */
 
@@ -44,7 +56,7 @@ function opeka_screening_menu() {
     'description' => 'Provides settings for the screening questions.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('opeka_screening_admin_form'),
-    'access arguments' => array('administer site configuration'),
+    'access arguments' => array('administer opeka screening'),
     'file' => 'opeka_screening.admin.inc',
   );
   return $items;
