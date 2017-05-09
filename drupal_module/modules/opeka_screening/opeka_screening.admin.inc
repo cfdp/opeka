@@ -45,7 +45,7 @@ function opeka_screening_admin_form($form, &$form_state) {
         '#type' => 'textfield',
         '#default_value' => $opeka_screening_options['answer_option'],
         '#size' => 80,
-        '#attributes' => array('class' => array('clearfix'), 'placeholder' => t('Answer option...')),
+        '#attributes' => array('class' => array('clearfix'), 'placeholder' => t('Answer option...'), 'required' => TRUE),
       ),
       '#prefix' => '<div id="' . $element_name . '_' . $idx . '">',
       '#suffix' => '</div>',

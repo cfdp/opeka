@@ -69,4 +69,3 @@ function opeka_schema() {
 function opeka_update_7000(&$sandbox) {
   drupal_install_schema('opeka');
 }
-
