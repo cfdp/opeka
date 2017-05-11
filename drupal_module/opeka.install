@@ -73,7 +73,7 @@ function opeka_update_7000(&$sandbox) {
 /**
 * Revert / import settings for the opeka permissions
 */
-function opeka_7001() {
+function opeka_update_7001() {
   drupal_set_message(t('Enabling modules...'), 'status');
 
   module_enable(array('features'));
