@@ -1,18 +1,3 @@
 <?php
 
-/**
-* Revert / import settings for the opeka permissions
-*/
-function opeka_features_permissions_update_7001() {
-  if (module_exists('features') && module_exists('opeka_screening') && module_exists('opeka_opening_hours')) {
-    module_enable(array('features'));
-    module_enable(array('opeka_screening'));
-    module_enable(array('opeka_opening_hours'));
 
-    drupal_set_message(t('Reverting the opeka permissions'), 'status');
-    features_revert(array('opeka_features_permissions' => array('user_permission')));
-  }
-  else {
-    drupal_set_message(t('Some modules needed for feature reverting not enabled. Not reverting.'), 'warning');
-  }
-}
