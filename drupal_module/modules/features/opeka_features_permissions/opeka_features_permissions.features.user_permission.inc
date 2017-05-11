@@ -25,6 +25,8 @@ function opeka_features_permissions_user_default_permissions() {
   $permissions['administer opeka chat'] = array(
     'name' => 'administer opeka chat',
     'roles' => array(
+      'Chatrådgiver' => 'Chatrådgiver',
+      'Koordinator' => 'Koordinator',
       'administrator' => 'administrator',
     ),
     'module' => 'opeka',
