@@ -21,21 +21,10 @@ function opeka_features_permissions_user_default_permissions() {
     'module' => 'opeka',
   );
 
-  // Exported permission: 'administer opeka advanced settings'.
-  $permissions['administer opeka advanced settings'] = array(
-    'name' => 'administer opeka advanced settings',
-    'roles' => array(
-      'administrator' => 'administrator',
-    ),
-    'module' => 'opeka',
-  );
-
   // Exported permission: 'administer opeka chat'.
   $permissions['administer opeka chat'] = array(
     'name' => 'administer opeka chat',
     'roles' => array(
-      'Chatrådgiver' => 'Chatrådgiver',
-      'Koordinator' => 'Koordinator',
       'administrator' => 'administrator',
     ),
     'module' => 'opeka',
@@ -58,6 +47,15 @@ function opeka_features_permissions_user_default_permissions() {
       'administrator' => 'administrator',
     ),
     'module' => 'opeka_screening',
+  );
+
+  // Exported permission: 'administer opeka settings'.
+  $permissions['administer opeka settings'] = array(
+    'name' => 'administer opeka settings',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'opeka',
   );
 
   // Exported permission: 'generate opeka chat ban codes'.

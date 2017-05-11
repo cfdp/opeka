@@ -20,9 +20,9 @@ function opeka_permission() {
       'title' => t('Administer the chat system'),
       'description' => t('Grants a user access to the admin backend of the Opeka chat system.'),
     ),
-    'administer opeka advanced settings' => array(
-      'title' => t('Administer the advanced settings'),
-      'description' => t('Grants a user access to the advanced settings of the Opeka chat system.'),
+    'administer opeka settings' => array(
+      'title' => t('Administer the Opeka settings'),
+      'description' => t('Grants a user access to the settings of the Opeka chat system.'),
     ),
     'generate opeka chat ban codes' => array(
       'title' => t('Generate opeka chat ban codes'),
@@ -64,7 +64,7 @@ function opeka_menu() {
     'description' => 'Provides settings for the chat service.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('opeka_admin_settings_form'),
-    'access arguments' => array('administer site configuration'),
+    'access arguments' => array('administer opeka settings'),
     'file' => 'opeka.admin.inc',
   );
 
@@ -75,7 +75,7 @@ function opeka_menu() {
     'weight' => 3,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('opeka_admin_advanced_settings_form'),
-    'access arguments' => array('administer opeka advanced settings'),
+    'access arguments' => array('administer opeka settings'),
     'file' => 'opeka.admin.advanced.inc',
   );
 

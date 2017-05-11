@@ -13,6 +13,8 @@ function opeka_opening_hours_admin_form($form, &$form_state) {
   $fieldset_id = 'fieldset-opeka-opening-hours-datetimes';
   $element_name = 'opeka_opening_hours_datetimes';
   $form['#opeka_multified_element_name'] = $element_name;
+  $help_text = t('Adjust opening hours here by defining the time intervals when the chat will be open.');
+  $form['#prefix'] = '<p>'.$help_text.'</p>';
 
   // Check if the incoming values are there, otherwise, use the stored ones.
   $datetimes_input_values = isset($form_state['input'][$element_name]) ? $form_state['input'][$element_name] : [];
