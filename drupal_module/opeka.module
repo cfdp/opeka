@@ -36,6 +36,10 @@ function opeka_permission() {
       'title' => t('Pause opeka chat auto-scroll'),
       'description' => t('Grants a user access to pause opeka chat auto-scrolling.'),
     ),
+    'access chat history' => array(
+      'title' => t('Access chat history'),
+      'description' => t('Grants a user access to view opeka chat messages sent before use logged in.'),
+    ),
   );
 }
 

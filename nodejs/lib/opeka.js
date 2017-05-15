@@ -351,7 +351,7 @@ function Server(config, logger) {
 
       // Only copy safe values from the account-data to the callback object
       _.each(
-        ['canGenerateBanCode', 'isAdmin', 'language', 'name', 'nickname', 'sid', 'uid', 'hideTypingMessage', 'allowPauseAutoScroll'],
+        ['canGenerateBanCode', 'isAdmin', 'language', 'name', 'nickname', 'sid', 'uid', 'hideTypingMessage', 'allowPauseAutoScroll', 'viewChatHistory'],
         function(k) {
           if(k in account) {
             clientData[k] = account[k]

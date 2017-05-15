@@ -41,7 +41,10 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
               account.allowPauseAutoScroll = allowPauseAutoScroll;
               drupal.user.access('hide typing message', account, function (err, hideTypingMessage) {
                 account.hideTypingMessage = hideTypingMessage;
-                callback(null, account);
+                drupal.user.access('access chat history', account, function (err, viewChatHistory) {
+                  account.viewChatHistory = viewChatHistory;
+                  callback(null, account);
+                });
               });
             });
           });
@@ -66,7 +69,10 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
         account.hideTypingMessage = hideTypingMessage;
         drupal.user.access('pause opeka chat autoscroll', account, function (err, allowPauseAutoScroll) {
           account.allowPauseAutoScroll = allowPauseAutoScroll;
-          callback(null, account);
+          drupal.user.access('access chat history', account, function (err, viewChatHistory) {
+            account.viewChatHistory = viewChatHistory;
+            callback(null, account);
+          });
         });
       });
     });
@@ -89,6 +95,7 @@ module.exports.filterData = function (client) {
     hideTypingMessage: client.hideTypingMessage,
     muted: client.muted,
     allowPauseAutoScroll: client.allowPauseAutoScroll,
+    viewChatHistory: client.viewChatHistory,
     name: client.nickname || client.account.name,
     drupal_uid: client.drupal_uid
   };
