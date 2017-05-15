@@ -38,28 +38,19 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
           drupal.user.access('generate opeka chat ban codes', account, function (err, canGenerateBanCode) {
             account.canGenerateBanCode = canGenerateBanCode;
             drupal.user.access('pause opeka chat autoscroll', account, function (err, allowPauseAutoScroll) {
-              util.log("Allow pausing autoscroll: " + allowPauseAutoScroll);
               account.allowPauseAutoScroll = allowPauseAutoScroll;
-              callback(null, account);
+              drupal.user.access('hide typing message', account, function (err, hideTypingMessage) {
+                account.hideTypingMessage = hideTypingMessage;
+                callback(null, account);
+              });
             });
           });
-        });
-        drupal.user.access('hide typing message', account, function (err, hideTypingMessage) {
-          account.hideTypingMessage = hideTypingMessage;
-          callback(null, account);
         });
       });
     });
   }
   // Otherwise, we need to check if the accessCode feature is enabled
   else {
-
-    drupal.user.load(0, function (err, account) {
-      drupal.user.access('hide typing message', account, function (err, hideTypingMessage) {
-        account.hideTypingMessage = hideTypingMessage;
-        callback(null, account);
-      });
-    });
 
     var account = {};
     account.isAdmin = false;
@@ -71,12 +62,15 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
     }
 
     drupal.user.load(0, function (err, account) {
-      drupal.user.access('pause opeka chat autoscroll', account, function (err, allowPauseAutoScroll) {
-        util.log("Allow pausing autoscroll: " + allowPauseAutoScroll);
-        account.allowPauseAutoScroll = allowPauseAutoScroll;
-        callback(null, account);
+      drupal.user.access('hide typing message', account, function (err, hideTypingMessage) {
+        account.hideTypingMessage = hideTypingMessage;
+        drupal.user.access('pause opeka chat autoscroll', account, function (err, allowPauseAutoScroll) {
+          account.allowPauseAutoScroll = allowPauseAutoScroll;
+          callback(null, account);
+        });
       });
     });
+
   }
 
 };
