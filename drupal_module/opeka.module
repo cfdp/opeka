@@ -38,7 +38,7 @@ function opeka_permission() {
     ),
     'access chat history' => array(
       'title' => t('Access chat history'),
-      'description' => t('Grants a user access to view opeka chat messages sent before use logged in.'),
+      'description' => t('Grants a user access to view opeka chat messages sent before user logged in.'),
     ),
   );
 }

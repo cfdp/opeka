@@ -54,9 +54,6 @@ body.page-opeka-widgets-inline {
   body.page-opeka-widgets-inline .status-content {
     width: 67%; }
   body.page-opeka-widgets-inline .login-button {
-    position: relative;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+    position: absolute;
+    top: 5px;
     display: inline-block; } }
