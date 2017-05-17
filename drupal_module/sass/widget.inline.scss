@@ -78,7 +78,8 @@ body.page-opeka-widgets-inline {
       width: 67%;
     }
     .login-button {
-      @include vertical-align;
+      position: absolute;
+      top: 5px;
       display: inline-block;
     }
   }

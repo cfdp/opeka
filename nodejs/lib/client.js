@@ -48,6 +48,8 @@ var Client = function(server, stream, remote, conn) {
 
         self.allowPauseAutoScroll = null;
 
+        self.viewChatHistory = null;
+
         self.screening = null;
 
         groups.registerClient(self);
