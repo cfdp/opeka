@@ -10,6 +10,17 @@
 function opeka_features_permissions_user_default_permissions() {
   $permissions = array();
 
+  // Exported permission: 'access chat history'.
+  $permissions['access chat history'] = array(
+    'name' => 'access chat history',
+    'roles' => array(
+      'Chatrådgiver' => 'Chatrådgiver',
+      'Koordinator' => 'Koordinator',
+      'administrator' => 'administrator',
+    ),
+    'module' => 'opeka',
+  );
+
   // Exported permission: 'access opeka chat'.
   $permissions['access opeka chat'] = array(
     'name' => 'access opeka chat',
@@ -40,15 +51,6 @@ function opeka_features_permissions_user_default_permissions() {
       'administrator' => 'administrator',
     ),
     'module' => 'opeka_opening_hours',
-  );
-
-  // Exported permission: 'administer opeka screening'.
-  $permissions['administer opeka screening'] = array(
-    'name' => 'administer opeka screening',
-    'roles' => array(
-      'administrator' => 'administrator',
-    ),
-    'module' => 'opeka_screening',
   );
 
   // Exported permission: 'administer opeka settings'.
