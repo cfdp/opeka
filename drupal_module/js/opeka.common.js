@@ -675,18 +675,15 @@ var Opeka = {
 
   // Play a sound when a client joins the chat
   Opeka.userJoinedSound = function() {
-
     Opeka.doorBellSound.play();
   };
 
   // Basic setup for the app when the DOM is loaded.
   $(function () {
     var view;
-    console.log(Drupal.settings.opeka.client_login_sound);
     Opeka.doorBellSound = new Howl({
       src: [Drupal.settings.opeka.client_login_sound]
     });
-    console.log(Howl);
     Opeka.compileTemplates();
 
     // We use a bare Backbone model for containing server status.
