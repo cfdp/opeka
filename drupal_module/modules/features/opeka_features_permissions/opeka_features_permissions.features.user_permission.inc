@@ -53,6 +53,15 @@ function opeka_features_permissions_user_default_permissions() {
     'module' => 'opeka_opening_hours',
   );
 
+  // Exported permission: 'administer opeka screening'.
+  $permissions['administer opeka screening'] = array(
+    'name' => 'administer opeka screening',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'opeka_screening',
+  );
+
   // Exported permission: 'administer opeka settings'.
   $permissions['administer opeka settings'] = array(
     'name' => 'administer opeka settings',
@@ -92,6 +101,17 @@ function opeka_features_permissions_user_default_permissions() {
       'administrator' => 'administrator',
     ),
     'module' => 'opeka',
+  );
+
+  // Exported permission: 'view opeka screening results'.
+  $permissions['view opeka screening results'] = array(
+    'name' => 'view opeka screening results',
+    'roles' => array(
+      'Chatrådgiver' => 'Chatrådgiver',
+      'Koordinator' => 'Koordinator',
+      'administrator' => 'administrator',
+    ),
+    'module' => 'opeka_screening',
   );
 
   return $permissions;
