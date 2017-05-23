@@ -31,8 +31,6 @@ function opeka_screening_display_results_table() {
                 'answer',
             ));
 
-  //$count_subm = $query->addExpression('COUNT(submission_id)');
-
 
   $results = $query->execute();
   $rows = array();
@@ -61,9 +59,9 @@ function opeka_screening_display_results_table() {
   if (!$total_last_month) {
     $total_last_month = t("None");
   }
-  $html .= "<div><p>".t('Total number of chat sessions: ').$total."</p></div>";
-  $html .= "<div><p>".t('Total number of chat sessions last 4 weeks: ').$total_last_month."</p></div>";
-  return ($html);
+  $html_pre = "<div><p>".t('Total number of chat sessions: ').$total."</p></div>";
+  $html_pre .= "<div><p>".t('Total number of chat sessions last 4 weeks: ').$total_last_month."</p></div>";
+  return ($html_pre . $html);
 }
 
 function _opeka_screening_expand_gender($gender) {
