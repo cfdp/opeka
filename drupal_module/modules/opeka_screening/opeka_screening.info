@@ -1,6 +1,9 @@
 name = Opeka Screening Questions
 description = An Opeka submodule, allowing to manage a number of screening questions given to the anonymous users before entering the chat
 files[] = opeka_screening.module
+files[] = opeka_screening.admin.inc
+files[] = opeka_screening.results.inc
+files[] = opeka_screening.install
 
 configure = admin/config/services/opeka/screening
 

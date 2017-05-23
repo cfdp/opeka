@@ -1130,21 +1130,27 @@ function Server(config, logger) {
       chatStart_Min = removedUser.chatStart_Min;
       removedUser.activeRoomId = null;
       checkPause = true;
-    } else {
+    }
+    else {
       // In this case we don't have a valid reference to a signed in client (happens when
       // client closes / refreshes the browser window)
       // - also from the snippet/chatwidget. The chat should only pause if the user is leaving an
       // active room.
-      checkPause = (activeRoomId === room.id);
+      self.logger.info('User logout: No valid reference to client.');
+      if (typeof room !== 'undefined') {
+          checkPause = (activeRoomId === room.id);
+      }
+      else {
+        checkPause = false;
+        self.logger.warning('@debug removeUserFromRoom: room undefined.');
+      }
     }
 
     // Calculate the duration of the chat session of the user being removed
     if (chatStart_Min) {
       chatEnd_Min = Math.round((new Date()).getTime() / 60000);
-      self.logger.info('Logout: User chat start: ', chatStart_Min);
-      self.logger.info('Logout: User chat end: ', chatEnd_Min);
-
       chatDuration = chatEnd_Min - chatStart_Min;
+      self.logger.info('User logout: Chat duration (minutes): ', chatDuration);
     }
 
     if(room) {
