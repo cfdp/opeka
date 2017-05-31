@@ -18,7 +18,7 @@ function opeka_permission() {
     ),
     'administer opeka chat' => array(
       'title' => t('Administer the chat system'),
-      'description' => t('Grants a user access to the admin backend of the Opeka chat system.'),
+      'description' => t('Grants a user access to log in as counselor / coordinator in the Opeka chat system.'),
     ),
     'administer opeka settings' => array(
       'title' => t('Administer the Opeka settings'),
@@ -81,6 +81,16 @@ function opeka_menu() {
     'page arguments' => array('opeka_admin_advanced_settings_form'),
     'access arguments' => array('administer opeka settings'),
     'file' => 'opeka.admin.advanced.inc',
+  );
+
+  $items['admin/config/services/opeka/statistics'] = array(
+    'title' => 'Statistics',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+    'file' => 'opeka.statistics.inc',
+    'file path' => drupal_get_path('module', 'opeka'),
+    'page callback' => 'opeka_statistics_display_results_table',
+    'access arguments' => array('administer opeka chat'),
   );
 
   $items['opeka-widgets/header'] = array(

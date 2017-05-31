@@ -2,10 +2,10 @@
 
 /** Generate a table with screening results
 *
-* Inspired by http://www.rahulsingla.com/blog/2011/05/drupal-7-creating-drupal-style-tables-with-paging-sorting-and-sticky-headers - thx a lot Rahul!
+* Inspired by http://www.rahulsingla.com/blog/2011/05/drupal-7-creating-drupal-style-tables-with-paging-sorting-and-sticky-headers
 **/
 
-function opeka_screening_display_results_table() {
+function opeka_statistics_display_results_table() {
   $header = array(
     array('data' => t('Date'), 'field' => 'submission_date', 'sort' => 'asc'),
     array('data' => t('ID'), 'field' => 'submission_id'),
@@ -16,7 +16,7 @@ function opeka_screening_display_results_table() {
   );
 
   // Get a paged list of all the submission data
-  $query = db_select('opeka_screening_submissions', 'n')
+  $query = db_select('opeka_stats', 'n')
             //->condition('status', 1) //Only published nodes, change condition as it suits you
             ->extend('PagerDefault')     //Pager Extender
                 ->limit(10)              //10 results per page
@@ -36,7 +36,7 @@ function opeka_screening_display_results_table() {
   $rows = array();
   foreach ($results as $subm) {
     $rows[] = array( 'data' =>
-                    array( format_date($subm->submission_date), $subm->submission_id, $subm->age, _opeka_screening_expand_gender($subm->gender), $subm->question, $subm->answer )
+                    array( format_date($subm->submission_date), $subm->submission_id, $subm->age, _opeka_statistics_expand_gender($subm->gender), $subm->question, $subm->answer )
                    );
   }
 
@@ -49,12 +49,12 @@ function opeka_screening_display_results_table() {
 
   $html .= theme('pager', array( 'tags' => array() ) );
 
-  $total = _opeka_screening_get_total();
+  $total = _opeka_statistics_get_total();
   if (!$total) {
     $total = t("None");
   }
 
-  $total_last_month = _opeka_screening_get_last_month();
+  $total_last_month = _opeka_statistics_get_last_month();
 
   if (!$total_last_month) {
     $total_last_month = t("None");
@@ -64,7 +64,7 @@ function opeka_screening_display_results_table() {
   return ($html_pre . $html);
 }
 
-function _opeka_screening_expand_gender($gender) {
+function _opeka_statistics_expand_gender($gender) {
   switch ($gender) {
     case "f":
       $res = t("female");
@@ -84,8 +84,8 @@ function _opeka_screening_expand_gender($gender) {
 /** Get the total number of submissions
  *
  */
-function _opeka_screening_get_total() {
-  $result = db_query("SELECT COUNT(*) FROM {opeka_screening_submissions}");
+function _opeka_statistics_get_total() {
+  $result = db_query("SELECT COUNT(*) FROM {opeka_stats}");
   $count = $result->fetchField(0);
 
   return $count;
@@ -94,8 +94,8 @@ function _opeka_screening_get_total() {
 /** Get the number of submissions the last month
  *
  */
-function _opeka_screening_get_last_month() {
-  $result = db_query("SELECT COUNT(*) FROM {opeka_screening_submissions} WHERE submission_date > :submission_date", array(
+function _opeka_statistics_get_last_month() {
+  $result = db_query("SELECT COUNT(*) FROM {opeka_stats} WHERE submission_date > :submission_date", array(
     ':submission_date' => REQUEST_TIME - 3600 * 24 * 28,
   ));
   $count = $result->fetchField(0);

@@ -5,6 +5,7 @@ dependencies[] = jquery_update
 files[] = opeka.module
 files[] = opeka.admin.inc
 files[] = opeka.pages.inc
+files[] = opeka.statistics.inc
 
 configure = admin/config/services/opeka
 

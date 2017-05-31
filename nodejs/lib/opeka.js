@@ -26,7 +26,7 @@ var _ = require("underscore"),
       groups: require("./groups"),
       queues: require('./queues'),
       rooms: require('./rooms'),
-      screening: require('./screening'),
+      statistics: require('./statistics'),
       user: require('./user'),
       Client: require('./client'),
       chatOpen: false
@@ -332,7 +332,7 @@ function Server(config, logger) {
       else {
         client.age = "";
       }
-      // If screening questions haven't been defined explicitly, set variable to null
+      // Is the screening module enabled? If screening questions haven't been defined explicitly, set variable to null
       if (clientUser.screening.question) {
         client.screening = clientUser.screening;
       }
@@ -839,9 +839,9 @@ function Server(config, logger) {
     client.whisperPartners = {};
     self.logger.info('Login: User chat start: ', client.chatStart_Min);
 
-    // add the screening questions to the db if present
-    if (self.config.get('features:screeningQuestions') && !client.account.isAdmin && client.screening) {
-      opeka.screening.save(client.age, client.gender, client.screening);
+    // add the chat session data for client to the db
+    if (!client.account.isAdmin) {
+      opeka.statistics.save(client.age, client.gender, client.screening);
     }
 
     // Special case when joining from the global Queue.

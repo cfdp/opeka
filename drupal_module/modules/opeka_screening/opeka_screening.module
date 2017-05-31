@@ -17,10 +17,6 @@ function opeka_screening_permission() {
       'title' => t('Administer the Opeka Screening Questions'),
       'description' => t('Grants a user access to the admin backend for managing the Opeka Screening Questions.'),
     ),
-    'view opeka screening results' => array(
-      'title' => t('View the Opeka Screening Question results'),
-      'description' => t('Grants a user access to the  Opeka Screening Question results.'),
-    ),
   );
 }
 
@@ -63,15 +59,6 @@ function opeka_screening_menu() {
     'file' => 'opeka_screening.admin.inc',
   );
 
-  $items['admin/config/services/opeka/screening_results'] = array(
-    'title' => 'Screening results',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 1,
-    'file' => 'opeka_screening.results.inc',
-    'file path' => drupal_get_path('module', 'opeka_screening'),
-    'page callback' => 'opeka_screening_display_results_table',
-    'access arguments' => array('view opeka screening results'),
-  );
   return $items;
 }
 
