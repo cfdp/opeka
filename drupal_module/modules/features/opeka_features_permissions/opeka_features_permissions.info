@@ -17,5 +17,4 @@ features[user_permission][] = administer opeka settings
 features[user_permission][] = generate opeka chat ban codes
 features[user_permission][] = hide typing message
 features[user_permission][] = pause opeka chat autoscroll
-features[user_permission][] = view opeka screening results
 project path = sites/all/modules/custom/opeka/modules/features

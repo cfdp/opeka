@@ -103,16 +103,5 @@ function opeka_features_permissions_user_default_permissions() {
     'module' => 'opeka',
   );
 
-  // Exported permission: 'view opeka screening results'.
-  $permissions['view opeka screening results'] = array(
-    'name' => 'view opeka screening results',
-    'roles' => array(
-      'Chatrådgiver' => 'Chatrådgiver',
-      'Koordinator' => 'Koordinator',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'opeka_screening',
-  );
-
   return $permissions;
 }
