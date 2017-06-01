@@ -21,6 +21,26 @@ function opeka_screening_permission() {
 }
 
 /**
+ * Implements hook_menu().
+ */
+function opeka_screening_menu() {
+  $items = array();
+
+  $items['admin/config/services/opeka/screening'] = array(
+    'title' => 'Screening Questions',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+    'description' => 'Provides settings for the screening questions.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('opeka_screening_admin_form'),
+    'access arguments' => array('administer opeka screening'),
+    'file' => 'opeka_screening.admin.inc',
+  );
+  return $items;
+}
+
+
+/**
   * Add assets - stylesheets etc.
   */
 
@@ -41,25 +61,6 @@ function opeka_screening_add_assets() {
   $settings['opeka_screening_options'] = $opeka_screening_options_text_array;
   // Add js files and settings
   drupal_add_js(array('opeka_screening' => $settings), 'setting');
-}
-
-/**
- * Implements hook_menu().
- */
-function opeka_screening_menu() {
-
-  $items['admin/config/services/opeka/screening'] = array(
-    'title' => 'Screening Questions',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 1,
-    'description' => 'Provides settings for the screening questions.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('opeka_screening_admin_form'),
-    'access arguments' => array('administer opeka screening'),
-    'file' => 'opeka_screening.admin.inc',
-  );
-
-  return $items;
 }
 
 /**
