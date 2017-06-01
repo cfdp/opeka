@@ -19,7 +19,7 @@ function opeka_statistics_display_results_table() {
   $query = db_select('opeka_stats', 'n')
             //->condition('status', 1) //Only published nodes, change condition as it suits you
             ->extend('PagerDefault')     //Pager Extender
-                ->limit(10)              //10 results per page
+                ->limit(50)              //10 results per page
             ->extend('TableSort')        //Sorting Extender
                 ->orderByHeader($header)//Field to sort on is picked from $header
             ->fields ('n', array (
