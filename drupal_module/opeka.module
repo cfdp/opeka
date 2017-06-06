@@ -407,3 +407,20 @@ function _opeka_var($var_name,$new_val = NULL) {
 
   return isset($vars[$var_name]) ? $vars[$var_name] : NULL;
 }
+
+/**
+ * Implements hook_user_login().
+ *
+ * We want to redirect authenticated users to /admin/opeka. See discussion here
+ * https://www.drupal.org/node/683696
+ */
+function opeka_user_login(&$edit, $account) {
+  // $edit is empty with one time login
+  if (!empty($edit)) {
+    $_GET['destination'] = 'admin/opeka';
+  }
+  // Or the form id is the password reset form
+  if ($_POST['form_id'] != 'user_pass_reset') {
+    $_GET['destination'] = 'admin/opeka';
+  }
+}
