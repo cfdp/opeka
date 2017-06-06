@@ -60,6 +60,43 @@ function opeka_schema() {
     'indexes' => array('ip_hash' => array('ip_hash')),
   );
 
+  $schema['opeka_stats'] = array(
+    'description' => 'We save gender, age and time about the chat sessions for statistical purposes. Furthermore we save the screening question and answer, if present',
+    'fields' => array(
+      'submission_id' => array(
+        'description' => 'Unique submission ID.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'age' => array(
+        'description' => 'User age.',
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'gender' => array(
+        'description' => 'User gender.',
+        'type' => 'varchar',
+        'length' => 12,
+      ),
+      'question' => array(
+        'description' => 'Screening question.',
+        'type' => 'text',
+      ),
+      'answer' => array(
+        'description' => 'Screening answer.',
+        'type' => 'text',
+      ),
+      'submission_date' => array(
+        'description' => 'Unix timestamp representing the time when the submission was made.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
+    ),
+    'primary key' => array('submission_id'),
+    'indexes' => array('submission_date' => array('submission_date')),
+  );
+
   return $schema;
 }
 
@@ -95,6 +132,44 @@ function opeka_update_7001() {
 * Revert / import settings for the opeka screening permissions
 */
 function opeka_update_7002() {
+  drupal_set_message(t('Enabling modules...'), 'status');
+
+  module_enable(array('features'));
+  module_enable(array('opeka_features_permissions'));
+  module_enable(array('opeka_screening'));
+  module_enable(array('opeka_opening_hours'));
+
+  if (module_exists('features') && module_exists('opeka_screening') && module_exists('opeka_opening_hours')) {
+
+    drupal_set_message(t('Reverting the opeka screening permissions'), 'status');
+    features_revert(array('opeka_features_permissions' => array('user_permission')));
+  }
+  else {
+    drupal_set_message(t('Some modules needed for feature reverting not enabled. Not reverting.'), 'warning');
+  }
+}
+
+/**
+* Create new table for chat statistics and copy existing data from screening module
+*/
+function opeka_update_7003() {
+  $schema = opeka_schema();
+  if (!db_table_exists('opeka_stats')) {
+    drupal_set_message(t('Creating table opeka_stats.'), 'status');
+    db_create_table('opeka_stats', $schema['opeka_stats']);
+    if(db_table_exists('opeka_screening_submissions')) {
+      // @todo: move existing entries from opeka_submissions to new table
+      drupal_set_message(t('Moving existing data from table opeka_screening_submissions.'), 'status');
+      $query = "INSERT INTO opeka_stats (age, gender, question, answer, submission_date) SELECT age, gender, question, answer, submission_date FROM opeka_screening_submissions;";
+      $result = db_query($query);
+      // delete old table   db_drop_table('opeka_screening_submissions');
+    }
+  }
+  else {
+    drupal_set_message(t('Table opeka_stats already exists.'), 'status');
+  }
+
+  // Revert permission features
   drupal_set_message(t('Enabling modules...'), 'status');
 
   module_enable(array('features'));
