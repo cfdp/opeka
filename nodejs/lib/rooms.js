@@ -5,44 +5,44 @@
 "use strict";
 
 var _ = require('underscore'),
-    uuid = require('node-uuid'),
-    util = require("util"),
-    opeka = {
-      groups: require('./groups'),
-      user: require("./user"),
-      queues: require("./queues"),
+  uuid = require('node-uuid'),
+  util = require("util"),
+  opeka = {
+    groups: require('./groups'),
+    user: require("./user"),
+    queues: require("./queues"),
+  },
+  roomList = {},
+  roomCounts = {
+    group: {
+      empty: 0,
+      active: 0,
+      full: 0
     },
-    roomList = {},
-    roomCounts = {
-      group: {
-        empty: 0,
-        active: 0,
-        full: 0
-      },
-      pair: {
-        empty: 0,
-        active: 0,
-        full: 0
-      },
-      total: {
-        empty: 0,
-        active: 0,
-        full: 0
-      }
-    };
+    pair: {
+      empty: 0,
+      active: 0,
+      full: 0
+    },
+    total: {
+      empty: 0,
+      active: 0,
+      full: 0
+    }
+  };
 
 /**
-* Get an open room of a specific type - pair or group.
-* Should not return a paused room and it should (@todo)
-* randomize between the available rooms so counselors will be handed new clients evenly.
-* @todo: test if this works for group chats
-*/
+ * Get an open room of a specific type - pair or group.
+ * Should not return a paused room and it should (@todo)
+ * randomize between the available rooms so counselors will be handed new clients evenly.
+ * @todo: test if this works for group chats
+ */
 var getOpenRoom = function (roomType) {
   return _.find(roomList, function (room) {
     var userCount = Object.keys(room.users).length;
 
     // No empty rooms, no full rooms and no paused rooms
-    if(userCount == 0 || userCount >= room.maxSize || room.paused) {
+    if (userCount == 0 || userCount >= room.maxSize || room.paused) {
       return false;
     }
 
@@ -62,8 +62,8 @@ var getOpenRoom = function (roomType) {
 // signaling that it reflects the paused property also
 var sumRoomList = function (rooms) {
   var empty = 0,
-      active = 0,
-      full = 0;
+    active = 0,
+    full = 0;
 
   _.each(rooms, function (room) {
     var userCount = Object.keys(room.users).length;
@@ -92,8 +92,8 @@ var sumRoomList = function (rooms) {
 // Count the rooms and update the roomCounts object with the result.
 var updateRoomCounts = function () {
   var pairRooms = [],
-      groupRooms = [],
-      allRooms = [];
+    groupRooms = [],
+    allRooms = [];
 
   _.each(roomList, function (room) {
     // Private rooms aren't counted.
@@ -126,6 +126,7 @@ var Room = function (options) {
     self.name = options.name;
     self.maxSize = parseInt(options.maxSize, 10);
     self.private = options.private;
+    self.invite = options.invite;
     self.ipLocation = options.ipLocation;
     self.uid = options.uid;
     self.queueSystem = options.queueSystem || 'private' // Default to private queue system.
@@ -155,7 +156,7 @@ var Room = function (options) {
     // Add our new room to the room list.
     roomList[self.id] = self;
 
-    util.log('Room created:' + self.id);
+    util.log('Room created: ' + self.id + ', invite: ' + self.invite);
 
     updateRoomCounts();
 
@@ -163,7 +164,7 @@ var Room = function (options) {
   };
 
   // Method used in order to check if the room is full
-  self.isFull = function() {
+  self.isFull = function () {
     var count = _.size(self.users);
     if (self.maxSize > 0 && count >= self.maxSize) {
       return true;
@@ -174,9 +175,9 @@ var Room = function (options) {
   };
 
   // Method used to see if there is a counselor in the room
-  self.hasCounsellor = function() {
+  self.hasCounsellor = function () {
     var count;
-    var setCount = function(response) {
+    var setCount = function (response) {
       count = response;
     }
     // the now js count function needs to be passed a callback function into which it feeds the user count (ct)
@@ -224,7 +225,7 @@ var Room = function (options) {
       if (callback) {
         try {
           callback(self.users);
-        } catch(ignore) {
+        } catch (ignore) {
           //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
         }
       }
@@ -277,7 +278,7 @@ var Room = function (options) {
     if (callback) {
       try {
         callback(self.users, queueUserID, removedUserNickname);
-      } catch(ignored) {
+      } catch (ignored) {
         //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
       }
     }
@@ -333,6 +334,7 @@ var Room = function (options) {
       id: self.id,
       uid: self.uid,
       name: self.name,
+      invite: self.invite,
       maxSize: self.maxSize,
       memberCount: self.memberCount,
       paused: self.paused || false,
@@ -345,7 +347,7 @@ var Room = function (options) {
   /**
    * Remove all users from the room.
    */
-  self.removeAllUsers = function() {
+  self.removeAllUsers = function () {
     _.each(self.users, function (user) {
       self.removeUser(user.clientId);
     });
@@ -358,7 +360,7 @@ var Room = function (options) {
   /**
    * Check to see if the user is muted.
    */
-  self.userIsMuted = function(clientId) {
+  self.userIsMuted = function (clientId) {
     return self.users[clientId].muted;
   };
 
@@ -367,9 +369,16 @@ var Room = function (options) {
 
 // Provide a list of rooms for the client.
 var clientData = function (includePrivateRooms) {
-  var rooms = _.map(roomList, function (room) {
-        return room.clientData();
-      });
+  var rooms = [];
+  _.each(roomList, function (room) {
+    if (!room.private) {
+      rooms.push(room.clientData());
+    }
+  });
+
+  rooms = _.map(roomList, function (room) {
+    return room.clientData();
+  });
 
   rooms = _.sortBy(rooms, function (room) {
     return room.name;

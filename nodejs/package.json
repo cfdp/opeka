@@ -25,6 +25,7 @@
     "emoticons": "^0.1.8",
     "nconf": "^0.8.4",
     "node-uuid": "^1.4.7",
+    "date-format": "^1.1.0",
     "shoe": "0.0.15",
     "socket.io": "^1.7.2",
     "underscore": "^1.8.3",

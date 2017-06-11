@@ -1,0 +1,84 @@
+<?php
+/**
+ * @file
+ * Installation and update functions.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function opeka_invite_schema() {
+  return array(
+    'opeka_invite' => array(
+      'description' => 'Opeka invitations.',
+      'fields' => array(
+        'iid' => array(
+          'description' => 'Unique invitation ID.',
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'name' => array(
+          'description' => 'Invitation name.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => TRUE,
+        ),
+        'time' => array(
+          'description' => 'Unix timestamp for the invitation scheduled time.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'token' => array(
+          'description' => 'Random token used for user authentication.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => TRUE,
+        ),
+        'invitee' => array(
+          'description' => 'Invitee name.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => TRUE,
+          'default' => '',
+        ),
+        'email' => array(
+          'description' => 'Invitee email.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => TRUE,
+          'default' => '',
+        ),
+        'counselor' => array(
+          'description' => 'Counselor name.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => TRUE,
+          'default' => '',
+        ),
+        'comment' => array(
+          'description' => 'Personal message.',
+          'type' => 'text',
+          'not null' => TRUE,
+          'default' => '',
+        ),
+        'status' => array(
+          'description' => '1 if the invitation is active, 0 otherwise',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 1,
+        ),
+        'count' => array(
+          'description' => 'How many times the token has been checked against.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+      ),
+      'primary key' => array('iid'),
+    ),
+  );
+}
