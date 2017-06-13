@@ -412,18 +412,22 @@ function Server(config, logger) {
     var autoPause = self.config.get('features:automaticPausePairRooms'),
       inviteId = null,
       roomId = null,
-      roomFound = null;
+      roomFound = null,
+      cancelled = false;
 
     self.logger.info('Search invite by token ' + token);
 
     _.forEach(opeka.invites.list, function (invite) {
       if (invite.token === token) {
-        inviteId = invite.id;
         self.logger.info('Invite ' + inviteId + ' is found by token ' + token);
+        inviteId = invite.id;
+        if (!invite.status) {
+          cancelled = true;
+        }
       }
     });
 
-    if (inviteId) {
+    if (inviteId && !cancelled) {
       _.forEach(opeka.rooms.list, function (room) {
         self.logger.info('Room: ' + room.id + ', invite: ' + room.invite);
         if (room.invite && room.invite == inviteId) {
@@ -435,6 +439,9 @@ function Server(config, logger) {
           }
         }
       });
+    }
+    else if (cancelled) {
+      self.logger.info('Attempt to accept cancelled invite ' + inviteId);
     }
     else {
       self.logger.info('No invite is found by token ' + token);
@@ -450,7 +457,7 @@ function Server(config, logger) {
    */
   self.everyone.addServerMethod('getRoomById', function (roomId, callback) {
     var autoPause = self.config.get('features:automaticPausePairRooms'),
-    roomFound = null;
+      roomFound = null;
 
     _.forEach(opeka.rooms.list, function (room) {
       if (room.id && room.id == roomId) {
@@ -873,7 +880,7 @@ function Server(config, logger) {
 
   self.councellors.addServerMethod('cancelInvite', function (inviteId) {
     if (inviteId != null) {
-      _.each(opeka.invites.list, function(invite, delta) {
+      _.each(opeka.invites.list, function (invite, delta) {
         if (invite.id == inviteId) {
           var invite = opeka.invites.list[delta];
           invite.status = 0;

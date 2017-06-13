@@ -1663,7 +1663,7 @@
           roomLink: Drupal.t('< Go back to room list'),
           createRoomButton: Drupal.t('Create room'),
           openRoomButton: Drupal.t('Open room'),
-          cancelInviteButton: Drupal.t('Disable'),
+          cancelInviteButton: Drupal.t('Cancel'),
           name: Drupal.t('Chat name'),
           date: Drupal.t('Date & time'),
           actions: Drupal.t('Actions'),

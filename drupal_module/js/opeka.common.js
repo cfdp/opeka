@@ -233,6 +233,15 @@ var Opeka = {
       if (Opeka.remote) {
         Opeka.remote.getInviteRoomByToken(token, function (room) {
           if (room) {
+            if (room = 'cancelled') {
+              self.navigate('rooms', {trigger: true});
+              var view = new Opeka.DialogView({
+                content: Backbone.View.prototype.make('p', 'message', Drupal.t('This chat has been cancelled by counselor.')),
+                title: Drupal.t('Chat is cancelled')
+              });
+
+              view.render();
+            }
             Opeka.roomList.add(room);
             Drupal.settings.opeka.user.roomId = room.id;
             if (self.checkSignIn()) {
@@ -243,7 +252,7 @@ var Opeka = {
             // alert(Drupal.t('It seems your counselor is not available yet, try again in a few minutes'));
             self.navigate('rooms', {trigger: true});
             var view = new Opeka.DialogView({
-              content: Backbone.View.prototype.make('p', 'message', Drupal.t('It seems your counselor is not available yet, try again in a few minutes')),
+              content: Backbone.View.prototype.make('p', 'message', Drupal.t('It seems your counselor is not available yet, try again in a few minutes.')),
               title: Drupal.t('Chat not available')
             });
 

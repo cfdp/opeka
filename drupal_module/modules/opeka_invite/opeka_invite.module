@@ -184,7 +184,7 @@ function opeka_invite_page_alter(&$page) {
     );
     drupal_add_js($setting, 'setting');
   }
-  drupal_add_js('setting', array('opeka' => array('invite' => TRUE)));
+  drupal_add_js(array('opeka' => array('invite' => TRUE)), 'setting');
 }
 
 /**
