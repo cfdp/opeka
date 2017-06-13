@@ -27,24 +27,6 @@ function opeka_main_page() {
   return implode("\n", $output);
 }
 
-/**
- * Checkes whether the current page is rendered using the Opeka chat system.
- * @return boolean - TRUE if current page is an Opeka page and FALSE otherwise.
- */
-function is_opeka_chat_page() {
-    $path = current_path();
-    $prefixes = array(
-        "opeka",
-        "opeka-widgets",
-        "admin/opeka"
-    );
-    foreach($prefixes as $prefix) {
-        if(substr($path, 0, strlen($prefix)) === $prefix) {
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
 
 /*
  * Inline widget page for inclusion on third party sites
