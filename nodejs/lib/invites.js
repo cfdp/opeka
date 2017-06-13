@@ -38,6 +38,11 @@ var Invite = function (data) {
       id: self.iid,
       name: self.name,
       time: format('dd/MM/yyyy hh:mm', new Date(self.time * 1000)),
+      invitee: self.invitee,
+      email: self.email,
+      counselor: self.counselor,
+      comment: self.comment,
+      status: self.status,
     };
   };
 

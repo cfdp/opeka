@@ -219,7 +219,7 @@ var Opeka = {
 
     inviteList: function () {
       var admin = Opeka.clientData.isAdmin;
-      if (this.checkSignIn() && admin) {
+      if (this.checkSignIn() && admin && Drupal.settings.opeka && Drupal.settings.opeka.invite) {
         var view = new Opeka.InviteListView({});
 
         Opeka.appViewInstance.replaceContent(view.render().el);
@@ -242,7 +242,7 @@ var Opeka = {
           else {
             // alert(Drupal.t('It seems your counselor is not available yet, try again in a few minutes'));
             self.navigate('rooms', {trigger: true});
-            view = new Opeka.DialogView({
+            var view = new Opeka.DialogView({
               content: Backbone.View.prototype.make('p', 'message', Drupal.t('It seems your counselor is not available yet, try again in a few minutes')),
               title: Drupal.t('Chat not available')
             });
@@ -416,6 +416,31 @@ var Opeka = {
     // This triggers a reset even on the queueList instance, so any views
     // that use this list can listen to that for updates.
     Opeka.inviteList.reset(invites);
+  };
+
+  // For when the server has an updated invites list for us.
+  Opeka.clientSideMethods.inviteCreated = function (newInvite) {
+    // This triggers a reset even on the queueList instance, so any views
+    // that use this list can listen to that for updates.
+    var existing  = _.find(Opeka.inviteList.models, function (invite, delta) {
+      return invite.id == newInvite.id;
+    });
+    if (!existing) {
+      Opeka.inviteList.add(newInvite);
+      Opeka.inviteList.trigger('change');
+    }
+  };
+
+  // For when the server has an updated invites list for us.
+  Opeka.clientSideMethods.inviteCancelled = function (inviteId) {
+    // This triggers a reset even on the queueList instance, so any views
+    // that use this list can listen to that for updates.
+    _.each(Opeka.inviteList.models, function (invite, delta) {
+      if (invite.id == inviteId) {
+        Opeka.inviteList.models[delta].set('status', false);
+      }
+    });
+    Opeka.inviteList.trigger('change');
   };
 
   // Add the new room to our local room list.

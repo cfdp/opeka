@@ -400,6 +400,8 @@ function Server(config, logger) {
       callback(null, invite.clientData());
     }
 
+    self.councellors.remote('inviteCreated', invite.clientData());
+
     self.logger.info('Invitation ' + invite.name + ' (' + invite.id + ') created.');
   });
 
@@ -866,6 +868,19 @@ function Server(config, logger) {
         self.broadcastChatStatus();
         self.sendSystemMessage("Room size changed to " + newSize, room.group, room);
       }
+    }
+  });
+
+  self.councellors.addServerMethod('cancelInvite', function (inviteId) {
+    if (inviteId != null) {
+      _.each(opeka.invites.list, function(invite, delta) {
+        if (invite.id == inviteId) {
+          var invite = opeka.invites.list[delta];
+          invite.status = 0;
+          self.logger.info('Cancelled invite ' + inviteId);
+          self.councellors.remote('inviteCancelled', inviteId);
+        }
+      });
     }
   });
 

@@ -155,7 +155,7 @@
         </div>
 
         <div class="form-item private-room">
-          <input name="private" id="private" name="private" type="checkbox" value="<%- private %>"<% if (invite) { %> disabled="disabled"<% } %>/>
+          <input name="private" id="private" name="private" type="checkbox" <% if (invite) { %> checked="checked" disabled="disabled"<% } %>/>
           <label for="private"><%= labels.private %></label>
         </div>
 

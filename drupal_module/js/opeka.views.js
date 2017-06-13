@@ -1268,8 +1268,10 @@
           name: form.find('input#edit-name').val(),
           date: form.find('input#opeka-invite-datepicker-popup').val(),
           time: form.find('input#opeka-invite-timeentry-popup').val(),
-          email: form.find('input#opeka-invite-timeentry-popup').val(),
-          // TODO
+          email: form.find('input#edit-email').val(),
+          invitee: form.find('input#edit-invitee').val(),
+          counselor: form.find('input#edit-counselor').val(),
+          comment: form.find('textarea#edit-comment').val(),
         },
         view = this,
         opeka = self;
@@ -1278,7 +1280,7 @@
         if (data.error) {
           form.find('.control-group').removeClass('error');
           form.find('.error-message').remove('.error-message');
-          _.each(data.error, function(message, field) {
+          _.each(data.error, function (message, field) {
             form.find('.form-item-' + field).addClass('error').append('<p class="error-message">' + message + '</p>');
           });
         }
@@ -1286,7 +1288,6 @@
           view.remove();
           view.options.invite.save(data, {
             success: function (self, newInvite) {
-              Opeka.inviteList.add(newInvite);
               view.remove();
             }
           });
@@ -1443,7 +1444,7 @@
         admin: Opeka.clientData.isAdmin,
         labels: {
           createRoom: Drupal.t('Create new room'),
-          inviteRooms: Drupal.t('Invitations list'),
+          inviteRooms: (Drupal.settings.opeka && Drupal.settings.opeka.invite) ? Drupal.t('Invitations list') : false,
           placeholder: Drupal.t('No rooms created'),
           closeWindowText: Drupal.t('Close window'),
           queueLink: Drupal.t('Go to queue list'),
@@ -1612,6 +1613,7 @@
     events: {
       "click .create-room": "createRoom",
       "click .create-invite": "createInvite",
+      "click .cancel-invite": "cancelInvite",
     },
 
     initialize: function (options) {
@@ -1647,7 +1649,7 @@
       _.each(Opeka.inviteList.models, function (invite) {
         invite.attributes.roomId = invites[invite.id] ? invites[invite.id] : null;
       });
-      this.trigger('change');
+      Opeka.inviteList.trigger('change');
     },
 
     render: function () {
@@ -1661,6 +1663,7 @@
           roomLink: Drupal.t('< Go back to room list'),
           createRoomButton: Drupal.t('Create room'),
           openRoomButton: Drupal.t('Open room'),
+          cancelInviteButton: Drupal.t('Disable'),
           name: Drupal.t('Chat name'),
           date: Drupal.t('Date & time'),
           actions: Drupal.t('Actions'),
@@ -1677,12 +1680,23 @@
 
     // Open the dialog to create a new invitation.
     createInvite: function () {
-      var dialog = new Opeka.InviteCreateView();
+      if (Drupal.settings.opeka && Drupal.settings.opeka.invite) {
+        var dialog = new Opeka.InviteCreateView();
+        dialog.render();
+        Drupal.behaviors.date_popup.attach('body');
+      }
+    },
 
-      dialog.render();
-
-      Drupal.behaviors.date_popup.attach('body');
-
+    // Open the dialog to cancel invitation.
+    cancelInvite: function (event) {
+      var inviteId = $(event.target).data('invite-id');
+      if (confirm(Drupal.t('Do you really want to cancel this invitation? Thia action cannot be undone. The invitee will receive the cancellation message immediately.'))) {
+        $.post('/admin/opeka/invite/cancel/ajax', {invite_id: inviteId}, function (inviteId) {
+          if (inviteId) {
+            Opeka.remote.cancelInvite(inviteId);
+          }
+        });
+      }
     },
 
     // Open the dialog to create a new room.

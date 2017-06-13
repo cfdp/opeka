@@ -60,8 +60,7 @@ function opeka_invite_schema() {
         'comment' => array(
           'description' => 'Personal message.',
           'type' => 'text',
-          'not null' => TRUE,
-          'default' => '',
+          'not null' => FALSE,
         ),
         'status' => array(
           'description' => '1 if the invitation is active, 0 otherwise',
