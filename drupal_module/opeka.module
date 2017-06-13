@@ -361,6 +361,11 @@ function opeka_preprocess_html(&$vars) {
  * Add needed variables
  */
 function opeka_preprocess_page(&$vars) {
+  // Hide the page title on opeka chat pages
+  if (opeka_is_opeka_chat_page()) {
+    drupal_set_title('');
+  }
+
   $vars['opeka_schedule'] = opeka_schedule_content();
   $vars['opeka_pair_chat_name'] = check_plain(variable_get('opeka_pair_chat_name', ''));
   $vars['opeka_group_chat_name'] = check_plain(variable_get('opeka_group_chat_name', ''));
@@ -392,6 +397,24 @@ function opeka_preprocess_page(&$vars) {
   }
 }
 
+/**
+ * Checkes whether the current page is rendered using the Opeka chat system.
+ * @return boolean - TRUE if current page is an Opeka page and FALSE otherwise.
+ */
+function opeka_is_opeka_chat_page() {
+    $path = current_path();
+    $prefixes = array(
+        "opeka",
+        "opeka-widgets",
+        "admin/opeka"
+    );
+    foreach($prefixes as $prefix) {
+        if(substr($path, 0, strlen($prefix)) === $prefix) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
 
 /*
  * A common function for defining variables to be used in various
