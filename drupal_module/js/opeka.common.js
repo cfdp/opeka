@@ -153,7 +153,7 @@ var Opeka = {
               }
               else {
                 Drupal.settings.opeka.user.roomId = null;
-                that.navigate('', {trigger: true});
+                that.navigate('rooms', {trigger: true});
               }
             });
           }
