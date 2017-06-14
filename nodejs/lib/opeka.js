@@ -841,7 +841,9 @@ function Server(config, logger) {
 
     // add the chat session data for client to the db
     if (!client.account.isAdmin) {
-      opeka.statistics.save(client.age, client.gender, client.screening);
+      opeka.statistics.save(client.age, client.gender, client.screening, function (session_id) {
+        client.stats_id = session_id;
+      });
     }
 
     // Special case when joining from the global Queue.
@@ -1151,6 +1153,7 @@ function Server(config, logger) {
       chatEnd_Min = Math.round((new Date()).getTime() / 60000);
       chatDuration = chatEnd_Min - chatStart_Min;
       self.logger.info('User logout: Chat duration (minutes): ', chatDuration);
+      opeka.statistics.saveChatDuration(removedUser.stats_id, chatDuration);
     }
 
     if(room) {
