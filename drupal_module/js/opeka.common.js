@@ -233,7 +233,7 @@ var Opeka = {
       if (Opeka.remote) {
         Opeka.remote.getInviteRoomByToken(token, function (room) {
           if (room) {
-            if (room = 'cancelled') {
+            if (room == 'cancelled') {
               self.navigate('rooms', {trigger: true});
               var view = new Opeka.DialogView({
                 content: Backbone.View.prototype.make('p', 'message', Drupal.t('This chat has been cancelled by counselor.')),
