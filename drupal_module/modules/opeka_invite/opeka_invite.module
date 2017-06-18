@@ -130,7 +130,7 @@ function opeka_invite_cancel_ajax() {
         ->execute()
       ) {
         // Send email.
-        drupal_mail('opeka_invite', 'cancel', $record->invitee . '<' . $record->mail . '>', language_default(), $record);
+        drupal_mail('opeka_invite', 'cancel', $record['invitee'] . '<' . $record['email'] . '>', language_default(), $record);
         drupal_json_output($values['invite_id']);
         return;
       }
