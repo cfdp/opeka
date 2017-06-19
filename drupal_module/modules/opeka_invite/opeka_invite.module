@@ -263,7 +263,7 @@ function opeka_invite_settings() {
 Opeka chat team.'),
     'subject' => variable_get('opeka_invite_subject', 'Invitation to [chat]'),
     'prefix' => variable_get('opeka_invite_message', 'Also [counselor] left a message for you:'),
-    'cancel_subject' => variable_get('opeka_invite_cancel_subject', '[chat] is cancelled'),
+    'cancel_subject' => variable_get('opeka_invite_cancel_subject', '[chat] has been cancelled'),
     'cancel_body' => variable_get('opeka_invite_cancel_body', 'Dear [name],
 
 [counselor] has just cancelled your chat previously scheduled on [date].
@@ -306,8 +306,8 @@ function opeka_invite_mail($key, &$message, $invite) {
     }
   }
   elseif ($key == 'cancel') {
-    $subject = $defaults['subject'];
-    $body = $defaults['body'];
+    $subject = $defaults['cancel_subject'];
+    $body = $defaults['cancel_body'];
   }
 
   if ($variables['[message]']) {
