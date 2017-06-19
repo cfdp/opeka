@@ -115,7 +115,7 @@ var scheduleCleanUp = function () {
     }
   });
   // Re-check every 30 minutes.
-  setTimeout(scheduleCleanUp, 10000);
+  setTimeout(scheduleCleanUp, 1800000);
 };
 
 module.exports = {
