@@ -452,6 +452,18 @@ var Opeka = {
     Opeka.inviteList.trigger('change');
   };
 
+  // For when the server has an updated invites list for us.
+  Opeka.clientSideMethods.inviteDeleted = function (inviteId) {
+    // This triggers a reset even on the queueList instance, so any views
+    // that use this list can listen to that for updates.
+    _.each(Opeka.inviteList.models, function (invite, delta) {
+      if (invite.id == inviteId) {
+        delete(Opeka.inviteList.models[delta]);
+      }
+    });
+    Opeka.inviteList.trigger('delete');
+  };
+
   // Add the new room to our local room list.
   Opeka.clientSideMethods.roomCreated = function (room) {
     var roomIsAdded = Opeka.roomList.get(room.id);

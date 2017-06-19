@@ -24,6 +24,7 @@
     "ecstatic": "^2.1.0",
     "emoticons": "^0.1.8",
     "nconf": "^0.8.4",
+    "php-unserialize": "^0.0.1",
     "node-uuid": "^1.4.7",
     "date-format": "^1.1.0",
     "shoe": "0.0.15",
