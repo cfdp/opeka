@@ -243,6 +243,24 @@ function opeka_invite_setting_form($form, $form_state) {
     '#default_value' => $defaults['cancel_body'],
   );
 
+  $form['opeka_invite_expire'] = array(
+    '#title' => t('Expiration time'),
+    '#description' => t('The invites will be deleted after this time past since their scheduled date and time.'),
+    '#type' => 'select',
+    '#options' => array(
+      0 => t('Never delete'),
+      1 => t('1 hour'),
+      6 => t('1 hours'),
+      12 => t('12 hours'),
+      24 => t('1 day'),
+      72 => t('3 days'),
+      168 => t('1 week'),
+      336 => t('2 weeks'),
+      672 => t('4 weeks'),
+    ),
+    '#default_value' => variable_get('opeka_invite_expire', 0),
+  );
+
   return system_settings_form($form);
 }
 
