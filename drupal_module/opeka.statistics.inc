@@ -8,7 +8,6 @@
 function opeka_statistics_display_results_table() {
   $header = array(
     array('data' => t('Date'), 'field' => 'submission_date', 'sort' => 'asc'),
-    array('data' => t('ID'), 'field' => 'submission_id'),
     array('data' => t('Chat duration (min)'), 'field' => 'chat_duration'),
     array('data' => t('Age'), 'field' => 'age'),
     array('data' => t('Gender'), 'field' => 'gender'),
@@ -25,7 +24,6 @@ function opeka_statistics_display_results_table() {
     ->orderByHeader($header)//Field to sort on is picked from $header
     ->fields('n', array(
       'submission_date',
-      'submission_id',
       'chat_duration',
       'age',
       'gender',
@@ -39,7 +37,6 @@ function opeka_statistics_display_results_table() {
     $rows[] = array(
       'data' => array(
         format_date($subm->submission_date),
-        $subm->submission_id,
         $subm->chat_duration !== NULL ? $subm->chat_duration : t('-'),
         $subm->age,
         _opeka_statistics_expand_gender($subm->gender),
