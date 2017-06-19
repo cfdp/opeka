@@ -1,0 +1,375 @@
+<?php
+/**
+ * @file
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function opeka_invite_menu() {
+  $items = array();
+
+  $items['admin/config/services/opeka/invite'] = array(
+    'title' => 'Invitation settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('opeka_invite_setting_form'),
+    'access arguments' => array('administer opeka invite links'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 100,
+  );
+
+  // Link to create an invitation via AJAX.
+  $items['admin/opeka/invite/ajax'] = array(
+    'page callback' => 'opeka_invite_create_ajax',
+    'access arguments' => array('administer opeka invite links'),
+    'type' => MENU_CALLBACK,
+  );
+
+  // Link to cancel an invitation via AJAX.
+  $items['admin/opeka/invite/cancel/ajax'] = array(
+    'page callback' => 'opeka_invite_cancel_ajax',
+    'access arguments' => array('administer opeka invite links'),
+    'type' => MENU_CALLBACK,
+  );
+
+  // List of all invites.
+  $items['admin/reports/opeka-invites'] = array(
+    'title' => 'Opeka Invitations',
+    'page callback' => 'opeka_invite_report',
+    'access arguments' => array('administer opeka invite links'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function opeka_invite_permission() {
+  return array(
+    'administer opeka invite links' => array(
+      'title' => t('Administer invitation links'),
+      'description' => t('Allow managing invitations for Opeka chat.'),
+      'restrict access' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Creates invite via AJAX and returns a rendered invite.
+ */
+function opeka_invite_create_ajax() {
+  $values = $_POST;
+  $errors = array();
+
+  $mail = trim(check_plain($values['email']));
+  if ($message = user_validate_mail($mail)) {
+    $errors['email'] = $message;
+  }
+  foreach (array(
+             'invitee' => 'invitee',
+             'date' => 'datetime-date',
+             'time' => 'datetime-time'
+           ) as $field => $class) {
+    if (empty($values[$field]) || !trim(check_plain($values[$field]))) {
+      $errors[$class] = t('This field cannot be empty');
+    }
+  }
+
+  if ($errors) {
+    $response = array(
+      'error' => $errors,
+    );
+    drupal_json_output($response);
+    return;
+  }
+
+  $name = trim(check_plain($values['name']));
+  $counselor = trim(check_plain($values['counselor']));
+  $comment = trim(check_plain($values['comment']));
+  $invitee = trim(check_plain($values['invitee']));
+  $time = strtotime($values['date'] . ' ' . $values['time']);
+  $record = array(
+    'name' => $name ?: t('Chat with !name', array('!name' => $invitee)),
+    'time' => $time ?: REQUEST_TIME,
+    'counselor' => $counselor ?: t('Counselor'),
+    'invitee' => $invitee,
+    'comment' => $comment,
+    'email' => $mail,
+    'token' => drupal_random_key(),
+  );
+  if (drupal_write_record('opeka_invite', $record)) {
+
+    // Send email.
+    drupal_mail('opeka_invite', 'invite', $invitee . '<' . $mail . '>', language_default(), $record);
+
+    // Prepare record.
+    unset($record['token']);
+
+    drupal_json_output($record);
+  }
+}
+
+/**
+ * Cancels invite via AJAX and returns a rendered invite.
+ */
+function opeka_invite_cancel_ajax() {
+  $values = $_POST;
+
+  if (isset($values['invite_id']) && is_numeric($values['invite_id'])) {
+    $query = db_select('opeka_invite', ' oi');
+    $query
+      ->condition('iid', $values['invite_id'])
+      ->fields('oi')
+      ->condition('status', 1);
+    if ($record = $query->execute()->fetchAssoc()) {
+      if (db_update('opeka_invite')
+        ->condition('iid', $values['invite_id'])
+        ->fields(array('status' => 0))
+        ->execute()
+      ) {
+        // Send email.
+        drupal_mail('opeka_invite', 'cancel', $record['invitee'] . '<' . $record['email'] . '>', language_default(), $record);
+        drupal_json_output($values['invite_id']);
+        return;
+      }
+    }
+
+  }
+
+  drupal_json_output(0);
+}
+
+/**
+ * Implements hook_page_alter().
+ */
+function opeka_invite_page_alter(&$page) {
+  if (current_path() == 'admin/opeka') {
+    date_popup_add();
+    drupal_add_js(drupal_get_path('module', 'date_popup') . '/date_popup.js');
+    $setting = array(
+      'datePopup' => array(
+        'opeka-invite-datepicker-popup' => array(
+          'func' => 'datepicker',
+          'settings' => array(
+            'changeMonth' => TRUE,
+            'changeYear' => TRUE,
+            'autoPopUp' => 'focus',
+            'closeAtTop' => FALSE,
+            'speed' => 'immediate',
+            'firstDay' => 0,
+            'dateFormat' => 'mm/dd/yy',
+            'yearRange' => '-3:+3',
+            'fromTo' => FALSE,
+            'defaultDate' => '0y',
+          ),
+        ),
+        'opeka-invite-timeentry-popup' => array(
+          'func' => 'timeEntry',
+          'settings' => array(
+            'show24Hours' => TRUE,
+            'showSeconds' => FALSE,
+            'timeSteps' => array(
+              0 => 1,
+              1 => 1,
+              2 => 0,
+            ),
+            'spinnerImage' => '',
+            'fromTo' => FALSE,
+          ),
+        ),
+      ),
+
+    );
+    drupal_add_js($setting, 'setting');
+  }
+  drupal_add_js(array('opeka' => array('invite' => TRUE)), 'setting');
+}
+
+/**
+ * Admin settings form.
+ */
+function opeka_invite_setting_form($form, $form_state) {
+  $form = array();
+
+  $form['description'] = array(
+    '#markup' => t('<p>You can use the following tokens:</p> <ul><li><strong>[name]</strong> for invitee name,</li> 
+      <li><strong>[mail]</strong> for invitee mail,</li> <li><strong>[chat]</strong> for chat name,</li> <li><strong>[date]</strong> for chat date and time,</li> 
+      <li><strong>[link]</strong> for invitation link,</li> <li><strong>[counselor]</strong> for counselor name,</li>
+      <li><strong>[message]</strong> for personal message with the prefix (see below).</li></ul>')
+  );
+
+  $defaults = opeka_invite_settings();
+
+  $form['invite'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Invitation email'),
+  );
+
+  $form['invite']['opeka_invite_subject'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subject'),
+    '#default_value' => $defaults['subject'],
+  );
+
+  $form['invite']['opeka_invite_body'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Body'),
+    '#default_value' => $defaults['body'],
+  );
+
+  $form['invite']['opeka_invite_message'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Personal message prefix'),
+    '#description' => t('If a counselor leaves a personal message, the prefix will be displayed before the message.'),
+    '#default_value' => $defaults['prefix'],
+  );
+
+  $form['cancel'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Cancellation email'),
+  );
+
+  $form['cancel']['opeka_invite_cancel_subject'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subject'),
+    '#default_value' => $defaults['cancel_subject'],
+  );
+
+  $form['cancel']['opeka_invite_cancel_body'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Body'),
+    '#default_value' => $defaults['cancel_body'],
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Returns admin settings.
+ */
+function opeka_invite_settings() {
+  return array(
+    'body' => variable_get('opeka_invite_body', 'Dear [name],
+
+[counselor] has invited you to a chat on [date]. Please click the link below that time to enter the chat.
+
+[link]
+
+[message]
+
+--
+Opeka chat team.'),
+    'subject' => variable_get('opeka_invite_subject', 'Invitation to [chat]'),
+    'prefix' => variable_get('opeka_invite_message', 'Also [counselor] left a message for you:'),
+    'cancel_subject' => variable_get('opeka_invite_cancel_subject', '[chat] has been cancelled'),
+    'cancel_body' => variable_get('opeka_invite_cancel_body', 'Dear [name],
+
+[counselor] has just cancelled your chat previously scheduled on [date].
+
+--
+Opeka chat team.'),
+  );
+}
+
+function opeka_invite_link($token) {
+  return url('opeka', array(
+    'fragment' => 'invites/' . $token,
+    'absolute' => TRUE
+  ));
+}
+
+/**
+ * Implements hook_mail().
+ */
+function opeka_invite_mail($key, &$message, $invite) {
+  $defaults = opeka_invite_settings();
+  $variables = array(
+    '[name]' => $invite['invitee'],
+    '[mail]' => $invite['email'],
+    '[chat]' => $invite['name'],
+    '[date]' => date('l j F Y, G:i', $invite['time']),
+    '[link]' => opeka_invite_link($invite['token']),
+    '[counselor]' => $invite['counselor'],
+    '[message]' => $invite['comment'],
+  );
+
+  if ($key == 'invite') {
+    $subject = $defaults['subject'];
+    $body = $defaults['body'];
+
+    if ($variables['[message]']) {
+      if ($defaults['prefix']) {
+        $variables['[message]'] = $defaults['prefix'] . "\n\n" . $variables['[message]'];
+      }
+    }
+  }
+  elseif ($key == 'cancel') {
+    $subject = $defaults['cancel_subject'];
+    $body = $defaults['cancel_body'];
+  }
+
+  if ($variables['[message]']) {
+    $variables['[message]'] = "\n\n" . $variables['[message]'] . "\n\n";
+  }
+
+  $body = implode($variables['[message]'], array_map('trim', explode('[message]', $body)));
+
+  $subject = strtr($subject, $variables);
+  $body = strtr($body, $variables);
+  $message['subject'] = str_replace(array("\r", "\n"), '', $subject);
+  $message['body'][] = drupal_html_to_text($body);
+}
+
+/**
+ * Displays the list of all invitations.
+ */
+function opeka_invite_report() {
+  $query = db_select('opeka_invite', 'oi')->extend('PagerDefault');
+  $count_query = clone $query;
+  $count_query->addExpression('COUNT(iid)');
+  $query
+    ->fields('oi')
+    ->orderBy('iid', 'DESC')
+    ->limit(50)
+    ->setCountQuery($count_query);
+  $result = $query->execute();
+  $rows = array();
+  foreach ($result as $record) {
+    $link = opeka_invite_link($record->token);
+    $rows[] = array(
+      'id' => $record->iid,
+      'name' => $record->name,
+      'date' => date('Y/m/j G:i', $record->time),
+      'status' => $record->status ? t('Active') : t('Cancelled'),
+      'counselor' => $record->counselor,
+      'invitee' => $record->invitee,
+      'email' => $record->email,
+      'comment' => $record->comment,
+      'link' => l(t('link'), $link),
+    );
+
+  }
+
+  $header = array(
+    'id' => t('Invite ID'),
+    'name' => t('Chat'),
+    'date' => t('Date & time'),
+    'status' => t('Status'),
+    'counselor' => t('Counselor'),
+    'invitee' => t('Invitee'),
+    'email' => t('E-mail'),
+    'comment' => t('Personal note'),
+    'link' => t('Link'),
+  );
+  return array(
+    'table' => array(
+      '#theme' => 'table',
+      '#header' => $header,
+      '#rows' => $rows,
+      '#empty' => t('No invitations have been created yet.')
+    ),
+    array('#theme' => 'pager')
+  );
+}
