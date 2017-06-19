@@ -1253,7 +1253,9 @@ function Server(config, logger) {
       chatEnd_Min = Math.round((new Date()).getTime() / 60000);
       chatDuration = chatEnd_Min - chatStart_Min;
       self.logger.info('User logout: Chat duration (minutes): ', chatDuration);
-      opeka.statistics.saveChatDuration(removedUser.stats_id, chatDuration);
+      if (removedUser) {
+        opeka.statistics.saveChatDuration(removedUser.stats_id, chatDuration);
+      }
     }
 
     if (room) {
