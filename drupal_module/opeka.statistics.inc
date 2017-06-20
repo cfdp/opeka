@@ -1,14 +1,14 @@
 <?php
 
 /** Generate a table with screening results
-*
-* Inspired by http://www.rahulsingla.com/blog/2011/05/drupal-7-creating-drupal-style-tables-with-paging-sorting-and-sticky-headers
-**/
+ *
+ * Inspired by http://www.rahulsingla.com/blog/2011/05/drupal-7-creating-drupal-style-tables-with-paging-sorting-and-sticky-headers
+ **/
 
 function opeka_statistics_display_results_table() {
   $header = array(
     array('data' => t('Date'), 'field' => 'submission_date', 'sort' => 'asc'),
-    array('data' => t('ID'), 'field' => 'submission_id'),
+    array('data' => t('Chat duration (min)'), 'field' => 'chat_duration'),
     array('data' => t('Age'), 'field' => 'age'),
     array('data' => t('Gender'), 'field' => 'gender'),
     array('data' => t('Question'), 'field' => 'question'),
@@ -17,37 +17,46 @@ function opeka_statistics_display_results_table() {
 
   // Get a paged list of all the submission data
   $query = db_select('opeka_stats', 'n')
-            //->condition('status', 1) //Only published nodes, change condition as it suits you
-            ->extend('PagerDefault')     //Pager Extender
-                ->limit(50)              //10 results per page
-            ->extend('TableSort')        //Sorting Extender
-                ->orderByHeader($header)//Field to sort on is picked from $header
-            ->fields ('n', array (
-                'submission_date',
-                'submission_id',
-                'age',
-                'gender',
-                'question',
-                'answer',
-            ));
-
+    //->condition('status', 1) //Only published nodes, change condition as it suits you
+    ->extend('PagerDefault')//Pager Extender
+    ->limit(50)//10 results per page
+    ->extend('TableSort')//Sorting Extender
+    ->orderByHeader($header)//Field to sort on is picked from $header
+    ->fields('n', array(
+      'submission_date',
+      'chat_duration',
+      'age',
+      'gender',
+      'question',
+      'answer',
+    ));
 
   $results = $query->execute();
   $rows = array();
   foreach ($results as $subm) {
-    $rows[] = array( 'data' =>
-                    array( format_date($subm->submission_date), $subm->submission_id, $subm->age, _opeka_statistics_expand_gender($subm->gender), $subm->question, $subm->answer )
-                   );
+    $rows[] = array(
+      'data' => array(
+        format_date($subm->submission_date),
+        $subm->chat_duration !== NULL ? $subm->chat_duration : t('-'),
+        $subm->age,
+        _opeka_statistics_expand_gender($subm->gender),
+        $subm->question,
+        $subm->answer
+      )
+    );
   }
 
-  $html = theme('table', array( 'header' => $header,
-                               'rows'=>$rows,
-                               'sticky' => TRUE, //Optional to indicate whether the table headers should be sticky
-                               'empty' => 'No screening results yet...', //Optional empty text for the table if resultset is empty
-                              )
-               );
+  $html = theme('table', array(
+      'header' => $header,
+      'rows' => $rows,
+      //Optional to indicate whether the table headers should be sticky
+      'sticky' => TRUE,
+      //Optional empty text for the table if resultset is empty
+      'empty' => 'No screening results yet...',
+    )
+  );
 
-  $html .= theme('pager', array( 'tags' => array() ) );
+  $html .= theme('pager', array('tags' => array()));
 
   $total = _opeka_statistics_get_total();
   if (!$total) {
@@ -59,8 +68,8 @@ function opeka_statistics_display_results_table() {
   if (!$total_last_month) {
     $total_last_month = t("None");
   }
-  $html_pre = "<div><p>".t('Total number of chat sessions: ').$total."</p></div>";
-  $html_pre .= "<div><p>".t('Total number of chat sessions last 4 weeks: ').$total_last_month."</p></div>";
+  $html_pre = "<div><p>" . t('Total number of chat sessions: ') . $total . "</p></div>";
+  $html_pre .= "<div><p>" . t('Total number of chat sessions last 4 weeks: ') . $total_last_month . "</p></div>";
   return ($html_pre . $html);
 }
 

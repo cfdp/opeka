@@ -194,6 +194,9 @@
         <a href="#queues" class="go-to-queues btn-util btn btn-small"><%= labels.queueLink %></a>
       <% } %>
       <button class="create-room btn btn-small btn-success"><%= labels.createRoom %></button>
+      <% if (labels.inviteRooms) { %>
+        <a href="#invites" class="invite-rooms btn btn-small btn-success"><%= labels.inviteRooms %></a>
+      <% } %>
       <% if (!chatOpen) { %>
         <div class="chat-state alert"><%= labels.chatClosed %></div>
       <% } %>
@@ -217,7 +220,7 @@
       </div>
       <p class="room-description"><%- room.get('name') %></p>
       <% if (room.attributes.private){%>
-          <div class="badge badge-important private-room">Training room</div>
+          <div class="badge badge-important private-room"><%= labels.privateRoomText %></div>
       <%} %>
       <% /* Only admins should be able to enter a full or paused room */ %>
       <% if (admin || ((room.get('memberCount') != room.get('maxSize')) && (!room.attributes.paused))) {%>
@@ -253,7 +256,41 @@
 
 </script>
 
+<script id="opeka_invite_list_tmpl" type="application/template">
+  <div>
+  <a href="#rooms" class="go-back-to-rooms btn-util"><%= labels.roomLink %></a>
+  <button class="create-invite btn btn-small"><%= labels.createInvite %></button>
+  </div>
+  <table class="invite-list table">
+    <thead><tr><th><%= labels.name %></th><th><%= labels.date %></th><th colspan="2"><%= labels.actions %></th></tr></thead>
+    <% invites.each(function (invite) { %>
+      <% if (invite.get('status')) { %>
+        <% labels.placeholder = ''; %>
+      <tr class="invite">
+        <td><%- invite.get('name') %></td>
+        <td><%- invite.get('time') %></td>
+        <td>
+        <td>
+        <% if (!invite.get('roomId')) { %>
+          <button class="create-room btn btn-small btn-success" data-invite-id="<%- invite.get('id') %>"><%= labels.createRoomButton %></button>
+        <% } else { %>
+          <a class="open-room btn btn-small btn-success" href="#rooms/<%- invite.get('roomId') %>"><%= labels.openRoomButton %></a>
+        <% } %>
+        </td>
+        <td>
+        <% if (invite.get('status')) { %>
+          <button class="cancel-invite btn btn-small btn-success" data-invite-id="<%- invite.get('id') %>"><%= labels.cancelInviteButton %></button>
+        <% } %>
+        </td>
+      </tr>
+    <% } %>
+  <% }); %>
+  <% if (labels.placeholder) { %>
+    <tr class="placeholder noinvites"><td colspan="4"><%= labels.placeholder %></td></tr>
+  <% } %>
+  </table>
 
+</script>
 
 <script id="opeka_queue_page_tmpl" type="application/template">
   <p><%= labels.placeholder %></p>
