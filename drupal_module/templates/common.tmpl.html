@@ -65,10 +65,10 @@
     <div class="sidebar-block">
       <h5 class="sidebar-block-heading"><%= labels.roomActions %><span class="arrow down"></span></h5>
       <div class="sidebar-block-content room-actions"  style="display: block;">
-        <button class="pause-toggle btn btn-small"><%= labels.pauseToggle %></button>
-        <button class="clear-messages btn btn-small"><%= labels.clearMessages %></button>
-        <button class="change-room-size btn btn-small"><%= labels.changeRoomSize %></button>
-        <button class="delete-room btn btn-small"><%= labels.deleteRoom %></button>
+        <button class="pause-toggle btn btn-sm btn-default"><%= labels.pauseToggle %></button>
+        <button class="clear-messages btn btn-sm btn-default"><%= labels.clearMessages %></button>
+        <button class="change-room-size btn btn-sm btn-default"><%= labels.changeRoomSize %></button>
+        <button class="delete-room btn btn-sm btn-default"><%= labels.deleteRoom %></button>
       </div>
     </div>
     <div class="sidebar-block">
@@ -93,7 +93,7 @@
     <%}else{ %>
       <button class="chat-toggle btn-danger btn"><%- labels.chatClose %></button>
     <% } %>
-    <button class="generate-ban-code btn-util btn"><%- labels.banCode %></button>
+    <button class="generate-ban-code btn-default btn"><%- labels.banCode %></button>
   <% } %>
 </script>
 
@@ -191,14 +191,14 @@
   <% if (admin) { %>
     <div class="queue-utils">
       <% if (queueSystem) { %>
-        <a href="#queues" class="go-to-queues btn-util btn btn-small"><%= labels.queueLink %></a>
+        <a href="#queues" class="go-to-queues btn-default btn btn-sm"><%= labels.queueLink %></a>
       <% } %>
-      <button class="create-room btn btn-small btn-success"><%= labels.createRoom %></button>
+      <button class="create-room btn btn-sm btn-success"><%= labels.createRoom %></button>
       <% if (labels.inviteRooms) { %>
-        <a href="#invites" class="invite-rooms btn btn-small btn-success"><%= labels.inviteRooms %></a>
+        <a href="#invites" class="invite-rooms btn btn-sm btn-default"><%= labels.inviteRooms %></a>
       <% } %>
       <% if (!chatOpen) { %>
-        <div class="chat-state alert"><%= labels.chatClosed %></div>
+        <div class="messages error alert chat-state"><%= labels.chatClosed %></div>
       <% } %>
     </div>
 
@@ -241,8 +241,8 @@
 
 <script id="opeka_queue_list_tmpl" type="application/template">
   <div>
-  <a href="#rooms" class="go-back-to-rooms btn-util"><%= labels.roomLink %></a>
-  <button class="create-queue btn btn-small"><%= labels.createQueue %></button>
+  <a href="#rooms" class="go-back-to-rooms btn btn-sm btn-default"><%= labels.roomLink %></a>
+  <button class="create-queue btn btn-sm btn-success"><%= labels.createQueue %></button>
   </div>
   <ul class="queue-list">
   <% queues.each(function (queue) { %>
@@ -258,8 +258,8 @@
 
 <script id="opeka_invite_list_tmpl" type="application/template">
   <div>
-  <a href="#rooms" class="go-back-to-rooms btn-util"><%= labels.roomLink %></a>
-  <button class="create-invite btn btn-small"><%= labels.createInvite %></button>
+  <a href="#rooms" class="go-back-to-rooms btn btn-sm btn-default"><%= labels.roomLink %></a>
+  <button class="create-invite btn btn-sm btn-success"><%= labels.createInvite %></button>
   </div>
   <table class="invite-list table">
     <thead><tr><th><%= labels.name %></th><th><%= labels.date %></th><th colspan="2"><%= labels.actions %></th></tr></thead>
@@ -272,14 +272,14 @@
         <td>
         <td>
         <% if (!invite.get('roomId')) { %>
-          <button class="create-room btn btn-small btn-success" data-invite-id="<%- invite.get('id') %>"><%= labels.createRoomButton %></button>
+          <button class="create-room btn btn-sm btn-success" data-invite-id="<%- invite.get('id') %>"><%= labels.createRoomButton %></button>
         <% } else { %>
-          <a class="open-room btn btn-small btn-success" href="#rooms/<%- invite.get('roomId') %>"><%= labels.openRoomButton %></a>
+          <a class="open-room btn btn-sm btn-success" href="#rooms/<%- invite.get('roomId') %>"><%= labels.openRoomButton %></a>
         <% } %>
         </td>
         <td>
         <% if (invite.get('status')) { %>
-          <button class="cancel-invite btn btn-small btn-success" data-invite-id="<%- invite.get('id') %>"><%= labels.cancelInviteButton %></button>
+          <button class="cancel-invite btn btn-sm btn-success" data-invite-id="<%- invite.get('id') %>"><%= labels.cancelInviteButton %></button>
         <% } %>
         </td>
       </tr>
@@ -302,7 +302,7 @@
 </script>
 
 <script id="opeka_room_list_create_room_tmpl" type="application/template">
-  <!--<button class="create-room btn btn-small"><%= labels.createRoom %></button>-->
+  <!--<button class="create-room btn btn-sm"><%= labels.createRoom %></button>-->
 </script>
 
 <script id="opeka_chat_tmpl" type="application/template">
