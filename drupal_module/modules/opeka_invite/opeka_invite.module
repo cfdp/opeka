@@ -307,7 +307,7 @@ function opeka_invite_mail($key, &$message, $invite) {
     '[name]' => $invite['invitee'],
     '[mail]' => $invite['email'],
     '[chat]' => $invite['name'],
-    '[date]' => date('l j F Y, G:i', $invite['time']),
+    '[date]' => format_date($invite['time'], 'custom', 'l j F Y, G:i'),
     '[link]' => opeka_invite_link($invite['token']),
     '[counselor]' => $invite['counselor'],
     '[message]' => $invite['comment'],
@@ -359,7 +359,7 @@ function opeka_invite_report() {
     $rows[] = array(
       'id' => $record->iid,
       'name' => $record->name,
-      'date' => date('Y/m/j G:i', $record->time),
+      'date' => format_date($record->time, 'custom', 'Y/m/j G:i'),
       'status' => $record->status ? t('Active') : t('Cancelled'),
       'counselor' => $record->counselor,
       'invitee' => $record->invitee,
