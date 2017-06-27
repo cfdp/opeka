@@ -735,17 +735,7 @@ var Opeka = {
         banCodeGenerator: Opeka.clientData.canGenerateBanCode
       });
 
-      /**
-       * @todo sometimes this function runs twice, it's going from user.authenticate function.
-       * let's check if '.opeka-chat-footer' not created yet.
-       */
-      var footerblock = $('#opeka-app .footer');
-      if (footerblock.find('.opeka-chat-footer').length) {
-        footerblock.html(footer.render().el);
-      }
-      else {
-        footerblock.append(footer.render().el);
-      }
+      $('#opeka-app').find('.footer').append(footer.render().el);
 
     });
   };

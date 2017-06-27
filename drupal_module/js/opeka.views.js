@@ -673,15 +673,12 @@
     className: 'opeka-chat-footer',
 
     events: {
-      "click .generate-ban-code": "generateBanCode",
-      "click .chat-toggle": "toggleChat"
+      "click .generate-ban-code": "generateBanCode"
     },
 
     initialize: function (options) {
       var self = this;
       this.banCodeGenerator = options.banCodeGenerator;
-      this.chatOpen = this.model.get('chatOpen');
-      this.model.on('change:chatOpen', this.render, this);
       _.bindAll(this);
 
     },
@@ -690,11 +687,8 @@
       if (JST.opeka_chat_footer_tmpl) {
         this.$el.html(JST.opeka_chat_footer_tmpl({
           banCodeGenerator: this.banCodeGenerator,
-          chatOpen: Opeka.status.attributes.chatOpen,
           labels: {
             banCode: Drupal.t('Generate new ban code'),
-            chatOpen: Drupal.t('Turn on chat'),
-            chatClose: Drupal.t('Turn off chat'),
             createInvite: Drupal.t('Create invitation link')
           }
         }));
@@ -714,15 +708,6 @@
         event.preventDefault();
       }
     },
-
-    toggleChat: function (event) {
-      Opeka.remote.toggleChat(function (newChatState) {
-      });
-
-      if (event) {
-        event.preventDefault();
-      }
-    }
   });
 
   Opeka.QueueView = Backbone.View.extend({
@@ -1410,6 +1395,7 @@
   Opeka.RoomListView = Backbone.View.extend({
     events: {
       "click .create-room": "createRoom",
+      "click .chat-toggle": "toggleChat"
     },
 
     initialize: function (options) {
@@ -1435,6 +1421,7 @@
         chatOpen = Opeka.status.attributes.chatOpen,
         queueSystem = Opeka.status.attributes.queueSystem,
         html = '';
+
       // Hide rooms with only two slots.
       if (Opeka.features && Opeka.features.hidePairRoomsOnRoomList) {
         hidePairRooms = true;
@@ -1454,7 +1441,7 @@
           fullRoomLink: Opeka.features.fullRoomLink,
           pausedRoomText: Drupal.t('Paused'),
           privateRoomText: Drupal.t('Private'),
-          chatClosed: Drupal.t('The chat is closed. Users will not be able to log into chat rooms before it is opened by a coordinator')
+          chatClosed: Drupal.t('The chat is closed. Users will not be able to log into chat rooms before it is opened by a coordinator. When turned on the chatsign will appear as "Occupied" until you create a room.')
         },
         hidePairRooms: hidePairRooms,
         rooms: roomList,
@@ -1462,15 +1449,15 @@
         chatOpen: chatOpen
       });
 
-      if (Opeka.clientData.isAdmin) {
-        html += JST.opeka_room_list_create_room_tmpl({
-          labels: {
-            createRoom: Drupal.t('Create room')
-          }
-        });
-      }
-
       this.$el.html(html);
+
+      // Toggle create-room button state depending on chat state
+      if (chatOpen) {
+        this.$el.find('.create-room').removeProp("disabled");
+      }
+      else {
+        this.$el.find('.create-room').prop("disabled");
+      }
 
       return this;
     },
@@ -1482,9 +1469,18 @@
       dialog.render();
     },
 
+    toggleChat: function (event) {
+      Opeka.remote.toggleChat(function (newChatState) {
+      });
+
+      if (event) {
+        event.preventDefault();
+      }
+    }
+
   });// END RoomListView
 
-  // Page to place the google form for user feedback
+  // Page to place the form for user feedback
   Opeka.UserFeedback = Backbone.View.extend({
     className: 'user-feedback-view well',
     initialize: function (options) {
