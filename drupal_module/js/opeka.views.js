@@ -170,9 +170,7 @@
           labels: {
             inQueueMessage: inQueueMessage,
             leaveQueueButton: Drupal.t('Leave queue'),
-            leaveRoomButton: this.admin ?
-              Drupal.t("Leave chat room and close it if no other councillors are present") :
-              Drupal.t('Leave chat room'),
+            leaveRoomButton: Drupal.t("Leave chat room"),
             placeholder: Drupal.t('Type message here…'),
             mutehelptext: Drupal.t('When you are muted, you are not allowed to send any messages until the counselor decides to unmute you. You can see all the other messages and receive whispers.'),
             roomPaused: Drupal.t('The room is paused'),
@@ -462,7 +460,6 @@
       "click .mute-user": "muteUser",
       "click .pause-toggle": "pauseToggle",
       "click .unmute-user": "unmuteUser",
-      "click .sidebar-block-heading": "sidebarBlocktoggle",
       "click .whisper": "whisper",
       "click .screening-wrapper": "screeningToggle"
     },
@@ -619,24 +616,6 @@
       }
     },
 
-    // For toggling visibility on chat room menu items
-    sidebarBlocktoggle: function (event) {
-      var head = $(event.currentTarget),
-        body = head.next('.sidebar-block-content'),
-        arrow = head.children('.arrow');
-
-      body.toggle();
-
-      if (arrow.hasClass('down')) {
-        arrow.removeClass('down').addClass('up');
-      } else {
-        arrow.removeClass('up').addClass('down');
-      }
-
-      if (event) {
-        event.preventDefault();
-      }
-    },
 
     // For toggling visibility of screening questions
     screeningToggle: function (event) {
