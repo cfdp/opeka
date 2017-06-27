@@ -148,6 +148,18 @@ function opeka_invite_page_alter(&$page) {
   if (current_path() == 'admin/opeka') {
     date_popup_add();
     drupal_add_js(drupal_get_path('module', 'date_popup') . '/date_popup.js');
+    drupal_add_js(drupal_get_path('module', 'opeka') . '/js/moment-with-locales.min.js');
+
+    // Determine offset between server time and user time (for nodejs).
+    try {
+      $user_timezone = new DateTimeZone(drupal_get_user_timezone());
+      $offset = $user_timezone->getOffset(new DateTime('now', new DateTimeZone('UTC')));
+    } catch (Exception $e) {
+      $offset = 0;
+    }
+
+    global $language;
+
     $setting = array(
       'datePopup' => array(
         'opeka-invite-datepicker-popup' => array(
@@ -180,7 +192,8 @@ function opeka_invite_page_alter(&$page) {
           ),
         ),
       ),
-
+      'userTimeZoneOffset' => $offset,
+      'userLang' => $language->language,
     );
     drupal_add_js($setting, 'setting');
   }

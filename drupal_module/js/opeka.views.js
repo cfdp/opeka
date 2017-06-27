@@ -1656,6 +1656,11 @@
       var inviteList = Opeka.inviteList,
         html = '';
 
+      // Format time.
+      moment.locale(Drupal.settings.userLang);
+      _.each(inviteList.models, function(invite) {
+        invite.set("formatted_time", moment((invite.get("time") + Drupal.settings.userTimeZoneOffset - moment().utcOffset() * 60) * 1000).format("dddd D MMMM YYYY, H:mm"));
+      });
       html = JST.opeka_invite_list_tmpl({
         labels: {
           createInvite: Drupal.t('Create new invitation'),
