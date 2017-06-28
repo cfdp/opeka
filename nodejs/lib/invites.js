@@ -39,7 +39,7 @@ var Invite = function (data) {
     return {
       id: self.iid,
       name: self.name,
-      time: format('dd/MM/yyyy hh:mm', new Date(self.time * 1000)),
+      time: self.time,
       invitee: self.invitee,
       email: self.email,
       counselor: self.counselor,
