@@ -9,6 +9,14 @@
  */
 function opeka_screening_admin_form($form, &$form_state) {
 
+  $form['opeka_screening_required'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Mark the question required.'),
+    '#description' => t('Check this box if answering the client should be required to answer the question before entering the chat.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_screening_required', 0),
+  );
+
   $fieldset_id = 'fieldset-opeka-screening-options';
   $element_name = 'opeka_screening_options';
   $form['#opeka_multified_element_name'] = $element_name;
