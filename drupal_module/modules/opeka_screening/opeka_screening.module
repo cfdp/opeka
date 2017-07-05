@@ -41,7 +41,7 @@ function opeka_screening_menu() {
 
 
 /**
-  * Add assets - stylesheets etc.
+  * Add assets - javascript variables, stylesheets etc.
   */
 
 function opeka_screening_add_assets() {
@@ -50,6 +50,7 @@ function opeka_screening_add_assets() {
 
   $opeka_screening_main = check_plain(variable_get('opeka_screening_main', ''));
   $opeka_screening_options_array = variable_get('opeka_screening_options', []);
+  $opeka_screening_required = variable_get('opeka_screening_required', 0);
 
   $opeka_screening_options_text_array = [];
   foreach ($opeka_screening_options_array as $array_el) {
@@ -59,6 +60,7 @@ function opeka_screening_add_assets() {
   // Settings to expose to the JavaScript client.
   $settings['opeka_screening_main'] = $opeka_screening_main;
   $settings['opeka_screening_options'] = $opeka_screening_options_text_array;
+  $settings['opeka_screening_required'] = $opeka_screening_required;
   // Add js files and settings
   drupal_add_js(array('opeka_screening' => $settings), 'setting');
 }

@@ -148,19 +148,20 @@
       </div>
 
       <% if (screeningQuestions && Drupal.settings.opeka_screening && Drupal.settings.opeka_screening.opeka_screening_options.length ) { %>
-        <div class="control-group">
+        <div class="control-group screening-questions">
           <label class="control-label screening-label">
             <%= labels.screening %>
           </label>
           <div class="controls">
-            <% var answerOptions = Drupal.settings.opeka_screening.opeka_screening_options;
-            var arrayLength = answerOptions.length; %>
+            <% var answerOptions = Drupal.settings.opeka_screening.opeka_screening_options; %>
             <p class="screening-question"><%= Drupal.settings.opeka_screening.opeka_screening_main %></p>
-            <input class="screening" checked="checked" name="screening" type="radio" value="No participation"><span class="screening-option"> <%- labels.screeningNoParticipation %></span><BR>
-            <% for (var i = 0; i < arrayLength; i++) { %>
-              <input class="screening" name="screening" type="radio" value="<%- answerOptions[i] %>">
-              <span class="screening-option"><%= answerOptions[i] %></span><BR>
-            <% }; %>
+            <% if (!Drupal.settings.opeka_screening.opeka_screening_required) { %>
+              <input class="screening" checked="checked" name="screening" type="radio" value="No participation"><span class="screening-option"> <%- labels.screeningNoParticipation %></span><br>
+            <% } %>
+            <% answerOptions.forEach(function(option) { %>
+              <input class="screening" name="screening" type="radio" value="<%- option %>">
+              <span class="screening-option"><%= option %></span><br>
+            <% }); %>
           </div>
         </div>
       <% } %>
