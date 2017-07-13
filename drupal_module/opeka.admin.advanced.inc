@@ -78,6 +78,38 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_custom_css', ''),
   );
 
+  $form['opeka_reconnect'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Allow reconnection'),
+    '#description' => t('Once checked, browser will try to reconnect to the server once the connection lost.'),
+    '#default_value' => variable_get('opeka_reconnect', TRUE),
+  );
+
+  $form['opeka_reconnect_attempts'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Max reconnection attempts'),
+    '#description' => t('Number of times a browser will attempt to reconnect.'),
+    '#default_value' => variable_get('opeka_reconnect_attempts', 10),
+    '#element_validate' => array('element_validate_integer_positive'),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="opeka_reconnect"]' => array('checked' => TRUE),
+      ),
+    ),
+  );
+
+  $form['opeka_reconnect_interval'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Reconnection interval (ms)'),
+    '#description' => t('Interval in milliseconds between reconnection attempts.'),
+    '#default_value' => variable_get('opeka_reconnect_interval', 2000),
+    '#element_validate' => array('element_validate_integer_positive'),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="opeka_reconnect"]' => array('checked' => TRUE),
+      ),
+    ),
+  );
   $form['submit']['#validate'][] = 'opeka_admin_settings_form_validate';
   return system_settings_form($form);
 }
