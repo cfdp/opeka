@@ -201,6 +201,9 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['client_url'] = $client_url;
   $settings['pair_chat_name'] = $pair_chat_name;
   $settings['group_chat_name'] = $group_chat_name;
+  $settings['reconnect'] = variable_get('opeka_reconnect', TRUE) ? 1 : 0;
+  $settings['max_reconnects'] = variable_get('opeka_reconnect_attempts', 10);
+  $settings['reconnect_interval'] = variable_get('opeka_reconnect_interval', 2000);
 
 
   // Add js files and settings
