@@ -4,10 +4,7 @@
 var _ = require('underscore'),
     groups = require('./groups'),
     uuid = require('node-uuid'),
-    ban = require('./ban'),
-    rooms = require('./rooms'),
-    util = require("util");
-
+    ban = require('./ban');
 
 /**
  * Represents a client instance
@@ -114,31 +111,16 @@ var Client = function(server, stream, remote, conn) {
         self.conn = null;
     };
 
-    self.onReconnect = function(newClient) {
-        util.log('Replacing user ' + self.clientId + ' with ' + newClient.clientId);
-        for (var id in rooms.list) {
-            rooms.list[id].replaceUser(self.clientId, newClient);
-        }
-        groups.unregisterClient(self);
-
-        // Break relations to objects that might be troublesome to garbage collect
-        self.server = null;
-        self.stream = null;
-        self.clientSideMethods = null;
-        self.conn = null;
-        self.activeRoomId = null;
-    };
-
     self.remote = function(functionName) {
         // Copy arguments to writeable array
         args = [];
         _.each(arguments, function(v) { args.push(v) });
 
         // Remove first arg
-        args.shift();
+        args.shift()
 
-        var fn;
-        if(self.clientSideMethods && (fn = self.clientSideMethods[functionName])) {
+        var fn = self.clientSideMethods[functionName];
+        if(fn) {
             return fn.apply(self, args);
         } else {
             self.server.logger.warning(
@@ -152,5 +134,6 @@ var Client = function(server, stream, remote, conn) {
 
     return self.construct();
 };
+
 
 module.exports = Client;

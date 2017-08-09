@@ -872,33 +872,6 @@
     }
   });
 
-  // Message dialog lets the user know he's banned from the system.
-  Opeka.ReconnectingDialogView = Opeka.DialogView.extend({
-    initialize: function (options) {
-      // Make sure options is an object.
-      options = options || {};
-
-      // Provide a default title.
-      options.title = options.title || Drupal.t('Reconnecting');
-
-      // Provide a default message.
-      options.message = options.message || Drupal.t('Your connection to the chat server was lost. Please wait, we are trying to reconnect.');
-
-      options.content = this.make('p', {'class': "message"}, options.message);
-
-      options.dialogOptions = {
-        closeOnEscape: false,
-        open: function (event, ui) {
-          $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
-        }
-      };
-
-
-      // Call the parent initialize once we're done customising.
-      return Opeka.DialogView.prototype.initialize.call(this, options);
-    }
-  });
-
   // Message dialog that forces the user to reload the page to continue.
   Opeka.FatalErrorDialogView = Opeka.DialogView.extend({
     initialize: function (options) {
