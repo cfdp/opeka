@@ -108,6 +108,17 @@
   <%= content %>
 </script>
 
+<script id="opeka_enter_form_tmpl" type="application/template">
+  <div class="enter-site-button">
+    <h2><%= labels.heading %></h2>
+    <p><%= message %></p>
+    <button class="enter-site btn btn-success"><%= labels.confirm %></button>
+    <div class="leave-link">
+      <a class="leave-site" href="https://cyberhus.dk/node/44447"><%= labels.leave %></a>
+    </div>
+  </div>
+</script>
+
 <script id="opeka_connect_form_tmpl" type="application/template">
  <div class="welcome-message"><%= Drupal.settings.opeka.welcome_message %></div>
  <form action="#" class="form-horizontal well">

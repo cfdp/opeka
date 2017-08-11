@@ -1899,17 +1899,23 @@
       this.queueId = options.queueId;
       _.bindAll(this);
       this.model.on('change:chatOpen', this.render, this);
+      this.inner = new Opeka.EnterSiteView();
+      this.listenTo( Backbone, 'enter-site-clicked', function (showSignIn) {
+          this.render(showSignIn);
+      }, this );
       return this;
     },
 
-    render: function () {
+    render: function (showSignInForm) {
       var name = '',
-        chatOpen = this.model.get('chatOpen');
+        isAdmin = (Drupal.settings.opeka.user && Drupal.settings.opeka.user.admin) ? true : false,
+        chatOpen = this.model.get('chatOpen'),
+        enterSiteButtonEnabled = Drupal.settings.opeka.enter_site_feature;
 
       //@todo: the visibility of the name should probably be a setting somewhere
       //Replace the Drupal username with rådgiver(counselor), not using the actual user name
       //name = Drupal.settings.opeka.user.name;
-      if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.admin) {
+      if (isAdmin) {
         name = Drupal.t('Counselor');
       }
       // If the chat is closed, only authenticated Drupal users is presented with the sign in form
@@ -1940,8 +1946,16 @@
       else {
         var form = Drupal.t('Loading...');
       }
+      // Render the Enter Site Button for clients if feature is enabled
+      if (!isAdmin && enterSiteButtonEnabled && showSignInForm !== true) {
+        this.$el.empty();
+        this.$el.append(this.inner.$el);
+        this.inner.render();
+      }
+      else {
+        this.$el.html(form);
+      }
 
-      this.$el.html(form);
       return this;
     },
 
@@ -1992,5 +2006,32 @@
       }
     }
   });// END SignInFormView
+
+  Opeka.EnterSiteView = Backbone.View.extend({
+    events: {
+      "click .enter-site": "enterSite",
+    },
+    render: function() {
+      var chatName = Drupal.settings.opeka.pair_chat_name || {},
+          form = JST.opeka_enter_form_tmpl({
+            message: Drupal.settings.opeka.enter_site_message,
+            labels: {
+              heading: chatName,
+              confirm: Drupal.settings.opeka.enter_site_confirm,
+              leave: Drupal.settings.opeka.enter_site_leave,
+            },
+          });
+      this.$el.html(form);
+      this.delegateEvents();
+    },
+
+
+    // Remove view and enter site if user confirms
+    enterSite: function() {
+      Backbone.trigger('enter-site-clicked', true );
+      this.remove();
+      this.unbind();
+    },
+  });// END EnterSiteView
 
 }(jQuery));
