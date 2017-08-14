@@ -1947,7 +1947,7 @@
         var form = Drupal.t('Loading...');
       }
       // Render the Enter Site Button for clients if feature is enabled
-      if (!isAdmin && enterSiteButtonEnabled && showSignInForm !== true) {
+      if (!isAdmin && (enterSiteButtonEnabled === "1") && showSignInForm !== true) {
         this.$el.empty();
         this.$el.append(this.inner.$el);
         this.inner.render();
