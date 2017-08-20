@@ -12,9 +12,9 @@ var Opeka = Opeka || {};
           pairChatName = Drupal.settings.opeka.pair_chat_name || Drupal.t("The 1-to-1 chat"),
           groupChatName = Drupal.settings.opeka.group_chat_name || Drupal.t("The group chat"),
           textStrings = {
-            buttonAvailable : Drupal.t("Start chat"),
-            buttonOccupied : Drupal.t("Occupied"),
-            buttonClosed : Drupal.t("Closed"),
+            buttonAvailable : Drupal.t("The chat is open"),
+            buttonOccupied : Drupal.t("The chat is occupied"),
+            buttonClosed : Drupal.t("The chat is closed"),
             buttonError : Drupal.t("Error connecting."),
             statusFetching : Drupal.t("Connecting..."),
             statusClosed_pair : Drupal.t('@pairChatName is closed', {'@pairChatName': pairChatName}),

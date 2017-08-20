@@ -66,7 +66,7 @@
       this.admin = options.admin;
       this.messages = Opeka.clientData.viewChatHistory ? this.translateMessages(this.model.attributes.messages) : [];
       this.inQueue = options.inQueue;
-      this.returnSendsMessage = ''; // Variable tied to user defined behaviour of input text area
+      this.returnSendsMessage = 'checked'; // Variable tied to user defined behaviour of input text area
       this.writersMessage = '';
       this.dontAutoScroll = -1; // Variable tied to user defined behaviour of input text area
       this.scrolling = false;
@@ -1923,6 +1923,7 @@
         var form = JST.opeka_connect_form_tmpl({
           accessCodeEnabled: Opeka.status.attributes.accessCodeEnabled,
           screeningQuestions: Opeka.status.attributes.screeningQuestions,
+          signInFootNote: Drupal.settings.opeka.signin_footnote,
           labels: {
             action: Drupal.t('Ready for chat'),
             age: Drupal.t('Age'),

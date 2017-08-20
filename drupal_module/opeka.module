@@ -134,6 +134,13 @@ function opeka_menu() {
     'access arguments' => array('access content'),
     'file' => 'opeka.pages.inc',
   );
+  $items['opeka-widgets/mixed'] = array(
+    'title' => 'Mixed widget',
+    'description' => 'Mixed widget code for third party sites.',
+    'page callback' => 'opeka_mixed_widget',
+    'access arguments' => array('access content'),
+    'file' => 'opeka.pages.inc',
+  );
   return $items;
 }
 
@@ -189,6 +196,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $enter_site_message = check_plain(variable_get('opeka_enter_site_message', ''));
   $enter_site_confirm = check_plain(variable_get('opeka_enter_site_confirm', ''));
   $enter_site_leave = check_plain(variable_get('opeka_enter_site_leave', ''));
+  $signin_footnote = check_plain(variable_get('opeka_signin_footnote', ''));
+  $mixed_widget_url = check_plain(variable_get('opeka_mixed_widget_url', ''));
 
   // Settings to expose to the JavaScript client.
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
@@ -209,7 +218,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['enter_site_message'] = $enter_site_message;
   $settings['enter_site_confirm'] = $enter_site_confirm;
   $settings['enter_site_leave'] = $enter_site_leave;
-
+  $settings['signin_footnote'] = $signin_footnote;
+  $settings['mixed_widget_url'] = $mixed_widget_url;
 
   // Add js files and settings
   drupal_add_js(array('opeka' => $settings), 'setting');
@@ -339,6 +349,12 @@ function opeka_theme($existing, $type, $theme, $path) {
       'type' => 'theme',
       'path' => drupal_get_path('module', 'opeka') . '/widgets/foldout',
     );
+  $templates['opeka__mixed_widget_page'] = array(
+      'base hook' => 'page',
+      'template' => 'opeka--mixed-widget-page',
+      'type' => 'theme',
+      'path' => drupal_get_path('module', 'opeka') . '/widgets/mixed',
+    );
   $templates['opeka__widget_html'] = array(
       'base hook' => 'page',
       'template' => 'opeka--widget-html',
@@ -373,7 +389,7 @@ function opeka_preprocess_page(&$vars) {
   $vars['opeka_pair_chat_name'] = check_plain(variable_get('opeka_pair_chat_name', ''));
   $vars['opeka_group_chat_name'] = check_plain(variable_get('opeka_group_chat_name', ''));
   $path_array = explode("/",current_path());
-  $allowed_widget_types = array("header","inline","popup", "foldout");
+  $allowed_widget_types = array("header","inline","popup", "foldout", "mixed");
   if (isset($path_array) && (count($path_array) >= 2) && ($path_array[0] === "opeka-widgets")) {
     $plain_arg_0 = check_plain($path_array[0]);
     $plain_arg_1 = check_plain($path_array[1]);

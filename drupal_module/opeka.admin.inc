@@ -106,5 +106,13 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#maxlength' => 50,
   );
 
+  $form['opeka_signin_footnote'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Signin footnote'),
+    '#description' => t('Footnote below the signin form.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_signin_footnote', ''),
+    '#maxlength' => 200,
+  );
   return system_settings_form($form);
 }

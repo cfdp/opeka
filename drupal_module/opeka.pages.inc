@@ -88,6 +88,17 @@ function opeka_foldout_widget(){
 }
 
 /*
+ * Mixed widget page for inclusion on third party sites
+ *
+ */
+function opeka_mixed_widget(){
+  opeka_widgets();
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.mixed.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  drupal_add_css('//fonts.googleapis.com/css?family=Lato:400,700', array('group' => CSS_THEME, 'type' => 'external', 'weight' => 11));
+  return array();
+}
+
+/*
  * Common function for the widgets
  *
  * Add needed assets

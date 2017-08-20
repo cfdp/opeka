@@ -154,7 +154,16 @@ body.page-opeka input.screening {
   margin-top: 0;
 }
 /* line 149, ../sass/opeka.base.scss */
+body.page-opeka .screening-questions {
+  margin-bottom: 5px;
+}
+/* line 152, ../sass/opeka.base.scss */
 body.page-opeka span.screening-option {
   line-height: 25px;
   padding-left: 8px;
+}
+/* line 156, ../sass/opeka.base.scss */
+body.page-opeka .signin-footnote {
+  color: #BFBFBF;
+  font-size: 0.8em;
 }
