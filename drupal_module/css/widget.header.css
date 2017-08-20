@@ -4,25 +4,37 @@
 /* $green: #72d477; */
 /* Typography */
 /* Buttons */
+/* line 6, ../sass/widget.header.scss */
 .login-button {
   bottom: 30px;
   position: absolute;
-  right: 15px; }
+  right: 15px;
+}
 
+/* line 12, ../sass/widget.header.scss */
 .status-content {
   margin: 0;
-  max-width: 300px; }
-  .status-content ul {
-    margin: 0;
-    padding: 0; }
-  .status-content li {
-    list-style: none; }
+  max-width: 300px;
+}
+/* line 16, ../sass/widget.header.scss */
+.status-content ul {
+  margin: 0;
+  padding: 0;
+}
+/* line 21, ../sass/widget.header.scss */
+.status-content li {
+  list-style: none;
+}
 
+/* line 28, ../sass/widget.header.scss */
 .read-more {
   display: inline-block;
   margin: 10px 0 0;
   text-align: center;
-  width: 100%; }
-  .read-more a {
-    color: #3a404c;
-    text-decoration: none; }
+  width: 100%;
+}
+/* line 34, ../sass/widget.header.scss */
+.read-more a {
+  color: #3a404c;
+  text-decoration: none;
+}

@@ -1,0 +1,345 @@
+@charset "UTF-8";
+/* line 3, ../sass/widget.mixed.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+/* line 7, ../sass/widget.mixed.scss */
+html, body, div, form, fieldset, legend, label, ol, ul, li, h1, h2, h3, h4, h5, h6, th, td, caption, p {
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+}
+
+/* line 13, ../sass/widget.mixed.scss */
+html p, body p {
+  color: #4a4a4a;
+}
+
+/* line 17, ../sass/widget.mixed.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 22, ../sass/widget.mixed.scss */
+th, td {
+  text-align: left;
+  vertical-align: top;
+}
+
+/* line 27, ../sass/widget.mixed.scss */
+img {
+  border: 0;
+}
+
+/* line 31, ../sass/widget.mixed.scss */
+body {
+  font-family: Lato,sans-serif;
+  font-size: 13px;
+  color: #4a4a4a;
+}
+
+/* line 37, ../sass/widget.mixed.scss */
+#widget {
+  background: #fff;
+  min-width: 210px;
+  max-width: 380px;
+  border: 1px solid #ccc;
+  padding: 15px;
+}
+
+/* line 45, ../sass/widget.mixed.scss */
+h1 {
+  font-size: 24px;
+  font-weight: 400;
+  color: #339fd4;
+  padding-bottom: 2px;
+}
+
+/* line 52, ../sass/widget.mixed.scss */
+.subtle-text {
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #999;
+}
+
+/* line 58, ../sass/widget.mixed.scss */
+h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  height: 27px;
+}
+
+/* line 64, ../sass/widget.mixed.scss */
+h3 a:hover i.arrow:after {
+  border-color: #339fd4;
+}
+
+/* line 68, ../sass/widget.mixed.scss */
+h3 i[class^="icn-"] {
+  display: block;
+  float: left;
+  position: relative;
+  top: -5px;
+  margin-right: 10px;
+}
+
+/* line 76, ../sass/widget.mixed.scss */
+h3 i.icn-chat {
+  background-image: url(../widgets/mixed/img/icon-chat.png);
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: block;
+  height: 24px;
+  width: 32px;
+  top: 0px;
+}
+
+/* line 87, ../sass/widget.mixed.scss */
+.chat-open i.icn-chat {
+  background-image: url(../widgets/mixed/img/icon-chat-open.png);
+}
+
+/* line 97, ../sass/widget.mixed.scss */
+h3 i.icn-letterbox {
+  background-image: url(../widgets/mixed/img/icon-letterbox.png);
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: block;
+  height: 25px;
+  width: 32px;
+}
+
+/* line 106, ../sass/widget.mixed.scss */
+h3 i.icn-forum {
+  background-image: url(../widgets/mixed/img/icon-forum.png);
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: block;
+  height: 28px;
+  width: 28px;
+}
+
+/* line 115, ../sass/widget.mixed.scss */
+h3 i.arrow {
+  margin-top: 4px;
+  float: right;
+}
+
+/* line 120, ../sass/widget.mixed.scss */
+h3 i.arrow:after {
+  width: 12px;
+  height: 12px;
+  border-color: #d9d9d9;
+  border-width: 0 3px 3px 0;
+}
+
+/* line 127, ../sass/widget.mixed.scss */
+a, a:visited, a:hover, a:focus {
+  text-decoration: none;
+}
+
+/* line 131, ../sass/widget.mixed.scss */
+li {
+  list-style-type: none;
+  line-height: normal;
+}
+
+/* line 136, ../sass/widget.mixed.scss */
+i.arrow {
+  display: inline-block;
+}
+
+/* line 140, ../sass/widget.mixed.scss */
+i.arrow:after {
+  content: '';
+  display: block;
+  border: solid #000;
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+/* line 151, ../sass/widget.mixed.scss */
+header {
+  border-bottom: 1px solid #d4d4d4;
+  margin-bottom: 20px;
+  padding: 20px 0;
+}
+
+/* line 157, ../sass/widget.mixed.scss */
+section {
+  margin-bottom: 25px;
+}
+
+/* line 161, ../sass/widget.mixed.scss */
+section ul li {
+  margin-bottom: 8px;
+  zoom: 1;
+}
+
+/* line 166, ../sass/widget.mixed.scss */
+section ul li a:first-letter {
+  text-transform: uppercase;
+}
+
+/* line 170, ../sass/widget.mixed.scss */
+section ul li a:hover i.arrow:after {
+  border-color: #2582af;
+}
+
+/* line 174, ../sass/widget.mixed.scss */
+section ul i.arrow {
+  float: left;
+  padding: 5px 5px 5px 0;
+}
+
+/* line 179, ../sass/widget.mixed.scss */
+section ul i.arrow:after {
+  width: 5px;
+  height: 5px;
+  border-color: #339fd4;
+  border-width: 0 2px 2px 0;
+}
+
+/* line 186, ../sass/widget.mixed.scss */
+section ul time {
+  color: #999;
+}
+
+/* line 190, ../sass/widget.mixed.scss */
+section ul time:before {
+  content: "· ";
+}
+
+/* line 194, ../sass/widget.mixed.scss */
+footer {
+  border-top: 1px solid #d4d4d4;
+  padding-top: 10px;
+  zoom: 1;
+}
+
+/* line 200, ../sass/widget.mixed.scss */
+footer p {
+  padding-bottom: 15px;
+  letter-spacing: 0 !important;
+}
+
+/* line 205, ../sass/widget.mixed.scss */
+a[class^="logo-"] {
+  float: left;
+}
+
+/* line 209, ../sass/widget.mixed.scss */
+a.logo-cyberhus i {
+  background-image: url(../widgets/mixed/img/logo-cyberhus.png);
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: block;
+  height: 29px;
+  width: 149px;
+}
+
+/* line 218, ../sass/widget.mixed.scss */
+a.logo-kk i {
+  background-image: url(../widgets/mixed/img/logo-kk.png);
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: block;
+  height: 37px;
+  width: 91px;
+  position: relative;
+  top: -5px;
+}
+
+/* line 229, ../sass/widget.mixed.scss */
+h3 a, section ul li a {
+  color: #4a4a4a;
+  display: block;
+}
+
+/* line 234, ../sass/widget.mixed.scss */
+h3 a:hover, section ul li a:hover {
+  color: #339fd4;
+}
+
+/* line 238, ../sass/widget.mixed.scss */
+section ul li:after, footer:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* line 245, ../sass/widget.mixed.scss */
+.login-button {
+  position: relative;
+}
+/* line 247, ../sass/widget.mixed.scss */
+.login-button .btn {
+  border: 1px solid #ccc;
+  color: #4a4a4a;
+  font-size: 16px;
+  position: absolute;
+  right: 0;
+  top: -8px;
+  padding: 8px;
+}
+
+/* line 259, ../sass/widget.mixed.scss */
+.chat-open .login-button .btn {
+  background-color: #51E789;
+  border: none;
+  color: #fff;
+}
+/* line 263, ../sass/widget.mixed.scss */
+.chat-open .login-button .btn:hover {
+  background-color: #19b955;
+  border-color: #51E789;
+}
+
+/*@media (-webkit-min-device-pixel-ratio: 2), 
+(min-resolution: 192dpi) {
+  h3 i.icn-chat {
+    background-image: url(../widgets/mixed/img-2x/icon-chat.png);
+    background-size: 149px 94px;
+    height: 24px;
+    width: 32px;
+  }
+
+  h3 i.icn-letterbox {
+    background-image: url(../widgets/mixed/img-2x/icon-letterbox.png);
+    background-size: 149px 94px;
+    height: 25px;
+    width: 32px;
+  }
+
+  h3 i.icn-forum {
+    background-image: url(../widgets/mixed/img-2x/icon-forum.png);
+    background-size: 149px 94px;
+    height: 28px;
+    width: 28px;
+  }
+
+  a.logo-cyberhus i {
+    background-image: url(../widgets/mixed/img-2x/logo-cyberhus.png);
+    background-size: 149px 94px;
+    height: 29px;
+    width: 149px;
+  }
+
+  a.logo-kk i {
+    background-image: url(/img-2x/logo-kk.png);
+    background-size: 149px 94px;
+    height: 37px;
+    width: 91px;
+  }
+}*/
+@media (max-width: 271px) {
+  /* line 310, ../sass/widget.mixed.scss */
+  a.logo-kk {
+    margin-top: 20px;
+  }
+}

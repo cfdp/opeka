@@ -146,8 +146,15 @@ body.page-opeka {
   input.screening {
     margin-top: 0;
   }
+  .screening-questions {
+    margin-bottom: 5px;
+  }
   span.screening-option {
     line-height: 25px;
     padding-left: 8px;
+  }
+  .signin-footnote {
+    color: $ccGray;
+    font-size: $font-sm;
   }
 }
