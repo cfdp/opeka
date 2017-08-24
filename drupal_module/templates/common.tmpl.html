@@ -15,10 +15,10 @@
 
             <% if (user.clientId !== clientId && admin) { %>
               <div class="actions btn-group">
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
             <% } %>
 
-                <i class="icon-user"></i><span class="name"><%- user.name %></span>
+                <span class="glyphicon glyphicon-user"></span><span class="name"><%- user.name %></span>
                 <% if (user.age || user.gender) { %>
                   <span class="meta">
                     (
@@ -45,7 +45,7 @@
               </div>
               <!-- end dropdown btn-group -->
               <% if (screeningQuestions && user.screening && Drupal.settings.opeka_screening && Drupal.settings.opeka_screening.opeka_screening_options.length) { %>
-                <div class="screening-wrapper btn"><%= labels.screeningInfo + ": " %>
+                <div class="screening-wrapper btn btn-default"><%= labels.screeningInfo + ": " %>
                   <dl class="screening-question">
                     <dt class="popover-title"><%= user.screening.question %></dt>
                     <dd class="popover-content"><%= user.screening.answer  %></dd>
@@ -104,36 +104,29 @@
 </script>
 
 <script id="opeka_connect_form_tmpl" type="application/template">
- <div class="welcome-message"><%= Drupal.settings.opeka.welcome_message %></div>
- <form action="#" class="form-horizontal well">
-    <div class="control-group">
-      <label class="control-label nickname-label">
-        <%= labels.nick %>
-      </label>
-      <div class="controls">
-        <input class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
-        <% if (name != 'Rådgiver') { %>
-        <!--<span class="label-tooltip"><%= labels.nick_tooltip %></span>-->
-        <% } %>
+  <div class="welcome-message"><%= Drupal.settings.opeka.welcome_message %></div>
+  <form action="#" class="form-horizontal well">
+    <div class="controls form-group">
+      <label for="nick" class="col-sm-3 control-label"><%= labels.nick %></label>
+      <div class="col-sm-7">
+        <input type="text"  maxlength="25" class="form-control nickname" value="<%- name %>" id="nick" placeholder="<%= labels.placeholder %>">
       </div>
     </div>
-    <% if (!name) { %>
 
-      <div class="control-group">
-        <label class="control-label age-label">
-          <%= labels.age %>
-        </label>
-        <div class="controls">
-          <input class="form-text age" type="text" maxlength="2" />
+    <% if (!name) { %>
+      <div class="controls form-group">
+        <label for="age" class="col-sm-3 control-label"><%= labels.age %></label>
+        <div class="col-sm-3">
+          <input type="text" class="form-control age" maxlength="2" id="age">
         </div>
       </div>
 
-      <div class="control-group">
-        <label class="control-label gender-label">
+      <div class="controls form-group">
+        <label class="gender-label col-sm-3">
           <%= labels.gender %>
         </label>
-        <div class="controls">
-          <select class="form-select gender">
+        <div class="col-sm-4 ">
+          <select class="form-control gender">
             <option value="" selected="selected"></option>
             <option value="m"><%= labels.male %></option>
             <option value="f"><%= labels.female %></option>
@@ -143,8 +136,8 @@
       </div>
 
       <% if (screeningQuestions && Drupal.settings.opeka_screening && Drupal.settings.opeka_screening.opeka_screening_options.length ) { %>
-        <div class="control-group">
-          <label class="control-label screening-label">
+        <div class="form-group col-sm-12">
+          <label class="screening-label">
             <%= labels.screening %>
           </label>
           <div class="controls">
@@ -161,7 +154,7 @@
       <% } %>
 
       <% if (accessCodeEnabled) { %>
-        <div class="control-group">
+        <div class="form-group col-sm-12">
           <label class="control-label accesscode-label">
             <%= labels.accessCode %>
           </label>
@@ -315,7 +308,7 @@
       <li class="system-message"><span>system:</span><%- message.message %></li>
     <% } else if (message.whisper) { %>
       <li class="whisper-message bs-callout" data-message-id="<%= message.messageId %>">
-        <div class="top-info clearfix">
+        <div class="top-info">
           <% if (message.receiver) { %>
             <div class="sender-name pull-left"><%- message.sender.name %> - <%= labels.whispered %></div>
             <% } else { %>
@@ -334,8 +327,7 @@
       </li>
     <% } else { %>
       <li class="chat-message bs-callout <% if(message.sender.isCouncellor) { %>bs-callout-counselor<% }else{%>bs-callout-client<% } %>" data-message-id="<%= message.messageId %>">
-        <div class="top-info clearfix">
-          <div class="sender-name pull-left"><%- message.sender.name %></div>
+        <div class="top-info">
           <div class="time pull-right"><%= formatTimestamp(message.date) %></div>
           <% if (admin) { %>
             <div class="actions pull-right">
@@ -343,7 +335,8 @@
             </div>
           <% } %>
         </div>
-        <div class="message"><%- message.message %></div>
+        <span class="sender-name"><%- message.sender.name %></span>
+        <span class="message"><%- message.message %></span>
       </li>
     <% } %>
   <% }); %>
