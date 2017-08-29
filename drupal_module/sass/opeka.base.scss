@@ -102,9 +102,28 @@
   }
 }
 
-// Admin page
+/* Admin page */
 body.page-admin-config-services-opeka-screening .btn.btn-info {
   margin-bottom: 1em;
+}
+
+/* Chat status in nav header */
+.online-status-view .status {
+  display: inline-block;
+  text-indent: -9999px;
+  width: 10px;
+  height: 10px;
+  padding: 15px;
+  background-image: url(../img/chat_status_closed.svg);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 10px 10px;
+  &.chat-busy {
+    background-image: url(../img/chat_status_busy.svg);
+  }
+  &.chat-open {
+    background-image: url(../img/chat_status_open.svg);
+  }
 }
 
 /* Logged in users */

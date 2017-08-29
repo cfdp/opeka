@@ -103,22 +103,45 @@
   background-color: #e6e6e6;
 }
 
+/* Admin page */
 /* line 106, ../sass/opeka.base.scss */
 body.page-admin-config-services-opeka-screening .btn.btn-info {
   margin-bottom: 1em;
 }
 
+/* Chat status in nav header */
+/* line 111, ../sass/opeka.base.scss */
+.online-status-view .status {
+  display: inline-block;
+  text-indent: -9999px;
+  width: 10px;
+  height: 10px;
+  padding: 15px;
+  background-image: url(../img/chat_status_closed.svg);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 10px 10px;
+}
+/* line 121, ../sass/opeka.base.scss */
+.online-status-view .status.chat-busy {
+  background-image: url(../img/chat_status_busy.svg);
+}
+/* line 124, ../sass/opeka.base.scss */
+.online-status-view .status.chat-open {
+  background-image: url(../img/chat_status_open.svg);
+}
+
 /* Logged in users */
-/* line 112, ../sass/opeka.base.scss */
+/* line 131, ../sass/opeka.base.scss */
 body.page-admin-opeka .app-view {
   /* Screening */
 }
-/* line 114, ../sass/opeka.base.scss */
+/* line 133, ../sass/opeka.base.scss */
 body.page-admin-opeka .app-view .screening-wrapper {
   display: inline-block;
   position: relative;
 }
-/* line 118, ../sass/opeka.base.scss */
+/* line 137, ../sass/opeka.base.scss */
 body.page-admin-opeka .app-view .screening-question {
   position: absolute;
   left: 0;
@@ -139,21 +162,21 @@ body.page-admin-opeka .app-view .screening-question {
 }
 
 /* Login page */
-/* line 138, ../sass/opeka.base.scss */
+/* line 157, ../sass/opeka.base.scss */
 body.page-opeka select.form-select.gender {
   height: 28px;
 }
-/* line 141, ../sass/opeka.base.scss */
+/* line 160, ../sass/opeka.base.scss */
 body.page-opeka label.screening-label {
   display: none;
   line-height: inherit;
   padding-top: 0;
 }
-/* line 146, ../sass/opeka.base.scss */
+/* line 165, ../sass/opeka.base.scss */
 body.page-opeka input.screening {
   margin-top: 0;
 }
-/* line 149, ../sass/opeka.base.scss */
+/* line 168, ../sass/opeka.base.scss */
 body.page-opeka span.screening-option {
   line-height: 25px;
   padding-left: 8px;

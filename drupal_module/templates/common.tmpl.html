@@ -59,6 +59,9 @@
         <% }); %>
         </ul>
       </div>
+      <% if (banCodeGenerator) { %>
+        <button class="generate-ban-code btn-default btn"><%- labels.banCode %></button>
+      <% } %>
     </div>
   <% } %>
   <% if (admin) { %>
@@ -87,9 +90,7 @@
 </script>
 
 <script id="opeka_chat_footer_tmpl" type="application/template">
-  <% if (banCodeGenerator) { %>
-    <button class="generate-ban-code btn-default btn"><%- labels.banCode %></button>
-  <% } %>
+
 </script>
 
 <script id="opeka_app_tmpl" type="application/template">

@@ -461,12 +461,14 @@
       "click .pause-toggle": "pauseToggle",
       "click .unmute-user": "unmuteUser",
       "click .whisper": "whisper",
-      "click .screening-wrapper": "screeningToggle"
+      "click .screening-wrapper": "screeningToggle",
+      "click .generate-ban-code": "generateBanCode"
     },
 
     initialize: function (options) {
       var self = this;
       this.admin = options.admin;
+      this.banCodeGenerator = options.banCodeGenerator;
       _.bindAll(this);
 
       this.model.on('change:userList', this.render, this);
@@ -488,6 +490,7 @@
         this.$el.html(JST.opeka_chat_sidebar_tmpl({
           admin: this.admin,
           clientId: Opeka.clientData.clientId,
+          banCodeGenerator: this.banCodeGenerator,
           labels: {
             userListHeading: Drupal.t('User list'),
             roomActions: Drupal.t('Room actions'),
@@ -506,6 +509,7 @@
             registrationForm: Drupal.t('Registration'),
             registrationFormLink: Drupal.t('Open registration form'),
             noRegistrationForm: Drupal.t('No registration form entered'),
+            banCode: Drupal.t('Generate new ban code'),
           },
           screeningQuestions: screeningQuestions,
           room: this.model,
@@ -629,6 +633,17 @@
       }
     },
 
+    generateBanCode: function (event) {
+      Opeka.remote.getBanCode(function (banCode) {
+        var dialog = new Opeka.BanCodeDialogView({banCode: banCode});
+
+        dialog.render();
+      });
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
 
     // Open dialog to whisper to an user.
     whisper: function (event) {
@@ -648,44 +663,24 @@
   });// END ChatSidebarView
 
   // Footer for the chat with generate ban code and open/close button.
-  Opeka.ChatFooterView = Backbone.View.extend({
+  Opeka.ChatStatusView = Backbone.View.extend({
     className: 'opeka-chat-footer',
-
-    events: {
-      "click .generate-ban-code": "generateBanCode"
-    },
 
     initialize: function (options) {
       var self = this;
-      this.banCodeGenerator = options.banCodeGenerator;
       _.bindAll(this);
-
     },
 
     render: function () {
       if (JST.opeka_chat_footer_tmpl) {
         this.$el.html(JST.opeka_chat_footer_tmpl({
-          banCodeGenerator: this.banCodeGenerator,
           labels: {
-            banCode: Drupal.t('Generate new ban code'),
             createInvite: Drupal.t('Create invitation link')
           }
         }));
       }
 
       return this;
-    },
-
-    generateBanCode: function (event) {
-      Opeka.remote.getBanCode(function (banCode) {
-        var dialog = new Opeka.BanCodeDialogView({banCode: banCode});
-
-        dialog.render();
-      });
-
-      if (event) {
-        event.preventDefault();
-      }
     },
   });
 
@@ -862,7 +857,7 @@
 
   // Simple view displayed in the footer containing status for the chat.
   Opeka.OnlineStatusView = Backbone.View.extend({
-    tagName: 'p',
+    tagName: 'li',
     className: 'online-status-view',
 
     initialize: function (options) {
@@ -877,10 +872,17 @@
     },
 
     render: function () {
+      var chatStatus;
       // Don’t render if we don’t have a status.
       if (this.model.has('councellors') && this.model.has('guests')) {
+        if (this.model.get('chatOpen') === true) {
+          chatStatus = "chat-open";
+        }
+        else {
+          chatStatus = "chat-closed"
+        }
         this.$el.html(JST.opeka_online_status_tmpl({
-          content: Drupal.t('There are !guests guests and !councellors councellors online', {
+          content: Drupal.t('<span class="status ' + chatStatus + '"></span>' + '!guests guests !councellors councellors online', {
             '!guests': '<span class="guests">' + this.model.get('guests') + '</span>',
             '!councellors': '<span class="councellors">' + this.model.get('councellors') + '</span>'
           })

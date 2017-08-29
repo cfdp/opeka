@@ -174,7 +174,8 @@ var Opeka = {
         if (Opeka) {
           sidebar = new Opeka.ChatSidebarView({
             admin: admin,
-            model: room
+            model: room,
+            banCodeGenerator: Opeka.clientData.canGenerateBanCode
           });
         }
 
@@ -716,7 +717,7 @@ var Opeka = {
   Opeka.signIn = function (user, callback) {
     Opeka.remote.signIn(user, function (clientData) {
       var destination = 'rooms',
-        footer;
+        onlineStatus;
 
       _.extend(Opeka.clientData, clientData);
 
@@ -731,13 +732,11 @@ var Opeka = {
 
       Opeka.router.navigate(destination, {trigger: true});
 
-      footer = new Opeka.ChatFooterView({
-        model: Opeka.status,
-        banCodeGenerator: Opeka.clientData.canGenerateBanCode
+      onlineStatus = new Opeka.ChatStatusView({
+        model: Opeka.status
       });
 
-      $('#opeka-app').find('.footer').append(footer.render().el);
-
+      $('#navbar').find('.navbar-nav.secondary').prepend(onlineStatus.render().el);
     });
   };
 
@@ -805,7 +804,7 @@ var Opeka = {
     });
 
     Opeka.appViewInstance.on('render', function (view) {
-      view.$el.find('.footer').append(Opeka.statusViewInstance.render().el);
+      $('#navbar').find('.navbar-nav.secondary').prepend(Opeka.statusViewInstance.render().el);
     });
 
     $('#opeka-app').html(Opeka.appViewInstance.render().el);
