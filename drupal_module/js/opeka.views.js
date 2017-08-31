@@ -1873,7 +1873,16 @@
         message = form.find('textarea.whisper-message').val();
 
       // Whisper the user.
-      Opeka.remote.whisper(this.clientId, message);
+      Opeka.remote.whisper(this.clientId, message, function (err) {
+        if (err) {
+          var view = new Opeka.DialogView({
+            content: Backbone.View.prototype.make('p', 'message', Drupal.t('Could not whisper to user. Maybe the user logged out.')),
+            title: Drupal.t('Sorry.')
+          });
+
+          view.render();
+        }
+      });
       this.remove();
 
       // Prevent event if needed.
