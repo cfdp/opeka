@@ -3,6 +3,24 @@
   <div id="room-size" data-room-size="<%- room.get('maxSize') %>"></div>
   <% /* Only display sidebar for anonymous clients in pair rooms if this settings is set to 1*/ %>
   <% if ((admin) || (!((Drupal.settings.opeka.pairchat_user_list === 0) && (room.get('maxSize') === 2)))) { %>
+    <% if (admin) { %>
+      <form action="#" class="leave-room-form">
+        <input class="form-submit send btn btn-success" type="submit" value="<%= labels.leaveRoomButton %>" />
+      </form>
+      <div class="btn-group btn-toggle">
+        <% if (room.attributes.paused) { %>
+          <button class="btn btn-primary pause-toggle btn-danger">PAUSE</button>
+          <button class="pause-toggle btn btn-default">ÅBEN</button>
+        <%}else{ %>
+          <button class="btn btn-default pause-toggle">PAUSE</button>
+          <button class="pause-toggle btn btn-primary btn-success">ÅBEN</button>
+        <% } %>
+      </div>
+      <button class="delete-room btn btn-default">
+        <span class="delete-room glyphicon glyphicon-remove" aria-hidden="true"></span>
+        <%= labels.deleteRoom %>
+      </button>
+    <% } %>
     <div id="user-list-block">
       <h5 class="sidebar-block-heading"><%= labels.userListHeading %><span class="arrow up"></span></h5>
       <div class="sidebar-block-content">
@@ -60,7 +78,7 @@
         </ul>
       </div>
       <% if (banCodeGenerator) { %>
-        <button class="generate-ban-code btn-default btn"><%- labels.banCode %></button>
+        <button class="generate-ban-code btn-default btn-sm btn"><%- labels.banCode %></button>
       <% } %>
     </div>
   <% } %>
@@ -68,10 +86,8 @@
     <div class="sidebar-block">
       <h5 class="sidebar-block-heading"><%= labels.roomActions %><span class="arrow down"></span></h5>
       <div class="sidebar-block-content room-actions"  style="display: block;">
-        <button class="pause-toggle btn btn-sm btn-default"><%= labels.pauseToggle %></button>
         <button class="clear-messages btn btn-sm btn-default"><%= labels.clearMessages %></button>
         <button class="change-room-size btn btn-sm btn-default"><%= labels.changeRoomSize %></button>
-        <button class="delete-room btn btn-sm btn-default"><%= labels.deleteRoom %></button>
       </div>
     </div>
     <div class="sidebar-block">
@@ -87,10 +103,6 @@
       </div>
     </div>
   <% } %>
-</script>
-
-<script id="opeka_chat_footer_tmpl" type="application/template">
-
 </script>
 
 <script id="opeka_app_tmpl" type="application/template">
@@ -302,6 +314,11 @@
 </script>
 
 <script id="opeka_chat_tmpl" type="application/template">
+<% if (!admin) { %>
+  <form action="#" class="leave-room-form">
+    <input class="form-submit send btn btn-success" type="submit" value="<%= labels.leaveRoomButton %>" />
+  </form>
+<% } %>
 <div class="chat-message-list-wrapper">
   <ul class="chat-message-list list-unstyled">
   <% _.each(messages, function (message) { %>
@@ -318,7 +335,7 @@
             <div class="time pull-right"><%= formatTimestamp(message.date) %></div>
             <% if (message.receiver) { %>
             <div class="actions pull-right">
-              <button class="reply-to-whisper btn-link pull-right" data-reply-to="<%- message.sender.name %>">
+              <button class="reply-to-whisper btn btn-sm btn-default pull-right" data-reply-to="<%- message.sender.name %>">
                 <%= labels.replyToWhisper %>
               </button>
             </div>
@@ -382,15 +399,11 @@
     <form action="#" class="leave-queue-form">
       <input class="form-submit send" type="submit" value="<%= labels.leaveQueueButton %>" />
     </form>
-  <% } else { %>
-    <form action="#" class="leave-room-form">
-      <input class="form-submit send btn btn-success" type="submit" value="<%= labels.leaveRoomButton %>" />
-    </form>
   <% } %>
 </script>
 
 <script id="opeka_user_feedback_tmpl" type="application/template">
-  <% if(admin) { %>
+  <% if (admin) { %>
     <p>The chat session has ended.</p>
   <% }else{ %>
     <p><%= labels.farewellMessage %></p>
