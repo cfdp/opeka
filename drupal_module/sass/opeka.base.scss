@@ -2,78 +2,45 @@
 @import "compass";
 @import "variables";
 
-.not-logged-in {
-  /* The sidebar is always visible in a group chat for anonymous clients*/
-  &.groupchat #opeka-app .content.client-sidebar-0 {
-    width: 66%;
-  }
-  #opeka-app {
-    /* Anonymous clients can have the sidebar disabled */
-    .content.client-sidebar-0 {
-      width: 100%;
-    }
-    .content.client-sidebar-1 {
-      width: 66%;
-    }
-  }
-
-  .groupchat,
-  .room-size-2 {
-    .footer {
-      display: none;
-    }
-  }
-}
-
 /* All users */
-#opeka-app {
 
+#opeka-app {
   .header,
   .footer {
     clear: both;
   }
-
   .content,
   .sidebar {
     float: left;
   }
-
   .content {
-    width: 66%;
+    width: 100%;
   }
-
   .sidebar {
     width: 33%;
   }
-
   .sidebar-block .room-actions .btn {
     clear: both;
     margin-bottom: .5em;
   }
-
   .emoticon {
     margin-bottom: -6px;
   }
-
   .message {
     white-space: pre-wrap;
   }
-
   .chat-message-list-wrapper {
     position: relative;
     padding-bottom: 12px;
   }
-
   .form-submit.send {
     vertical-align: top;
   }
-
   .chat-flow-controls {
     display: inline-block;
   }
-
- .writers-message {
-    width:100%;
+  .writers-message {
+    width: 100%;
     padding: .2em .5em;
     box-sizing: border-box;
     font-size: .8em;
@@ -82,54 +49,52 @@
     bottom: 0px;
     left: 0;
   }
-
-  .return-sends-msg, .dont-auto-scroll, .return-writers-msg {
+  .return-sends-msg,
+  .dont-auto-scroll,
+  .return-writers-msg {
     margin: 0 2px 0 10px;
   }
-
   label[for="return-sends-msg"],
   label[for="dont-auto-scroll"],
-  label[for="return-writers-msg"]  {
+  label[for="return-writers-msg"] {
     display: inline-block;
   }
-
   .dropdown-menu li {
     cursor: pointer;
-
     &:hover {
       background-color: $ccLightGray;
     }
   }
 }
 
-/* Admin page */
-body.page-admin-config-services-opeka-screening .btn.btn-info {
-  margin-bottom: 1em;
-}
 
-/* Chat status in nav header */
-.online-status-view .status {
-  display: inline-block;
-  text-indent: -9999px;
-  width: 10px;
-  height: 10px;
-  padding: 15px;
-  background-image: url(../img/chat_status_closed.svg);
-  background-repeat: no-repeat;
-  background-position: bottom;
-  background-size: 10px 10px;
-  &.chat-busy {
-    background-image: url(../img/chat_status_busy.svg);
-  }
-  &.chat-open {
-    background-image: url(../img/chat_status_open.svg);
-  }
-}
+/* chat counselors / admins */
 
-/* Logged in users */
-body.page-admin-opeka {
-  .app-view {
-     /* Screening */
+.opeka-counselor {
+  #opeka-app {
+    .room-list {
+      .room {
+        min-width: 550px;
+        margin-right: 10px;
+      }
+      display: inline-block;
+      vertical-align: top;
+    }
+    .edit-opening-hours {
+      margin-bottom: 10px;
+    }
+    .widget-wrapper {
+      width: 50%;
+      display: inline-block;
+      padding: 20px 0 0 0;
+    }
+    .leave-room-form {
+      vertical-align: middle;
+      display: inline-block;
+      margin-bottom: 0;
+      text-align: left;
+    }
+    /* Screening */
     .screening-wrapper {
       display: inline-block;
       position: relative;
@@ -148,11 +113,84 @@ body.page-admin-opeka {
       white-space: normal;
       z-index: 1010;
     }
-
   }
-
 }
+
+.opeka-counselor {
+  &.groupchat,
+  &.room-size-2 {
+    /* Always make room for sidebar in chat room */
+    #opeka-app .content {
+      width: 66%;
+    }
+  }
+  &.room-size-2 {
+    /* Hide leave room button in pair chat */
+    #opeka-app .leave-room-form {
+      display: none;
+    }
+  }
+}
+
+
+/* Chat clients (ie. not counselors) */
+
+.opeka-client {
+  /* The sidebar is always visible in a group chat for anonymous clients*/
+  &.groupchat #opeka-app .content.client-sidebar-0 {
+    width: 66%;
+  }
+  #opeka-app {
+    /* Anonymous clients can have the sidebar disabled */
+    .content.client-sidebar-0 {
+      width: 100%;
+    }
+    .content.client-sidebar-1 {
+      width: 66%;
+    }
+    .opeka-chat-sidebar {
+      margin-top: 40px;
+    }
+  }
+  .groupchat,
+  .room-size-2 {
+    .footer {
+      //display: none;
+    }
+  }
+}
+
+
+/* Admin page */
+
+body.page-admin-config-services-opeka-screening .btn.btn-info {
+  margin-bottom: 1em;
+}
+
+
+/* Chat status in nav header */
+
+.online-status-view .status {
+  display: inline-block;
+  text-indent: -9999px;
+  width: 10px;
+  height: 10px;
+  padding: 15px;
+  background-image: url(../img/chat_status_closed.svg);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 10px 10px;
+  &.chat-busy {
+    background-image: url(../img/chat_status_busy.svg);
+  }
+  &.chat-open {
+    background-image: url(../img/chat_status_open.svg);
+  }
+}
+
+
 /* Login page */
+
 body.page-opeka {
   select.form-select.gender {
     height: 28px;

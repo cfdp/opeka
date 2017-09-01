@@ -11,4 +11,3 @@
     <a id="join-chat" class="btn chat" href="#"></a>
   </div>
 </div>
-

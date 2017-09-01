@@ -1423,7 +1423,8 @@
           fullRoomLink: Opeka.features.fullRoomLink,
           pausedRoomText: Drupal.t('Paused'),
           privateRoomText: Drupal.t('Private'),
-          chatClosed: Drupal.t('The chat is closed. Users will not be able to log into chat rooms before it is opened by a coordinator. When turned on the chatsign will appear as "Occupied" until you create a room.')
+          chatClosed: Drupal.t('The chat is closed. Users will not be able to log into chat rooms before it is opened by a coordinator. When turned on the chatsign will appear as "Occupied" until you create a room.'),
+          editOpeningHours: Drupal.t('Edit opening hours')
         },
         hidePairRooms: hidePairRooms,
         rooms: roomList,
