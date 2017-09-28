@@ -3,10 +3,6 @@
 @import "variables";
 
 .not-logged-in {
-  /* The sidebar is always visible in a group chat for anonymous clients*/
-  &.groupchat #opeka-app .content.client-sidebar-0 {
-    width: 66%;
-  }
   #opeka-app {
     /* Anonymous clients can have the sidebar disabled */
     .content.client-sidebar-0 {
@@ -22,6 +18,13 @@
     .footer {
       display: none;
     }
+  }
+}
+
+@media (min-width: $tab) {
+  /* The sidebar goes to its proper place on bigger screens */
+  .not-logged-in.groupchat #opeka-app .content.client-sidebar-0 {
+    width: 66%;
   }
 }
 
