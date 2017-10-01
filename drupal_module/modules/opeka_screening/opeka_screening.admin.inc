@@ -24,7 +24,7 @@ function opeka_screening_admin_form($form, &$form_state) {
   // Check if the incoming values are there, otherwise, use the stored ones.
   $question_input_values = isset($form_state['input'][$element_name]) ? $form_state['input'][$element_name] : [];
   $opeka_screening_options_array = $question_input_values ?: variable_get('opeka_screening_options', []);
-  $opeka_screening_options_array = array_filter($opeka_screening_options_array, function($array_el) {
+  $opeka_screening_options_array = array_filter($opeka_screening_options_array, function ($array_el) {
     return !(empty($array_el['answer_option']));
   });
 
@@ -47,13 +47,17 @@ function opeka_screening_admin_form($form, &$form_state) {
     '#description' => '',
   );
   // Add as many answer options as the values we have, and one more.
-  foreach ($opeka_screening_options_array as $idx=>$opeka_screening_options) {
+  foreach ($opeka_screening_options_array as $idx => $opeka_screening_options) {
     $form[$element_name][] = array(
       'answer_option' => array(
         '#type' => 'textfield',
         '#default_value' => $opeka_screening_options['answer_option'],
         '#size' => 80,
-        '#attributes' => array('class' => array('clearfix'), 'placeholder' => t('Answer option...'), 'required' => TRUE),
+        '#attributes' => array(
+          'class' => array('clearfix'),
+          'placeholder' => t('Answer option...'),
+          'required' => TRUE,
+        ),
       ),
       '#prefix' => '<div id="' . $element_name . '_' . $idx . '">',
       '#suffix' => '</div>',
@@ -63,7 +67,10 @@ function opeka_screening_admin_form($form, &$form_state) {
     'answer_option' => array(
       '#type' => 'textfield',
       '#size' => 80,
-      '#attributes' => array('class' => array('clearfix'), 'placeholder' => t('Answer option...')),
+      '#attributes' => array(
+        'class' => array('clearfix'),
+        'placeholder' => t('Answer option...'),
+      ),
     ),
   );
 
@@ -108,7 +115,7 @@ function opeka_fapi_multifield_submit_add_more($form, &$form_state, $arg) {
  */
 function opeka_screening_admin_form_submit($form, &$form_state) {
   $element_name = $form['#opeka_multified_element_name'];
-  $form_state['values'][$element_name] = array_filter($form_state['values'][$element_name], function($array_el) {
+  $form_state['values'][$element_name] = array_filter($form_state['values'][$element_name], function ($array_el) {
     return !(empty($array_el['answer_option']));
   });
 }
