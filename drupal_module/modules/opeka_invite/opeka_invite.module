@@ -365,6 +365,10 @@ function opeka_invite_mail($key, &$message, $invite) {
   if ($variables['[message]']) {
     $variables['[message]'] = "\n\n" . $variables['[message]'] . "\n\n";
   }
+  else {
+    // We need a few newlines between the link and the rest of the body to avoid a malformed URL
+    $variables['[message]'] = "\n\n";
+  }
 
   $body = implode($variables['[message]'], array_map('trim', explode('[message]', $body)));
 
