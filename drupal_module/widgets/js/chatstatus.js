@@ -42,13 +42,22 @@ var Opeka = Opeka || {};
         var statusTab = $('.status-tab'),
             chatButton = $('.login-button .chat'),
             chatLink = false,
-            body = $('body');
-        
-        var roomType = "pair";
+            body = $('body'),
+            roomType = "pair",
+            closeBtn = $(".opeka-chat-popup.close");
+            
         
         // The group class is added to the body tag by requesting the widget URL and appending /group at the end
         // e.g. https://demo.curachat.com/opeka-widgets/header/group
         if (body.hasClass("group")) { roomType = "group"; }
+        
+        // Close popup when the close window message is received
+        
+        closeBtn.on( "click",  function() {
+          var closeMsg = roomType+"-CloseIframe";
+          console.log("closeMsg "+closeMsg);
+          opekaChatPopup(closeMsg);
+        });
         
         // Set the temporary status text
         statusTab.text(textStrings.statusFetching);
@@ -86,7 +95,7 @@ var Opeka = Opeka || {};
                 chatLink = true;
                 chatButton.text(textStrings.buttonAvailable);
                 if (opekaClientURL) {
-                  opekaChatPopup("Open");
+                  opekaChatPopup(roomType+"-Open");
                 }
               }
               else {
@@ -128,7 +137,7 @@ var Opeka = Opeka || {};
             chatLink = false;
             chatButton.text(textStrings.buttonOccupied);
             if (opekaClientURL) {
-              opekaChatPopup("Occupied");
+              opekaChatPopup(roomType+"-Occupied");
             }
           }
           // The chat app not turned on or is not initialized / unreachable.
@@ -138,7 +147,7 @@ var Opeka = Opeka || {};
             chatLink = false;
             chatButton.text(textStrings.buttonClosed);
             if (opekaClientURL) {
-              opekaChatPopup("Closed");
+              opekaChatPopup(roomType+"-Closed");
             }
           }
           // If all fails - probably the server is down...
@@ -148,7 +157,7 @@ var Opeka = Opeka || {};
             chatLink = false;
             chatButton.text(textStrings.buttonError);
             if (opekaClientURL) {
-              opekaChatPopup("Closed");
+              opekaChatPopup(roomType+"-Closed");
             }
             console.log('Opeka chat app error. Server might be down. chatStatus: ', chatStatus);
           }

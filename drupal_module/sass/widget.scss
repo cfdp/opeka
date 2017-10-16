@@ -1,123 +1,256 @@
-/* General styling applied to all widgets */
 // Utilities
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,500,700,800");
+@import "compass";
 @import "variables";
 
-html, body {
+html,
+body {
   background: none transparent;
+  background-image: none;
   color: #fff;
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 100%;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
   height: 100%;
   overflow: hidden;
   padding: 0px;
-
+  margin: 0;
   p {
     color: #fff;
-    margin: 0;
+    margin: 0 0 5px 0;
   }
-}
-
-
-/* Don't show admin menu on the widget pages */
-html body.admin-menu.page-opeka-widgets {
-  margin-top: 0px !important;
-
-  #admin-menu {
+  body.admin-menu.page-opeka-widgets {
+    margin-top: 0px !important;
+  }
+  body.admin-menu.page-opeka-widgets #admin-menu {
     display: none;
   }
 }
-/* Buttons */
-.login-button {
-  .btn {
+
+.login-button .btn {
+    display: inline-block;
+    background-color: white;
+    padding: 0.85em 1.5em;
+    border-radius: 2em;
     border: none;
-    box-shadow: none;
-    background: transparent none repeat scroll 0% 0%;
-    color: #fff;
-    font-size: $font-std;
-    padding: .7em 1em;
-    text-shadow: none;
+    cursor: pointer;
+    opacity: 1;
+    line-height: 1;
     text-decoration: none;
-    transition: background-color 300ms ease-out 0s;
-  }
+    text-shadow: none;
+    text-align: center;
+    text-transform: uppercase;
+    color: black;
 }
-.chat-open .login-button .btn {
-  background-color: darken($ccGreen, 10%);
-  &:hover {
-    background-color: darken($ccGreen, 20%);
+body.chat-open,
+body.chat-busy {
+  background-image: none;
+}
+body.chat-open {
+  &,
+  .status-wrapper,
+  .name-tab {
+    background-color: $color-green-light;
+  }
+  .login-button .btn {
+    background-color: $color-green-dark;
+    color: white;
   }
 }
 
-/* Name tab */
+body.chat-busy {
+  &,
+  .status-wrapper,
+  .name-tab {
+    background-color: $color-orange;
+  }
+}
+
 .name-tab {
   background-color: $ccGray;
 }
 
-/* Status tab */
 .status-tab {
   color: #fff;
-  font-weight: bold;
-  font-size: $font-large;
-  margin-bottom: 5px;
+  font-weight: 700;
+  font-size: 1.25em;
+  margin-bottom: 1em;
   width: 100%;
 }
 
-/* Status wrapper */
 .status-wrapper {
   background-color: $ccGray;
-  font-size: $font-std;
+  font-size: 1em;
   height: 100%;
-  padding: 10px;
+  padding: 2em;
+  box-sizing: border-box;
 }
 
-.chat-open .status-wrapper,
-.chat-open .name-tab {
-  background-color: $ccGreen;
-}
-
-.chat-busy .status-wrapper,
-.chat-busy .name-tab {
-  background-color: $ccOrange;
-}
-
-.chat-closed .status-wrapper,
-.chat-closed .name-tab {
-  background-color: $ccOrange;
+.chat-closed {
+  .status-wrapper,
+  .name-tab {
+    background-color: $color-gray;
+  }
 }
 
 .status-content {
-  margin: 0 8px;
+  margin: 0;
   a {
     color: white;
     text-decoration: underline;
   }
+}
+
+.status-content {
+  &,
   ul {
-    margin: .5em 0;
+    margin: 0;
     padding: 0;
     li {
       list-style: none;
     }
   }
-
+  ul,
   .opening-hours {
     margin-bottom: 10px;
   }
+}
 
-  .opeka-multi-widget-iframe {
-    margin-bottom: 0;
+.read-more {
+  display: inline-block;
+  margin: 10px 0 0;
+  text-align: center;
+  width: 100%;
+  a {
+    text-decoration: underline;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
-.status-info {
+.login-button {
+  bottom: 2em;
+  position: absolute;
+  right: 2em;
+  font-size: 12px;
 }
-.read-more {
-  display: inline-block; 
-  margin: 10px 0 0; 
-  text-align: center; 
-  width: 100%;
-}
-.read-more a { 
-  text-decoration: underline;
-}
-.read-more a:hover{
-  text-decoration: underline;
+/* Related to popup */
+body.page-opeka-widgets-popup {
+  .status-wrapper {
+    color: #ffffff;
+    margin: 0 auto;
+    max-width: 1180px;
+    padding: .6em 1em;
+    @media (min-width: 768px) {
+      padding:1em 0;
+    }
+    @media (max-height: 50px) {
+      padding: .6em 0;
+    }
+  }
+  
+  &.chat-busy {
+    background-color: $color-sand;   
+    .status-wrapper {
+      background-color: $color-sand;
+    }
+
+    .status-tab {
+      color: $text-color;
+    }
+    .login-button .btn {
+      background-color: $color-orange-light;
+      color: #ffffff;
+    }
+  }
+
+  .status-tab {
+    display: inline-block;
+    font-size: 1em;
+    height: 100%;
+    max-width: 120px;
+    padding: .7em 1em 0 0;
+    vertical-align: top;
+    @media (min-width: 768px) {
+      font-size: 1.4em;
+      max-width: 250px;
+      padding: .7em 1em 0 0;
+    }    
+    @media (max-height: 50px) {
+      padding-top: 0;
+    }
+  }
+  .status-content {
+    display: inline-block;
+    padding-left: 1em;
+    max-width: 33%;
+    &, p {
+      color: #1b1d1f;
+      margin: 0;
+    }
+    ul, li, p {
+      display: inline;
+    }
+    @media (max-width: 1023px) {
+      display: none;
+    }
+  }
+  
+  .login-button {
+    border-left: 1px solid white;
+    display: inline-block;
+    height: 100%;
+    padding-left: .5em;
+    position: relative;
+    bottom:auto;
+    right: auto;
+    vertical-align: top;
+    @media (min-width: 1024px) {
+      padding-left: 2em;
+    }
+    .btn {
+      background-color: #3C5E22;
+      background-image: none;
+      font-size: 12px;
+      padding: 0.65em 1.2em;
+      border-radius: 2em;
+      max-width: 110px;
+      @media (min-width: 1024px) {
+        font-size: 14px;
+        max-width: 170px;
+        padding-left: 2em;
+      }
+      @media (max-height: 50px) {
+        font-size: 10px;
+        max-width: 160px;
+        padding: .5em .9em;
+      }
+    }
+  }
+  /* Related to popup */
+  .button-wrapper {
+    height: 100%;
+    float: right;
+  }
+  a.close {
+    position: relative;
+    float: right;
+    top: 50%;
+    transform: translateY(-50%);
+    display: block;
+    height: 20px;
+    width: 20px;
+    background: url(../img/close-white.png);
+    background-image: url(../img/close-white.svg), none;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    opacity: 1;
+    text-indent: -9999px;
+  }
+  &.chat-open a.close {
+    background: url(../img/close-black.png);
+    background-image: url(../img/close-black.svg), none;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+  }
 }
