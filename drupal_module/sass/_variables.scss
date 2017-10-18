@@ -55,3 +55,34 @@ $color-green-light: #80B45A;
 $color-orange-light: #EBB560;
 $color-sand: #F5D9AD;
 $color-green-dark: #4d6928;
+
+/* Breakpoints */
+@mixin bp-narrow {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin bp-normal {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin bp-wide {
+  @media (min-width: 1200px) {
+    @content;
+  }
+}
+
+@mixin bp-mobile {
+  @media (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin print {
+  @media print {
+    @content;
+  }
+}

@@ -6,38 +6,65 @@
 /* Base colors*/
 /* Text Colors */
 /* Curachat additions */
-/* Buttons */
-/* line 6, ../sass/widget.header.scss */
-.login-button {
-  bottom: 30px;
-  position: absolute;
-  right: 15px;
-}
-
-/* line 12, ../sass/widget.header.scss */
+/* Breakpoints */
+/* line 5, ../sass/widget.header.scss */
 .status-content {
   margin: 0;
   max-width: 300px;
 }
-/* line 16, ../sass/widget.header.scss */
+@media (min-width: 30em) {
+  /* line 5, ../sass/widget.header.scss */
+  .status-content {
+    display: inline-block;
+    margin-right: 1em;
+  }
+}
+/* line 12, ../sass/widget.header.scss */
 .status-content ul {
   margin: 0;
   padding: 0;
 }
-/* line 21, ../sass/widget.header.scss */
+/* line 17, ../sass/widget.header.scss */
 .status-content li {
   list-style: none;
 }
 
-/* line 28, ../sass/widget.header.scss */
+/* line 22, ../sass/widget.header.scss */
 .read-more {
   display: inline-block;
   margin: 10px 0 0;
   text-align: center;
   width: 100%;
 }
-/* line 34, ../sass/widget.header.scss */
+/* line 28, ../sass/widget.header.scss */
 .read-more a {
   color: #3a404c;
   text-decoration: none;
+}
+
+/* Buttons */
+@media (min-width: 30em) {
+  /* line 35, ../sass/widget.header.scss */
+  .login-button {
+    position: absolute;
+    right: 2em;
+    bottom: 2em;
+    margin-right: 1em;
+  }
+}
+/* line 42, ../sass/widget.header.scss */
+.login-button .btn {
+  color: #1b1d1f;
+}
+/* line 45, ../sass/widget.header.scss */
+.login-button .button-subtext {
+  font-style: italic;
+  margin-top: .3em;
+  max-width: 170px;
+}
+
+/* line 52, ../sass/widget.header.scss */
+body.chat-open .login-button .btn {
+  background-color: #ffffff;
+  color: #1b1d1f;
 }

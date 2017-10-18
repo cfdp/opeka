@@ -41,6 +41,7 @@ var Opeka = Opeka || {};
       $(function () {
         var statusTab = $('.status-tab'),
             chatButton = $('.login-button .chat'),
+            statusContent = $('.status-content'),
             chatLink = false,
             body = $('body'),
             roomType = "pair",
@@ -51,11 +52,9 @@ var Opeka = Opeka || {};
         // e.g. https://demo.curachat.com/opeka-widgets/header/group
         if (body.hasClass("group")) { roomType = "group"; }
         
-        // Close popup when the close window message is received
-        
+        // Send close iframe message to parent window when button is clicked
         closeBtn.on( "click",  function() {
           var closeMsg = roomType+"-CloseIframe";
-          console.log("closeMsg "+closeMsg);
           opekaChatPopup(closeMsg);
         });
         
