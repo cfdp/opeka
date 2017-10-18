@@ -63,6 +63,49 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_pairchat_user_list', 0),
   );
 
+  $form['opeka_widget_header_button_subtext'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subtext for the header widget button'),
+    '#description' => t('Text below the header widget button'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_widget_header_button_subtext', t('Chats are for young people aged 9 to 23 years.')),
+    '#maxlength' => 200,
+  );
+
+  $form['opeka_widget_popup'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Opeka popup widget settings'),
+    '#weight' => 4,
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['opeka_widget_popup']['opeka_widget_popup_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Text for the popup widget'),
+    '#description' => t('Text on the popup widget'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_widget_popup_text', t('Chat anonymously with a counselor')),
+    '#maxlength' => 200,
+  );
+
+  $form['opeka_widget_popup']['opeka_widget_popup_link_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Text for the link'),
+    '#description' => t('Text for the link'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_widget_popup_link_text', ''),
+    '#maxlength' => 50,
+  );
+
+  $form['opeka_widget_popup']['opeka_widget_popup_link_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('URL for the link'),
+    '#description' => t('URL for the link'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_widget_popup_link_url', ''),
+    '#maxlength' => 100,
+  );
   $form['opeka_enter_site'] = array(
     '#type' => 'fieldset',
     '#title' => t('Enter site settings'),
