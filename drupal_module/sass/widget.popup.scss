@@ -22,11 +22,10 @@ body.page-opeka-widgets-popup {
       max-width: 1180px;
     }
     @media (max-height: 50px) {
-      padding-top: .2em;
-      padding-bottom: .6em;
+      padding-top: .3em;
+      padding-bottom: .3em;
     }
     @media (max-height: 50px) and (min-width: 768px){
-      padding-top: .4em;
     }
   }
 
@@ -49,30 +48,29 @@ body.page-opeka-widgets-popup {
     display: inline-block;
     font-size: 1em;
     font-weight: 700;
-    height: 100%;
     width: 100px;
-    padding: .7em 1em 0 0;
+    margin-right: 1em;
     vertical-align: top;
+    @include vertical-align();
+
     @include bp-narrow {
       font-size: 1.4em;
       width: 200px;
-      padding: .7em 1em 0 0;
     }
     @include bp-wide {
       width: 250px;
     }
     @media (max-height: 50px) {
-      padding-top: 0;
     }
     @media (max-height: 50px) and (min-width: 768px) {
-      padding-top: 0.2em;
     }
   }
   .status-content {
     display: inline-block;
-    height: 20px;
-    padding: .7em 0 0 1em;
+    padding-left: 1em;
     max-width: 50%;
+    @include vertical-align();
+
     &, p {
       color: #1b1d1f;
       margin: 0;
@@ -85,7 +83,6 @@ body.page-opeka-widgets-popup {
       font-weight: 700;
     }
     @media (max-height: 50px) {
-      padding-top: 0.2em;
     }
     @media (max-width: 1023px) {
       display: none;
@@ -115,6 +112,7 @@ body.page-opeka-widgets-popup {
       padding: 0.65em 1.2em;
       border-radius: 2em;
       width: 120px;
+      @include vertical-align();
 
       @include bp-narrow {
         font-size: 14px;
@@ -129,7 +127,6 @@ body.page-opeka-widgets-popup {
       }
     }
   }
-  /* Related to popup */
   .button-wrapper {
     height: 100%;
     float: right;
