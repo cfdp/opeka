@@ -244,6 +244,16 @@ function Server(config, logger) {
    * resources required for the safe operation of the chat.
    */
   self.everyone.addServerMethod('signIn', function (clientUser, callback) {
+    // Support user re-signin.
+    var oldClient;
+    if (clientUser.clientId) {
+      oldClient = opeka.groups.getClient(clientUser.clientId);
+      if (oldClient){
+        self.logger.info("Reconnected user: ", clientUser.clientId, ' -> ', this.clientId);
+      }
+      delete(clientUser.clientId);
+    }
+
     var client = this,
       accessCode = self.config.get('accessCode'),
       accessCodeEnabled = self.config.get('features:accessCodeEnabled'),
@@ -362,9 +372,14 @@ function Server(config, logger) {
         }
       );
 
+      if (oldClient){
+        oldClient.onReconnect(client);
+      }
+
       if (callback) {
         callback(clientData);
       }
+
     });
   });
 
@@ -741,7 +756,9 @@ function Server(config, logger) {
       mutedClient = roomGroup.getClient(clientId);
 
     // Mute the user.
-    mutedClient.muted = true;
+    if (mutedClient) {
+      mutedClient.muted = true;
+    }
     userData.muted = true;
 
     // Tell the councellors about the muted user.

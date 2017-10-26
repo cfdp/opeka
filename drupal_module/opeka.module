@@ -222,6 +222,9 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['enter_site_leave'] = $enter_site_leave;
   $settings['signin_footnote'] = $signin_footnote;
   $settings['mixed_widget_url'] = $mixed_widget_url;
+  $settings['reconnect'] = variable_get('opeka_reconnect', TRUE) ? 1 : 0;
+  $settings['max_reconnects'] = variable_get('opeka_reconnect_attempts', 10);
+  $settings['reconnect_interval'] = variable_get('opeka_reconnect_interval', 2000);
 
   // Add js files and settings
   drupal_add_js(array('opeka' => $settings), 'setting');
