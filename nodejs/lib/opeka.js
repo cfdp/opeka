@@ -94,8 +94,7 @@ function Server(config, logger) {
       });
     }
 
-    // When a socket.io user connects, tell them about current room status
-    // When a socket.io user connects, tell them about current room status
+    // When a socket.io user connects, tell about current room status
     self.io_server.on("connection", function (socket) {
       // Make getDirectSignInURL available through the io_socket server as well
       socket.on("getDirectSignInURL", function (roomType, callback) {
@@ -253,7 +252,6 @@ function Server(config, logger) {
       }
       delete(clientUser.clientId);
     }
-
     var client = this,
       accessCode = self.config.get('accessCode'),
       accessCodeEnabled = self.config.get('features:accessCodeEnabled'),
@@ -283,7 +281,6 @@ function Server(config, logger) {
 
       // Add the user to the signedIn group.
       self.signedIn.addUser(client.clientId);
-
 
       // Expose the drupal client drupal uid if they provided one and we're configured to do so
       if (self.config.get('features:exposeDrupalUIDs') && account.uid) {
@@ -355,16 +352,15 @@ function Server(config, logger) {
 
       client.accessCode = clientUser.accessCode;
 
-
       // Update online users count for all clients.
       self.updateUserStatus(self.everyone);
-
+      
       // Copy original input data
       _.extend(clientData, clientUser);
 
       // Only copy safe values from the account-data to the callback object
       _.each(
-        ['canGenerateBanCode', 'isAdmin', 'language', 'name', 'nickname', 'sid', 'uid', 'hideTypingMessage', 'allowPauseAutoScroll', 'viewChatHistory'],
+        ['canGenerateBanCode', 'isAdmin', 'language', 'name', 'nickname', 'sid', 'uid', 'hideTypingMessage', 'allowPauseAutoScroll', 'viewChatHistory', 'connectionData.online'],
         function (k) {
           if (k in account) {
             clientData[k] = account[k]
@@ -489,7 +485,7 @@ function Server(config, logger) {
 
 // -------- GLOBAL QUEUE FUNCTIONS START -----------
 
-  // Called by the Counsellors in order to create a new room.
+  // Called by the Counsellors in order to create a new queue.
   self.councellors.addServerMethod('createQueue', function (attributes, callback) {
     if (attributes.name.length > 0) {
       if (attributes.active === undefined) {
@@ -619,7 +615,7 @@ function Server(config, logger) {
     self.broadcastChatStatus();
   });
 
-  // Allow the everyone to update writingMessage.
+  // Allow everyone to update writingMessage.
   self.everyone.addServerMethod('writingMessage', function (roomId, callback) {
     var client = this,
       room = opeka.rooms.list[client.activeRoomId];
@@ -637,7 +633,15 @@ function Server(config, logger) {
       self.sendWritesMessage(writers, room.group);
     }
   });
-
+  
+  // Allow everyone to be pinged.
+  self.everyone.addServerMethod('pingServer', function (pingStart, callback) {
+    var client = this,
+        currentTime = (new Date()).getTime();
+    console.log('ping received, latency = ', ((currentTime - pingStart)/2));
+    client.connectionData.pingReceived = currentTime;   
+    callback(false);
+  });
 
   // Allow the councellors to unpause a room.
   self.councellors.addServerMethod('unpauseRoom', function (roomId, callback) {
@@ -955,7 +959,6 @@ function Server(config, logger) {
   // This function is used by the clients in order to change rooms
   self.signedIn.addServerMethod('changeRoom', function (roomId, callback, quit) {
     var client = this,
-      //serv = self,
       newRoom = opeka.rooms.list[roomId],
       queueSystem = self.config.get('features:queueSystem'),
       queueFullUrl = self.config.get('features:queueFullUrl');

@@ -35,8 +35,10 @@
     "winston": "^2.3.0"
   },
   "devDependencies": {
+    "browserify": "*",
+    "expect.js": "^0.3.1",
     "forever": "0.10.x",
-    "browserify": "*"
+    "superagent": "^3.8.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

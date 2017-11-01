@@ -97,7 +97,8 @@ module.exports.filterData = function (client) {
     allowPauseAutoScroll: client.allowPauseAutoScroll,
     viewChatHistory: client.viewChatHistory,
     name: client.nickname || client.account.name,
-    drupal_uid: client.drupal_uid
+    drupal_uid: client.drupal_uid,
+    onlineStatus: client.OnlineStatus,
   };
 };
 

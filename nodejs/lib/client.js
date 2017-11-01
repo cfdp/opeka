@@ -2,11 +2,11 @@
  * Created by jubk on 5/21/15.
  */
 var _ = require('underscore'),
-    groups = require('./groups'),
-    uuid = require('node-uuid'),
-    ban = require('./ban'),
-    rooms = require('./rooms'),
-    util = require("util");
+  groups = require('./groups'),
+  uuid = require('node-uuid'),
+  ban = require('./ban'),
+  rooms = require('./rooms'),
+  util = require("util");
 
 
 /**
@@ -17,140 +17,203 @@ var _ = require('underscore'),
  * @param conn - the connection object from dnode
  * @constructor
  */
-var Client = function(server, stream, remote, conn) {
-    var self = this;
+var Client = function (server, stream, remote, conn) {
+  var self = this;
 
-    self.construct = function() {
-        self.clientId = uuid();
+  self.construct = function () {
+    self.clientId = uuid();
 
-        self.server = server;
-        self.stream = stream;
-        self.clientSideMethods = remote;
+    self.server = server;
+    self.stream = stream;
+    self.clientSideMethods = remote;
 
-        self.conn = conn;
+    self.conn = conn;
 
-        self.serverSideMethods = {};
+    self.serverSideMethods = {};
 
-        self.account = {};
+    self.account = {};
 
-        self.whisperPartners = {};
+    self.whisperPartners = {};
 
-        self.nickname = null;
-        self.gender = null;
-        self.age = null;
-        self.accessCode = null;
-        self.city = null;
-        self.state = null;
+    self.nickname = null;
+    self.gender = null;
+    self.age = null;
+    self.accessCode = null;
+    self.city = null;
+    self.state = null;
 
-        self.chatStart_Min = null;
+    self.chatStart_Min = null;
+    self.connectionData = {
+      online: null,
+      pingSent: null,
+      pingReceived: null,
+      pingTimerId: null,
+    };
 
-        self.activeRoomId = null;
-        self.activeQueueRoomId = null;
+    self.activeRoomId = null;
+    self.activeQueueRoomId = null;
 
-        self.drupal_uid = null;
+    self.drupal_uid = null;
 
-        self.allowPauseAutoScroll = null;
+    self.allowPauseAutoScroll = null;
 
-        self.viewChatHistory = null;
+    self.viewChatHistory = null;
 
-        self.screening = null;
+    self.screening = null;
 
-        groups.registerClient(self);
-        conn.on('ready', function() {
-            self.onConnectionReady();
+    groups.registerClient(self);
+    conn.on('ready', function () {
+      self.onConnectionReady();
+    });
+
+    conn.on('end', function () {
+      self.onConnectionClosed();
+    });
+
+    return self;
+  };
+
+  self.getServerSideMethods = function () {
+    return self.serverSideMethods;
+  };
+
+  self.getClientSideMethods = function () {
+    return self.clientSideMethods;
+  };
+
+  self.onConnectionReady = function () {
+    var stream = self.stream,
+      server = self.server,
+      ip = null,
+      banInfo = null;
+
+    if (stream.headers['x-real-ip']) {
+      ip = stream.headers['x-real-ip'];
+    } else {
+      ip = stream.remoteAddress;
+    }
+
+    banInfo = ban.checkIP(ip, server.config.get('ban:salt'));
+
+    if (banInfo.isBanned) {
+      server.logger.warning('User ' + self.clientId + ' tried to connect with banned address ' + banInfo.digest);
+      self.remote('setIsBanned', true);
+
+      // Close the socket after data has been synced.
+      setTimeout(function () {
+        stream.end();
+      }, 500);
+    };
+    currentTime = (new Date()).getTime();
+    self.connectionData.pingSent = currentTime;
+    self.connectionData.pingReceived = currentTime;
+
+    self.connectionData.pingTimerId = setInterval(function () {
+      self.pingClient();
+    }, 5000);
+
+    server.updateUserStatus(self);
+  };
+
+  self.onConnectionClosed = function () {
+    groups.unregisterClient(self);
+    self.server.handleConnectionClosed(self);
+    console.log('connection closed for', self.clientId);
+
+    // Break relations to objects that might be troublesome to garbage collect
+    self.server = null;
+    self.stream = null;
+    self.clientSideMethods = null;
+    self.conn = null;
+  };
+
+  self.onReconnect = function (newClient) {
+    util.log('Replacing user ' + self.clientId + ' with ' + newClient.clientId);
+    for (var id in rooms.list) {
+      rooms.list[id].replaceUser(self.clientId, newClient);
+    }
+    groups.unregisterClient(self);
+
+    // Break relations to objects that might be troublesome to garbage collect
+    self.server = null;
+    self.stream = null;
+    self.clientSideMethods = null;
+    self.conn = null;
+    self.activeRoomId = null;
+  };
+
+  self.pingClient = function () {
+    self.connectionData.pingSent = (new Date()).getTime();
+    console.log('sending ping...');
+    self.remote('sendPingBack', self.connectionData.pingSent);
+    self.detectOfflineStatus();
+  };
+
+  self.detectOfflineStatus = function () {
+    var latency = self.connectionData.pingSent - self.connectionData.pingReceived; 
+    console.log("Time since last ping received = " + latency);
+    var reconnectWindow = 10000;
+    var disconnectLimit = 60000;
+    
+    if ((latency) > reconnectWindow) {
+      console.log("client latency > ", reconnectWindow);
+      self.connectionData.online = false;
+
+      // update userlist with new offline state if user is in a room
+      updateUserList();
+    }
+    if ((latency) > disconnectLimit) {
+      self.connectionData.online = false;
+      clearInterval(self.connectionData.pingTimerId)
+      console.log('cleared interval - time to delete user from room');
+      console.log('activeRoomId = ' + self.activeRoomId);
+      // time to disconnect user;
+    };
+    
+    function updateUserList() {
+      var currentRoom;
+      for (var id in rooms.list) {
+        currentRoom = rooms.list[id];
+        _.find(currentRoom.users,function(val){
+            console.log('is client in a room? ', _.contains(val, self.clientId));
+            if (_.contains(val, self.clientId)) {
+              opeka.user.sendUserList(currentRoom.everyone, currentRoom.id, currentRoom.users);
+            }
         });
+      }
+      
+    }
+  };
 
-        conn.on('end', function() {
-            self.onConnectionClosed();
-        });
+  self.remote = function (functionName) {
+    // Copy arguments to writeable array
+    args = [];
+    _.each(arguments, function (v) {
+      args.push(v)
+    });
 
-        return self;
-    };
+    // Remove first arg
+    args.shift();
 
-    self.getServerSideMethods = function() {
-        return self.serverSideMethods;
-    };
+    var fn;
+    if (self.clientSideMethods && (fn = self.clientSideMethods[functionName])) {
+      return fn.apply(self, args);
+    } else if (self.server) {
+      self.server.logger.warning(
+        "Tried to call method '" + functionName + "' for user " +
+        self.clientId + ", but the method does not exist on the client side."
+      );
+      return false;
+    } else {
+      console.warn(
+        "Tried to call method '" + functionName + "' for user " +
+        self.clientId + ", but the method does not exist on the client side."
+      );
+    }
 
-    self.getClientSideMethods = function() {
-        return self.clientSideMethods;
-    };
+  };
 
-    self.onConnectionReady = function() {
-        var stream = self.stream,
-            server = self.server,
-            ip = null,
-            banInfo = null;
-
-        if (stream.headers['x-real-ip']) {
-          ip = stream.headers['x-real-ip'];
-        }
-        else {
-          ip = stream.remoteAddress;
-        }
-
-        banInfo = ban.checkIP(ip, server.config.get('ban:salt'));
-
-        if (banInfo.isBanned) {
-            server.logger.warning('User ' + self.clientId + ' tried to connect with banned address ' + banInfo.digest);
-            self.remote('setIsBanned', true);
-
-            // Close the socket after data has been synced.
-            setTimeout(function () {
-                stream.end();
-            }, 500);
-        }
-
-        server.updateUserStatus(self);
-    };
-
-    self.onConnectionClosed = function() {
-        groups.unregisterClient(self);
-        self.server.handleConnectionClosed(self);
-
-        // Break relations to objects that might be troublesome to garbage collect
-        self.server = null;
-        self.stream = null;
-        self.clientSideMethods = null;
-        self.conn = null;
-    };
-
-    self.onReconnect = function(newClient) {
-        util.log('Replacing user ' + self.clientId + ' with ' + newClient.clientId);
-        for (var id in rooms.list) {
-            rooms.list[id].replaceUser(self.clientId, newClient);
-        }
-        groups.unregisterClient(self);
-
-        // Break relations to objects that might be troublesome to garbage collect
-        self.server = null;
-        self.stream = null;
-        self.clientSideMethods = null;
-        self.conn = null;
-        self.activeRoomId = null;
-    };
-
-    self.remote = function(functionName) {
-        // Copy arguments to writeable array
-        args = [];
-        _.each(arguments, function(v) { args.push(v) });
-
-        // Remove first arg
-        args.shift();
-
-        var fn;
-        if(self.clientSideMethods && (fn = self.clientSideMethods[functionName])) {
-            return fn.apply(self, args);
-        } else {
-            self.server.logger.warning(
-                "Tried to call method '" + functionName + "' for user " +
-                self.clientId + ", but the method does not exist on the client side."
-            );
-            return false;
-        }
-
-    };
-
-    return self.construct();
+  return self.construct();
 };
 
 module.exports = Client;

@@ -426,7 +426,7 @@ var Opeka = {
     Opeka.inviteList.reset(invites);
   };
 
-  // For when the server has an updated invites list for us.
+  // For when the server has a new invite for us.
   Opeka.clientSideMethods.inviteCreated = function (newInvite) {
     // This triggers a reset even on the queueList instance, so any views
     // that use this list can listen to that for updates.
@@ -439,7 +439,7 @@ var Opeka = {
     }
   };
 
-  // For when the server has an updated invites list for us.
+  // For when the server has an invite cancellation.
   Opeka.clientSideMethods.inviteCancelled = function (inviteId) {
     // This triggers a reset even on the queueList instance, so any views
     // that use this list can listen to that for updates.
@@ -451,7 +451,7 @@ var Opeka = {
     Opeka.inviteList.trigger('change');
   };
 
-  // For when the server has an updated invites list for us.
+  // For when the server reports an invite is deleted.
   Opeka.clientSideMethods.inviteDeleted = function (inviteId) {
     // This triggers a reset even on the queueList instance, so any views
     // that use this list can listen to that for updates.
@@ -677,7 +677,17 @@ var Opeka = {
     view.render();
   };
 
-
+  // The server pings client to determine connection status and latency
+  Opeka.clientSideMethods.sendPingBack = function (pingStart) {
+    Opeka.remote.pingServer(pingStart, function (err) {
+        // If we need to take action depending on the results from the server,
+        // it can be done here...
+        if (err) {
+          console.error('Opeka: Seems theres an error in the ping function.');
+        }
+      });
+  };
+  
   /**
    * If the client user is leaving a pair room and hidePairRoomsOnRoomList is true
    * send him to the goodbye page
