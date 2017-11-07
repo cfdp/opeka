@@ -6,13 +6,24 @@
 var _ = require("underscore"),
 util = require("util"),
 drupal = require("drupal");
+var currentlyAuthenticating = []; // Prevent client from initiating more than one auth session at a time
 
 // Authenticate a user logging on to the chat server.
-module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCode, callback) {
-  // If the client claims he's logged in, validate that assertion.
+module.exports.authenticate = function (clientUser, clientId, accessCodeEnabled, accessCode, callback) {
+  var index;
+
   util.log("User authenticating, Drupal sid: " + clientUser.sid);
   util.log("User authenticating, Drupal uid: " + clientUser.uid);
 
+  if (_.contains(currentlyAuthenticating, clientId)) {
+    util.log("Error: user trying to authenticate multiple times.");
+    return;
+  }
+  currentlyAuthenticating.push(clientId);
+  console.log('user currentlyAuth: ');
+  console.dir(currentlyAuthenticating);
+
+  // If the client claims he's logged in, validate that assertion.
   if (clientUser.sid && clientUser.uid) {
     // Validate the user's session.
     drupal.user.session_load(clientUser.sid, function (err, session) {
@@ -43,6 +54,9 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
                 account.hideTypingMessage = hideTypingMessage;
                 drupal.user.access('access chat history', account, function (err, viewChatHistory) {
                   account.viewChatHistory = viewChatHistory;
+                  // User is now authenticated, remove from auth list
+                  index = currentlyAuthenticating.indexOf(clientId);
+                  currentlyAuthenticating.splice(index, 1);
                   callback(null, account);
                 });
               });
@@ -71,14 +85,15 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
           account.allowPauseAutoScroll = allowPauseAutoScroll;
           drupal.user.access('access chat history', account, function (err, viewChatHistory) {
             account.viewChatHistory = viewChatHistory;
+            // User is now authenticated, remove from auth list
+            index = currentlyAuthenticating.indexOf(clientId);
+            currentlyAuthenticating.splice(index, 1);
             callback(null, account);
           });
         });
       });
     });
-
   }
-
 };
 
 // Filters the user data and remove personal/security sensitive data and
@@ -98,7 +113,7 @@ module.exports.filterData = function (client) {
     viewChatHistory: client.viewChatHistory,
     name: client.nickname || client.account.name,
     drupal_uid: client.drupal_uid,
-    onlineStatus: client.OnlineStatus,
+    online: client.connectionData.online,
   };
 };
 

@@ -6,6 +6,7 @@ var _ = require('underscore'),
   uuid = require('node-uuid'),
   ban = require('./ban'),
   rooms = require('./rooms'),
+  user = require('./user.js'),
   util = require("util");
 
 
@@ -48,6 +49,8 @@ var Client = function (server, stream, remote, conn) {
       pingSent: null,
       pingReceived: null,
       pingTimerId: null,
+      reconnectLimit: server.config.get('features:reconnectLimit'),
+      disconnectLimit: server.config.get('features:disconnectLimit'),
     };
 
     self.activeRoomId = null;
@@ -93,6 +96,8 @@ var Client = function (server, stream, remote, conn) {
       ip = stream.remoteAddress;
     }
 
+    server.logger.info("Connection ready for user with IP ", ip);
+
     banInfo = ban.checkIP(ip, server.config.get('ban:salt'));
 
     if (banInfo.isBanned) {
@@ -107,6 +112,7 @@ var Client = function (server, stream, remote, conn) {
     currentTime = (new Date()).getTime();
     self.connectionData.pingSent = currentTime;
     self.connectionData.pingReceived = currentTime;
+    self.connectionData.online = true;
 
     self.connectionData.pingTimerId = setInterval(function () {
       self.pingClient();
@@ -117,9 +123,12 @@ var Client = function (server, stream, remote, conn) {
 
   self.onConnectionClosed = function () {
     groups.unregisterClient(self);
-    self.server.handleConnectionClosed(self);
-    console.log('connection closed for', self.clientId);
-
+    if (self.server) {
+      self.server.handleConnectionClosed(self);
+    }
+    else {
+      console.error('could not close connection for clientId = ' + self.clientId + ' - self.server undefined.');
+    }
     // Break relations to objects that might be troublesome to garbage collect
     self.server = null;
     self.stream = null;
@@ -144,45 +153,52 @@ var Client = function (server, stream, remote, conn) {
 
   self.pingClient = function () {
     self.connectionData.pingSent = (new Date()).getTime();
-    console.log('sending ping...');
     self.remote('sendPingBack', self.connectionData.pingSent);
     self.detectOfflineStatus();
   };
 
   self.detectOfflineStatus = function () {
-    var latency = self.connectionData.pingSent - self.connectionData.pingReceived; 
-    console.log("Time since last ping received = " + latency);
-    var reconnectWindow = 10000;
-    var disconnectLimit = 60000;
-    
-    if ((latency) > reconnectWindow) {
-      console.log("client latency > ", reconnectWindow);
-      self.connectionData.online = false;
+    var latency = self.connectionData.pingSent - self.connectionData.pingReceived;
 
-      // update userlist with new offline state if user is in a room
-      updateUserList();
-    }
-    if ((latency) > disconnectLimit) {
-      self.connectionData.online = false;
+    if (latency > self.connectionData.disconnectLimit) {
       clearInterval(self.connectionData.pingTimerId)
-      console.log('cleared interval - time to delete user from room');
-      console.log('activeRoomId = ' + self.activeRoomId);
-      // time to disconnect user;
-    };
-    
-    function updateUserList() {
-      var currentRoom;
-      for (var id in rooms.list) {
-        currentRoom = rooms.list[id];
-        _.find(currentRoom.users,function(val){
-            console.log('is client in a room? ', _.contains(val, self.clientId));
-            if (_.contains(val, self.clientId)) {
-              opeka.user.sendUserList(currentRoom.everyone, currentRoom.id, currentRoom.users);
-            }
-        });
-      }
-      
+      // time to disconnect user
+      self.updateClientOnlineState(false, true);
     }
+    else if (latency > self.connectionData.reconnectLimit) {
+      // update userlist with new client offline state
+      self.updateClientOnlineState(false, false);
+    }
+  };
+
+/**
+ * Update client online state and disconnect them if disconnectLimit is passed
+ *
+ */
+  self.updateClientOnlineState = function (newState, disconnect) {
+    var currentClient,
+        room;
+    for (var id in rooms.list) {
+      room = rooms.list[id];
+      _.find(room.users,function(val){
+          if (_.contains(val, self.clientId)) {
+            currentClient = room.users[self.clientId];
+            if (disconnect) {
+              self.server.removeUserFromRoom(room, self.clientId, room.id, currentClient.chatStart_Min, function (err, users) {
+                if (err) return console.warn(err);
+                user.sendUserList(room.group, room.id, users);
+                self.server.updateUserStatus(self.everyone);
+              });
+              return;
+            }
+            currentClient.online = newState;
+            self.connectionData.online = newState;
+            user.sendUserList(room.group, room.id, room.users);
+            return;
+          }
+      });
+    }
+    console.warn('Tried to update client online state, but user not found in any room.');
   };
 
   self.remote = function (functionName) {
@@ -198,19 +214,14 @@ var Client = function (server, stream, remote, conn) {
     var fn;
     if (self.clientSideMethods && (fn = self.clientSideMethods[functionName])) {
       return fn.apply(self, args);
-    } else if (self.server) {
-      self.server.logger.warning(
-        "Tried to call method '" + functionName + "' for user " +
-        self.clientId + ", but the method does not exist on the client side."
-      );
-      return false;
-    } else {
+    }
+    else {
       console.warn(
         "Tried to call method '" + functionName + "' for user " +
         self.clientId + ", but the method does not exist on the client side."
       );
+      return false;
     }
-
   };
 
   return self.construct();

@@ -19,7 +19,15 @@
             <% } %>
 
                 <i class="icon-user"></i><span class="name"><%- user.name %></span>
-                <span class="online-status"><%- user.onlineStatus %></span>
+                <span class="online-status">
+                <% if (user.online) { %>
+                    (online)
+                <% }
+                  else { %>
+                    (offline)
+                <% } %>
+                </span>
+
                 <% if (user.age || user.gender) { %>
                   <span class="meta">
                     (

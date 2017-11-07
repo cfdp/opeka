@@ -365,7 +365,9 @@ var Room = function (options) {
   };
 
   /**
-   * Check to see if the user is in group.
+   * Replaces the user with clientId with the newClient
+   *
+   * Used in the reconnect feature
    */
   self.replaceUser = function (clientId, newClient) {
     if (self.users[clientId]) {
@@ -373,6 +375,7 @@ var Room = function (options) {
         util.log('Replaced user ' + clientId + ' with ' + newClient.clientId + ' in room ' + self.id);
         self.removeUser(clientId);
         self.addUser(newClient);
+        opeka.user.sendUserList(self.group, self.id, self.users);
       }
     }
   };

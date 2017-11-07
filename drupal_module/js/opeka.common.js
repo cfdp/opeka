@@ -26,7 +26,9 @@ var Opeka = {
     'dnode': null,
     // Boolean specifying whether the serverside Javascript loaded successfully
     'serverJSLoaded': false,
-    'doorBellSound': null
+    'doorBellSound': null,
+    'reconnectHandlers': false,
+    'lastPingreceived': null,
   },
   // Initialise window.JST if it does not exist.
   JST = JST || {};
@@ -678,10 +680,9 @@ var Opeka = {
   };
 
   // The server pings client to determine connection status and latency
-  Opeka.clientSideMethods.sendPingBack = function (pingStart) {
-    Opeka.remote.pingServer(pingStart, function (err) {
-        // If we need to take action depending on the results from the server,
-        // it can be done here...
+  Opeka.clientSideMethods.sendPingBack = function (lastPing) {
+    Opeka.lastPingreceived = lastPing;
+    Opeka.remote.pingServer(function (err) {
         if (err) {
           console.error('Opeka: Seems theres an error in the ping function.');
         }
@@ -724,17 +725,15 @@ var Opeka = {
   // Sign in to the chat app.
   Opeka.signIn = function (user, callback) {
     Opeka.remote.signIn(user, function (clientData) {
-
-      var once = true;
-      if (once){
-        once = false;
+      if (!Opeka.reconnectHandlers){
+        Opeka.reconnectHandlers = true; // Marks that the 'connected' handler has been attached.
         $(Opeka).on('connected', function() {
           var matches = Backbone.history.getFragment().match(/^rooms\/(.*)$/);
           if (matches) {
             clientData.roomId = matches[1];
           }
           Opeka.signIn(clientData, function () {
-            console.log('User re-signin');
+            console.log('User re-signin.');
             $(window).bind('beforeunload.opeka', function () {
               return Drupal.t('Do you really want to leave this page?');
             });
@@ -778,7 +777,6 @@ var Opeka = {
       else {
         footerblock.append(footer.render().el);
       }
-
     });
   };
 
@@ -877,6 +875,10 @@ var Opeka = {
       // Wait five seconds before showing the dialog, in case the
       // disconnect was caused by the user reloading the page.
       window.setTimeout(function () {
+        if (Opeka.shownFatalErrorDialog) {
+          return;
+        }
+        Opeka.shownFatalErrorDialog = true;
         $(Opeka).trigger("disconnected");
         $(window).unbind('beforeunload.opeka');
         view = new Opeka.FatalErrorDialogView({

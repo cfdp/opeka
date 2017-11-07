@@ -21,7 +21,9 @@
     "exposeDrupalUIDs": false,
     "requireDrupalLogin": false,
     "chatHistory": true,
-    "screeningQuestions": false
+    "screeningQuestions": false,
+    "reconnectLimit": 10000,
+    "disconnectLimit": 60000
   },
   "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
   "server": {
