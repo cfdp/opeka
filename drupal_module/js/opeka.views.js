@@ -346,7 +346,7 @@
     // Enable sending messages when pressing the ENTER (return) key
     sendMessageonEnter: function (event) {
       var message = this.$el.find('textarea.message').val();
-      var code = (event.keyCode || event.which);
+      var code = event.charCode ? event.charCode : event.keyCode ? event.keyCode : 0;
       var returnSendsMessage = this.returnSendsMessage;
 
       // Listen for the key code
