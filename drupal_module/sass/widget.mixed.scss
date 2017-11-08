@@ -243,54 +243,60 @@ section ul li:after,footer:after {
 }
 
 // Opeka widget overrides
-.login-button {
-  position: relative;
-  .btn {
-    border: 1px solid #ccc;
-    color: #4a4a4a;
-    font-size: 16px;
-    position: absolute;
-    right: 0;
-    top: -2px;
-    padding: 8px;
-  }
-}
-
-.chat-open {
-  .login-button .btn {
-    background-color: $neonGreen;
-    border: none;
-    color: #fff;
-    &:hover {
-      background-color: darken($neonGreen, 20%);
-      border-color: $neonGreen;
-    }
-  }   
-}
-
-@media (max-width: $small-smart) {
-  section {
-    margin-bottom: 15px;
-  }
-  .chat h3 {
-    margin-bottom: 4px;
-  }
+body.page-opeka-widgets-mixed {
   .login-button {
+    position: relative;
     .btn {
       border: 1px solid #ccc;
+      background-image: none;
+      border-radius: 10px;
       color: #4a4a4a;
-      font-size: 16px;
-      margin-top: 8px;
-      min-width: 110px;
-      right: inherit;
+      font-size: 14px;
+      position: absolute;
+      right: 0;
+      top: -2px;
       padding: 8px;
-      position: inherit;
+      text-transform: none;
     }
   }
-  .logo-cyberhus,
-  .logo-partner {
-    display: none;
+
+  &.chat-open {
+    .login-button .btn {
+      background-color: $neonGreen;
+      border: none;
+      color: #fff;
+      &:hover {
+        background-color: darken($neonGreen, 20%);
+        border-color: $neonGreen;
+      }
+    }
   }
+
+  @media (max-width: $small-smart) {
+    section {
+      margin-bottom: 15px;
+    }
+    .chat h3 {
+      margin-bottom: 4px;
+    }
+    .login-button {
+      .btn {
+        border: 1px solid #ccc;
+        color: #4a4a4a;
+        font-size: 16px;
+        margin-top: 8px;
+        min-width: 110px;
+        right: inherit;
+        padding: 8px;
+        position: inherit;
+      }
+    }
+    .logo-cyberhus,
+    .logo-partner {
+      display: none;
+    }
+  }
+
 }
 
 /*@media (-webkit-min-device-pixel-ratio: 2), 
