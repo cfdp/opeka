@@ -55,7 +55,7 @@ Group = function(name) {
     /**
      * Get the client specified by the client Id. Will return
      * @param clientId -
-     * @returns {*} - will return null if the client is not part of the
+     * @returns {*} - will return null if the client is not part of the group
      *                or if the client has been unregistered
      */
     self.getClient = function(clientId) {

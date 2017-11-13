@@ -244,13 +244,34 @@ function Server(config, logger) {
    */
   self.everyone.addServerMethod('signIn', function (clientUser, callback) {
     // Support user re-signin.
-    var oldClient;
+    var oldClient,
+        reconnectTimeout;
+    
+//    console.log('signIn: opeka.rooms.list: ');
+//    console.dir(opeka.rooms.list);        
+//    _.forEach(opeka.rooms.list, function (loopRoom) {
+//        console.log('loop room users');
+//        console.dir(loopRoom.users);
+//        console.log('loop room group members');
+//        console.dir(loopRoom.group.members);
+//      });
+//      _.forEach(opeka.rooms.list, function (loopRoom) {
+//        console.log('loop room users');
+//        console.dir(loopRoom.users);
+//      });
+
     if (clientUser.clientId) {
       oldClient = opeka.groups.getClient(clientUser.clientId);
       if (oldClient){
         self.logger.info("Reconnected user: ", clientUser.clientId, ' -> ', this.clientId);
       }
+      else {
+        console.log('Reconnected user: user not in any groups, setting reconnectTimeout=true for : ', clientUser.clientId);
+        reconnectTimeout= true;
+      }
       delete(clientUser.clientId);
+    } else {
+      console.log('signIn: user had no clientId');
     }
     var client = this,
       accessCode = self.config.get('accessCode'),
@@ -369,6 +390,11 @@ function Server(config, logger) {
 
       if (oldClient){
         oldClient.onReconnect(client);
+      }
+      // If we had a reconnect timeout then the client needs an update. 
+      else if (reconnectTimeout) {
+        console.log('calling reconnect timeout on new client...');
+        client.remote('reconnectTimeout');
       }
 
       if (callback) {
@@ -633,7 +659,7 @@ function Server(config, logger) {
     }
   });
   
-  // Allow everyone to be pinged.
+  // Allow everyone to ping the server.
   self.everyone.addServerMethod('pingServer', function (callback) {
     var client = this,
         currentTime = (new Date()).getTime();
@@ -1288,13 +1314,19 @@ function Server(config, logger) {
 
     // Calculate the duration of the chat session of the user being removed
     if (chatStart_Min) {
+      console.log('chat start min: ' + chatStart_Min);
       chatEnd_Min = Math.round((new Date()).getTime() / 60000);
       chatDuration = chatEnd_Min - chatStart_Min;
+      console.log('chat duration: ' + chatDuration);
       self.logger.info('User logout: Chat duration (minutes): ', chatDuration);
       if (removedUser) {
         opeka.statistics.saveChatDuration(removedUser.stats_id, chatDuration);
       }
     }
+    else {
+      self.logger.warning('chat start min not defined');
+    }
+
 
     if (room) {
       if (checkPause && (autoPause === true) && (room.maxSize === 2) && !room.paused) {

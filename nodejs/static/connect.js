@@ -9324,10 +9324,11 @@ var shoe = require('shoe'),
   $(function() {
 
     Opeka.numReconnects = 0;
+    Opeka.checkOnlineTimerId = null;
+    Opeka.reconnectTimerId = null;
     var maxReconnects = Drupal.settings.opeka.reconnect ? (Drupal.settings.opeka.max_reconnects || 10) : false,
       reconnectInterval = Drupal.settings.opeka.reconnect_interval || 5000,
-      disconnectLimit = reconnectInterval * maxReconnects,
-      checkOnlineTimerId = null;
+      disconnectLimit = reconnectInterval * maxReconnects;
 
     connect();
 
@@ -9341,30 +9342,41 @@ var shoe = require('shoe'),
       d.pipe(stream).pipe(d);
       // Fallback checking if we are really connected to the server
       if (Drupal.settings.opeka.reconnect) {
-        if (checkOnlineTimerId) {
-          clearInterval(checkOnlineTimerId);
+        if (Opeka.checkOnlineTimerId) {
+          clearInterval(Opeka.checkOnlineTimerId);
         }
-        checkOnlineTimerId = window.setInterval(checkOnlineState, reconnectInterval);
+        Opeka.checkOnlineTimerId = window.setInterval(checkOnlineState, reconnectInterval);
       }
     }
 
     function reconnect() {
+      console.log('reconnect: Opeka.reconnectTimerId is ', Opeka.reconnectTimerId);
+      console.log('reconnect: Opeka.checkOnlineTimerId is ', Opeka.checkOnlineTimerId);
       console.log('Reconnecting ' + (++Opeka.numReconnects));
       Opeka.onReconnect();
-      setTimeout(connect, reconnectInterval);
+      Opeka.reconnectTimerId = setTimeout(connect, reconnectInterval);
     }
 
+    /**
+     * Fallback function for checking connection to server, 
+     * since in some browsers the dnode "end" event is not working well
+     *
+     */
     function checkOnlineState() {
       var currentTime = (new Date()).getTime();
-      var delay = currentTime - Opeka.lastPingreceived;
+      var delay = currentTime - Opeka.lastPingReceivedClientTime;
+      console.log('delay is ', delay);
+      console.log('checkOnlineStatue: Opeka.reconnectTimerId is ', Opeka.reconnectTimerId);
+      console.log('checkOnlineStatue: Opeka.checkOnlineTimerId is ', Opeka.checkOnlineTimerId);
 
       if (delay > disconnectLimit) {
         console.warn('No connection to server, show fatal error dialog.');
-        clearInterval(checkOnlineTimerId);
+        clearInterval(Opeka.checkOnlineTimerId);
         Opeka.onDisconnect();
       }
       else if (delay > reconnectInterval) {
-        Opeka.onReconnect();
+        console.log('Using fallback reconnect function');
+        reconnect();
       }
     }
   });

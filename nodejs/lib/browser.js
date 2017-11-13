@@ -10,6 +10,7 @@ var shoe = require('shoe'),
     Opeka.numReconnects = 0;
     var maxReconnects = Drupal.settings.opeka.reconnect ? (Drupal.settings.opeka.max_reconnects || 10) : false,
       reconnectInterval = Drupal.settings.opeka.reconnect_interval || 5000,
+      fallbackInterval = 20000,
       disconnectLimit = reconnectInterval * maxReconnects,
       checkOnlineTimerId = null;
 
@@ -28,7 +29,7 @@ var shoe = require('shoe'),
         if (checkOnlineTimerId) {
           clearInterval(checkOnlineTimerId);
         }
-        checkOnlineTimerId = window.setInterval(checkOnlineState, reconnectInterval);
+        checkOnlineTimerId = window.setInterval(checkOnlineState, fallbackInterval);
       }
     }
 
@@ -38,17 +39,24 @@ var shoe = require('shoe'),
       setTimeout(connect, reconnectInterval);
     }
 
+    /**
+     * Fallback function for checking connection to server, in some browsers the dnode "end" event is not working well
+     *
+     */
     function checkOnlineState() {
       var currentTime = (new Date()).getTime();
       var delay = currentTime - Opeka.lastPingreceived;
+      console.log('delay is ', delay);
 
       if (delay > disconnectLimit) {
         console.warn('No connection to server, show fatal error dialog.');
         clearInterval(checkOnlineTimerId);
         Opeka.onDisconnect();
       }
-      else if (delay > reconnectInterval) {
+      else if (delay > fallbackInterval) {
+        console.log('Using fallback reconnect function');
         Opeka.onReconnect();
+        setTimeout(connect, reconnectInterval);
       }
     }
   });

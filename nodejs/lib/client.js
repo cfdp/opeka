@@ -46,6 +46,7 @@ var Client = function (server, stream, remote, conn) {
     self.chatStart_Min = null;
     self.connectionData = {
       online: null,
+      serverDisconnect: null,
       pingSent: null,
       pingReceived: null,
       pingTimerId: null,
@@ -138,12 +139,20 @@ var Client = function (server, stream, remote, conn) {
 
   self.onReconnect = function (newClient) {
     util.log('Replacing user ' + self.clientId + ' with ' + newClient.clientId);
+    if (self.connectionData.serverDisconnect) {
+      console.log('client.js: user has been disconnected by server, calling reconnectTimeout for ' + self.clientId);
+      self.remote('reconnectTimeout');
+    }
     for (var id in rooms.list) {
       rooms.list[id].replaceUser(self.clientId, newClient);
     }
     groups.unregisterClient(self);
+    
+    self.breakRelations();
+  };
 
-    // Break relations to objects that might be troublesome to garbage collect
+  // Break relations to objects that might be troublesome to garbage collect
+  self.breakRelations = function() {
     self.server = null;
     self.stream = null;
     self.clientSideMethods = null;
@@ -163,6 +172,9 @@ var Client = function (server, stream, remote, conn) {
     if (latency > self.connectionData.disconnectLimit) {
       clearInterval(self.connectionData.pingTimerId)
       // time to disconnect user
+      console.log('latency > disconnectLimit: Time to disconnect user ', self.clientId);
+      self.connectionData.serverDisconnect = true;
+
       self.updateClientOnlineState(false, true);
     }
     else if (latency > self.connectionData.reconnectLimit) {
@@ -198,7 +210,13 @@ var Client = function (server, stream, remote, conn) {
           }
       });
     }
+    // The user is not present in any rooms
     console.warn('Tried to update client online state, but user not found in any room.');
+    if (disconnect) {
+      //console.log('call breakrelations in updateClientOnlineState.');
+      //self.breakRelations();
+    }
+    return;
   };
 
   self.remote = function (functionName) {

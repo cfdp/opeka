@@ -124,9 +124,11 @@
         inQueueMessage = Drupal.t('Chat room is full, you are currently in queue as number: @number. You can stay and wait until you can enter or leave the queue.', {'@number': this.inQueue + 1});
       }
 
-      // Hide the send message form if room is paused, user is muted or
-      // in queue.
-      hideForm = !this.model.get('paused') && !activeUser.muted && this.inQueue === false;
+      // Hide the send message form if room is paused, user is muted,
+      //  is reconnecting or in queue.
+      hideForm = !Opeka.shownReconnectingDialog && !this.model.get('paused') && !activeUser.muted && this.inQueue === false;
+      
+      console.log('eeeeujjjj');
 
       // Figure out if the message form is currently present.
       formPresent = this.$el.find(".message-form").length > 0;
@@ -509,6 +511,8 @@
             registrationForm: Drupal.t('Registration'),
             registrationFormLink: Drupal.t('Open registration form'),
             noRegistrationForm: Drupal.t('No registration form entered'),
+            online: Drupal.t('online'),
+            offline: Drupal.t('connecting...'),
           },
           screeningQuestions: screeningQuestions,
           room: this.model,
