@@ -65,7 +65,7 @@ var Opeka = Opeka || {};
         // Update status text if no connection could be made to server after 10 sec
         function checkConnection(){
           if (!io_socket.connected) {
-            console.log('Error: No connection to Opeka chat server');
+            console.warn('Error: No connection to Opeka chat server');
             body.removeClass('chat-busy chat-open').addClass('chat-closed');
             statusTab.text(textStrings.statusError);
             chatButton.text(textStrings.buttonError);
@@ -84,7 +84,6 @@ var Opeka = Opeka || {};
             chatLink = false;
             return;
           }
-          
           switch(roomType) {
             case "pair":
               // If chat is open and there are available one-to-one rooms (chat open).
@@ -93,9 +92,7 @@ var Opeka = Opeka || {};
                 statusTab.text(textStrings.statusAvailable_pair);
                 chatLink = true;
                 chatButton.text(textStrings.buttonAvailable);
-                if (opekaClientURL) {
-                  opekaChatPopup(roomType+"-Open");
-                }
+                opekaChatPopup(roomType+"-Open");
               }
               else {
                 calculatePassiveState();
@@ -108,6 +105,7 @@ var Opeka = Opeka || {};
                 statusTab.text(textStrings.statusAvailable_group);
                 chatLink = true;
                 chatButton.text(textStrings.buttonAvailable);
+                opekaChatPopup(roomType+"-Open");
               }
               else {
                 calculatePassiveState();
@@ -135,9 +133,7 @@ var Opeka = Opeka || {};
             statusTab.text(textStrings["statusOccupied_"+roomType]);
             chatLink = false;
             chatButton.text(textStrings.buttonOccupied);
-            if (opekaClientURL) {
-              opekaChatPopup(roomType+"-Occupied");
-            }
+            opekaChatPopup(roomType+"-Occupied");
           }
           // The chat app not turned on or is not initialized / unreachable.
           else if (chatStatus === 'undefined' || !chatStatus.chatOpen){
@@ -145,9 +141,7 @@ var Opeka = Opeka || {};
             statusTab.text(textStrings["statusClosed_"+roomType]);
             chatLink = false;
             chatButton.text(textStrings.buttonClosed);
-            if (opekaClientURL) {
-              opekaChatPopup(roomType+"-Closed");
-            }
+            opekaChatPopup(roomType+"-Closed");
           }
           // If all fails - probably the server is down...
           else {
@@ -155,10 +149,8 @@ var Opeka = Opeka || {};
             statusTab.text(textStrings.statusError);
             chatLink = false;
             chatButton.text(textStrings.buttonError);
-            if (opekaClientURL) {
-              opekaChatPopup(roomType+"-Closed");
-            }
-            console.log('Opeka chat app error. Server might be down. chatStatus: ', chatStatus);
+            opekaChatPopup(roomType+"-Closed");
+            console.warn('Opeka chat app error. Server might be down. chatStatus: ', chatStatus);
           }
         }
 
@@ -189,13 +181,13 @@ var Opeka = Opeka || {};
 
           var callback = function(err, signInURL) {
             if (err) {
-              console.log('Opeka error: ' + err);
+              console.warn('Opeka error: ' + err);
               w.location = opekaBaseURL+'/error';
               return;
             }
             // Double-check chat status - close window if chat is unavailable
             if (!(chatStatus.rooms && chatStatus.rooms.pair.active > 0) && !(chatStatus.rooms && chatStatus.rooms.pair.full > 0)) {
-              console.log('Opeka error: chat unavailable ');
+              console.warn('Opeka error: chat unavailable ');
               w.close();
             }
             else {
@@ -209,7 +201,9 @@ var Opeka = Opeka || {};
 
        /* This will successfully queue a message to be sent to the parent window */
       function opekaChatPopup(popupAction) {
-        parent.postMessage(popupAction, opekaClientURL);
+        if (opekaClientURL) {
+          parent.postMessage(popupAction, opekaClientURL);
+        }
       };
     },
   };
