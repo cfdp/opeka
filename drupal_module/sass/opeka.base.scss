@@ -138,7 +138,8 @@ body.page-admin-opeka {
 }
 /* Login page */
 body.page-opeka {
-  select.form-select.gender {
+  select.form-select.gender,
+  select.form-select.age {
     height: 28px;
   }
   label.screening-label {
