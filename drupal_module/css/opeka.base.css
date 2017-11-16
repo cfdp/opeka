@@ -143,29 +143,30 @@ body.page-admin-opeka .app-view .screening-question {
 
 /* Login page */
 /* line 141, ../sass/opeka.base.scss */
-body.page-opeka select.form-select.gender {
+body.page-opeka select.form-select.gender,
+body.page-opeka select.form-select.age {
   height: 28px;
 }
-/* line 144, ../sass/opeka.base.scss */
+/* line 145, ../sass/opeka.base.scss */
 body.page-opeka label.screening-label {
   display: none;
   line-height: inherit;
   padding-top: 0;
 }
-/* line 149, ../sass/opeka.base.scss */
+/* line 150, ../sass/opeka.base.scss */
 body.page-opeka input.screening {
   margin-top: 0;
 }
-/* line 152, ../sass/opeka.base.scss */
+/* line 153, ../sass/opeka.base.scss */
 body.page-opeka .screening-questions {
   margin-bottom: 5px;
 }
-/* line 155, ../sass/opeka.base.scss */
+/* line 156, ../sass/opeka.base.scss */
 body.page-opeka span.screening-option {
   line-height: 25px;
   padding-left: 8px;
 }
-/* line 159, ../sass/opeka.base.scss */
+/* line 160, ../sass/opeka.base.scss */
 body.page-opeka .signin-footnote {
   color: #BFBFBF;
   font-size: 0.8em;
