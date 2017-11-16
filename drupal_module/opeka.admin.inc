@@ -149,13 +149,21 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#maxlength' => 50,
   );
 
-  $form['opeka_signin_footnote'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Signin footnote'),
-    '#description' => t('Footnote below the signin form.'),
-    '#required' => FALSE,
-    '#default_value' => variable_get('opeka_signin_footnote', ''),
-    '#maxlength' => 200,
+  $form['opeka_age_min'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Enter minimum age for clients'),
+    '#description' => t('This is the minimum age that clients are presented with on the login form.'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('opeka_age_min', 9),
+    '#maxlength' => 2,
+  );
+  $form['opeka_age_max'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Enter maximum age for clients'),
+    '#description' => t('This is the maximum age that clients are presented with on the login form.'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('opeka_age_max', 23),
+    '#maxlength' => 2,
   );
   return system_settings_form($form);
 }

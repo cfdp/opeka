@@ -199,6 +199,9 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $enter_site_leave = check_plain(variable_get('opeka_enter_site_leave', ''));
   $signin_footnote = check_plain(variable_get('opeka_signin_footnote', ''));
   $mixed_widget_url = check_plain(variable_get('opeka_mixed_widget_url', ''));
+  $age_min = check_plain(variable_get('opeka_age_min', 9));
+  $age_max = check_plain(variable_get('opeka_age_max', 23));
+
 
   // Settings to expose to the JavaScript client.
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
@@ -213,7 +216,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['dnode_endpoint'] = preg_replace('/\/connect[.]js$/', '/opeka', $js_url);
   $settings['socket_io_url'] = preg_replace('/\/connect[.]js$/', '/', $js_url);
   $settings['client_url'] = $client_url;
-  $settings['pair_chat_name'] = $pair_chat_name;
+  $settings['pair_chat_name'] = $pair_chat_name ;
   $settings['group_chat_name'] = $group_chat_name;
   $settings['popup_text'] = $popup_text;
   $settings['enter_site_feature'] = $enter_site_feature;
@@ -222,6 +225,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['enter_site_leave'] = $enter_site_leave;
   $settings['signin_footnote'] = $signin_footnote;
   $settings['mixed_widget_url'] = $mixed_widget_url;
+  $settings['age_min'] = $age_min;
+  $settings['age_max'] = $age_max;
 
   // Add js files and settings
   drupal_add_js(array('opeka' => $settings), 'setting');
