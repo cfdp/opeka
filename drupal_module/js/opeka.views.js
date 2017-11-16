@@ -1936,6 +1936,8 @@
           labels: {
             action: Drupal.t('Ready for chat'),
             age: Drupal.t('Age'),
+            ageMin: parseInt(Drupal.settings.opeka.age_min),
+            ageMax: parseInt(Drupal.settings.opeka.age_max),
             gender: Drupal.t('Gender'),
             female: Drupal.t('Female'),
             nonbinary: Drupal.t('non-binary'),

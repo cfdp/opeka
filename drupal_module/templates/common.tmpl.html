@@ -140,7 +140,12 @@
           <%= labels.age %>
         </label>
         <div class="controls">
-          <input class="form-text age" type="text" maxlength="2" />
+          <select class="form-select age">
+            <option value="" selected="selected"></option>
+            <% var i; for (i=labels.ageMin; i<=labels.ageMax; i++) { %>
+              <option value="<%= i %>"><%= i %></option>
+            <% } %>
+          </select>
         </div>
       </div>
 
