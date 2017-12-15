@@ -246,17 +246,21 @@ section ul li:after,footer:after {
 .login-button {
   position: relative;
   .btn {
+    background-image: none;
     border: 1px solid #ccc;
+    border-radius: 4px;
     color: #4a4a4a;
-    font-size: 16px;
+    font-size: 14px;
     position: absolute;
     right: 0;
+    text-transform: none;
     top: -2px;
     padding: 8px;
   }
 }
 
-.chat-open {
+body.page-opeka-widgets-mixed.chat-open {
+  background-color: white;
   .login-button .btn {
     background-color: $neonGreen;
     border: none;
