@@ -286,39 +286,46 @@ section ul li:after, footer:after {
 }
 /* line 248, ../sass/widget.mixed.scss */
 .login-button .btn {
+  background-image: none;
   border: 1px solid #ccc;
+  border-radius: 4px;
   color: #4a4a4a;
-  font-size: 16px;
+  font-size: 14px;
   position: absolute;
   right: 0;
+  text-transform: none;
   top: -2px;
   padding: 8px;
 }
 
-/* line 260, ../sass/widget.mixed.scss */
-.chat-open .login-button .btn {
+/* line 262, ../sass/widget.mixed.scss */
+body.page-opeka-widgets-mixed.chat-open {
+  background-color: white;
+}
+/* line 264, ../sass/widget.mixed.scss */
+body.page-opeka-widgets-mixed.chat-open .login-button .btn {
   background-color: #51E789;
   border: none;
   color: #fff;
 }
-/* line 264, ../sass/widget.mixed.scss */
-.chat-open .login-button .btn:hover {
+/* line 268, ../sass/widget.mixed.scss */
+body.page-opeka-widgets-mixed.chat-open .login-button .btn:hover {
   background-color: #19b955;
   border-color: #51E789;
 }
 
 @media (max-width: 24em) {
-  /* line 272, ../sass/widget.mixed.scss */
+  /* line 276, ../sass/widget.mixed.scss */
   section {
     margin-bottom: 15px;
   }
 
-  /* line 275, ../sass/widget.mixed.scss */
+  /* line 279, ../sass/widget.mixed.scss */
   .chat h3 {
     margin-bottom: 4px;
   }
 
-  /* line 279, ../sass/widget.mixed.scss */
+  /* line 283, ../sass/widget.mixed.scss */
   .login-button .btn {
     border: 1px solid #ccc;
     color: #4a4a4a;
@@ -330,7 +337,7 @@ section ul li:after, footer:after {
     position: inherit;
   }
 
-  /* line 290, ../sass/widget.mixed.scss */
+  /* line 294, ../sass/widget.mixed.scss */
   .logo-cyberhus,
   .logo-partner {
     display: none;
