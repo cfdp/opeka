@@ -259,17 +259,22 @@ section ul li:after,footer:after {
   }
 }
 
-body.page-opeka-widgets-mixed.chat-open {
-  background-color: white;
-  .login-button .btn {
-    background-color: $neonGreen;
-    border: none;
-    color: #fff;
-    &:hover {
-      background-color: darken($neonGreen, 20%);
-      border-color: $neonGreen;
+body.page-opeka-widgets-mixed {
+  &.chat-open,
+  &.chat-busy {
+    background-color: white;
+  }
+  &.chat-open {
+    .login-button .btn {
+      background-color: $neonGreen;
+      border: none;
+      color: #fff;
+      &:hover {
+        background-color: darken($neonGreen, 20%);
+        border-color: $neonGreen;
+      }
     }
-  }   
+  }
 }
 
 @media (max-width: $small-smart) {
