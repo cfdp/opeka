@@ -1,0 +1,155 @@
+/* Styling for the popup widget
+ *
+ */
+
+// Utilities
+@import "variables";
+
+body.page-opeka-widgets-popup {
+  .status-wrapper {
+    color: #ffffff;
+    margin: 0 auto;
+    max-width: 1180px;
+    padding: .6em 1em;
+    @include bp-narrow {
+      padding: 1em 0;
+      max-width: 700px;
+    }
+    @include bp-normal {
+      max-width: 960px;
+    }
+    @include bp-wide {
+      max-width: 1180px;
+    }
+    @media (max-height: 50px) {
+      padding-top: .3em;
+      padding-bottom: .3em;
+    }
+    @media (max-height: 50px) and (min-width: 768px){
+    }
+  }
+
+  &.chat-busy {
+    background-color: $color-sand;
+    .status-wrapper {
+      background-color: $color-sand;
+    }
+
+    .chat-name {
+      color: $text-color;
+    }
+    .login-button .btn {
+      background-color: $color-orange-light;
+      color: #ffffff;
+    }
+  }
+
+  .chat-name {
+    display: inline-block;
+    font-size: 1em;
+    font-weight: 700;
+    width: 100px;
+    margin-right: 1em;
+    vertical-align: top;
+    @include vertical-align();
+
+    @include bp-narrow {
+      font-size: 1.4em;
+      width: 200px;
+    }
+    @include bp-wide {
+      width: 250px;
+    }
+    @media (max-height: 50px) {
+    }
+    @media (max-height: 50px) and (min-width: 768px) {
+    }
+  }
+  .status-content {
+    display: inline-block;
+    padding-left: 1em;
+    max-width: 50%;
+    @include vertical-align();
+
+    &, p {
+      color: #1b1d1f;
+      margin: 0;
+    }
+    ul, li, p {
+      display: inline;
+    }
+    a {
+      color: $text-color;
+      font-weight: 700;
+    }
+    @media (max-height: 50px) {
+    }
+    @media (max-width: 1023px) {
+      display: none;
+    }
+  }
+
+  .login-button {
+    border-left: 1px solid rgb(255, 255, 255);
+    border-left: 1px solid rgba(255, 255, 255, .2);
+    display: inline-block;
+    height: 100%;
+    padding-left: .5em;
+    position: relative;
+    bottom:auto;
+    right: auto;
+    vertical-align: top;
+    @include bp-narrow {
+      padding-left: 2em;
+    }
+    @include bp-normal {
+    }
+
+    .btn {
+      background-color: #3C5E22;
+      background-image: none;
+      font-size: 12px;
+      padding: 0.65em 1.2em;
+      border-radius: 2em;
+      width: 120px;
+      @include vertical-align();
+
+      @include bp-narrow {
+        font-size: 14px;
+        padding: 0.85em 1em;
+        width: 200px;
+      }
+      @include bp-normal {
+      }
+      @media (max-height: 50px) {
+        font-size: 10px;
+        padding: .7em 1em;
+      }
+    }
+  }
+  .button-wrapper {
+    height: 100%;
+    float: right;
+  }
+  a.close {
+    position: relative;
+    float: right;
+    top: 50%;
+    transform: translateY(-50%);
+    display: block;
+    height: 20px;
+    width: 20px;
+    background: url(../img/close-white.png);
+    background-image: url(../img/close-white.svg), none;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    opacity: 1;
+    text-indent: -9999px;
+  }
+  &.chat-open a.close {
+    background: url(../img/close-black.png);
+    background-image: url(../img/close-black.svg), none;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+  }
+}

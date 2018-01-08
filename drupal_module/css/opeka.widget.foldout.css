@@ -3,13 +3,21 @@
  */
 /* Mixin */
 /* Variables */
-/* $green: #72d477; */
 /* Typography */
+/* Cyberhus Clean theme */
+/* Base colors*/
+/* Text Colors */
+/* Curachat additions */
+/* Breakpoints */
+/* line 7, ../sass/opeka.widget.foldout.scss */
 .opeka-chat-foldout-wrapper {
   top: 15%;
   position: fixed;
   right: -260px;
-  z-index: 10; }
+  z-index: 10;
+}
 
+/* line 14, ../sass/opeka.widget.foldout.scss */
 .opeka-chat-foldout-wrapper.demo-group-chat {
-  top: 45%; }
+  top: 45%;
+}

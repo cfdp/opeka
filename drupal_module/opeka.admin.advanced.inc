@@ -69,6 +69,14 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#required' => FALSE,
     '#default_value' => variable_get('opeka_client_url', ''),
   );
+  
+  $form['opeka_mixed_widget_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Mixed widget'),
+    '#description' => t('If the mixed widget is used, please provide the URL of the jsonp resource, e.g. https://mysite.com/resource?.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_mixed_widget_url', ''),
+  );
 
   $form['opeka_custom_css'] = array(
     '#type' => 'textfield',

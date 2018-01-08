@@ -2,6 +2,32 @@
 @import "compass";
 @import "variables";
 
+.not-logged-in {
+  #opeka-app {
+    /* Anonymous clients can have the sidebar disabled */
+    .content.client-sidebar-0 {
+      width: 100%;
+    }
+    .content.client-sidebar-1 {
+      width: 66%;
+    }
+  }
+
+  .groupchat,
+  .room-size-2 {
+    .footer {
+      display: none;
+    }
+  }
+}
+
+@media (min-width: $tab) {
+  /* The sidebar goes to its proper place on bigger screens */
+  .not-logged-in.groupchat #opeka-app .content.client-sidebar-0 {
+    width: 66%;
+  }
+}
+
 /* All users */
 
 #opeka-app {
@@ -192,7 +218,8 @@ body.page-admin-config-services-opeka-screening .btn.btn-info {
 /* Login page */
 
 body.page-opeka {
-  select.form-select.gender {
+  select.form-select.gender,
+  select.form-select.age {
     height: 28px;
   }
   label.screening-label {
@@ -203,8 +230,15 @@ body.page-opeka {
   input.screening {
     margin-top: 0;
   }
+  .screening-questions {
+    margin-bottom: 5px;
+  }
   span.screening-option {
     line-height: 25px;
     padding-left: 8px;
+  }
+  .signin-footnote {
+    color: $ccGray;
+    font-size: $font-sm;
   }
 }

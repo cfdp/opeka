@@ -66,7 +66,7 @@
       this.admin = options.admin;
       this.messages = Opeka.clientData.viewChatHistory ? this.translateMessages(this.model.attributes.messages) : [];
       this.inQueue = options.inQueue;
-      this.returnSendsMessage = ''; // Variable tied to user defined behaviour of input text area
+      this.returnSendsMessage = 'checked'; // Variable tied to user defined behaviour of input text area
       this.writersMessage = '';
       this.dontAutoScroll = -1; // Variable tied to user defined behaviour of input text area
       this.scrolling = false;
@@ -621,7 +621,6 @@
       }
     },
 
-
     // For toggling visibility of screening questions
     screeningToggle: function (event) {
       var btn = $(event.currentTarget),
@@ -676,6 +675,9 @@
       if (JST.opeka_chat_footer_tmpl) {
         this.$el.html(JST.opeka_chat_footer_tmpl({
           labels: {
+          banCodeGenerator: this.banCodeGenerator,
+          labels: {
+            banCode: Drupal.t('Generate new ban code'),
             createInvite: Drupal.t('Create invitation link')
           }
         }));
@@ -1635,6 +1637,11 @@
       var inviteList = Opeka.inviteList,
         html = '';
 
+      // Format time.
+      moment.locale(Drupal.settings.userLang);
+      _.each(inviteList.models, function(invite) {
+        invite.set("formatted_time", moment((invite.get("time") + Drupal.settings.userTimeZoneOffset - moment().utcOffset() * 60) * 1000).format("dddd D MMMM YYYY, H:mm"));
+      });
       html = JST.opeka_invite_list_tmpl({
         labels: {
           createInvite: Drupal.t('Create new invitation'),
@@ -1847,7 +1854,16 @@
         message = form.find('textarea.whisper-message').val();
 
       // Whisper the user.
-      Opeka.remote.whisper(this.clientId, message);
+      Opeka.remote.whisper(this.clientId, message, function (err) {
+        if (err) {
+          var view = new Opeka.DialogView({
+            content: Backbone.View.prototype.make('p', 'message', Drupal.t('Could not whisper to user. Maybe the user logged out.')),
+            title: Drupal.t('Sorry.')
+          });
+
+          view.render();
+        }
+      });
       this.remove();
 
       // Prevent event if needed.
@@ -1873,17 +1889,23 @@
       this.queueId = options.queueId;
       _.bindAll(this);
       this.model.on('change:chatOpen', this.render, this);
+      this.inner = new Opeka.EnterSiteView();
+      this.listenTo( Backbone, 'enter-site-clicked', function (showSignIn) {
+          this.render(showSignIn);
+      }, this );
       return this;
     },
 
-    render: function () {
+    render: function (showSignInForm) {
       var name = '',
-        chatOpen = this.model.get('chatOpen');
+        isAdmin = (Drupal.settings.opeka.user && Drupal.settings.opeka.user.admin) ? true : false,
+        chatOpen = this.model.get('chatOpen'),
+        enterSiteButtonEnabled = Drupal.settings.opeka.enter_site_feature;
 
       //@todo: the visibility of the name should probably be a setting somewhere
       //Replace the Drupal username with rådgiver(counselor), not using the actual user name
       //name = Drupal.settings.opeka.user.name;
-      if (Drupal.settings.opeka.user && Drupal.settings.opeka.user.admin) {
+      if (isAdmin) {
         name = Drupal.t('Counselor');
       }
       // If the chat is closed, only authenticated Drupal users is presented with the sign in form
@@ -1891,9 +1913,12 @@
         var form = JST.opeka_connect_form_tmpl({
           accessCodeEnabled: Opeka.status.attributes.accessCodeEnabled,
           screeningQuestions: Opeka.status.attributes.screeningQuestions,
+          signInFootNote: Drupal.settings.opeka.signin_footnote,
           labels: {
             action: Drupal.t('Ready for chat'),
             age: Drupal.t('Age'),
+            ageMin: parseInt(Drupal.settings.opeka.age_min),
+            ageMax: parseInt(Drupal.settings.opeka.age_max),
             gender: Drupal.t('Gender'),
             female: Drupal.t('Female'),
             nonbinary: Drupal.t('non-binary'),
@@ -1914,8 +1939,16 @@
       else {
         var form = Drupal.t('Loading...');
       }
+      // Render the Enter Site Button for clients if feature is enabled
+      if (!isAdmin && (enterSiteButtonEnabled === "1") && showSignInForm !== true) {
+        this.$el.empty();
+        this.$el.append(this.inner.$el);
+        this.inner.render();
+      }
+      else {
+        this.$el.html(form);
+      }
 
-      this.$el.html(form);
       return this;
     },
 
@@ -1932,9 +1965,18 @@
       //add a random number to each anonymous user to help in distinguishing them
       var x = Math.floor((Math.random() * 50) + 1);
 
-      var question = this.$el.find('.screening-question').text();
+      var question = this.$el.find('p.screening-question').text();
       var answer = this.$el.find('input[name=screening]:checked').val();
-      // @todo: save other answer options as well
+      var screeningRequired = (Drupal.settings.opeka_screening && Drupal.settings.opeka_screening.opeka_screening_required);
+      var validationError;
+
+      var errMsg = Drupal.t('You must answer the question before you can enter the chat.');
+      // Check if an option has been chosen if answering is required
+      if (screeningRequired && (answer === undefined) && !user.admin) {
+        alert(errMsg);
+        validationError = true;
+      }
+
       user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous!x', {'!x': x});
       user.age = this.$el.find('.age').val();
       user.gender = this.$el.find('.gender').val();
@@ -1943,17 +1985,46 @@
       user.roomId = user.roomId ? user.roomId : this.roomId;
       user.queueId = this.queueId;
 
-      Opeka.signIn(user, function () {
-        view.$el.fadeOut();
-        $(window).bind('beforeunload.opeka', function () {
-          return Drupal.t('Do you really want to leave this page?');
+      if (!validationError) {
+        Opeka.signIn(user, function () {
+          view.$el.fadeOut();
+          $(window).bind('beforeunload.opeka', function () {
+            return Drupal.t('Do you really want to leave this page?');
+          });
         });
-      });
+      }
 
       if (event) {
         event.preventDefault();
       }
     }
   });// END SignInFormView
+
+  Opeka.EnterSiteView = Backbone.View.extend({
+    events: {
+      "click .enter-site": "enterSite",
+    },
+    render: function() {
+      var chatName = Drupal.settings.opeka.pair_chat_name || {},
+          form = JST.opeka_enter_form_tmpl({
+            message: Drupal.settings.opeka.enter_site_message,
+            labels: {
+              heading: chatName,
+              confirm: Drupal.settings.opeka.enter_site_confirm,
+              leave: Drupal.settings.opeka.enter_site_leave,
+            },
+          });
+      this.$el.html(form);
+      this.delegateEvents();
+    },
+
+
+    // Remove view and enter site if user confirms
+    enterSite: function() {
+      Backbone.trigger('enter-site-clicked', true );
+      this.remove();
+      this.unbind();
+    },
+  });// END EnterSiteView
 
 }(jQuery));

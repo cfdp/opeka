@@ -266,7 +266,7 @@ function Server(config, logger) {
 
       // Check whether the user is required to be logged into Drupal
       if (self.config.get("features:requireDrupalLogin") && !account.uid) {
-        self.logger.info('User without drupal login tried to access the chat.');
+        self.logger.info('User without Drupal login tried to access the chat.');
         client.remote('loginRequiredMessage', client.clientId);
         return;
       }
@@ -770,28 +770,38 @@ function Server(config, logger) {
     roomGroup.remote('roomUserUnmuted', roomId, clientId, userData, councillor.nickname);
   });
 
-  /* Function used by the counselors in order to whisper to an user */
-  self.everyone.addServerMethod('whisper', function (clientId, messageText) {
+  /* Function used by the counselors in order to whisper to a user */
+  self.everyone.addServerMethod('whisper', function (clientId, messageText, callback) {
     var whisperClientId = this.clientId,
       whisperName = this.nickname,
-      recipient = self.everyone.getClient(clientId),
-      recieverName = recipient.nickname,
+      recipient= self.everyone.getClient(clientId),
+      recieverName,
       date = new Date();
 
-    // Check if we're allowed to whiser to the
-    if (!self.councellors.getClient(whisperClientId) && !this.whisperPartners[clientId]) {
-      self.sendSystemMessage("You are not allowed to whisper to user " + recieverName, this);
-      return;
+    // Safety check to make sure the recipient is not null or undefined
+    if (recipient) {
+      recieverName = recipient.nickname;
+      // Check if we're allowed to whisper to the client
+      if (!self.councellors.getClient(whisperClientId) && !this.whisperPartners[clientId]) {
+        self.sendSystemMessage("You are not allowed to whisper to user " + recieverName, this);
+        return;
+      }
+
+      // Allow the recipient to whisper back
+      recipient.whisperPartners[whisperClientId] = true;
+
+      // Send to user being whispered.
+      recipient.remote('roomRecieveWhisper', clientId, messageText, whisperName, true, date);
+
+      // Send to counselor who did the whispering.
+      this.remote('roomRecieveWhisper', whisperClientId, messageText, recieverName, false, date);
+      callback(false);
     }
-
-    // Allow the recipient to whisper back
-    recipient.whisperPartners[whisperClientId] = true;
-
-    // Send to user being whispered.
-    recipient.remote('roomRecieveWhisper', clientId, messageText, whisperName, true, date);
-
-    // Send to counselor who did the whispering.
-    this.remote('roomRecieveWhisper', whisperClientId, messageText, recieverName, false, date);
+    else {
+      // The recipent was not defined
+      self.logger.error('Whisper failed: recipient not defined.');
+      callback(true);
+    }
   });
 
   // Called by the Counsellors in order to create a new room.

@@ -7,7 +7,7 @@
 
 function opeka_statistics_display_results_table() {
   $header = array(
-    array('data' => t('Date'), 'field' => 'submission_date', 'sort' => 'asc'),
+    array('data' => t('Date'), 'field' => 'submission_date', 'sort' => 'desc'),
     array('data' => t('Chat duration (min)'), 'field' => 'chat_duration'),
     array('data' => t('Age'), 'field' => 'age'),
     array('data' => t('Gender'), 'field' => 'gender'),

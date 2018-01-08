@@ -4,19 +4,22 @@
   <% /* Only display sidebar for anonymous clients in pair rooms if this settings is set to 1*/ %>
   <% if ((admin) || (!((Drupal.settings.opeka.pairchat_user_list === 0) && (room.get('maxSize') === 2)))) { %>
     <% if (admin) { %>
+      <form action="#" class="leave-room-form">
+        <input class="form-submit send btn btn-success" type="submit" value="<%= labels.leaveRoomButton %>" />
+      </form>
       <div class="btn-group btn-toggle">
         <% if (room.attributes.paused) { %>
-          <button class="btn btn-sm btn-primary pause-toggle btn-warning">PAUSE</button>
-          <button class="pause-toggle btn btn-sm btn-default">START</button>
+          <button class="btn btn-primary pause-toggle btn-danger">PAUSE</button>
+          <button class="pause-toggle btn btn-default">ÅBEN</button>
         <%}else{ %>
-          <button class="btn btn-sm btn-default pause-toggle">PAUSE</button>
-          <button class="pause-toggle btn btn-sm btn-primary btn-success">START</button>
+          <button class="btn btn-default pause-toggle">PAUSE</button>
+          <button class="pause-toggle btn btn-primary btn-success">ÅBEN</button>
         <% } %>
       </div>
-      <button class="clear-messages btn btn-sm btn-default"><%= labels.clearMessages %></button>
-      <form action="#" class="leave-room-form">
-        <input class="form-submit send btn btn-sm btn-success" type="submit" value="<%= labels.leaveRoomButton %>" />
-      </form>
+      <button class="delete-room btn btn-default">
+        <span class="delete-room glyphicon glyphicon-remove" aria-hidden="true"></span>
+        <%= labels.deleteRoom %>
+      </button>
     <% } %>
     <div id="user-list-block">
       <h5 class="sidebar-block-heading"><%= labels.userListHeading %><span class="arrow up"></span></h5>
@@ -83,11 +86,8 @@
     <div class="sidebar-block">
       <h5 class="sidebar-block-heading"><%= labels.roomActions %><span class="arrow down"></span></h5>
       <div class="sidebar-block-content room-actions"  style="display: block;">
+        <button class="clear-messages btn btn-sm btn-default"><%= labels.clearMessages %></button>
         <button class="change-room-size btn btn-sm btn-default"><%= labels.changeRoomSize %></button>
-        <button class="delete-room btn btn-sm btn-default">
-          <span class="delete-room glyphicon glyphicon-remove" aria-hidden="true"></span>
-          <%= labels.deleteRoom %>
-        </button>
       </div>
     </div>
     <div class="sidebar-block">
@@ -116,6 +116,17 @@
   <%= content %>
 </script>
 
+<script id="opeka_enter_form_tmpl" type="application/template">
+  <div class="enter-site-button">
+    <h2><%= labels.heading %></h2>
+    <p><%= message %></p>
+    <button class="enter-site btn btn-success"><%= labels.confirm %></button>
+    <div class="leave-link">
+      <a class="leave-site" href="https://cyberhus.dk/node/44447"><%= labels.leave %></a>
+    </div>
+  </div>
+</script>
+
 <script id="opeka_connect_form_tmpl" type="application/template">
   <div class="welcome-message"><%= Drupal.settings.opeka.welcome_message %></div>
   <form action="#" class="form-horizontal well">
@@ -125,12 +136,17 @@
         <input type="text"  maxlength="25" class="form-control nickname" value="<%- name %>" id="nick" placeholder="<%= labels.placeholder %>">
       </div>
     </div>
-
-    <% if (!name) { %>
-      <div class="controls form-group">
-        <label for="age" class="col-sm-3 control-label"><%= labels.age %></label>
-        <div class="col-sm-3">
-          <input type="text" class="form-control age" maxlength="2" id="age">
+      <div class="control-group">
+        <label class="control-label age-label">
+          <%= labels.age %>
+        </label>
+        <div class="controls">
+          <select class="form-select age">
+            <option value="" selected="selected"></option>
+            <% var i; for (i=labels.ageMin; i<=labels.ageMax; i++) { %>
+              <option value="<%= i %>"><%= i %></option>
+            <% } %>
+          </select>
         </div>
       </div>
 
@@ -149,19 +165,20 @@
       </div>
 
       <% if (screeningQuestions && Drupal.settings.opeka_screening && Drupal.settings.opeka_screening.opeka_screening_options.length ) { %>
-        <div class="form-group col-sm-12">
-          <label class="screening-label">
+        <div class="control-group screening-questions">
+          <label class="control-label screening-label">
             <%= labels.screening %>
           </label>
           <div class="controls">
-            <% var answerOptions = Drupal.settings.opeka_screening.opeka_screening_options;
-            var arrayLength = answerOptions.length; %>
+            <% var answerOptions = Drupal.settings.opeka_screening.opeka_screening_options; %>
             <p class="screening-question"><%= Drupal.settings.opeka_screening.opeka_screening_main %></p>
-            <input class="screening" checked="checked" name="screening" type="radio" value="No participation"><span class="screening-option"> <%- labels.screeningNoParticipation %></span><BR>
-            <% for (var i = 0; i < arrayLength; i++) { %>
-              <input class="screening" name="screening" type="radio" value="<%- answerOptions[i] %>">
-              <span class="screening-option"><%= answerOptions[i] %></span><BR>
-            <% }; %>
+            <% if (!Drupal.settings.opeka_screening.opeka_screening_required) { %>
+              <input class="screening" checked="checked" name="screening" type="radio" value="No participation"><span class="screening-option"> <%- labels.screeningNoParticipation %></span><br>
+            <% } %>
+            <% answerOptions.forEach(function(option) { %>
+              <input class="screening" name="screening" type="radio" value="<%- option %>">
+              <span class="screening-option"><%= option %></span><br>
+            <% }); %>
           </div>
         </div>
       <% } %>
@@ -173,6 +190,14 @@
           </label>
           <div class="controls">
             <input class="form-text accesscode" type="text" maxlength="10" />
+          </div>
+        </div>
+      <% } %>
+      
+      <% if (signInFootNote.length > 0) { %>
+        <div class="control-group signin-footnote">
+          <div class="controls">
+            <p><%= signInFootNote %></p>
           </div>
         </div>
       <% } %>
@@ -288,7 +313,7 @@
         <% labels.placeholder = ''; %>
       <tr class="invite">
         <td><%- invite.get('name') %></td>
-        <td><%- invite.get('time') %></td>
+        <td><%- invite.get('formatted_time') %></td>
         <td>
         <td>
         <% if (!invite.get('roomId')) { %>

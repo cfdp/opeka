@@ -29,7 +29,9 @@ var Opeka = {
     'doorBellSound': null
   },
   // Initialise window.JST if it does not exist.
-  JST = JST || {};
+  JST = JST || {},
+  Backbone = Backbone || {},
+  Drupal = Drupal || {};
 
 (function ($) {
   "use strict";
@@ -69,7 +71,6 @@ var Opeka = {
     // Check that the user is signed in, and if not, redirect to the
     // signIn page.
     checkSignIn: function () {
-      // All signed in users are supposed to have the changeRoom method.
       if (!Opeka.clientData.isSignedIn) {
         this.navigate("", {trigger: true});
       }
@@ -87,7 +88,7 @@ var Opeka = {
       });
 
       if (nonce) {
-        // Reserve a spot as soon as the connection is made
+        // Reserve our spot as soon as the client is connected.
         $(Opeka).on('connected', function () {
           Opeka.remote.reserveRoomSpot(nonce, function (roomId) {
             view.roomId = roomId;
