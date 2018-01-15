@@ -129,13 +129,31 @@ li.leaf {
 
 /* Chat room */
 
+.chat-message-list-wrapper {
+  background: $wrapperBgColor;
+  margin-top: 30px;
+
+  @include desktop-width {
+    margin-top: 0px;
+  }
+}
+
 ul.chat-message-list {
   background: $contentBgColor;
-  height: 400px;
+  height: 100px;
   list-style: none;
   margin: 0 0 10px 0;
   overflow-y: auto;
-  @include small-smart-width {
+  @include micro-height {
+    height: 200px;
+  }
+  @include micro-height {
+    height: 200px;
+  }
+  @include small {
+    height: 370px;
+  }
+  @include small-smart {
     height: 470px;
   }
   @include tablet {
@@ -145,15 +163,6 @@ ul.chat-message-list {
     height: 530px;
     border: 1px solid $borderColor;
     border-radius: $borderRadius;
-  }
-}
-
-.chat-message-list-wrapper {
-  background: $wrapperBgColor;
-  margin-top: 30px;
-
-  @include desktop-width {
-    margin-top: 0px;
   }
 }
 
@@ -207,7 +216,7 @@ ul.chat-message-list {
     margin: 10px;
   }
   .chat-message-content {
-    width: 80%;
+    width: 75%;
     padding: 8px;
     background: $messageBgColor;
     border-radius: $borderRadius;
@@ -290,7 +299,6 @@ ul.chat-message-list {
 .system-message {
   color: $messageMetaDataColor;
 }
-
 
 /* Chat message form */
 
@@ -582,9 +590,6 @@ ul.chat-message-list {
     box-sizing: border-box;
     font-size: .8em;
     font-weight: normal;
-    position: absolute;
-    bottom: 0px;
-    left: 0;
   }
   .return-sends-msg,
   .dont-auto-scroll,
@@ -612,6 +617,7 @@ ul.chat-message-list {
     top: 0;
     height: 44px;
     width: 100%;
+    z-index: 2;
     .chat-name {
       font-size: 20px;
     }
@@ -727,17 +733,6 @@ ul.chat-message-list {
       padding: 10px 0 0 0;
     }
 
-    .chat-message-list-wrapper {
-      margin-top: 0;
-    }
-    ul.chat-message-list {
-      border: 1px solid $borderColor;
-      border-radius: $borderRadius;
-    }
-    .chat-view-form {
-      position: relative;
-      padding: 0;
-    }
     .room-list {
       .room {
         min-width: 550px;
@@ -793,6 +788,25 @@ ul.chat-message-list {
       padding: 2px;
       white-space: normal;
       z-index: 1010;
+    }
+
+    /* Chat room view */
+
+    .chat-message-list-wrapper {
+      margin-top: 0;
+    }
+    ul.chat-message-list {
+      border: 1px solid $borderColor;
+      border-radius: $borderRadius;
+    }
+    .writers-message {
+      position: absolute;
+      bottom: 0px;
+      left: 0;
+    }
+    .chat-view-form {
+      position: relative;
+      padding: 0;
     }
   }
   &.groupchat,
@@ -862,7 +876,7 @@ body.opeka-client {
       display: block;
       position: fixed;
       top: 9px;
-      right: 67px;
+      right: 81px;
       z-index: 3;
       @include desktop-width {
         position: relative;
@@ -910,10 +924,13 @@ body.opeka-client {
     }
     .chat-name {
       font-size: 13px;
-      margin-top: 8px;
+      height: 35px;
+      display: table-cell;
+      vertical-align: middle;
+      width: 120px;
       @include tablet-width {
         font-size: 18px;
-        margin-top: 0px;
+        width: 50%;
       }
     }
     .content.client-sidebar-0 {

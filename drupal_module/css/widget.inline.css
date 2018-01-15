@@ -13,6 +13,7 @@
 /*
 * — Mixins —
 */
+/* Trying to target case when soft keyboard pops up */
 /* inline widget */
 /* line 9, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline {

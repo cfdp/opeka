@@ -15,6 +15,7 @@
 /*
 * — Mixins —
 */
+/* Trying to target case when soft keyboard pops up */
 /* line 10, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup .status-wrapper {
   color: #ffffff;

@@ -13,8 +13,27 @@
   transform: perspective(1px) translateY(-50%);
 }
 
+/* Trying to target case when soft keyboard pops up */
+@mixin micro-height {
+  @media (min-height: #{$micro-height}) {
+    @content;
+  }
+}
+
 @mixin small-width {
   @media (min-width: #{$small-width}) {
+    @content;
+  }
+}
+
+@mixin small-height {
+  @media (min-width: #{$small-height}) {
+    @content;
+  }
+}
+
+@mixin small {
+  @media (min-width: #{$small-width}) and (min-height: #{$small-height}) {
     @content;
   }
 }
@@ -25,6 +44,11 @@
   }
 }
 
+@mixin small-smart {
+  @media (min-width: #{$small-smart-width}) and (min-height: #{$small-smart-height}) {
+    @content;
+  }
+}
 @mixin smart-width {
   @media (min-width: #{$smart-width}) {
     @content;

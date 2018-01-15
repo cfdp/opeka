@@ -13,6 +13,7 @@
 /*
 * — Mixins —
 */
+/* Trying to target case when soft keyboard pops up */
 /* line 7, ../sass/widget.scss */
 html,
 body {
