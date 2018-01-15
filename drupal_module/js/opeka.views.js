@@ -57,7 +57,7 @@
       "submit .leave-room-form": "leaveRoom",
       "click .reply-to-whisper": "whisperReply",
       "click .return-writers-msg": "toggleWritersMessage",
-      "scroll": "updateScrollPosition"
+      "scroll": "updateScrollPosition",
     },
 
     initialize: function (options) {
@@ -99,8 +99,7 @@
     },
 
     render: function () {
-      // We need to make sure that the writersMessage is rendered
-      // if it changed state
+      // We need to make sure that the writersMessage is updated if it changed state
       var writersMessageChanged = false;
       if ((this.$el.find('.writers-message').length) && (this.writersMessage !== this.$el.find('.writers-message').text)) {
         writersMessageChanged = true;
@@ -112,7 +111,9 @@
       var activeUser = this.model.get('activeUser'),
         inQueueMessage = '',
         hideForm = false,
-        formPresent = true;
+        formPresent = true,
+        showWritingMsg = (Drupal.settings.opeka.clients_writing_message || this.admin) ? true : false;
+
       if (!activeUser) {
         activeUser = {muted: false};
       }
@@ -141,6 +142,8 @@
       this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
         formatTimestamp: this.formatTimestamp,
+        chatName: this.model.get('maxSize') === 2 ? Drupal.settings.opeka.pair_chat_name : Drupal.settings.opeka.group_chat_name,
+        showWritingMsg: (Drupal.settings.opeka.clients_writing_message === 1 || this.admin),
         labels: {
           deleteMessage: Drupal.t('Delete'),
           whispered: Drupal.t('Whispered'),
@@ -189,7 +192,7 @@
         }));
       }
       // Render the writersMessage
-      if (this.writersMessage) {
+      if (this.writersMessage && showWritingMsg) {
         if (this.$el.find('.writers-message').length) {
           this.$el.find('.writers-message').text(this.writersMessage)
         }
@@ -444,7 +447,7 @@
           return true;
         }
       });
-    }
+    },
   });// END ChatView
 
   // Sidebar for the chat with user lists and admin options.
@@ -461,7 +464,7 @@
       "click .pause-toggle": "pauseToggle",
       "click .unmute-user": "unmuteUser",
       "click .whisper": "whisper",
-      "click .screening-wrapper": "screeningToggle",
+      "click .dropdown-toggler": "dropdownToggler",
       "click .generate-ban-code": "generateBanCode"
     },
 
@@ -621,11 +624,17 @@
       }
     },
 
-    // For toggling visibility of screening questions
-    screeningToggle: function (event) {
+    // For toggling visibility of user list (for clients )and screening questions
+    dropdownToggler: function (event) {
       var btn = $(event.currentTarget),
-        content = btn.children('.screening-question');
+          content;
 
+      if ($(event.target).hasClass('sidebar-block-heading') && !this.admin) {
+        content = btn.siblings('.sidebar-block-content').children('.user-list');
+      }
+      else if ($(event.target).hasClass('screening-wrapper')) {
+        content = btn.children('.screening-question');
+      }
       content.toggle();
 
       if (event) {
@@ -674,7 +683,6 @@
     render: function () {
       if (JST.opeka_chat_footer_tmpl) {
         this.$el.html(JST.opeka_chat_footer_tmpl({
-          labels: {
           banCodeGenerator: this.banCodeGenerator,
           labels: {
             banCode: Drupal.t('Generate new ban code'),
@@ -682,7 +690,6 @@
           }
         }));
       }
-
       return this;
     },
   });

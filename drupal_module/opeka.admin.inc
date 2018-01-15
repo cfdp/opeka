@@ -63,6 +63,14 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_pairchat_user_list', 0),
   );
 
+  $form['opeka_clients_writing_message'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Clients can see the "User is writing" message'),
+    '#description' => t('Toggle the ability for clients to see the "User is writing" message. Check it if the clients should be able to see the message.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_clients_writing_message', 0),
+  );
+
   $form['opeka_widget_header_button_subtext'] = array(
     '#type' => 'textfield',
     '#title' => t('Subtext for the header widget button'),

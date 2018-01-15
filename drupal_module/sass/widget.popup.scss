@@ -4,6 +4,7 @@
 
 // Utilities
 @import "variables";
+@import "mixins";
 
 body.page-opeka-widgets-popup {
   .status-wrapper {
@@ -11,14 +12,14 @@ body.page-opeka-widgets-popup {
     margin: 0 auto;
     max-width: 1180px;
     padding: .6em 1em;
-    @include bp-narrow {
+    @include narrow-width {
       padding: 1em 0;
       max-width: 700px;
     }
-    @include bp-normal {
+    @include small-desktop-width {
       max-width: 960px;
     }
-    @include bp-wide {
+    @include small-desktop-width {
       max-width: 1180px;
     }
     @media (max-height: 50px) {
@@ -53,16 +54,12 @@ body.page-opeka-widgets-popup {
     vertical-align: top;
     @include vertical-align();
 
-    @include bp-narrow {
+    @include narrow-width {
       font-size: 1.4em;
       width: 200px;
     }
-    @include bp-wide {
+    @include desktop-width {
       width: 250px;
-    }
-    @media (max-height: 50px) {
-    }
-    @media (max-height: 50px) and (min-width: 768px) {
     }
   }
   .status-content {
@@ -99,10 +96,8 @@ body.page-opeka-widgets-popup {
     bottom:auto;
     right: auto;
     vertical-align: top;
-    @include bp-narrow {
+    @include narrow-width {
       padding-left: 2em;
-    }
-    @include bp-normal {
     }
 
     .btn {
@@ -114,12 +109,10 @@ body.page-opeka-widgets-popup {
       width: 120px;
       @include vertical-align();
 
-      @include bp-narrow {
+      @include narrow-width {
         font-size: 14px;
         padding: 0.85em 1em;
         width: 200px;
-      }
-      @include bp-normal {
       }
       @media (max-height: 50px) {
         font-size: 10px;

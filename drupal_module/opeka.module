@@ -168,7 +168,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
     'jquery.ui.theme.css',*/
   ), $stylesheets);
   foreach ($stylesheets as $filename) {
-    drupal_add_css($path . '/css/' . $filename);
+    drupal_add_css($path . '/css/' . $filename, array('weight' => CSS_THEME + 1));
   }
 
   // Get settings from the admin interface
@@ -201,6 +201,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $mixed_widget_url = check_plain(variable_get('opeka_mixed_widget_url', ''));
   $age_min = check_plain(variable_get('opeka_age_min', 9));
   $age_max = check_plain(variable_get('opeka_age_max', 23));
+  $clients_writing_message = check_plain(variable_get('opeka_clients_writing_message', 0));
+
 
 
   // Settings to expose to the JavaScript client.
@@ -227,8 +229,9 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['mixed_widget_url'] = $mixed_widget_url;
   $settings['age_min'] = $age_min;
   $settings['age_max'] = $age_max;
+  $settings['clients_writing_message'] = $clients_writing_message;
 
-  // Add js files and settings
+    // Add js files and settings
   drupal_add_js(array('opeka' => $settings), 'setting');
 
   // Load the required JavaScript libraries.

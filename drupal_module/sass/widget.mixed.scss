@@ -1,6 +1,7 @@
 // Utilities
 @import "compass";
 @import "variables";
+@import "mixins";
 
 article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section {
   display: block;
@@ -277,7 +278,7 @@ body.page-opeka-widgets-mixed {
   }
 }
 
-@media (max-width: $small-smart) {
+@include small-smart-width {
   section {
     margin-bottom: 15px;
   }
@@ -301,41 +302,3 @@ body.page-opeka-widgets-mixed {
     display: none;
   }
 }
-
-/*@media (-webkit-min-device-pixel-ratio: 2), 
-(min-resolution: 192dpi) {
-  h3 i.icn-chat {
-    background-image: url(../widgets/mixed/img-2x/icon-chat.png);
-    background-size: 149px 94px;
-    height: 24px;
-    width: 32px;
-  }
-
-  h3 i.icn-letterbox {
-    background-image: url(../widgets/mixed/img-2x/icon-letterbox.png);
-    background-size: 149px 94px;
-    height: 25px;
-    width: 32px;
-  }
-
-  h3 i.icn-forum {
-    background-image: url(../widgets/mixed/img-2x/icon-forum.png);
-    background-size: 149px 94px;
-    height: 28px;
-    width: 28px;
-  }
-
-  a.logo-cyberhus i {
-    background-image: url(../widgets/mixed/img-2x/logo-cyberhus.png);
-    background-size: 149px 94px;
-    height: 29px;
-    width: 149px;
-  }
-
-  a.logo-kk i {
-    background-image: url(/img-2x/logo-kk.png);
-    background-size: 149px 94px;
-    height: 37px;
-    width: 91px;
-  }
-}*/

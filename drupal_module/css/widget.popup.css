@@ -1,65 +1,71 @@
+@charset "UTF-8";
 /* Styling for the popup widget
  *
  */
-/* Mixin */
-/* Variables */
+/*
+* — Variables —
+*/
+/* Responsive media query breakpoints */
+/* Bootstrap overrides */
 /* Typography */
-/* Cyberhus Clean theme */
+/* Cyberhus Clean theme (used in widgets) */
 /* Base colors*/
 /* Text Colors */
 /* Curachat additions */
-/* Breakpoints */
-/* line 9, ../sass/widget.popup.scss */
+/*
+* — Mixins —
+*/
+/* line 10, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup .status-wrapper {
   color: #ffffff;
   margin: 0 auto;
   max-width: 1180px;
   padding: .6em 1em;
 }
-@media (min-width: 768px) {
-  /* line 9, ../sass/widget.popup.scss */
+@media (min-width: 48em) {
+  /* line 10, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .status-wrapper {
     padding: 1em 0;
     max-width: 700px;
   }
 }
-@media (min-width: 1024px) {
-  /* line 9, ../sass/widget.popup.scss */
+@media (min-width: 64em) {
+  /* line 10, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .status-wrapper {
     max-width: 960px;
   }
 }
-@media (min-width: 1200px) {
-  /* line 9, ../sass/widget.popup.scss */
+@media (min-width: 64em) {
+  /* line 10, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .status-wrapper {
     max-width: 1180px;
   }
 }
 @media (max-height: 50px) {
-  /* line 9, ../sass/widget.popup.scss */
+  /* line 10, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .status-wrapper {
     padding-top: .3em;
     padding-bottom: .3em;
   }
 }
-/* line 32, ../sass/widget.popup.scss */
+/* line 33, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup.chat-busy {
   background-color: #F5D9AD;
 }
-/* line 34, ../sass/widget.popup.scss */
+/* line 35, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup.chat-busy .status-wrapper {
   background-color: #F5D9AD;
 }
-/* line 38, ../sass/widget.popup.scss */
+/* line 39, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup.chat-busy .chat-name {
   color: #1b1d1f;
 }
-/* line 41, ../sass/widget.popup.scss */
+/* line 42, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup.chat-busy .login-button .btn {
   background-color: #EBB560;
   color: #ffffff;
 }
-/* line 47, ../sass/widget.popup.scss */
+/* line 48, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup .chat-name {
   display: inline-block;
   font-size: 1em;
@@ -73,20 +79,20 @@ body.page-opeka-widgets-popup .chat-name {
   -ms-transform: perspective(1px) translateY(-50%);
   transform: perspective(1px) translateY(-50%);
 }
-@media (min-width: 768px) {
-  /* line 47, ../sass/widget.popup.scss */
+@media (min-width: 48em) {
+  /* line 48, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .chat-name {
     font-size: 1.4em;
     width: 200px;
   }
 }
-@media (min-width: 1200px) {
-  /* line 47, ../sass/widget.popup.scss */
+@media (min-width: 70em) {
+  /* line 48, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .chat-name {
     width: 250px;
   }
 }
-/* line 68, ../sass/widget.popup.scss */
+/* line 65, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup .status-content {
   display: inline-block;
   padding-left: 1em;
@@ -97,27 +103,27 @@ body.page-opeka-widgets-popup .status-content {
   -ms-transform: perspective(1px) translateY(-50%);
   transform: perspective(1px) translateY(-50%);
 }
-/* line 74, ../sass/widget.popup.scss */
+/* line 71, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup .status-content, body.page-opeka-widgets-popup .status-content p {
   color: #1b1d1f;
   margin: 0;
 }
-/* line 78, ../sass/widget.popup.scss */
+/* line 75, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup .status-content ul, body.page-opeka-widgets-popup .status-content li, body.page-opeka-widgets-popup .status-content p {
   display: inline;
 }
-/* line 81, ../sass/widget.popup.scss */
+/* line 78, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup .status-content a {
   color: #1b1d1f;
   font-weight: 700;
 }
 @media (max-width: 1023px) {
-  /* line 68, ../sass/widget.popup.scss */
+  /* line 65, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .status-content {
     display: none;
   }
 }
-/* line 92, ../sass/widget.popup.scss */
+/* line 89, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup .login-button {
   border-left: 1px solid white;
   border-left: 1px solid rgba(255, 255, 255, 0.2);
@@ -129,13 +135,13 @@ body.page-opeka-widgets-popup .login-button {
   right: auto;
   vertical-align: top;
 }
-@media (min-width: 768px) {
-  /* line 92, ../sass/widget.popup.scss */
+@media (min-width: 48em) {
+  /* line 89, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .login-button {
     padding-left: 2em;
   }
 }
-/* line 108, ../sass/widget.popup.scss */
+/* line 103, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup .login-button .btn {
   background-color: #3C5E22;
   background-image: none;
@@ -149,8 +155,8 @@ body.page-opeka-widgets-popup .login-button .btn {
   -ms-transform: perspective(1px) translateY(-50%);
   transform: perspective(1px) translateY(-50%);
 }
-@media (min-width: 768px) {
-  /* line 108, ../sass/widget.popup.scss */
+@media (min-width: 48em) {
+  /* line 103, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .login-button .btn {
     font-size: 14px;
     padding: 0.85em 1em;
@@ -158,18 +164,18 @@ body.page-opeka-widgets-popup .login-button .btn {
   }
 }
 @media (max-height: 50px) {
-  /* line 108, ../sass/widget.popup.scss */
+  /* line 103, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .login-button .btn {
     font-size: 10px;
     padding: .7em 1em;
   }
 }
-/* line 130, ../sass/widget.popup.scss */
+/* line 123, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup .button-wrapper {
   height: 100%;
   float: right;
 }
-/* line 134, ../sass/widget.popup.scss */
+/* line 127, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup a.close {
   position: relative;
   float: right;
@@ -185,7 +191,7 @@ body.page-opeka-widgets-popup a.close {
   opacity: 1;
   text-indent: -9999px;
 }
-/* line 149, ../sass/widget.popup.scss */
+/* line 142, ../sass/widget.popup.scss */
 body.page-opeka-widgets-popup.chat-open a.close {
   background: url(../img/close-black.png);
   background-image: url(../img/close-black.svg), none;
