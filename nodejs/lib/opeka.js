@@ -1058,18 +1058,21 @@ function Server(config, logger) {
         autoPause = self.config.get('features:automaticPausePairRooms');
 
       // Set room on pause if the room is a pair room.
-      if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
-        room.paused = true;
-        self.everyone.remote('roomUpdated', room.id, {paused: true});
-        self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
-      }
+      if (room) {
+        if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
+          room.paused = true;
+          self.everyone.remote('roomUpdated', room.id, {paused: true});
+          self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
+        }
 
-      // Remove the user.
-      self.removeUserFromRoom(room, clientId, activeRoomId, chatStart_Min, function (users) {
-        opeka.user.sendUserList(room.group, room.id, users);
-        self.updateUserStatus(self.everyone);
-      });
-      self.helperUpdateRoomCount(roomId);
+
+        // Remove the user.
+        self.removeUserFromRoom(room, clientId, activeRoomId, chatStart_Min, function (users) {
+          opeka.user.sendUserList(room.group, room.id, users);
+          self.updateUserStatus(self.everyone);
+        });
+        self.helperUpdateRoomCount(roomId);
+      }
     }
   });
 
