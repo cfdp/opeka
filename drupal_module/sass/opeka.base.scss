@@ -145,10 +145,16 @@ ul.chat-message-list {
   margin: 0 0 10px 0;
   overflow-y: auto;
   @include micro-height {
-    height: 200px;
+    height: 80px;
   }
-  @include micro-height {
-    height: 200px;
+  @include tiny-height {
+    height: 130px;
+  }
+  @include mini2-height {
+    height: 160px;
+  }
+  @include mini-height {
+    height: 300px;
   }
   @include small {
     height: 370px;
@@ -590,6 +596,8 @@ ul.chat-message-list {
     box-sizing: border-box;
     font-size: .8em;
     font-weight: normal;
+    position: fixed;
+    bottom: 110px;
   }
   .return-sends-msg,
   .dont-auto-scroll,
@@ -792,7 +800,7 @@ ul.chat-message-list {
 
     /* Chat room view */
 
-    .chat-message-list-wrapper {
+    .chat-message-list-wrapper {  
       margin-top: 0;
     }
     ul.chat-message-list {
@@ -867,6 +875,9 @@ body.opeka-client {
         margin-top: 60px;
       }
     }
+    .footer {
+      display: none;
+    }
   }
 
   /* Group chat specific */
@@ -906,6 +917,7 @@ body.opeka-client {
         border-radius: 5px;
         background-color: $btnBgColor;
         padding: 5px;
+        width: 177px;
         @include desktop-width {
           background-color: transparent;
           border: none;

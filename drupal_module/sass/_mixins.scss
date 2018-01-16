@@ -20,6 +20,24 @@
   }
 }
 
+@mixin tiny-height {
+  @media (min-height: #{$tiny-height}) {
+    @content;
+  }
+}
+
+@mixin mini2-height {
+  @media (min-height: #{$mini2-height}) {
+    @content;
+  }
+}
+
+@mixin mini-height {
+  @media (min-height: #{$mini-height}) {
+    @content;
+  }
+}
+
 @mixin small-width {
   @media (min-width: #{$small-width}) {
     @content;

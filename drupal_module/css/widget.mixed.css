@@ -320,7 +320,7 @@ body.page-opeka-widgets-mixed.chat-open .login-button .btn:hover {
   border-color: #51E789;
 }
 
-@media (min-width: 22em) {
+@media (min-width: 352px) {
   /* line 282, ../sass/widget.mixed.scss */
   section {
     margin-bottom: 15px;

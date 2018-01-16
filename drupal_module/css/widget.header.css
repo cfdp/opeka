@@ -19,7 +19,7 @@
   margin: 0;
   max-width: 300px;
 }
-@media (min-width: 30em) {
+@media (min-width: 480px) {
   /* line 6, ../sass/widget.header.scss */
   .status-content {
     display: inline-block;
@@ -50,7 +50,7 @@
 }
 
 /* Buttons */
-@media (min-width: 30em) {
+@media (min-width: 480px) {
   /* line 36, ../sass/widget.header.scss */
   .login-button {
     position: absolute;

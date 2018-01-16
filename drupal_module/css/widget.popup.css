@@ -23,20 +23,20 @@ body.page-opeka-widgets-popup .status-wrapper {
   max-width: 1180px;
   padding: .6em 1em;
 }
-@media (min-width: 48em) {
+@media (min-width: 768px) {
   /* line 10, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .status-wrapper {
     padding: 1em 0;
     max-width: 700px;
   }
 }
-@media (min-width: 64em) {
+@media (min-width: 1024px) {
   /* line 10, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .status-wrapper {
     max-width: 960px;
   }
 }
-@media (min-width: 64em) {
+@media (min-width: 1024px) {
   /* line 10, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .status-wrapper {
     max-width: 1180px;
@@ -80,14 +80,14 @@ body.page-opeka-widgets-popup .chat-name {
   -ms-transform: perspective(1px) translateY(-50%);
   transform: perspective(1px) translateY(-50%);
 }
-@media (min-width: 48em) {
+@media (min-width: 768px) {
   /* line 48, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .chat-name {
     font-size: 1.4em;
     width: 200px;
   }
 }
-@media (min-width: 70em) {
+@media (min-width: 1120px) {
   /* line 48, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .chat-name {
     width: 250px;
@@ -136,7 +136,7 @@ body.page-opeka-widgets-popup .login-button {
   right: auto;
   vertical-align: top;
 }
-@media (min-width: 48em) {
+@media (min-width: 768px) {
   /* line 89, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .login-button {
     padding-left: 2em;
@@ -156,7 +156,7 @@ body.page-opeka-widgets-popup .login-button .btn {
   -ms-transform: perspective(1px) translateY(-50%);
   transform: perspective(1px) translateY(-50%);
 }
-@media (min-width: 48em) {
+@media (min-width: 768px) {
   /* line 103, ../sass/widget.popup.scss */
   body.page-opeka-widgets-popup .login-button .btn {
     font-size: 14px;

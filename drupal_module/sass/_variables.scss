@@ -3,19 +3,21 @@
 */
 
 /* Responsive media query breakpoints */
-$mob: 11.250em; //180px
-$micro-height: 20em; //230px
-$tiny-height: 30em; //
-$small-width: 20em; //230px
-$small-height: 35em; //560px
-$small-smart-width: 22em; //352px
-$small-smart-height: 40em; //640px
-$smart-width: 30em; //480px
-$tablet-width: 36.625em; //586px
-$tablet-height: 64em; // 1024px
-$narrow-width: 48em; //768px
-$small-desktop-width: 64em; // 1024px
-$desktop-width: 70em; // 1120px
+$mob: 180px; //11.250em; //
+$micro-height: 230px; // 20em; //
+$tiny-height: 320px;
+$mini2-height: 420px;
+$mini-height: 480px;
+$small-width: 230px; // 20em; //
+$small-height: 560px; // 35em; //
+$small-smart-width: 352px; // 22em; //
+$small-smart-height: 640px; // 40em; //
+$smart-width: 480px; //  30em; //
+$tablet-width: 586px; // 36.625em; //
+$tablet-height: 1024px; // 64em; // 
+$narrow-width: 768px; // 48em; //
+$small-desktop-width: 1024px; // 64em; // 
+$desktop-width: 1120px; //  70em; // 
 
 $onepx: 0.063em;
 

@@ -85,7 +85,7 @@ body.logged-in.page-opeka.room-size-2 > .container,
 body.not-logged-in.page-opeka.room-size-2 > .container {
   max-width: 640px;
 }
-@media (min-width: 70em) {
+@media (min-width: 1120px) {
   /* line 65, ../sass/opeka.base.scss */
   body.logged-in.room-size-2, body.logged-in.pair,
   body.not-logged-in.room-size-2,
@@ -171,7 +171,7 @@ li.leaf {
   background: transparent;
   margin-top: 30px;
 }
-@media (min-width: 70em) {
+@media (min-width: 1120px) {
   /* line 132, ../sass/opeka.base.scss */
   .chat-message-list-wrapper {
     margin-top: 0px;
@@ -186,37 +186,49 @@ ul.chat-message-list {
   margin: 0 0 10px 0;
   overflow-y: auto;
 }
-@media (min-height: 20em) {
+@media (min-height: 230px) {
   /* line 141, ../sass/opeka.base.scss */
   ul.chat-message-list {
-    height: 200px;
+    height: 80px;
   }
 }
-@media (min-height: 20em) {
+@media (min-height: 320px) {
   /* line 141, ../sass/opeka.base.scss */
   ul.chat-message-list {
-    height: 200px;
+    height: 130px;
   }
 }
-@media (min-width: 20em) and (min-height: 35em) {
+@media (min-height: 420px) {
+  /* line 141, ../sass/opeka.base.scss */
+  ul.chat-message-list {
+    height: 160px;
+  }
+}
+@media (min-height: 480px) {
+  /* line 141, ../sass/opeka.base.scss */
+  ul.chat-message-list {
+    height: 300px;
+  }
+}
+@media (min-width: 230px) and (min-height: 560px) {
   /* line 141, ../sass/opeka.base.scss */
   ul.chat-message-list {
     height: 370px;
   }
 }
-@media (min-width: 22em) and (min-height: 40em) {
+@media (min-width: 352px) and (min-height: 640px) {
   /* line 141, ../sass/opeka.base.scss */
   ul.chat-message-list {
     height: 470px;
   }
 }
-@media (min-width: 36.625em) and (min-height: 64em) {
+@media (min-width: 586px) and (min-height: 1024px) {
   /* line 141, ../sass/opeka.base.scss */
   ul.chat-message-list {
     height: 630px;
   }
 }
-@media (min-width: 70em) {
+@media (min-width: 1120px) {
   /* line 141, ../sass/opeka.base.scss */
   ul.chat-message-list {
     height: 530px;
@@ -225,7 +237,7 @@ ul.chat-message-list {
   }
 }
 
-/* line 169, ../sass/opeka.base.scss */
+/* line 175, ../sass/opeka.base.scss */
 .chat-message,
 .system-message,
 .whisper-message {
@@ -233,8 +245,8 @@ ul.chat-message-list {
   padding: 5px 0;
   clear: both;
 }
-@media (min-width: 70em) {
-  /* line 169, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 175, ../sass/opeka.base.scss */
   .chat-message,
   .system-message,
   .whisper-message {
@@ -243,7 +255,7 @@ ul.chat-message-list {
   }
 }
 
-/* line 181, ../sass/opeka.base.scss */
+/* line 187, ../sass/opeka.base.scss */
 .whisper-message {
   background-color: #F8F8F8;
   margin-left: auto;
@@ -254,25 +266,25 @@ ul.chat-message-list {
   -webkit-border-radius: 5px;
   border-radius: 5px;
 }
-/* line 188, ../sass/opeka.base.scss */
+/* line 194, ../sass/opeka.base.scss */
 .whisper-message .message {
   clear: both;
   margin-bottom: 10px;
   width: 70%;
 }
-/* line 193, ../sass/opeka.base.scss */
+/* line 199, ../sass/opeka.base.scss */
 .whisper-message .actions {
   clear: both;
 }
-/* line 196, ../sass/opeka.base.scss */
+/* line 202, ../sass/opeka.base.scss */
 .whisper-message .reply-to-whisper {
   bottom: 0;
   position: absolute;
   margin: 5px;
   right: 0;
 }
-@media (min-width: 70em) {
-  /* line 181, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 187, ../sass/opeka.base.scss */
   .whisper-message {
     border: 0;
     border-radius: 0;
@@ -280,95 +292,95 @@ ul.chat-message-list {
 }
 
 /* Common styles for all types */
-/* line 211, ../sass/opeka.base.scss */
+/* line 217, ../sass/opeka.base.scss */
 .bs-callout {
   position: relative;
 }
-/* line 213, ../sass/opeka.base.scss */
+/* line 219, ../sass/opeka.base.scss */
 .bs-callout .meta-info {
   position: absolute;
   top: 0;
   margin: 10px;
 }
-/* line 218, ../sass/opeka.base.scss */
+/* line 224, ../sass/opeka.base.scss */
 .bs-callout .chat-message-content {
   width: 75%;
   padding: 8px;
   background: whitesmoke;
   border-radius: 5px;
 }
-/* line 224, ../sass/opeka.base.scss */
+/* line 230, ../sass/opeka.base.scss */
 .bs-callout h4 {
   margin-top: 0;
 }
-/* line 227, ../sass/opeka.base.scss */
+/* line 233, ../sass/opeka.base.scss */
 .bs-callout .sender-name,
 .bs-callout .time {
   color: #999999;
 }
-/* line 231, ../sass/opeka.base.scss */
+/* line 237, ../sass/opeka.base.scss */
 .bs-callout p:last-child {
   margin-bottom: 0;
 }
-/* line 234, ../sass/opeka.base.scss */
+/* line 240, ../sass/opeka.base.scss */
 .bs-callout .highlight {
   background-color: #ffffff;
 }
-/* line 237, ../sass/opeka.base.scss */
+/* line 243, ../sass/opeka.base.scss */
 .bs-callout .btn-danger {
   opacity: .2;
 }
-/* line 240, ../sass/opeka.base.scss */
+/* line 246, ../sass/opeka.base.scss */
 .bs-callout .top-info {
   margin-bottom: .5em;
 }
-/* line 243, ../sass/opeka.base.scss */
+/* line 249, ../sass/opeka.base.scss */
 .bs-callout:hover .actions .btn-danger {
   opacity: 1;
 }
 
 /* Variations */
-/* line 251, ../sass/opeka.base.scss */
+/* line 257, ../sass/opeka.base.scss */
 .bs-callout-counselor .chat-message-content {
   background-color: #f4faf4;
   margin-right: 0;
   margin-left: auto;
 }
-/* line 256, ../sass/opeka.base.scss */
+/* line 262, ../sass/opeka.base.scss */
 .bs-callout-counselor .sender-name,
 .bs-callout-counselor .time {
   color: #a3d7a3;
 }
 
-/* line 263, ../sass/opeka.base.scss */
+/* line 269, ../sass/opeka.base.scss */
 .bs-callout-client .meta-info {
   right: 0;
 }
-/* line 266, ../sass/opeka.base.scss */
+/* line 272, ../sass/opeka.base.scss */
 .bs-callout-client .chat-message-content {
   background-color: #f5f9fc;
   margin-right: auto;
   margin-left: 0;
 }
-/* line 271, ../sass/opeka.base.scss */
+/* line 277, ../sass/opeka.base.scss */
 .bs-callout-client .sender-name,
 .bs-callout-client .time {
   color: #91bce0;
 }
 
-/* line 277, ../sass/opeka.base.scss */
+/* line 283, ../sass/opeka.base.scss */
 .sender-name,
 .time {
   text-transform: uppercase;
   font-size: 13px;
 }
 
-/* line 283, ../sass/opeka.base.scss */
+/* line 289, ../sass/opeka.base.scss */
 .system-message {
   color: #999999;
 }
 
-/* line 287, ../sass/opeka.base.scss */
+/* line 293, ../sass/opeka.base.scss */
 .delete-message.btn-link {
   text-transform: uppercase;
   font-size: 13px;
@@ -377,18 +389,18 @@ ul.chat-message-list {
   opacity: 0.4;
 }
 
-/* line 295, ../sass/opeka.base.scss */
+/* line 301, ../sass/opeka.base.scss */
 .delete-message.btn-link:hover {
   opacity: 1;
 }
 
-/* line 299, ../sass/opeka.base.scss */
+/* line 305, ../sass/opeka.base.scss */
 .system-message {
   color: #999999;
 }
 
 /* Chat message form */
-/* line 305, ../sass/opeka.base.scss */
+/* line 311, ../sass/opeka.base.scss */
 .form-text-container {
   display: inline-block;
   vertical-align: top;
@@ -396,7 +408,7 @@ ul.chat-message-list {
   max-width: 455px;
 }
 
-/* line 312, ../sass/opeka.base.scss */
+/* line 318, ../sass/opeka.base.scss */
 .chat-view-form {
   background-color: #F8F8F8;
   padding: 5px;
@@ -405,50 +417,50 @@ ul.chat-message-list {
   left: 0;
   width: 100%;
 }
-@media (min-width: 70em) {
-  /* line 312, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 318, ../sass/opeka.base.scss */
   .chat-view-form {
     position: relative;
     padding: 0;
   }
 }
 
-/* line 325, ../sass/opeka.base.scss */
+/* line 331, ../sass/opeka.base.scss */
 .message-form {
   position: relative;
 }
-/* line 327, ../sass/opeka.base.scss */
+/* line 333, ../sass/opeka.base.scss */
 .message-form .form-text {
   height: 60px;
   resize: none;
   max-width: 640px;
   width: 100%;
 }
-@media (min-width: 30em) {
-  /* line 327, ../sass/opeka.base.scss */
+@media (min-width: 480px) {
+  /* line 333, ../sass/opeka.base.scss */
   .message-form .form-text {
     width: 320px;
   }
 }
-@media (min-width: 36.625em) {
-  /* line 327, ../sass/opeka.base.scss */
+@media (min-width: 586px) {
+  /* line 333, ../sass/opeka.base.scss */
   .message-form .form-text {
     width: 400px;
   }
 }
-@media (min-width: 70em) {
-  /* line 327, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 333, ../sass/opeka.base.scss */
   .message-form .form-text {
     width: 455px;
   }
 }
-/* line 342, ../sass/opeka.base.scss */
+/* line 348, ../sass/opeka.base.scss */
 .message-form .form-submit.send {
   margin-left: 5px;
   padding: 5px 10px;
 }
 
-/* line 348, ../sass/opeka.base.scss */
+/* line 354, ../sass/opeka.base.scss */
 .paused-nowriting {
   background-color: #afafaf;
   border: 1px solid #7e7e7e;
@@ -456,18 +468,18 @@ ul.chat-message-list {
   padding: 10px;
 }
 
-/* line 355, ../sass/opeka.base.scss */
+/* line 361, ../sass/opeka.base.scss */
 .chat-flow-controls {
   vertical-align: top;
 }
-/* line 357, ../sass/opeka.base.scss */
+/* line 363, ../sass/opeka.base.scss */
 .chat-flow-controls label {
   font-size: 13px;
   font-weight: normal;
 }
 
 /* FIXED TAB - CHAT WIDGET */
-/* line 366, ../sass/opeka.base.scss */
+/* line 372, ../sass/opeka.base.scss */
 .fixed-tab.well {
   height: 40px;
   right: -265px;
@@ -479,32 +491,32 @@ ul.chat-message-list {
 }
 
 /* CHAT PRESENTATION PAGE */
-/* line 379, ../sass/opeka.base.scss */
+/* line 385, ../sass/opeka.base.scss */
 .teaser {
   float: left;
   margin-right: 10px;
   width: 90%;
 }
 
-/* line 385, ../sass/opeka.base.scss */
+/* line 391, ../sass/opeka.base.scss */
 .teaser-wrapper {
   overflow: hidden;
 }
 
-/* line 389, ../sass/opeka.base.scss */
+/* line 395, ../sass/opeka.base.scss */
 .teaser-column {
   float: left;
   overflow: hidden;
   max-width: 50%;
 }
 
-/* line 395, ../sass/opeka.base.scss */
+/* line 401, ../sass/opeka.base.scss */
 .footer {
   border: none;
 }
 
 /* MODAL DIALOG / POPUP WINDOWS */
-/* line 404, ../sass/opeka.base.scss */
+/* line 410, ../sass/opeka.base.scss */
 .page-opeka .ui-icon,
 .page-opeka .ui-dialog .ui-dialog-titlebar-close,
 .page-admin-opeka .ui-icon,
@@ -513,14 +525,14 @@ ul.chat-message-list {
   background-repeat: no-repeat;
   background-position: -96px -128px;
 }
-/* line 410, ../sass/opeka.base.scss */
+/* line 416, ../sass/opeka.base.scss */
 .page-opeka .ui-widget-header .ui-icon,
 .page-opeka .ui-dialog .ui-dialog-titlebar-close,
 .page-admin-opeka .ui-widget-header .ui-icon,
 .page-admin-opeka .ui-dialog .ui-dialog-titlebar-close {
   background-image: url(images/ui-icons_222222_256x240.png);
 }
-/* line 414, ../sass/opeka.base.scss */
+/* line 420, ../sass/opeka.base.scss */
 .page-opeka .ui-dialog .ui-dialog-titlebar-close span,
 .page-admin-opeka .ui-dialog .ui-dialog-titlebar-close span {
   display: block;
@@ -530,124 +542,124 @@ ul.chat-message-list {
 
 /* FOOTER */
 /* Branding */
-/* line 427, ../sass/opeka.base.scss */
+/* line 433, ../sass/opeka.base.scss */
 .logo1 {
   display: none;
 }
 
-/* line 430, ../sass/opeka.base.scss */
+/* line 436, ../sass/opeka.base.scss */
 .footer {
   padding: 0;
   margin: 0;
 }
 
-@media (min-width: 36.625em) {
-  /* line 436, ../sass/opeka.base.scss */
+@media (min-width: 586px) {
+  /* line 442, ../sass/opeka.base.scss */
   .logo1 {
     display: inline-block;
     margin-right: 20px;
     max-width: 200px;
   }
 
-  /* line 441, ../sass/opeka.base.scss */
+  /* line 447, ../sass/opeka.base.scss */
   .logo2 {
     display: inline-block;
     max-width: 440px;
   }
 
-  /* line 445, ../sass/opeka.base.scss */
+  /* line 451, ../sass/opeka.base.scss */
   .footer-branding {
     float: right;
     max-width: 72%;
   }
 }
-/* line 451, ../sass/opeka.base.scss */
+/* line 457, ../sass/opeka.base.scss */
 #opeka-app {
   /* The signin view. Logging into the chat. */
   /* The room list */
   /* The sidebar in the chat view */
   /* The user info and admin sidebar */
 }
-/* line 452, ../sass/opeka.base.scss */
+/* line 458, ../sass/opeka.base.scss */
 #opeka-app .header,
 #opeka-app .footer {
   clear: both;
 }
-/* line 456, ../sass/opeka.base.scss */
+/* line 462, ../sass/opeka.base.scss */
 #opeka-app .content,
 #opeka-app .sidebar {
   float: left;
 }
-/* line 460, ../sass/opeka.base.scss */
+/* line 466, ../sass/opeka.base.scss */
 #opeka-app .content {
   width: 100%;
 }
-/* line 463, ../sass/opeka.base.scss */
+/* line 469, ../sass/opeka.base.scss */
 #opeka-app .sidebar {
   width: 33%;
 }
-/* line 467, ../sass/opeka.base.scss */
+/* line 473, ../sass/opeka.base.scss */
 #opeka-app .footer {
   border: none;
   margin: 10px auto;
   padding: 10px 0;
   max-width: 400px;
 }
-@media (min-width: 70em) {
-  /* line 467, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 473, ../sass/opeka.base.scss */
   #opeka-app .footer {
     margin: 10px 0;
   }
 }
-/* line 478, ../sass/opeka.base.scss */
+/* line 484, ../sass/opeka.base.scss */
 #opeka-app .signin-view {
   max-width: 400px;
   margin: 0 auto 20px auto;
 }
-@media (min-width: 70em) {
-  /* line 478, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 484, ../sass/opeka.base.scss */
   #opeka-app .signin-view {
     margin: 0 0 20px 0;
   }
 }
-/* line 484, ../sass/opeka.base.scss */
+/* line 490, ../sass/opeka.base.scss */
 #opeka-app .signin-view .welcome-message {
   padding: 10px 0;
 }
-/* line 487, ../sass/opeka.base.scss */
+/* line 493, ../sass/opeka.base.scss */
 #opeka-app .signin-view .controls {
   clear: both;
   display: block;
 }
-/* line 491, ../sass/opeka.base.scss */
+/* line 497, ../sass/opeka.base.scss */
 #opeka-app .signin-view .login-to-chat {
   text-align: center;
 }
 @media (min-width: 768px) {
-  /* line 495, ../sass/opeka.base.scss */
+  /* line 501, ../sass/opeka.base.scss */
   #opeka-app .signin-view .form-group label {
     width: 30%;
   }
 }
-/* line 505, ../sass/opeka.base.scss */
+/* line 511, ../sass/opeka.base.scss */
 #opeka-app ul.room-list {
   list-style: none;
   margin: 20px 0px 0px 0px;
   padding-left: 0;
 }
-/* line 511, ../sass/opeka.base.scss */
+/* line 517, ../sass/opeka.base.scss */
 #opeka-app .room {
   clear: both;
   overflow: hidden;
   margin-bottom: 20px;
 }
-/* line 517, ../sass/opeka.base.scss */
+/* line 523, ../sass/opeka.base.scss */
 #opeka-app .room-details {
   letter-spacing: 1px;
   padding: 10px;
   min-width: 70px;
 }
-/* line 523, ../sass/opeka.base.scss */
+/* line 529, ../sass/opeka.base.scss */
 #opeka-app .room-status,
 #opeka-app .room-size {
   color: #ffffff;
@@ -658,12 +670,12 @@ ul.chat-message-list {
   text-align: center;
   text-transform: uppercase;
 }
-/* line 534, ../sass/opeka.base.scss */
+/* line 540, ../sass/opeka.base.scss */
 #opeka-app .room-details,
 #opeka-app .room-description {
   float: left;
 }
-/* line 539, ../sass/opeka.base.scss */
+/* line 545, ../sass/opeka.base.scss */
 #opeka-app .room-description {
   display: inline-block;
   font-size: 14px;
@@ -671,47 +683,47 @@ ul.chat-message-list {
   margin: 0 0 0 5px;
   padding: 10px 5px;
 }
-/* line 547, ../sass/opeka.base.scss */
+/* line 553, ../sass/opeka.base.scss */
 #opeka-app .room-enter,
 #opeka-app .meantime {
   display: inline-block;
   float: right;
 }
-/* line 554, ../sass/opeka.base.scss */
+/* line 560, ../sass/opeka.base.scss */
 #opeka-app .sidebar-block {
   margin: 2em 0;
 }
-/* line 556, ../sass/opeka.base.scss */
+/* line 562, ../sass/opeka.base.scss */
 #opeka-app .sidebar-block .room-actions .btn {
   clear: both;
   margin-bottom: .5em;
 }
-/* line 562, ../sass/opeka.base.scss */
+/* line 568, ../sass/opeka.base.scss */
 #opeka-app .sidebar-block-heading {
   border-bottom: 1px solid #cccccc;
 }
-/* line 569, ../sass/opeka.base.scss */
+/* line 575, ../sass/opeka.base.scss */
 #opeka-app .emoticon {
   margin-bottom: -6px;
 }
-/* line 572, ../sass/opeka.base.scss */
+/* line 578, ../sass/opeka.base.scss */
 #opeka-app .message {
   white-space: pre-wrap;
 }
-/* line 575, ../sass/opeka.base.scss */
+/* line 581, ../sass/opeka.base.scss */
 #opeka-app .chat-message-list-wrapper {
   position: relative;
   padding-bottom: 12px;
 }
-/* line 579, ../sass/opeka.base.scss */
+/* line 585, ../sass/opeka.base.scss */
 #opeka-app .form-submit.send {
   vertical-align: top;
 }
-/* line 582, ../sass/opeka.base.scss */
+/* line 588, ../sass/opeka.base.scss */
 #opeka-app .chat-flow-controls {
   display: inline-block;
 }
-/* line 585, ../sass/opeka.base.scss */
+/* line 591, ../sass/opeka.base.scss */
 #opeka-app .writers-message {
   background-color: #F8F8F8;
   -moz-border-radius: 5px;
@@ -722,28 +734,30 @@ ul.chat-message-list {
   box-sizing: border-box;
   font-size: .8em;
   font-weight: normal;
+  position: fixed;
+  bottom: 110px;
 }
-/* line 594, ../sass/opeka.base.scss */
+/* line 602, ../sass/opeka.base.scss */
 #opeka-app .return-sends-msg,
 #opeka-app .dont-auto-scroll,
 #opeka-app .return-writers-msg {
   margin: 0 2px 0 10px;
 }
-/* line 599, ../sass/opeka.base.scss */
+/* line 607, ../sass/opeka.base.scss */
 #opeka-app label[for="return-sends-msg"],
 #opeka-app label[for="dont-auto-scroll"],
 #opeka-app label[for="return-writers-msg"] {
   display: inline-block;
 }
-/* line 604, ../sass/opeka.base.scss */
+/* line 612, ../sass/opeka.base.scss */
 #opeka-app .dropdown-menu li {
   cursor: pointer;
 }
-/* line 606, ../sass/opeka.base.scss */
+/* line 614, ../sass/opeka.base.scss */
 #opeka-app .dropdown-menu li:hover {
   background-color: #e6e6e6;
 }
-/* line 611, ../sass/opeka.base.scss */
+/* line 619, ../sass/opeka.base.scss */
 #opeka-app .client-header {
   color: #25AD60;
   background-color: #F8F8F8;
@@ -755,18 +769,18 @@ ul.chat-message-list {
   width: 100%;
   z-index: 2;
 }
-/* line 621, ../sass/opeka.base.scss */
+/* line 629, ../sass/opeka.base.scss */
 #opeka-app .client-header .chat-name {
   font-size: 20px;
 }
-@media (min-width: 70em) {
-  /* line 611, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 619, ../sass/opeka.base.scss */
   #opeka-app .client-header {
     position: relative;
     padding: 0;
   }
 }
-/* line 629, ../sass/opeka.base.scss */
+/* line 637, ../sass/opeka.base.scss */
 #opeka-app .leave-room-form {
   text-align: right;
   position: absolute;
@@ -774,25 +788,25 @@ ul.chat-message-list {
   top: 0;
   padding: 9px 10px 5px 0;
 }
-@media (min-width: 70em) {
-  /* line 629, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 637, ../sass/opeka.base.scss */
   #opeka-app .leave-room-form {
     padding: 0;
   }
 }
-/* line 640, ../sass/opeka.base.scss */
+/* line 648, ../sass/opeka.base.scss */
 #opeka-app .pause-toggle.paused {
   background-color: orange;
 }
-/* line 646, ../sass/opeka.base.scss */
+/* line 654, ../sass/opeka.base.scss */
 #opeka-app .app-view {
   margin-top: 15px;
 }
-/* line 648, ../sass/opeka.base.scss */
+/* line 656, ../sass/opeka.base.scss */
 #opeka-app .app-view .sidebar {
   margin: 0 0 0 5px;
 }
-/* line 652, ../sass/opeka.base.scss */
+/* line 660, ../sass/opeka.base.scss */
 #opeka-app ul.user-list {
   background: transparent;
   display: none;
@@ -800,57 +814,57 @@ ul.chat-message-list {
   margin: 0 0 10px 0;
   padding-left: 0;
 }
-/* line 658, ../sass/opeka.base.scss */
+/* line 666, ../sass/opeka.base.scss */
 #opeka-app ul.user-list li {
   padding: 5px;
 }
-/* line 660, ../sass/opeka.base.scss */
+/* line 668, ../sass/opeka.base.scss */
 #opeka-app ul.user-list li:last-child {
   border: none;
   padding-bottom: 0;
 }
-/* line 665, ../sass/opeka.base.scss */
+/* line 673, ../sass/opeka.base.scss */
 #opeka-app ul.user-list li.user-list-item {
   padding-left: 0;
 }
-/* line 668, ../sass/opeka.base.scss */
+/* line 676, ../sass/opeka.base.scss */
 #opeka-app ul.user-list li .name {
   padding-left: 5px;
 }
-@media (min-width: 70em) {
-  /* line 652, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 660, ../sass/opeka.base.scss */
   #opeka-app ul.user-list {
     display: block;
   }
 }
 
 /* Admin / counselor specific */
-/* line 679, ../sass/opeka.base.scss */
+/* line 687, ../sass/opeka.base.scss */
 .opeka-counselor {
   /* Hide leave room button for counselors in pair chat rooms */
   /* Create room dialogue */
   /* @todo: hiding this should be optional via settings */
 }
-/* line 682, ../sass/opeka.base.scss */
+/* line 690, ../sass/opeka.base.scss */
 .opeka-counselor.room-size-2 {
   /* Remove extra margin for leave button */
 }
-/* line 684, ../sass/opeka.base.scss */
+/* line 692, ../sass/opeka.base.scss */
 .opeka-counselor.room-size-2.page-admin #opeka-app {
   margin-top: 0;
 }
-/* line 694, ../sass/opeka.base.scss */
+/* line 702, ../sass/opeka.base.scss */
 .opeka-counselor .room-edit-form .queue-system-wrapper,
 .opeka-counselor .room-edit-form .ip-location-wrapper,
 .opeka-counselor .room-edit-form .private-room {
   display: none;
 }
-/* line 701, ../sass/opeka.base.scss */
+/* line 709, ../sass/opeka.base.scss */
 .opeka-counselor input.private,
 .opeka-counselor label[for=private] {
   display: inline;
 }
-/* line 707, ../sass/opeka.base.scss */
+/* line 715, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app {
   /* Room list - /opeka#rooms */
   /* Queue list */
@@ -858,7 +872,7 @@ ul.chat-message-list {
   /* Screening */
   /* Chat room view */
 }
-/* line 711, ../sass/opeka.base.scss */
+/* line 719, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .invite-rooms,
 .opeka-counselor #opeka-app .go-to-queues,
 .opeka-counselor #opeka-app .create-invite,
@@ -866,61 +880,61 @@ ul.chat-message-list {
   float: right;
   margin-left: 10px;
 }
-/* line 720, ../sass/opeka.base.scss */
+/* line 728, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .app-view button.create-room, .opeka-counselor #opeka-app .app-view button.invite-rooms,
 .opeka-counselor #opeka-app .app-view button .create-invite {
   margin-bottom: 20px;
 }
-/* line 727, ../sass/opeka.base.scss */
+/* line 735, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .chat-toggle-container {
   margin-bottom: 20px;
 }
-/* line 731, ../sass/opeka.base.scss */
+/* line 739, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app ul.room-list a.admin-enter {
   float: right;
   padding: 10px 0 0 0;
 }
-/* line 736, ../sass/opeka.base.scss */
+/* line 744, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .room-list {
   display: inline-block;
   vertical-align: top;
 }
-/* line 737, ../sass/opeka.base.scss */
+/* line 745, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .room-list .room {
   min-width: 550px;
   margin-right: 10px;
 }
-/* line 744, ../sass/opeka.base.scss */
+/* line 752, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .edit-opening-hours {
   margin-bottom: 10px;
 }
-/* line 747, ../sass/opeka.base.scss */
+/* line 755, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .widget-wrapper {
   width: 50%;
   display: inline-block;
   padding: 20px 0 0 0;
 }
-/* line 752, ../sass/opeka.base.scss */
+/* line 760, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .leave-room-form {
   vertical-align: middle;
   display: inline-block;
   margin-bottom: 0;
   text-align: left;
 }
-/* line 761, ../sass/opeka.base.scss */
+/* line 769, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app ul.queue-list {
   margin-top: 2em;
 }
-/* line 768, ../sass/opeka.base.scss */
+/* line 776, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app table.invite-list {
   margin-top: 2em;
 }
-/* line 774, ../sass/opeka.base.scss */
+/* line 782, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .screening-wrapper {
   display: inline-block;
   position: relative;
 }
-/* line 778, ../sass/opeka.base.scss */
+/* line 786, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .screening-question {
   position: absolute;
   left: 0;
@@ -939,107 +953,111 @@ ul.chat-message-list {
   white-space: normal;
   z-index: 1010;
 }
-/* line 795, ../sass/opeka.base.scss */
+/* line 803, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .chat-message-list-wrapper {
   margin-top: 0;
 }
-/* line 798, ../sass/opeka.base.scss */
+/* line 806, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app ul.chat-message-list {
   border: 1px solid #cccccc;
   border-radius: 5px;
 }
-/* line 802, ../sass/opeka.base.scss */
+/* line 810, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .writers-message {
   position: absolute;
   bottom: 0px;
   left: 0;
 }
-/* line 807, ../sass/opeka.base.scss */
+/* line 815, ../sass/opeka.base.scss */
 .opeka-counselor #opeka-app .chat-view-form {
   position: relative;
   padding: 0;
 }
-/* line 812, ../sass/opeka.base.scss */
+/* line 820, ../sass/opeka.base.scss */
 .opeka-counselor.groupchat, .opeka-counselor.room-size-2 {
   /* Hide leave room button for the counselors */
   /* Always make room for sidebar in chat room */
 }
-/* line 815, ../sass/opeka.base.scss */
+/* line 823, ../sass/opeka.base.scss */
 .opeka-counselor.groupchat #opeka-app .leave-room-form, .opeka-counselor.room-size-2 #opeka-app .leave-room-form {
   display: none;
 }
-/* line 819, ../sass/opeka.base.scss */
+/* line 827, ../sass/opeka.base.scss */
 .opeka-counselor.groupchat #opeka-app .content, .opeka-counselor.room-size-2 #opeka-app .content {
   width: 66%;
 }
 
 /* Client specific */
-/* line 827, ../sass/opeka.base.scss */
+/* line 835, ../sass/opeka.base.scss */
 body.opeka-client {
   background-color: #ffffff;
   /* Group chat specific */
 }
-/* line 829, ../sass/opeka.base.scss */
+/* line 837, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app {
   /* The signin view. Logging into the chat. */
   /* Clients can have the sidebar disabled */
 }
-/* line 831, ../sass/opeka.base.scss */
+/* line 839, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .signin-view {
   /* Screening radios */
 }
-/* line 833, ../sass/opeka.base.scss */
+/* line 841, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .signin-view select.form-select.gender,
 body.opeka-client #opeka-app .signin-view select.form-select.age {
   height: 28px;
 }
-/* line 837, ../sass/opeka.base.scss */
+/* line 845, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .signin-view label.screening-label {
   display: none;
   line-height: inherit;
   padding-top: 0;
 }
-/* line 842, ../sass/opeka.base.scss */
+/* line 850, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .signin-view input.screening {
   margin-top: 0;
 }
-/* line 845, ../sass/opeka.base.scss */
+/* line 853, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .signin-view .screening-questions {
   margin: 0 0 5px 15px;
 }
-/* line 848, ../sass/opeka.base.scss */
+/* line 856, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .signin-view span.screening-option {
   line-height: 25px;
   padding-left: 8px;
 }
-/* line 852, ../sass/opeka.base.scss */
+/* line 860, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .signin-view .signin-footnote {
   color: #BFBFBF;
   font-size: 13px;
 }
-/* line 858, ../sass/opeka.base.scss */
+/* line 866, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .content.client-sidebar-0 {
   width: 100%;
 }
-/* line 861, ../sass/opeka.base.scss */
+/* line 869, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .content.client-sidebar-1 {
   width: 66%;
 }
-/* line 864, ../sass/opeka.base.scss */
+/* line 872, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .opeka-chat-sidebar {
   margin-top: 0;
 }
-@media (min-width: 70em) {
-  /* line 864, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 872, ../sass/opeka.base.scss */
   body.opeka-client #opeka-app .opeka-chat-sidebar {
     margin-top: 60px;
   }
 }
-/* line 873, ../sass/opeka.base.scss */
+/* line 878, ../sass/opeka.base.scss */
+body.opeka-client #opeka-app .footer {
+  display: none;
+}
+/* line 884, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app {
   /* Hide sidebar in group chats on small screens */
 }
-/* line 875, ../sass/opeka.base.scss */
+/* line 886, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .sidebar {
   display: block;
   position: fixed;
@@ -1047,25 +1065,25 @@ body.opeka-client.groupchat #opeka-app .sidebar {
   right: 81px;
   z-index: 3;
 }
-@media (min-width: 70em) {
-  /* line 875, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 886, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .sidebar {
     position: relative;
     top: auto;
     right: auto;
   }
 }
-/* line 886, ../sass/opeka.base.scss */
+/* line 897, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .sidebar .sidebar-block {
   margin: 0;
 }
-@media (min-width: 70em) {
-  /* line 889, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 900, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .sidebar .opeka-chat-sidebar {
     margin-top: 40px;
   }
 }
-/* line 894, ../sass/opeka.base.scss */
+/* line 905, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .sidebar .sidebar-block-heading {
   display: inline-block;
   margin-bottom: 0;
@@ -1088,8 +1106,8 @@ body.opeka-client.groupchat #opeka-app .sidebar .sidebar-block-heading {
   user-select: none;
   margin-top: 0;
 }
-@media (min-width: 70em) {
-  /* line 894, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 905, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .sidebar .sidebar-block-heading {
     font-size: 14px;
     background-color: transparent;
@@ -1097,36 +1115,37 @@ body.opeka-client.groupchat #opeka-app .sidebar .sidebar-block-heading {
     border: none;
   }
 }
-/* line 904, ../sass/opeka.base.scss */
+/* line 915, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .sidebar .user-list {
   border: 1px solid #cccccc;
   border-radius: 5px;
   background-color: #fff;
   padding: 5px;
+  width: 177px;
 }
-@media (min-width: 70em) {
-  /* line 904, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 915, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .sidebar .user-list {
     background-color: transparent;
     border: none;
   }
 }
-/* line 914, ../sass/opeka.base.scss */
+/* line 926, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .sidebar li.user-list-item {
   font-size: 12px;
 }
-/* line 918, ../sass/opeka.base.scss */
+/* line 930, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .client-header {
   padding: 5px 10px 0 10px;
   z-index: 2;
 }
-@media (min-width: 36.625em) {
-  /* line 918, ../sass/opeka.base.scss */
+@media (min-width: 586px) {
+  /* line 930, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .client-header {
     padding: 10px 10px 0 15px;
   }
 }
-/* line 925, ../sass/opeka.base.scss */
+/* line 937, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .chat-name {
   font-size: 13px;
   height: 35px;
@@ -1134,37 +1153,37 @@ body.opeka-client.groupchat #opeka-app .chat-name {
   vertical-align: middle;
   width: 120px;
 }
-@media (min-width: 36.625em) {
-  /* line 925, ../sass/opeka.base.scss */
+@media (min-width: 586px) {
+  /* line 937, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .chat-name {
     font-size: 18px;
     width: 50%;
   }
 }
-/* line 936, ../sass/opeka.base.scss */
+/* line 948, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .content.client-sidebar-0 {
   width: 100%;
 }
-@media (min-width: 36.625em) {
-  /* line 936, ../sass/opeka.base.scss */
+@media (min-width: 586px) {
+  /* line 948, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .content.client-sidebar-0 {
     width: 66%;
   }
 }
-@media (min-width: 70em) {
-  /* line 936, ../sass/opeka.base.scss */
+@media (min-width: 1120px) {
+  /* line 948, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .content.client-sidebar-0 {
     width: 66%;
   }
 }
-/* line 946, ../sass/opeka.base.scss */
+/* line 958, ../sass/opeka.base.scss */
 body.opeka-client .menu {
   float: right;
   margin-right: 0;
 }
 
 /* Drupal administration pages */
-/* line 955, ../sass/opeka.base.scss */
+/* line 967, ../sass/opeka.base.scss */
 body.page-admin-config-services-opeka-screening .btn.btn-info {
   margin-bottom: 1em;
 }
