@@ -140,31 +140,10 @@ li.leaf {
 
 ul.chat-message-list {
   background: $contentBgColor;
-  height: 100px;
   list-style: none;
   margin: 0 0 10px 0;
   overflow-y: auto;
-  @include micro-height {
-    height: 80px;
-  }
-  @include tiny-height {
-    height: 130px;
-  }
-  @include mini2-height {
-    height: 160px;
-  }
-  @include mini-height {
-    height: 300px;
-  }
-  @include small {
-    height: 370px;
-  }
-  @include small-smart {
-    height: 470px;
-  }
-  @include tablet {
-    height: 630px;
-  }
+
   @include desktop-width {
     height: 530px;
     border: 1px solid $borderColor;
@@ -597,7 +576,7 @@ ul.chat-message-list {
     font-size: .8em;
     font-weight: normal;
     position: fixed;
-    bottom: 110px;
+    bottom: 103px;
   }
   .return-sends-msg,
   .dont-auto-scroll,
@@ -803,10 +782,38 @@ ul.chat-message-list {
     .chat-message-list-wrapper {  
       margin-top: 0;
     }
+
     ul.chat-message-list {
+      background: $contentBgColor;
       border: 1px solid $borderColor;
       border-radius: $borderRadius;
-    }
+      height: 100px;
+      list-style: none;
+      margin: 0 0 10px 0;
+      overflow-y: auto;
+      @include micro-height {
+        height: 80px;
+      }
+      @include tiny-height {
+        height: 130px;
+      }
+      @include mini2-height {
+        height: 160px;
+      }
+      @include mini-height {
+        height: 300px;
+      }
+      @include small {
+        height: 370px;
+      }
+      @include small-smart {
+        height: 470px;
+      }
+      @include tablet {
+        height: 630px;
+      }
+    }    
+
     .writers-message {
       position: absolute;
       bottom: 0px;
@@ -875,6 +882,15 @@ body.opeka-client {
         margin-top: 60px;
       }
     }
+    
+    /* Chat message area */
+    ul.chat-message-list {
+      position: fixed;
+      top: 45px;
+      bottom: 110px;
+      width: 90%;
+    }
+
     .footer {
       display: none;
     }
