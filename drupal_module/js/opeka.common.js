@@ -681,14 +681,10 @@ var Opeka = {
   };
 
   // The server pings client to determine connection status and latency
-  Opeka.clientSideMethods.sendPingBack = function (lastPing) {
-    Opeka.lastPingReceivedServerTime = lastPing;
+  Opeka.clientSideMethods.ping = function (serverTime, cb) {
+    Opeka.lastPingReceivedServerTime = serverTime;
     Opeka.lastPingReceivedClientTime = (new Date()).getTime();
-    Opeka.remote.pingServer(function (err) {
-        if (err) {
-          console.error('Opeka: Seems theres an error in the ping function.');
-        }
-      });
+    cb(null, Opeka.lastPingReceivedClientTime);
   };
   
    // If the client was offline too long, inform him and force a reload

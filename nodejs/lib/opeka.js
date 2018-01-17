@@ -659,14 +659,6 @@ function Server(config, logger) {
     }
   });
   
-  // Allow everyone to ping the server.
-  self.everyone.addServerMethod('pingServer', function (callback) {
-    var client = this,
-        currentTime = (new Date()).getTime();
-    client.connectionData.pingReceived = currentTime;   
-    callback(false);
-  });
-
   // Allow the councellors to unpause a room.
   self.councellors.addServerMethod('unpauseRoom', function (roomId, callback) {
     //var context = this;

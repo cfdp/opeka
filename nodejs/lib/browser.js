@@ -10,7 +10,7 @@ var shoe = require('shoe'),
     Opeka.numReconnects = 0;
     var maxReconnects = Drupal.settings.opeka.reconnect ? (Drupal.settings.opeka.max_reconnects || 10) : false,
       reconnectInterval = Drupal.settings.opeka.reconnect_interval || 5000,
-      fallbackInterval = 20000,
+      fallbackInterval = 6000,
       disconnectLimit = reconnectInterval * maxReconnects,
       checkOnlineTimerId = null;
 
@@ -45,7 +45,7 @@ var shoe = require('shoe'),
      */
     function checkOnlineState() {
       var currentTime = (new Date()).getTime();
-      var delay = currentTime - Opeka.lastPingreceived;
+      var delay = currentTime - Opeka.lastPingReceivedClientTime;
       console.log('delay is ', delay);
 
       if (delay > disconnectLimit) {

@@ -7,8 +7,15 @@ var _ = require('underscore'),
   ban = require('./ban'),
   rooms = require('./rooms'),
   user = require('./user.js'),
-  util = require("util");
+  util = require("util")
 
+  // Connection states
+  CREATED = 0,
+  CONNECTED = 1,
+  PENDING_TIMEOUT = 2,
+  DISCONNECTED = 3
+
+  PING_INTERVAL = 5000;
 
 /**
  * Represents a client instance
@@ -22,6 +29,7 @@ var Client = function (server, stream, remote, conn) {
   var self = this;
 
   self.construct = function () {
+    self.state = CREATED;
     self.clientId = uuid();
 
     self.server = server;
@@ -47,9 +55,9 @@ var Client = function (server, stream, remote, conn) {
     self.connectionData = {
       online: null,
       serverDisconnect: null,
-      pingSent: null,
-      pingReceived: null,
-      pingTimerId: null,
+      lastPingSent: 0,
+      lastPingSuccess: null,
+      pingDelay: null,
       reconnectLimit: server.config.get('features:reconnectLimit'),
       disconnectLimit: server.config.get('features:disconnectLimit'),
     };
@@ -64,6 +72,7 @@ var Client = function (server, stream, remote, conn) {
     self.viewChatHistory = null;
 
     self.screening = null;
+    self.now = (new Date()).getTime();
 
     groups.registerClient(self);
     conn.on('ready', function () {
@@ -73,6 +82,8 @@ var Client = function (server, stream, remote, conn) {
     conn.on('end', function () {
       self.onConnectionClosed();
     });
+
+    self.tickId = setInterval(function () { self.tick(); }, 1000);
 
     return self;
   };
@@ -99,6 +110,8 @@ var Client = function (server, stream, remote, conn) {
 
     server.logger.info("Connection ready for user with IP ", ip);
 
+    self.state = CONNECTED;
+
     banInfo = ban.checkIP(ip, server.config.get('ban:salt'));
 
     if (banInfo.isBanned) {
@@ -111,18 +124,34 @@ var Client = function (server, stream, remote, conn) {
       }, 500);
     };
     currentTime = (new Date()).getTime();
-    self.connectionData.pingSent = currentTime;
-    self.connectionData.pingReceived = currentTime;
+    self.connectionData.lastPingSuccess = currentTime;
+    self.connectionData.pingDelay = 0;
     self.connectionData.online = true;
-
-    self.connectionData.pingTimerId = setInterval(function () {
-      self.pingClient();
-    }, 5000);
 
     server.updateUserStatus(self);
   };
 
+  self.tick = function() {
+    self.now = (new Date()).getTime();
+
+    switch(self.state) {
+      case CREATED:
+        break;
+      case CONNECTED:
+        self.checkTimeout();
+        break;
+      case PENDING_TIMEOUT:
+        self.checkDisconnect();
+        break;
+      case DISCONNECTED:
+        break
+      default:
+        break;
+    }
+  }
+  
   self.onConnectionClosed = function () {
+    self.state = DISCONNECTED;
     groups.unregisterClient(self);
     if (self.server) {
       self.server.handleConnectionClosed(self);
@@ -161,27 +190,61 @@ var Client = function (server, stream, remote, conn) {
   };
 
   self.pingClient = function () {
-    self.connectionData.pingSent = (new Date()).getTime();
-    self.remote('sendPingBack', self.connectionData.pingSent);
-    self.detectOfflineStatus();
+    var pingSent = self.now;
+
+    console.log("PING " + self.clientId + " " + pingSent);
+
+    self.connectionData.lastPingSent = pingSent;
+
+    self.remote('ping', pingSent, function(err, clientTime) {
+      var pingDelay = (new Date()).getTime() - pingSent;
+      console.log(
+        "PONG " + self.clientId + " " + pingSent + ": " + pingDelay
+      );
+      // Ignore any PONG that arrives after PINGs older than the last
+      // successful one.
+      if(pingSent >= self.connectionData.lastPingSuccess) {
+        self.connectionData.pingDelay = pingDelay;
+        self.connectionData.lastPingSuccess = pingSent;
+      }
+    });
   };
 
-  self.detectOfflineStatus = function () {
-    var latency = self.connectionData.pingSent - self.connectionData.pingReceived;
+  // Checks if the client connection has been idle for too long. Will also
+  // issue a ping to the client every PING_INTERVAL.
+  self.checkTimeout = function () {
+    if(self.state != CONNECTED) {
+      return;
+    }
+    if((self.now - self.connectionData.lastPingSent) >= PING_INTERVAL) {
+      self.pingClient();
+    }
 
-    if (latency > self.connectionData.disconnectLimit) {
-      clearInterval(self.connectionData.pingTimerId)
-      // time to disconnect user
-      console.log('latency > disconnectLimit: Time to disconnect user ', self.clientId);
+    var sinceTimeout = self.now - self.connectionData.lastPingSuccess;
+
+    if (sinceTimeout > self.connectionData.disconnectLimit) {
+      // Move user state PENDING_TIMEOUT
+      console.log(
+        'latency > disconnectLimit: Time to disconnect user ', self.clientId
+      );
+      self.state = PENDING_TIMEOUT;
       self.connectionData.serverDisconnect = true;
 
       self.updateClientOnlineState(false, true);
     }
-    else if (latency > self.connectionData.reconnectLimit) {
+  };
+
+  self.checkDisconnect = function () {
+    if(self.state != PENDING_TIMEOUT) {
+      return;
+    }
+    var sinceTimeout = self.now - self.connectionData.lastPingSuccess;
+    if (sinceTimeout > self.connectionData.reconnectLimit) {
+      self.state = DISCONNECTED;
       // update userlist with new client offline state
       self.updateClientOnlineState(false, false);
     }
-  };
+  }
 
 /**
  * Update client online state and disconnect them if disconnectLimit is passed
@@ -244,5 +307,10 @@ var Client = function (server, stream, remote, conn) {
 
   return self.construct();
 };
+
+Client.CREATED = CREATED;
+Client.CONNECTED = CONNECTED;
+Client.PENDING_TIMEOUT = PENDING_TIMEOUT;
+Client.DISCONNECTED = DISCONNECTED;
 
 module.exports = Client;

@@ -7558,6 +7558,9 @@ var unload_triggered = function() {
     trigger_unload_callbacks();
 };
 
+// Onbeforeunload alone is not reliable. We could use only 'unload'
+// but it's not working in opera within an iframe. Let's use both.
+utils.attachEvent('beforeunload', unload_triggered);
 utils.attachEvent('unload', unload_triggered);
 
 utils.unload_add = function(listener) {
@@ -9324,11 +9327,11 @@ var shoe = require('shoe'),
   $(function() {
 
     Opeka.numReconnects = 0;
-    Opeka.checkOnlineTimerId = null;
-    Opeka.reconnectTimerId = null;
     var maxReconnects = Drupal.settings.opeka.reconnect ? (Drupal.settings.opeka.max_reconnects || 10) : false,
       reconnectInterval = Drupal.settings.opeka.reconnect_interval || 5000,
-      disconnectLimit = reconnectInterval * maxReconnects;
+      fallbackInterval = 6000,
+      disconnectLimit = reconnectInterval * maxReconnects,
+      checkOnlineTimerId = null;
 
     connect();
 
@@ -9342,43 +9345,40 @@ var shoe = require('shoe'),
       d.pipe(stream).pipe(d);
       // Fallback checking if we are really connected to the server
       if (Drupal.settings.opeka.reconnect) {
-        if (Opeka.checkOnlineTimerId) {
-          clearInterval(Opeka.checkOnlineTimerId);
+        if (checkOnlineTimerId) {
+          clearInterval(checkOnlineTimerId);
         }
-        Opeka.checkOnlineTimerId = window.setInterval(checkOnlineState, reconnectInterval);
+        checkOnlineTimerId = window.setInterval(checkOnlineState, fallbackInterval);
       }
     }
 
     function reconnect() {
-      console.log('reconnect: Opeka.reconnectTimerId is ', Opeka.reconnectTimerId);
-      console.log('reconnect: Opeka.checkOnlineTimerId is ', Opeka.checkOnlineTimerId);
       console.log('Reconnecting ' + (++Opeka.numReconnects));
       Opeka.onReconnect();
-      Opeka.reconnectTimerId = setTimeout(connect, reconnectInterval);
+      setTimeout(connect, reconnectInterval);
     }
 
     /**
-     * Fallback function for checking connection to server, 
-     * since in some browsers the dnode "end" event is not working well
+     * Fallback function for checking connection to server, in some browsers the dnode "end" event is not working well
      *
      */
     function checkOnlineState() {
       var currentTime = (new Date()).getTime();
       var delay = currentTime - Opeka.lastPingReceivedClientTime;
       console.log('delay is ', delay);
-      console.log('checkOnlineStatue: Opeka.reconnectTimerId is ', Opeka.reconnectTimerId);
-      console.log('checkOnlineStatue: Opeka.checkOnlineTimerId is ', Opeka.checkOnlineTimerId);
 
       if (delay > disconnectLimit) {
         console.warn('No connection to server, show fatal error dialog.');
-        clearInterval(Opeka.checkOnlineTimerId);
+        clearInterval(checkOnlineTimerId);
         Opeka.onDisconnect();
       }
-      else if (delay > reconnectInterval) {
+      else if (delay > fallbackInterval) {
         console.log('Using fallback reconnect function');
-        reconnect();
+        Opeka.onReconnect();
+        setTimeout(connect, reconnectInterval);
       }
     }
   });
 })(jQuery);
+
 },{"dnode":28,"shoe":39}]},{},[41]);
