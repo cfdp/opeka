@@ -896,10 +896,10 @@
         else {
           chatStatus = "chat-closed"
         }
-        statusTextGuests = Drupal.formatPlural(guests, '1 guest', '!guests guests', {'!guests': guests});
-        statusTextcounselors = Drupal.formatPlural(counselors, '1 counselor', '!counselors counselors', {'!counselors': counselors});
+        statusTextGuests = Drupal.formatPlural(guests, '1 guest', '@count guests');
+        statusTextcounselors = Drupal.formatPlural(counselors, '1 counselor', '@count counselors');
         this.$el.html(JST.opeka_online_status_tmpl({
-          content: '<span class="status ' + chatStatus + '"></span>' + statusTextGuests + " " + statusTextcounselors
+          content: '<span class="status ' + chatStatus + '"></span>' + statusTextGuests + ", " + statusTextcounselors
         }));
 
 
