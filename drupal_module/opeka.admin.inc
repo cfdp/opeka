@@ -37,7 +37,7 @@ function opeka_admin_page() {
  * Admin settings form for Opeka.
  */
 function opeka_admin_settings_form($form, &$form_state) {
-  form_load_include($form_state, 'admin.inc', 'lol_queue');
+  form_load_include($form_state, 'admin.inc');
 
   $form['opeka_reg_pair_url'] = array(
     '#type' => 'textfield',

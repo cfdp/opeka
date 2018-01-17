@@ -797,9 +797,6 @@ ul.chat-message-list {
       @include tiny-height {
         height: 130px;
       }
-      @include mini2-height {
-        height: 160px;
-      }
       @include mini-height {
         height: 300px;
       }
@@ -812,7 +809,7 @@ ul.chat-message-list {
       @include tablet {
         height: 630px;
       }
-    }    
+    }
 
     .writers-message {
       position: absolute;
@@ -889,6 +886,13 @@ body.opeka-client {
       top: 45px;
       bottom: 110px;
       width: 90%;
+
+      @include desktop-width {
+        position: relative;
+        width: 100%;
+        top: auto;
+        bottom: auto;
+      }
     }
 
     .footer {
@@ -912,6 +916,12 @@ body.opeka-client {
       }
       .sidebar-block {
         margin: 0;
+        position: absolute;
+        right: 33px;
+        @include desktop-width {
+          position: relative;
+          right: auto;
+        }
       }
       .opeka-chat-sidebar {
         @include desktop-width {
@@ -949,6 +959,9 @@ body.opeka-client {
       @include tablet-width {
         padding: 10px 10px 0 15px;
       }
+      @include desktop-width {
+        padding: 0 10px 0 0;
+      }
     }
     .chat-name {
       font-size: 13px;
@@ -975,11 +988,4 @@ body.opeka-client {
     float: right;
     margin-right: 0;
   }
-}
-
-
-/* Drupal administration pages */
-
-body.page-admin-config-services-opeka-screening .btn.btn-info {
-  margin-bottom: 1em;
 }

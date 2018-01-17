@@ -391,7 +391,7 @@ function Server(config, logger) {
   });
 
 
-  // Called by the Counsellors in order to create a new room.
+  // Called by the counselors in order to create a new room.
   self.councellors.addServerMethod('createInvite', function (attributes, callback) {
     var invite = new opeka.invites.Invite(attributes);
     invite.addToList();
@@ -474,7 +474,7 @@ function Server(config, logger) {
 
 // -------- GLOBAL QUEUE FUNCTIONS START -----------
 
-  // Called by the Counsellors in order to create a new room.
+  // Called by the counselors in order to create a new room.
   self.councellors.addServerMethod('createQueue', function (attributes, callback) {
     if (attributes.name.length > 0) {
       if (attributes.active === undefined) {
@@ -745,7 +745,7 @@ function Server(config, logger) {
     userData.muted = true;
 
     // Tell the councellors about the muted user.
-    opeka.user.sendUserList(room.counsellorGroup, room.id, room.users);
+    opeka.user.sendUserList(room.counselorGroup, room.id, room.users);
 
     // Tell the user that he was muted.
     roomGroup.remote('roomUserMuted', roomId, clientId, userData, councillor.nickname);
@@ -764,7 +764,7 @@ function Server(config, logger) {
     userData.muted = false;
 
     // Tell the councellors about the unmuted user.
-    opeka.user.sendUserList(room.counsellorGroup, room.id, room.users);
+    opeka.user.sendUserList(room.counselorGroup, room.id, room.users);
 
     // Tell the user that he was unmuted.
     roomGroup.remote('roomUserUnmuted', roomId, clientId, userData, councillor.nickname);
@@ -804,7 +804,7 @@ function Server(config, logger) {
     }
   });
 
-  // Called by the Counsellors in order to create a new room.
+  // Called by the counselors in order to create a new room.
   self.councellors.addServerMethod('createRoom', function (attributes, callback) {
     attributes.uid = this.account.uid;
     if (attributes.name.length > 0) {
@@ -832,7 +832,7 @@ function Server(config, logger) {
     self.broadcastChatStatus();
   });
 
-  // This function is called by the Counsellors in order to delete a room from the system
+  // This function is called by the counselors in order to delete a room from the system
   self.councellors.addServerMethod('deleteRoom', function (roomId, finalMessage) {
     var room = opeka.rooms.list[roomId],
       lastRoom = true,
@@ -1190,7 +1190,7 @@ function Server(config, logger) {
             opeka.user.sendUserList(room.group, room.id, users);
             // Try to remove the room if the disconnected user is the last counselor since
             // no anonymous users should be left without counselor if soloClientsAllowed is false
-            if (client.account.isAdmin && !room.counsellorPresent && !room.soloClientsAllowed) {
+            if (client.account.isAdmin && !room.counselorPresent && !room.soloClientsAllowed) {
               self.logger.warning('Last admin user disconnected - shutting down room. Counselor id: ', client.clientId);
               //Inform the remaining users that the room is closing down
               if (client.activeRoomId) {

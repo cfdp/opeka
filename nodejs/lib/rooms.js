@@ -138,11 +138,11 @@ var Room = function (options) {
     self.soloClientsAllowed = false; //@todo: should probably be a setting in config.json
 
     // Keep track of counselor presence
-    self.counsellorPresent = true;
+    self.counselorPresent = true;
 
     // Create groups for connected users and councellors.
     self.group = opeka.groups.getGroup(self.id);
-    self.counsellorGroup = opeka.groups.getGroup("counsellors-" + self.id);
+    self.counselorGroup = opeka.groups.getGroup("counselors-" + self.id);
 
     // A hash of the users currently in the room.
     self.users = {};
@@ -175,22 +175,22 @@ var Room = function (options) {
   };
 
   // Method used to see if there is a counselor in the room
-  self.hasCounsellor = function () {
+  self.hascounselor = function () {
     var count;
     var setCount = function (response) {
       count = response;
     }
     // the now js count function needs to be passed a callback function into which it feeds the user count (ct)
-    self.counsellorGroup.count(function (ct) {
+    self.counselorGroup.count(function (ct) {
       setCount(ct);
     });
     if (count >= 1) {
-      self.counsellorPresent = true;
+      self.counselorPresent = true;
     }
     else {
-      self.counsellorPresent = false;
+      self.counselorPresent = false;
     }
-    return self.counsellorPresent;
+    return self.counselorPresent;
   };
 
   // Add an user to the group.
@@ -206,13 +206,13 @@ var Room = function (options) {
     // - that the room is not paused
     // - that we have a counselor present (if needed)
     // before adding the person to the room.
-    if (client.account.isAdmin || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && (self.hasCounsellor() && !self.soloClientsAllowed)) && client) {
+    if (client.account.isAdmin || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && (self.hascounselor() && !self.soloClientsAllowed)) && client) {
       self.users[client.clientId] = opeka.user.filterData(client);
       self.group.addUser(client.clientId);
 
       // Start the timer in order to retrieve at the end the duration of the chat
       if (client.account.isAdmin) {
-        self.counsellorGroup.addUser(client.clientId);
+        self.counselorGroup.addUser(client.clientId);
         util.log('Admin user added to room ' + self.id);
       }
       else {
@@ -247,11 +247,11 @@ var Room = function (options) {
       removedUserNickname = self.users[clientId].name;
       // Remove clientId from either group as well as the user list.
       self.group.removeUser(clientId);
-      self.counsellorGroup.removeUser(clientId);
+      self.counselorGroup.removeUser(clientId);
       delete self.users[clientId];
 
-      // Update counsellorPresent state
-      self.hasCounsellor();
+      // Update counselorPresent state
+      self.hascounselor();
 
       updateRoomCounts();
     }
