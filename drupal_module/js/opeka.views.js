@@ -882,7 +882,12 @@
     },
 
     render: function () {
-      var chatStatus;
+      var chatStatus,
+          statusTextGuests,
+          statusTextcounselors,
+          guests = this.model.get('guests'),
+          counselors = this.model.get('councellors');
+
       // Don’t render if we don’t have a status.
       if (this.model.has('councellors') && this.model.has('guests')) {
         if (this.model.get('chatOpen') === true) {
@@ -891,12 +896,19 @@
         else {
           chatStatus = "chat-closed"
         }
+        statusTextGuests = Drupal.formatPlural(guests, '1 guest', '!guests guests', {'!guests': guests});
+        statusTextcounselors = Drupal.formatPlural(counselors, '1 counselor', '!counselors counselors', {'!counselors': counselors});
         this.$el.html(JST.opeka_online_status_tmpl({
-          content: Drupal.t('<span class="status ' + chatStatus + '"></span>' + '!guests guests !councellors councellors online', {
-            '!guests': '<span class="guests">' + this.model.get('guests') + '</span>',
-            '!councellors': '<span class="councellors">' + this.model.get('councellors') + '</span>'
-          })
+          content: '<span class="status ' + chatStatus + '"></span>' + statusTextGuests + " " + statusTextcounselors
         }));
+
+
+//        this.$el.html(JST.opeka_online_status_tmpl({
+//          content: '<span class="status ' + chatStatus + '"></span>' + '!guests guests !councellors councellors online', {
+//            '!guests': this.model.get('guests')
+//            '!councellors': '<span class="councellors">' + this.model.get('councellors') + '</span>'
+//          }
+//        }));
       }
 
       return this;
