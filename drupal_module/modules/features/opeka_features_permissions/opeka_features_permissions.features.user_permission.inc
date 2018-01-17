@@ -47,6 +47,7 @@ function opeka_features_permissions_user_default_permissions() {
   $permissions['administer opeka opening hours'] = array(
     'name' => 'administer opeka opening hours',
     'roles' => array(
+      'Chatrådgiver' => 'Chatrådgiver',
       'Koordinator' => 'Koordinator',
       'administrator' => 'administrator',
     ),
