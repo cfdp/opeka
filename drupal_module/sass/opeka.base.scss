@@ -2,7 +2,6 @@
 @import "compass";
 @import "variables";
 @import "mixins";
-@import url("https://fonts.googleapis.com/css?family=Montserrat:400,500,700,800");
 
 /*
 * — General styles —
@@ -866,6 +865,11 @@ body.opeka-client {
         font-size: $font-sm;
       }
     }
+
+    ul.room-list {
+      max-width: 500px;
+      margin: 20px auto;
+    }
     /* Clients can have the sidebar disabled */
     .content.client-sidebar-0 {
       width: 100%;
@@ -902,13 +906,14 @@ body.opeka-client {
 
   /* Group chat specific */
   &.groupchat #opeka-app {
-    /* Hide sidebar in group chats on small screens */
+    /* Show user list in sidebar as dropdown in group chats on small screens */
     .sidebar {
       display: block;
       position: fixed;
       top: 9px;
       right: 81px;
       z-index: 3;
+      width: 190px;
       @include desktop-width {
         position: relative;
         top: auto;
@@ -943,7 +948,8 @@ body.opeka-client {
         border-radius: 5px;
         background-color: $btnBgColor;
         padding: 5px;
-        width: 177px;
+        width: 181px;
+        position: absolute;
         @include desktop-width {
           background-color: transparent;
           border: none;

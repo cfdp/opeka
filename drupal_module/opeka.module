@@ -168,8 +168,10 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
     'jquery.ui.theme.css',*/
   ), $stylesheets);
   foreach ($stylesheets as $filename) {
-    drupal_add_css($path . '/css/' . $filename, array('weight' => CSS_THEME + 1));
+    drupal_add_css($path . '/css/' . $filename, array('weight' => CSS_THEME));
   }
+
+  drupal_add_css('https://fonts.googleapis.com/css?family=Montserrat', array('group' => CSS_THEME, 'type' => 'external'));
 
   // Get settings from the admin interface
   $js_url = check_plain(variable_get('opeka_connectjs_url', 'https://localhost:3000/connect.js'));
