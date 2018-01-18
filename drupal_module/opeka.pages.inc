@@ -27,24 +27,6 @@ function opeka_main_page() {
   return implode("\n", $output);
 }
 
-/**
- * Checkes whether the current page is rendered using the Opeka chat system.
- * @return boolean - TRUE if current page is an Opeka page and FALSE otherwise.
- */
-function is_opeka_chat_page() {
-    $path = current_path();
-    $prefixes = array(
-        "opeka",
-        "opeka-widgets",
-        "admin/opeka"
-    );
-    foreach($prefixes as $prefix) {
-        if(substr($path, 0, strlen($prefix)) === $prefix) {
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
 
 /*
  * Inline widget page for inclusion on third party sites
@@ -84,6 +66,17 @@ function opeka_popup_widget(){
 function opeka_foldout_widget(){
   opeka_widgets();
   drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.foldout.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  return array();
+}
+
+/*
+ * Mixed widget page for inclusion on third party sites
+ *
+ */
+function opeka_mixed_widget(){
+  opeka_widgets();
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/widget.mixed.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 100));
+  drupal_add_css('//fonts.googleapis.com/css?family=Lato:400,700', array('group' => CSS_THEME, 'type' => 'external', 'weight' => 11));
   return array();
 }
 

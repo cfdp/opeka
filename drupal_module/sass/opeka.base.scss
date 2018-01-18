@@ -1,116 +1,763 @@
 // Utilities
 @import "compass";
 @import "variables";
+@import "mixins";
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,500,700,800");
 
-.not-logged-in {
-  /* The sidebar is always visible in a group chat for anonymous clients*/
-  &.groupchat #opeka-app .content.client-sidebar-0 {
-    width: 66%;
+/*
+* — General styles —
+*/
+
+html, body {
+  height: 100%;
+}
+
+ul {
+  padding-left: 16px;
+}
+
+body.logged-in,
+body.not-logged-in {
+  background-color: $defaultBodyBgColor;
+  font-size: $font-std;
+  font-family: "Montserrat", sans-serif;
+
+  /* Drupal messages */
+  .messages {
+    margin: 1em 0;
   }
-  #opeka-app {
-    /* Anonymous clients can have the sidebar disabled */
-    .content.client-sidebar-0 {
-      width: 100%;
+
+  /* Forms */
+
+  .form-group {
+    margin: 5px 10px 5px 0;
+  }
+
+  .form-control {
+    width: auto;
+    margin-bottom: 1em;
+  }
+
+  .form-wrapper {
+    margin: 15px 0;
+    select {
+      clear: left;
     }
-    .content.client-sidebar-1 {
-      width: 66%;
+    select, input {
+      margin-right: 15px;
+    }
+    .btn.form-submit {
+      clear: left;
+      float: left;
     }
   }
 
-  .groupchat,
-  .room-size-2 {
-    .footer {
-      display: none;
+  /* smaller containers for clients */
+  &.page-opeka {
+    &>.container {
+      max-width: 960px;
     }
+    &.room-size-2>.container {
+      max-width: 640px;
+    }
+  }
+  @include desktop-width {
+    &.room-size-2,
+    &.pair {
+      background-color: $pairChatBodyBgColor;
+    }
+    &.groupchat,
+    &.page-opeka-signin-groupchat {
+      background-color: $groupChatBodyBgColor;
+    }
+  }
+
+  .btn-sm {
+    font-size: $font-smallest;
+  }
+
+  .btn.form-submit {
+    @include box-shadow(none);
+  }
+
+  .btn[disabled] {
+    background-color: $disabledBtnBgColor;
+    border-color: $disabledBtnBorderColor;
+    color: $gray-darker;
+    &:hover {
+      background-color: $disabledBtnBgColor;
+      border-color: $disabledBtnBorderColor;
+    }
+  }
+
+  .btn-success {
+    background-color: $bntSuccessColor;
+  }
+
+  .well {
+    padding: 5px;
   }
 }
 
-/* All users */
-#opeka-app {
+/* Main menu */
 
+li.expanded,
+li.collapsed,
+li.leaf {
+  padding: 0;
+}
+
+/* Chat status in nav header */
+
+.online-status-view .status {
+  display: inline-block;
+  text-indent: -9999px;
+  width: 10px;
+  height: 10px;
+  padding: 15px;
+  background-image: url(../img/chat_status_closed.svg);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 10px 10px;
+  &.chat-busy {
+    background-image: url(../img/chat_status_busy.svg);
+  }
+  &.chat-open {
+    background-image: url(../img/chat_status_open.svg);
+  }
+}
+
+/* Chat room */
+
+.chat-message-list-wrapper {
+  background: $wrapperBgColor;
+  margin-top: 30px;
+
+  @include desktop-width {
+    margin-top: 0px;
+  }
+}
+
+ul.chat-message-list {
+  background: $contentBgColor;
+  list-style: none;
+  margin: 0 0 10px 0;
+  overflow-y: auto;
+
+  @include desktop-width {
+    height: 530px;
+    border: 1px solid $borderColor;
+    border-radius: $borderRadius;
+  }
+}
+
+.chat-message,
+.system-message,
+.whisper-message {
+  margin: 2px 0;
+  padding: 5px 0;
+  clear: both;
+  @include desktop-width {
+    margin: 0 10px 10px 5px;
+    padding: 5px;
+  }
+}
+
+.whisper-message {
+  background-color: $gray-light2;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5px;
+  border: 1px solid $borderColor;
+  @include border-radius(5px);
+  .message {
+    clear: both;
+    margin-bottom: 10px;
+    width: 70%;
+  }
+  .actions {
+    clear: both;
+  }
+  .reply-to-whisper {
+    bottom: 0;
+    position: absolute;
+    margin: 5px;
+    right: 0;
+  }
+  @include desktop-width {
+    border: 0;
+    border-radius: 0;
+  }
+}
+
+
+/* Common styles for all types */
+
+.bs-callout {
+  position: relative;
+  .meta-info {
+    position: absolute;
+    top: 0;
+    margin: 10px;
+  }
+  .chat-message-content {
+    width: 75%;
+    padding: 8px;
+    background: $messageBgColor;
+    border-radius: $borderRadius;
+  }
+  h4 {
+    margin-top: 0;
+  }
+  .sender-name,
+  .time {
+    color: $messageMetaDataColor;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+  .highlight {
+    background-color: $messageHighlight;
+  }
+  .btn-danger {
+    opacity: .2;
+  }
+  .top-info {
+    margin-bottom: .5em;
+  }
+  &:hover .actions .btn-danger {
+    opacity: 1;
+  }
+}
+
+/* Variations */
+
+.bs-callout-counselor {
+  .chat-message-content {
+    background-color: $messageCounselorBgColor;
+    margin-right: 0;
+    margin-left: auto;
+  }
+  .sender-name,
+  .time {
+    color: $messageCounselorMDColor;
+  }
+}
+
+.bs-callout-client {
+  .meta-info {
+    right: 0;
+  }
+  .chat-message-content {
+   background-color: $messageClientBgColor;
+    margin-right: auto;
+    margin-left: 0;
+  }
+  .sender-name,
+  .time {
+    color: $messageClientMDColor;
+  }
+}
+
+.sender-name,
+.time {
+  text-transform: uppercase;
+  font-size: $font-sm;
+}
+
+.system-message {
+  color: $messageMetaDataColor;
+}
+
+.delete-message.btn-link {
+  text-transform: uppercase;
+  font-size: $font-sm;
+  margin: -2px 0 0;
+  padding: 0 5px 0 0;
+  opacity: 0.4;
+}
+
+.delete-message.btn-link:hover {
+  opacity: 1;
+}
+
+.system-message {
+  color: $messageMetaDataColor;
+}
+
+/* Chat message form */
+
+.form-text-container {
+  display: inline-block;
+  vertical-align: top;
+  width: 100%;
+  max-width: 455px;
+}
+
+.chat-view-form {
+  background-color: $defaultBodyBgColor;
+  padding: 5px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  @include desktop-width {
+    position: relative;
+    padding: 0;
+  }
+}
+
+.message-form {
+  position: relative;
+  .form-text {
+    height: 60px;
+    resize: none;
+    max-width: 640px;
+    width: 100%;
+    @include smart-width {
+      width: 320px;
+    }
+    @include tablet-width {
+      width: 400px;
+    }
+    @include desktop-width {
+      width: 455px;
+    }
+  }
+  .form-submit.send {
+    margin-left: 5px;
+    padding: 5px 10px;
+  }
+}
+
+.paused-nowriting {
+  background-color: rgb(175, 175, 175);
+  border: 1px solid rgb(126, 126, 126);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.chat-flow-controls {
+  vertical-align: top;
+  label {
+    font-size: $font-sm;
+    font-weight: normal;
+  }
+}
+
+
+/* FIXED TAB - CHAT WIDGET */
+
+.fixed-tab.well {
+  height: 40px;
+  right: -265px;
+  top: 30%;
+  overflow: hidden;
+  padding: 10px;
+  position: fixed;
+  z-index: 100;
+}
+
+
+/* CHAT PRESENTATION PAGE */
+
+.teaser {
+  float: left;
+  margin-right: 10px;
+  width: 90%;
+}
+
+.teaser-wrapper {
+  overflow: hidden;
+}
+
+.teaser-column {
+  float: left;
+  overflow: hidden;
+  max-width: 50%;
+}
+
+.footer {
+  border: none;
+}
+
+
+/* MODAL DIALOG / POPUP WINDOWS */
+
+.page-opeka,
+.page-admin-opeka {
+  .ui-icon,
+  .ui-dialog .ui-dialog-titlebar-close {
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-position: -96px -128px;
+  }
+  .ui-widget-header .ui-icon,
+  .ui-dialog .ui-dialog-titlebar-close {
+    background-image: url(images/ui-icons_222222_256x240.png);
+  }
+  .ui-dialog .ui-dialog-titlebar-close span {
+    display: block;
+    margin: 1px;
+    text-indent: 9999px;
+  }
+}
+
+
+/* FOOTER */
+
+
+/* Branding */
+
+.logo1 {
+  display: none;
+}
+.footer {
+  padding: 0;
+  margin: 0;
+}
+
+@include tablet-width {
+  .logo1 {
+    display: inline-block;
+    margin-right: 20px;
+    max-width: 200px;
+  }
+  .logo2 {
+    display: inline-block;
+    max-width: 440px;
+  }
+  .footer-branding {
+    float: right;
+    max-width: 72%;
+  }
+}
+
+#opeka-app {
   .header,
   .footer {
     clear: both;
   }
-
   .content,
   .sidebar {
     float: left;
   }
-
   .content {
-    width: 66%;
+    width: 100%;
   }
-
   .sidebar {
     width: 33%;
   }
 
-  .sidebar-block .room-actions .btn {
+  .footer {
+    border: none;
+    margin: 10px auto;
+    padding: 10px 0;
+    max-width: 400px;
+    @include desktop-width {
+      margin: 10px 0;
+    }
+  }
+
+  /* The signin view. Logging into the chat. */
+  .signin-view {
+    max-width: 400px;
+    margin: 0 auto 20px auto;
+    @include desktop-width {
+      margin: 0 0 20px 0;
+    }
+    .welcome-message {
+      padding: 10px 0;
+    }
+    .controls {
+      clear: both;
+      display: block;
+    }
+    .login-to-chat {
+      text-align: center;
+    }
+    .form-group {
+      label {
+        @media (min-width: 768px) {
+          width: 30%;
+        }
+      }
+    }
+  }
+
+  /* The room list */
+
+  ul.room-list {
+    list-style: none;
+    margin: 20px 0px 0px 0px;
+    padding-left: 0;
+  }
+
+  .room {
     clear: both;
-    margin-bottom: .5em;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .room-details {
+    letter-spacing: 1px;
+    padding: 10px;
+    min-width: 70px;
+  }
+
+  .room-status,
+  .room-size {
+    color: $roomInfoColor;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 0px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .room-details,
+  .room-description {
+    float: left;
+  }
+
+  .room-description {
+    display: inline-block;
+    font-size: $font-std;
+    font-weight: bold;
+    margin: 0 0 0 5px;
+    padding: 10px 5px;
+  }
+
+  .room-enter,
+  .meantime {
+    display: inline-block;
+    float: right;
+  }
+
+  /* The sidebar in the chat view */
+  .sidebar-block {
+    margin: 2em 0;
+    .room-actions .btn {
+      clear: both;
+      margin-bottom: .5em;
+    }
+  }
+
+  .sidebar-block-heading {
+    border-bottom: 1px solid $borderColor;
+
+    @include desktop-width {
+    }
   }
 
   .emoticon {
     margin-bottom: -6px;
   }
-
   .message {
     white-space: pre-wrap;
   }
-
   .chat-message-list-wrapper {
     position: relative;
     padding-bottom: 12px;
   }
-
   .form-submit.send {
     vertical-align: top;
   }
-
   .chat-flow-controls {
     display: inline-block;
   }
-
- .writers-message {
-    width:100%;
+  .writers-message {
+    background-color: $ccLighterGray;
+    @include border-radius(5px);
+    float: left;
     padding: .2em .5em;
     box-sizing: border-box;
     font-size: .8em;
     font-weight: normal;
-    position: absolute;
-    bottom: 0px;
-    left: 0;
+    position: fixed;
+    bottom: 103px;
   }
-
-  .return-sends-msg, .dont-auto-scroll, .return-writers-msg {
+  .return-sends-msg,
+  .dont-auto-scroll,
+  .return-writers-msg {
     margin: 0 2px 0 10px;
   }
-
   label[for="return-sends-msg"],
   label[for="dont-auto-scroll"],
-  label[for="return-writers-msg"]  {
+  label[for="return-writers-msg"] {
     display: inline-block;
   }
-
   .dropdown-menu li {
     cursor: pointer;
-
     &:hover {
       background-color: $ccLightGray;
     }
   }
-}
 
-// Admin page
-body.page-admin-config-services-opeka-screening .btn.btn-info {
-  margin-bottom: 1em;
-}
+  .client-header {
+    color: $ccGreen;
+    background-color: $gray-light2;
+    padding: 10px 10px 0 15px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 44px;
+    width: 100%;
+    z-index: 2;
+    .chat-name {
+      font-size: 20px;
+    }
+    @include desktop-width {
+      position: relative;
+      padding: 0;
+    }
+  }
+  .leave-room-form {
+    text-align: right;
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 9px 10px 5px 0;
+    @include desktop-width {
+      padding: 0;
+    }
+  }
+  .pause-toggle {
+    &.paused {
+      background-color: orange;
+    }
+  }
 
-/* Logged in users */
-body.page-admin-opeka {
+  /* The user info and admin sidebar */
   .app-view {
-     /* Screening */
+    margin-top: 15px;
+    .sidebar {
+      margin: 0 0 0 5px;
+    }
+  }
+  ul.user-list {
+    background: $wrapperBgColor;
+    display: none;
+    list-style: none;
+    margin: 0 0 10px 0;
+    padding-left: 0;
+    li {
+      padding: 5px;
+      &:last-child {
+        border: none;
+        padding-bottom: 0;
+      }
+    }
+    li.user-list-item {
+      padding-left: 0;
+    }
+    li .name {
+      padding-left: 5px;
+    }
+    @include desktop-width {
+      display: block;
+    }
+  }
+}
+
+/* Admin / counselor specific */
+
+.opeka-counselor {
+
+  /* Hide leave room button for counselors in pair chat rooms */
+  &.room-size-2 {
+    /* Remove extra margin for leave button */
+    &.page-admin #opeka-app {
+      margin-top: 0;
+    }
+  }
+
+  /* Create room dialogue */
+
+  /* @todo: hiding this should be optional via settings */
+
+  .room-edit-form {
+    .queue-system-wrapper,
+    .ip-location-wrapper,
+    .private-room {
+      display: none;
+    }
+  }
+
+  input.private,
+  label[for=private] {
+    display: inline;
+  }
+
+
+  #opeka-app {
+
+    /* Room list - /opeka#rooms */
+
+    .invite-rooms,
+    .go-to-queues,
+    .create-invite,
+    .create-queue {
+      float: right;
+      margin-left: 10px;
+    }
+
+    .app-view button {
+      &.create-room,
+      &.invite-rooms,
+      .create-invite {
+        margin-bottom: 20px;
+      }
+    }
+
+    .chat-toggle-container {
+      margin-bottom: 20px;
+    }
+
+    ul.room-list a.admin-enter {
+      float: right;
+      padding: 10px 0 0 0;
+    }
+
+    .room-list {
+      .room {
+        min-width: 550px;
+        margin-right: 10px;
+      }
+      display: inline-block;
+      vertical-align: top;
+    }
+    .edit-opening-hours {
+      margin-bottom: 10px;
+    }
+    .widget-wrapper {
+      width: 50%;
+      display: inline-block;
+      padding: 20px 0 0 0;
+    }
+    .leave-room-form {
+      vertical-align: middle;
+      display: inline-block;
+      margin-bottom: 0;
+      text-align: left;
+    }
+
+    /* Queue list */
+
+    ul.queue-list {
+      margin-top: 2em;
+    }
+
+
+    /* Invite list */
+
+    table.invite-list {
+      margin-top: 2em;
+    }
+
+    /* Screening */
+
     .screening-wrapper {
       display: inline-block;
       position: relative;
@@ -130,24 +777,215 @@ body.page-admin-opeka {
       z-index: 1010;
     }
 
+    /* Chat room view */
+
+    .chat-message-list-wrapper {  
+      margin-top: 0;
+    }
+
+    ul.chat-message-list {
+      background: $contentBgColor;
+      border: 1px solid $borderColor;
+      border-radius: $borderRadius;
+      height: 100px;
+      list-style: none;
+      margin: 0 0 10px 0;
+      overflow-y: auto;
+      @include micro-height {
+        height: 80px;
+      }
+      @include tiny-height {
+        height: 130px;
+      }
+      @include mini-height {
+        height: 300px;
+      }
+      @include small {
+        height: 370px;
+      }
+      @include small-smart {
+        height: 470px;
+      }
+      @include tablet {
+        height: 630px;
+      }
+    }
+
+    .writers-message {
+      position: absolute;
+      bottom: 0px;
+      left: 0;
+    }
+    .chat-view-form {
+      position: relative;
+      padding: 0;
+    }
+  }
+  &.groupchat,
+  &.room-size-2 {
+    /* Hide leave room button for the counselors */
+    #opeka-app .leave-room-form {
+      display: none;
+    }
+    /* Always make room for sidebar in chat room */
+    #opeka-app .content {
+      width: 66%;
+    }
+  }
+}
+
+/* Client specific */
+
+body.opeka-client {
+  background-color: $contentBgColor;
+  #opeka-app {
+    /* The signin view. Logging into the chat. */
+    .signin-view {
+      /* Screening radios */
+      select.form-select.gender,
+      select.form-select.age {
+        height: 28px;
+      }
+      label.screening-label {
+        display: none;
+        line-height: inherit;
+        padding-top: 0;
+      }
+      input.screening {
+        margin-top: 0;
+      }
+      .screening-questions {
+        margin: 0 0 5px 15px;
+      }
+      span.screening-option {
+        line-height: 25px;
+        padding-left: 8px;
+      }
+      .signin-footnote {
+        color: $ccGray;
+        font-size: $font-sm;
+      }
+    }
+    /* Clients can have the sidebar disabled */
+    .content.client-sidebar-0 {
+      width: 100%;
+    }
+    .content.client-sidebar-1 {
+      width: 66%;
+    }
+    .opeka-chat-sidebar {
+      margin-top: 0;
+      @include desktop-width {
+        margin-top: 60px;
+      }
+    }
+    
+    /* Chat message area */
+    ul.chat-message-list {
+      position: fixed;
+      top: 45px;
+      bottom: 110px;
+      width: 90%;
+
+      @include desktop-width {
+        position: relative;
+        width: 100%;
+        top: auto;
+        bottom: auto;
+      }
+    }
+
+    .footer {
+      display: none;
+    }
   }
 
-}
-/* Login page */
-body.page-opeka {
-  select.form-select.gender {
-    height: 28px;
+  /* Group chat specific */
+  &.groupchat #opeka-app {
+    /* Hide sidebar in group chats on small screens */
+    .sidebar {
+      display: block;
+      position: fixed;
+      top: 9px;
+      right: 81px;
+      z-index: 3;
+      @include desktop-width {
+        position: relative;
+        top: auto;
+        right: auto;
+      }
+      .sidebar-block {
+        margin: 0;
+        position: absolute;
+        right: 33px;
+        @include desktop-width {
+          position: relative;
+          right: auto;
+        }
+      }
+      .opeka-chat-sidebar {
+        @include desktop-width {
+          margin-top: 40px;
+        }
+      }
+      .sidebar-block-heading {
+        @include btn($font-smallest,5px 10px);
+        margin-top: 0;
+        @include desktop-width {
+          font-size: $font-std;
+          background-color: transparent;
+          border-bottom: 1px solid $borderColor;
+          border: none;
+        }
+      }
+      .user-list {
+        border: 1px solid $borderColor;
+        border-radius: 5px;
+        background-color: $btnBgColor;
+        padding: 5px;
+        width: 177px;
+        @include desktop-width {
+          background-color: transparent;
+          border: none;
+        }
+      }
+      li.user-list-item {
+        font-size: 12px;
+      }
+    }
+    .client-header {
+      padding: 5px 10px 0 10px;
+      z-index: 2;
+      @include tablet-width {
+        padding: 10px 10px 0 15px;
+      }
+      @include desktop-width {
+        padding: 0 10px 0 0;
+      }
+    }
+    .chat-name {
+      font-size: 13px;
+      height: 35px;
+      display: table-cell;
+      vertical-align: middle;
+      width: 120px;
+      @include tablet-width {
+        font-size: 18px;
+        width: 50%;
+      }
+    }
+    .content.client-sidebar-0 {
+      width: 100%;
+      @include tablet-width {
+        width: 66%;
+      }
+      @include desktop-width {
+        width: 66%;
+      }
+    }
   }
-  label.screening-label {
-    display: none;
-    line-height: inherit;
-    padding-top: 0;
-  }
-  input.screening {
-    margin-top: 0;
-  }
-  span.screening-option {
-    line-height: 25px;
-    padding-left: 8px;
+  .menu {
+    float: right;
+    margin-right: 0;
   }
 }

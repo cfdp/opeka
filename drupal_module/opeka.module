@@ -134,6 +134,13 @@ function opeka_menu() {
     'access arguments' => array('access content'),
     'file' => 'opeka.pages.inc',
   );
+  $items['opeka-widgets/mixed'] = array(
+    'title' => 'Mixed widget',
+    'description' => 'Mixed widget code for third party sites.',
+    'page callback' => 'opeka_mixed_widget',
+    'access arguments' => array('access content'),
+    'file' => 'opeka.pages.inc',
+  );
   return $items;
 }
 
@@ -161,7 +168,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
     'jquery.ui.theme.css',*/
   ), $stylesheets);
   foreach ($stylesheets as $filename) {
-    drupal_add_css($path . '/css/' . $filename);
+    drupal_add_css($path . '/css/' . $filename, array('weight' => CSS_THEME + 1));
   }
 
   // Get settings from the admin interface
@@ -185,6 +192,18 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $client_url = check_plain(variable_get('opeka_client_url', ''));
   $pair_chat_name = check_plain(variable_get('opeka_pair_chat_name', ''));
   $group_chat_name = check_plain(variable_get('opeka_group_chat_name', ''));
+  $popup_text = check_plain(variable_get('opeka_popup_text', ''));
+  $enter_site_feature = check_plain(variable_get('opeka_enter_site_feature', 0));
+  $enter_site_message = check_plain(variable_get('opeka_enter_site_message', ''));
+  $enter_site_confirm = check_plain(variable_get('opeka_enter_site_confirm', ''));
+  $enter_site_leave = check_plain(variable_get('opeka_enter_site_leave', ''));
+  $signin_footnote = check_plain(variable_get('opeka_signin_footnote', ''));
+  $mixed_widget_url = check_plain(variable_get('opeka_mixed_widget_url', ''));
+  $age_min = check_plain(variable_get('opeka_age_min', 9));
+  $age_max = check_plain(variable_get('opeka_age_max', 23));
+  $clients_writing_message = check_plain(variable_get('opeka_clients_writing_message', 0));
+
+
 
   // Settings to expose to the JavaScript client.
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
@@ -199,11 +218,20 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['dnode_endpoint'] = preg_replace('/\/connect[.]js$/', '/opeka', $js_url);
   $settings['socket_io_url'] = preg_replace('/\/connect[.]js$/', '/', $js_url);
   $settings['client_url'] = $client_url;
-  $settings['pair_chat_name'] = $pair_chat_name;
+  $settings['pair_chat_name'] = $pair_chat_name ;
   $settings['group_chat_name'] = $group_chat_name;
+  $settings['popup_text'] = $popup_text;
+  $settings['enter_site_feature'] = $enter_site_feature;
+  $settings['enter_site_message'] = $enter_site_message;
+  $settings['enter_site_confirm'] = $enter_site_confirm;
+  $settings['enter_site_leave'] = $enter_site_leave;
+  $settings['signin_footnote'] = $signin_footnote;
+  $settings['mixed_widget_url'] = $mixed_widget_url;
+  $settings['age_min'] = $age_min;
+  $settings['age_max'] = $age_max;
+  $settings['clients_writing_message'] = $clients_writing_message;
 
-
-  // Add js files and settings
+    // Add js files and settings
   drupal_add_js(array('opeka' => $settings), 'setting');
 
   // Load the required JavaScript libraries.
@@ -331,6 +359,12 @@ function opeka_theme($existing, $type, $theme, $path) {
       'type' => 'theme',
       'path' => drupal_get_path('module', 'opeka') . '/widgets/foldout',
     );
+  $templates['opeka__mixed_widget_page'] = array(
+      'base hook' => 'page',
+      'template' => 'opeka--mixed-widget-page',
+      'type' => 'theme',
+      'path' => drupal_get_path('module', 'opeka') . '/widgets/mixed',
+    );
   $templates['opeka__widget_html'] = array(
       'base hook' => 'page',
       'template' => 'opeka--widget-html',
@@ -342,7 +376,8 @@ function opeka_theme($existing, $type, $theme, $path) {
 
 /*
  * Implements hook_preprocess_html
- * Add html template suggestions
+ *
+ * Add html template suggestions and chat role css class to body
  */
 function opeka_preprocess_html(&$vars) {
   $path_array = explode("/",current_path());
@@ -353,7 +388,16 @@ function opeka_preprocess_html(&$vars) {
       $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype'); // Get the value
     }
   }
+  $opeka_role = "opeka-no-access";
+  if (user_access('administer opeka chat')) {
+    $opeka_role = "opeka-counselor";
+  }
+  else if (user_access('access opeka chat')) {
+    $opeka_role = "opeka-client";
+  }
+  $vars['classes_array'][] = drupal_clean_css_identifier($opeka_role);
 }
+
 
 /*
  * Implements hook_preprocess_page
@@ -361,11 +405,20 @@ function opeka_preprocess_html(&$vars) {
  * Add needed variables
  */
 function opeka_preprocess_page(&$vars) {
+  // Hide the page title on opeka chat pages
+  if (opeka_is_opeka_chat_page()) {
+    drupal_set_title('');
+  }
+
   $vars['opeka_schedule'] = opeka_schedule_content();
+  $vars['opeka_widget_header_button_subtext'] = check_plain(variable_get('opeka_widget_header_button_subtext', ''));
+  $vars['opeka_widget_popup_text'] = check_plain(variable_get('opeka_widget_popup_text', ''));
+  $vars['opeka_widget_popup_link_text'] = check_plain(variable_get('opeka_widget_popup_link_text', ''));
+  $vars['opeka_widget_popup_link_url'] = check_plain(variable_get('opeka_widget_popup_link_url', ''));
   $vars['opeka_pair_chat_name'] = check_plain(variable_get('opeka_pair_chat_name', ''));
   $vars['opeka_group_chat_name'] = check_plain(variable_get('opeka_group_chat_name', ''));
   $path_array = explode("/",current_path());
-  $allowed_widget_types = array("header","inline","popup", "foldout");
+  $allowed_widget_types = array("header","inline","popup", "foldout", "mixed");
   if (isset($path_array) && (count($path_array) >= 2) && ($path_array[0] === "opeka-widgets")) {
     $plain_arg_0 = check_plain($path_array[0]);
     $plain_arg_1 = check_plain($path_array[1]);
@@ -392,6 +445,24 @@ function opeka_preprocess_page(&$vars) {
   }
 }
 
+/**
+ * Checkes whether the current page is rendered using the Opeka chat system.
+ * @return boolean - TRUE if current page is an Opeka page and FALSE otherwise.
+ */
+function opeka_is_opeka_chat_page() {
+    $path = current_path();
+    $prefixes = array(
+        "opeka",
+        "opeka-widgets",
+        "admin/opeka"
+    );
+    foreach($prefixes as $prefix) {
+        if(substr($path, 0, strlen($prefix)) === $prefix) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
 
 /*
  * A common function for defining variables to be used in various
@@ -406,4 +477,33 @@ function _opeka_var($var_name,$new_val = NULL) {
   }
 
   return isset($vars[$var_name]) ? $vars[$var_name] : NULL;
+}
+
+/**
+ * Implements hook_user_login().
+ *
+ * We want to redirect authenticated users to /admin/opeka. See discussion here
+ * https://www.drupal.org/node/683696
+ */
+function opeka_user_login(&$edit, $account) {
+  // $edit is empty with one time login
+  if (!empty($edit)) {
+    $_GET['destination'] = 'admin/opeka';
+  }
+  // Or the form id is the password reset form
+  if ($_POST['form_id'] != 'user_pass_reset') {
+    $_GET['destination'] = 'admin/opeka';
+  }
+}
+
+function opeka_disable_block($module, $delta) {
+  db_update('block')
+    ->fields([
+      'status' => 0,
+    ])
+    ->condition('theme', 'curachat_v2')
+    ->condition('module', $module)
+    ->condition('delta', $delta)
+    ->execute()
+  ;
 }

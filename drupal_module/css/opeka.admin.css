@@ -1,0 +1,39 @@
+/* Drupal administration pages */
+/* line 4, ../sass/opeka.admin.scss */
+body.page-admin .form-type-textarea,
+body.page-admin .form-type-textfield,
+body.page-admin .form-type-select {
+  max-width: 500px;
+}
+/* line 9, ../sass/opeka.admin.scss */
+body.page-admin .form-submit {
+  margin-top: 1em;
+}
+
+/* line 16, ../sass/opeka.admin.scss */
+body.page-admin-config-services-opeka-screening #fieldset-opeka-screening-options .form-item {
+  max-width: 300px;
+  margin-bottom: .5em;
+}
+/* line 21, ../sass/opeka.admin.scss */
+body.page-admin-config-services-opeka-screening .btn.btn-info {
+  margin-bottom: 1em;
+}
+
+/* line 26, ../sass/opeka.admin.scss */
+body.page-admin-config-services-opeka-opening-hours #fieldset-opeka-opening-hours-datetimes {
+  margin-bottom: 1em;
+}
+/* line 28, ../sass/opeka.admin.scss */
+body.page-admin-config-services-opeka-opening-hours #fieldset-opeka-opening-hours-datetimes .form-item {
+  float: left;
+}
+/* line 31, ../sass/opeka.admin.scss */
+body.page-admin-config-services-opeka-opening-hours #fieldset-opeka-opening-hours-datetimes .form-type-select {
+  clear: left;
+}
+/* line 34, ../sass/opeka.admin.scss */
+body.page-admin-config-services-opeka-opening-hours #fieldset-opeka-opening-hours-datetimes button.form-submit {
+  clear: left;
+  float: left;
+}

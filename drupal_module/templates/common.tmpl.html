@@ -3,8 +3,26 @@
   <div id="room-size" data-room-size="<%- room.get('maxSize') %>"></div>
   <% /* Only display sidebar for anonymous clients in pair rooms if this settings is set to 1*/ %>
   <% if ((admin) || (!((Drupal.settings.opeka.pairchat_user_list === 0) && (room.get('maxSize') === 2)))) { %>
-    <div id="user-list-block">
-      <h5 class="sidebar-block-heading"><%= labels.userListHeading %><span class="arrow up"></span></h5>
+    <% if (admin) { %>
+      <form action="#" class="leave-room-form">
+        <input class="form-submit send btn btn-success" type="submit" value="<%= labels.leaveRoomButton %>" />
+      </form>
+      <div class="btn-group btn-toggle">
+        <% if (room.attributes.paused) { %>
+          <button class="btn btn-primary pause-toggle btn-danger">PAUSE</button>
+          <button class="pause-toggle btn btn-default">ÅBEN</button>
+        <%}else{ %>
+          <button class="btn btn-default pause-toggle">PAUSE</button>
+          <button class="pause-toggle btn btn-primary btn-success">ÅBEN</button>
+        <% } %>
+      </div>
+      <button class="delete-room btn btn-default">
+        <span class="delete-room glyphicon glyphicon-remove" aria-hidden="true"></span>
+        <%= labels.deleteRoom %>
+      </button>
+    <% } %>
+    <div id="user-list-block" class="sidebar-block">
+      <h5 class="sidebar-block-heading dropdown-toggler"><%= labels.userListHeading %><span class="arrow up"></span></h5>
       <div class="sidebar-block-content">
         <ul class="user-list">
         <% if (!users) { %>
@@ -15,10 +33,10 @@
 
             <% if (user.clientId !== clientId && admin) { %>
               <div class="actions btn-group">
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
             <% } %>
 
-                <i class="icon-user"></i><span class="name"><%- user.name %></span>
+                <span class="glyphicon glyphicon-user"></span><span class="name"><%- user.name %></span>
                 <% if (user.age || user.gender) { %>
                   <span class="meta">
                     (
@@ -45,7 +63,7 @@
               </div>
               <!-- end dropdown btn-group -->
               <% if (screeningQuestions && user.screening && Drupal.settings.opeka_screening && Drupal.settings.opeka_screening.opeka_screening_options.length) { %>
-                <div class="screening-wrapper btn"><%= labels.screeningInfo + ": " %>
+                <div class="screening-wrapper btn btn-default dropdown-toggler"><%= labels.screeningInfo + ": " %>
                   <dl class="screening-question">
                     <dt class="popover-title"><%= user.screening.question %></dt>
                     <dd class="popover-content"><%= user.screening.answer  %></dd>
@@ -59,16 +77,17 @@
         <% }); %>
         </ul>
       </div>
+      <% if (banCodeGenerator) { %>
+        <button class="generate-ban-code btn-default btn-sm btn"><%- labels.banCode %></button>
+      <% } %>
     </div>
   <% } %>
   <% if (admin) { %>
     <div class="sidebar-block">
       <h5 class="sidebar-block-heading"><%= labels.roomActions %><span class="arrow down"></span></h5>
       <div class="sidebar-block-content room-actions"  style="display: block;">
-        <button class="pause-toggle btn btn-small"><%= labels.pauseToggle %></button>
-        <button class="clear-messages btn btn-small"><%= labels.clearMessages %></button>
-        <button class="change-room-size btn btn-small"><%= labels.changeRoomSize %></button>
-        <button class="delete-room btn btn-small"><%= labels.deleteRoom %></button>
+        <button class="clear-messages btn btn-sm btn-default"><%= labels.clearMessages %></button>
+        <button class="change-room-size btn btn-sm btn-default"><%= labels.changeRoomSize %></button>
       </div>
     </div>
     <div class="sidebar-block">
@@ -86,17 +105,6 @@
   <% } %>
 </script>
 
-<script id="opeka_chat_footer_tmpl" type="application/template">
-  <% if (banCodeGenerator) { %>
-    <% if (!chatOpen) { %>
-      <button class="chat-toggle btn-success btn"><%- labels.chatOpen %></button>
-    <%}else{ %>
-      <button class="chat-toggle btn-danger btn"><%- labels.chatClose %></button>
-    <% } %>
-    <button class="generate-ban-code btn-util btn"><%- labels.banCode %></button>
-  <% } %>
-</script>
-
 <script id="opeka_app_tmpl" type="application/template">
   <div class="header"></div>
   <div class="content client-sidebar-<%= Drupal.settings.opeka.pairchat_user_list %>"><%= content %></div>
@@ -108,37 +116,47 @@
   <%= content %>
 </script>
 
+<script id="opeka_enter_form_tmpl" type="application/template">
+  <div class="enter-site-button">
+    <h2><%= labels.heading %></h2>
+    <p><%= message %></p>
+    <button class="enter-site btn btn-success"><%= labels.confirm %></button>
+    <div class="leave-link">
+      <a class="leave-site" href="https://cyberhus.dk/node/44447"><%= labels.leave %></a>
+    </div>
+  </div>
+</script>
+
 <script id="opeka_connect_form_tmpl" type="application/template">
- <div class="welcome-message"><%= Drupal.settings.opeka.welcome_message %></div>
- <form action="#" class="form-horizontal well">
-    <div class="control-group">
-      <label class="control-label nickname-label">
-        <%= labels.nick %>
-      </label>
-      <div class="controls">
-        <input class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
-        <% if (name != 'Rådgiver') { %>
-        <!--<span class="label-tooltip"><%= labels.nick_tooltip %></span>-->
-        <% } %>
+  <div class="welcome-message"><%= Drupal.settings.opeka.welcome_message %></div>
+  <form action="#" class="form-horizontal well">
+    <div class="controls form-group">
+      <label for="nick" class="col-sm-3 control-label"><%= labels.nick %></label>
+      <div class="col-sm-7">
+        <input type="text"  maxlength="25" class="form-control nickname" value="<%- name %>" id="nick" placeholder="<%= labels.placeholder %>">
       </div>
     </div>
     <% if (!name) { %>
-
-      <div class="control-group">
+      <div class="controls form-group">
         <label class="control-label age-label">
           <%= labels.age %>
         </label>
-        <div class="controls">
-          <input class="form-text age" type="text" maxlength="2" />
+        <div class="col-sm-4">
+          <select class="form-control age">
+            <option value="" selected="selected"></option>
+            <% var i; for (i=labels.ageMin; i<=labels.ageMax; i++) { %>
+              <option value="<%= i %>"><%= i %></option>
+            <% } %>
+          </select>
         </div>
       </div>
 
-      <div class="control-group">
-        <label class="control-label gender-label">
+      <div class="controls form-group">
+        <label class="gender-label col-sm-3">
           <%= labels.gender %>
         </label>
-        <div class="controls">
-          <select class="form-select gender">
+        <div class="col-sm-4">
+          <select class="form-control gender">
             <option value="" selected="selected"></option>
             <option value="m"><%= labels.male %></option>
             <option value="f"><%= labels.female %></option>
@@ -148,25 +166,26 @@
       </div>
 
       <% if (screeningQuestions && Drupal.settings.opeka_screening && Drupal.settings.opeka_screening.opeka_screening_options.length ) { %>
-        <div class="control-group">
+        <div class="form-group screening-questions">
           <label class="control-label screening-label">
             <%= labels.screening %>
           </label>
           <div class="controls">
-            <% var answerOptions = Drupal.settings.opeka_screening.opeka_screening_options;
-            var arrayLength = answerOptions.length; %>
+            <% var answerOptions = Drupal.settings.opeka_screening.opeka_screening_options; %>
             <p class="screening-question"><%= Drupal.settings.opeka_screening.opeka_screening_main %></p>
-            <input class="screening" checked="checked" name="screening" type="radio" value="No participation"><span class="screening-option"> <%- labels.screeningNoParticipation %></span><BR>
-            <% for (var i = 0; i < arrayLength; i++) { %>
-              <input class="screening" name="screening" type="radio" value="<%- answerOptions[i] %>">
-              <span class="screening-option"><%= answerOptions[i] %></span><BR>
-            <% }; %>
+            <% if (!Drupal.settings.opeka_screening.opeka_screening_required) { %>
+              <input class="screening" checked="checked" name="screening" type="radio" value="No participation"><span class="screening-option"> <%- labels.screeningNoParticipation %></span><br>
+            <% } %>
+            <% answerOptions.forEach(function(option) { %>
+              <input class="screening" name="screening" type="radio" value="<%- option %>">
+              <span class="screening-option"><%= option %></span><br>
+            <% }); %>
           </div>
         </div>
       <% } %>
 
       <% if (accessCodeEnabled) { %>
-        <div class="control-group">
+        <div class="form-group col-sm-12">
           <label class="control-label accesscode-label">
             <%= labels.accessCode %>
           </label>
@@ -175,10 +194,18 @@
           </div>
         </div>
       <% } %>
+      
+      <% if (signInFootNote.length > 0) { %>
+        <div class="control-group signin-footnote">
+          <div class="controls">
+            <p><%= signInFootNote %></p>
+          </div>
+        </div>
+      <% } %>
 
     <% } %>
-    <div class="control-group">
-      <div class="controls">
+    <div class="form-group">
+      <div class="controls login-to-chat">
         <input class="connect form-submit btn btn-success" type="submit" value="<%= labels.action %>" />
         <span class="cyberhus-logo"></span>
       </div>
@@ -190,56 +217,78 @@
 <script id="opeka_room_list_tmpl" type="application/template">
   <% if (admin) { %>
     <div class="queue-utils">
+      <div class="chat-toggle-container">
+        <div class="btn-group btn-toggle">
+          <% if (!chatOpen) { %>
+            <button class="btn btn-primary chat-toggle btn-danger">OFF</button>
+            <button class="chat-toggle btn btn-default">ON</button>
+          <%}else{ %>
+            <button class="btn btn-default chat-toggle">OFF</button>
+            <button class="chat-toggle btn btn-primary btn-success">ON</button>
+          <% } %>
+        </div>
+        <% if (!chatOpen) { %>
+          <div class="messages error alert chat-state"><%= labels.chatClosed %></div>
+        <% } %>
+      </div>
       <% if (queueSystem) { %>
-        <a href="#queues" class="go-to-queues btn-util btn btn-small"><%= labels.queueLink %></a>
+        <a href="#queues" class="go-to-queues btn-default btn"><%= labels.queueLink %></a>
       <% } %>
-      <button class="create-room btn btn-small btn-success"><%= labels.createRoom %></button>
-      <% if (!chatOpen) { %>
-        <div class="chat-state alert"><%= labels.chatClosed %></div>
+      <button class="create-room btn btn-success" disabled><%= labels.createRoom %></button>
+      <% if (labels.inviteRooms) { %>
+        <a href="#invites" class="invite-rooms btn btn-default"><%= labels.inviteRooms %></a>
       <% } %>
     </div>
-
   <% } %>
   <ul class="room-list">
-  <% rooms.each(function (room) { %>
-    <% /* Show the room list - show all rooms for counselors */ %>
-    <% if (admin || (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms === false)))) { %>
-      <% labels.placeholder = ''; %>
-      <li class="room well">
-      <div class="room-details badge badge-info <% if (room.get('memberCount') === room.get('maxSize')){%>full<%} %><% if (room.attributes.paused){%> paused<%} %>">
-        <span class="room-size"><%- room.get('memberCount') %>/<%- room.get('maxSize') %></span>
-        <% if (room.get('memberCount') === room.get('maxSize')){%>
-          <span class="room-status full"><%= labels.fullRoomText %></span>
+    <% rooms.each(function (room) { %>
+      <% /* Show the room list - show all rooms for counselors */ %>
+      <% if (admin || (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms === false)))) { %>
+        <% labels.placeholder = ''; %>
+        <li class="room well">
+        <div class="room-details badge badge-info <% if (room.get('memberCount') === room.get('maxSize')){%>full<%} %><% if (room.attributes.paused){%> paused<%} %>">
+          <span class="room-size"><%- room.get('memberCount') %>/<%- room.get('maxSize') %></span>
+          <% if (room.get('memberCount') === room.get('maxSize')){%>
+            <span class="room-status full"><%= labels.fullRoomText %></span>
+          <%} %>
+          <% if (room.attributes.paused){%>
+            <span class="room-status paused"><%= labels.pausedRoomText %></span>
+          <%} %>
+        </div>
+        <p class="room-description"><%- room.get('name') %></p>
+        <% if (room.attributes.private){%>
+            <div class="badge badge-important private-room"><%= labels.privateRoomText %></div>
         <%} %>
-        <% if (room.attributes.paused){%>
-          <span class="room-status paused"><%= labels.pausedRoomText %></span>
-        <%} %>
-      </div>
-      <p class="room-description"><%- room.get('name') %></p>
-      <% if (room.attributes.private){%>
-          <div class="badge badge-important private-room">Training room</div>
-      <%} %>
-      <% /* Only admins should be able to enter a full or paused room */ %>
-      <% if (admin || ((room.get('memberCount') != room.get('maxSize')) && (!room.attributes.paused))) {%>
-        <a href="#rooms/<%= room.id %>" class="room-enter btn btn-success"><%= labels.enterRoom %></a>
-      <%}else{ %>
-        <a href="<%= labels.fullRoomLink %>" target="_blank" class="meantime btn btn-warning"><%= labels.fullRoomLinkText %></a>
-      <%}%>  
-      </li>
+        <% /* Only admins should be able to enter a full or paused room */ %>
+        <% if (admin || ((room.get('memberCount') != room.get('maxSize')) && (!room.attributes.paused))) {%>
+          <a href="#rooms/<%= room.id %>" class="room-enter btn btn-success"><%= labels.enterRoom %></a>
+        <%}else{ %>
+          <a href="<%= labels.fullRoomLink %>" target="_blank" class="meantime btn btn-warning"><%= labels.fullRoomLinkText %></a>
+        <%}%>  
+        </li>
+      <% } %>
+    <% }); %>
+    <% if (labels.placeholder && !admin) { %>
+      <li class="placeholder norooms"><%= labels.placeholder %></li>
+      <li><a class="btn btn-success" href="#" onclick="javascript: window.close();"><%= labels.closeWindowText %></a></li>
     <% } %>
-  <% }); %>
-  <% if (labels.placeholder && !admin) { %>
-    <li class="placeholder norooms"><%= labels.placeholder %></li>
-    <li><a class="btn btn-success" href="#" onclick="javascript: window.close();"><%= labels.closeWindowText %></a></li>
-  <% } %>
   </ul>
-
+  <% if (admin) { %>
+    <div class="widget-wrapper">
+      <a class="edit-opening-hours btn btn-default" href="/admin/config/services/opeka/opening_hours" title="Edit opening hours">
+        <span class="delete-room glyphicon glyphicon-pencil" aria-hidden="true"></span>
+        <%= labels.editOpeningHours %>
+      </a>
+      <iframe src="//<%= window.location.hostname %>/opeka-widgets/header" marginwidth="0" marginheight="0" scrolling="no" width="100%" height="180" frameborder="0">
+    </div>
+    
+  <% } %>
 </script>
 
 <script id="opeka_queue_list_tmpl" type="application/template">
   <div>
-  <a href="#rooms" class="go-back-to-rooms btn-util"><%= labels.roomLink %></a>
-  <button class="create-queue btn btn-small"><%= labels.createQueue %></button>
+  <a href="#rooms" class="go-back-to-rooms btn btn-default"><%= labels.roomLink %></a>
+  <button class="create-queue btn btn-success"><%= labels.createQueue %></button>
   </div>
   <ul class="queue-list">
   <% queues.each(function (queue) { %>
@@ -253,7 +302,41 @@
 
 </script>
 
+<script id="opeka_invite_list_tmpl" type="application/template">
+  <div>
+  <a href="#rooms" class="go-back-to-rooms btn btn-default"><%= labels.roomLink %></a>
+  <button class="create-invite btn btn-success"><%= labels.createInvite %></button>
+  </div>
+  <table class="invite-list table">
+    <thead><tr><th><%= labels.name %></th><th><%= labels.date %></th><th colspan="2"><%= labels.actions %></th></tr></thead>
+    <% invites.each(function (invite) { %>
+      <% if (invite.get('status')) { %>
+        <% labels.placeholder = ''; %>
+      <tr class="invite">
+        <td><%- invite.get('name') %></td>
+        <td><%- invite.get('formatted_time') %></td>
+        <td>
+        <td>
+        <% if (!invite.get('roomId')) { %>
+          <button class="create-room btn btn-success" data-invite-id="<%- invite.get('id') %>"><%= labels.createRoomButton %></button>
+        <% } else { %>
+          <a class="open-room btn btn-success" href="#rooms/<%- invite.get('roomId') %>"><%= labels.openRoomButton %></a>
+        <% } %>
+        </td>
+        <td>
+        <% if (invite.get('status')) { %>
+          <button class="cancel-invite btn btn-success" data-invite-id="<%- invite.get('id') %>"><%= labels.cancelInviteButton %></button>
+        <% } %>
+        </td>
+      </tr>
+    <% } %>
+  <% }); %>
+  <% if (labels.placeholder) { %>
+    <tr class="placeholder noinvites"><td colspan="4"><%= labels.placeholder %></td></tr>
+  <% } %>
+  </table>
 
+</script>
 
 <script id="opeka_queue_page_tmpl" type="application/template">
   <p><%= labels.placeholder %></p>
@@ -264,47 +347,53 @@
 
 </script>
 
-<script id="opeka_room_list_create_room_tmpl" type="application/template">
-  <!--<button class="create-room btn btn-small"><%= labels.createRoom %></button>-->
-</script>
-
 <script id="opeka_chat_tmpl" type="application/template">
+<% if (!admin) { %>
+  <div class="client-header">
+    <div class="chat-name"><%= chatName %></div>
+    <form action="#" class="leave-room-form">
+      <input class="form-submit send btn btn-sm btn-default " type="submit" value="<%= labels.leaveRoomButton %>" />
+    </form>
+  </div>
+<% } %>
 <div class="chat-message-list-wrapper">
   <ul class="chat-message-list list-unstyled">
   <% _.each(messages, function (message) { %>
     <% if (message.system) { %>
-      <li class="system-message"><span>system:</span><%- message.message %></li>
+      <li class="system-message"><span>system: </span><%- message.message %></li>
     <% } else if (message.whisper) { %>
       <li class="whisper-message bs-callout" data-message-id="<%= message.messageId %>">
-        <div class="top-info clearfix">
+        <div class="top-info">
           <% if (message.receiver) { %>
             <div class="sender-name pull-left"><%- message.sender.name %> - <%= labels.whispered %></div>
-            <% } else { %>
+          <% } else { %>
             <div class="sender-name pull-left"><%= labels.whisperedTo %> - <%- message.sender.name %></div>
-            <% } %>
-            <div class="time pull-right"><%= formatTimestamp(message.date) %></div>
-            <% if (message.receiver) { %>
+          <% } %>
+          <div class="time pull-right"><%= formatTimestamp(message.date) %></div>
+          <% if (message.receiver) { %>
             <div class="actions pull-right">
-              <button class="reply-to-whisper btn-link pull-right" data-reply-to="<%- message.sender.name %>">
+              <button class="reply-to-whisper btn btn-sm btn-default" data-reply-to="<%- message.sender.name %>">
                 <%= labels.replyToWhisper %>
               </button>
-            </div>
-            <% } %>
-          </div>
-        <div class="message"><%- message.message %></div>
-      </li>
-    <% } else { %>
-      <li class="chat-message bs-callout <% if(message.sender.isCouncellor) { %>bs-callout-counselor<% }else{%>bs-callout-client<% } %>" data-message-id="<%= message.messageId %>">
-        <div class="top-info clearfix">
-          <div class="sender-name pull-left"><%- message.sender.name %></div>
-          <div class="time pull-right"><%= formatTimestamp(message.date) %></div>
-          <% if (admin) { %>
-            <div class="actions pull-right">
-              <button class="delete-message btn-link pull-right"><%= labels.deleteMessage %></button>
             </div>
           <% } %>
         </div>
         <div class="message"><%- message.message %></div>
+      </li>
+    <% } else { %>
+      <li class="chat-message bs-callout <% if(message.sender.isCouncellor) { %>bs-callout-counselor<% }else{%>bs-callout-client<% } %>" data-message-id="<%= message.messageId %>">
+        <div class="chat-message-content">
+          <span class="sender-name"><%- message.sender.name %></span>
+          <span class="message"><%- message.message %></span>
+        </div>
+        <div class="meta-info">
+          <span class="time pull-right"><%= formatTimestamp(message.date) %></span>
+          <% if (admin) { %>
+            <span class="actions">
+              <button class="delete-message btn-link pull-right"><%= labels.deleteMessage %></button>
+            </span>
+          <% } %>
+        </div>
       </li>
     <% } %>
   <% }); %>
@@ -349,15 +438,11 @@
     <form action="#" class="leave-queue-form">
       <input class="form-submit send" type="submit" value="<%= labels.leaveQueueButton %>" />
     </form>
-  <% } else { %>
-    <form action="#" class="leave-room-form">
-      <input class="form-submit send btn btn-success" type="submit" value="<%= labels.leaveRoomButton %>" />
-    </form>
   <% } %>
 </script>
 
 <script id="opeka_user_feedback_tmpl" type="application/template">
-  <% if(admin) { %>
+  <% if (admin) { %>
     <p>The chat session has ended.</p>
   <% }else{ %>
     <p><%= labels.farewellMessage %></p>

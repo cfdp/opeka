@@ -114,48 +114,109 @@
     <!--<p>To create a simple 1 to 1 chat, please click the green button below.</p>
       <button class="ui-button ui-button-text-only"><span class="ui-button-text">Create a 1 to 1 chat room</span></button>-->
     <div class="create-groupchat-room">
-    <div class="groupchat-room-settings">
-      <div class="form-item">
-        <label for="name"><%- labels.name %></label>
-        <input class="form-text name required" name="name" type="textfield" placeholder="Chatrum" />
-        <span class="help-text"><%- labels.chatroomhelp %></span>
+      <div class="groupchat-room-settings">
+        <div class="form-item">
+          <label for="name"><%- labels.name %></label>
+          <input class="form-text name required" name="name" id="name" type="text" placeholder="<%- labels.namePlaceholder %>" value="<%- defaultName %>" />
+          <div class="help-text"><%- labels.chatroomhelp %></div>
+        </div>
+
+        <div class="form-item">
+          <label for="max-size"><%- labels.size %></label>
+          <select class="max-size" name="max-size" id="max-size">
+            <option value="2" selected="selected">2 <%- labels.users %></option>
+            <option value="5">5 <%- labels.users %></option>
+            <option value="6">6 <%- labels.users %></option>
+            <option value="7">7 <%- labels.users %></option>
+            <option value="8">8 <%- labels.users %></option>
+            <option value="9">9 <%- labels.users %></option>
+            <option value="10">10 <%- labels.users %></option>
+            <option value="15">15 <%- labels.users %></option>
+          </select>
+        </div>
+
+        <div class="form-item ip-location-wrapper">
+          <label for="ip-location"><%- labels.iPLocation %></label>
+          <select class="ip-location"  name="ip-location" id="ip-location">
+            <option value="Any" selected="selected"><%- labels.any %></option>
+            <option value="Denmark"><%- labels.dk %></option>
+            <option value="Scandinavia"><%- labels.outDk %></option>
+          </select>
+        </div>
+
+        <div class="form-item queue-system-wrapper">
+          <label for="queue-system"><%- labels.queueSystem %></label>
+          <select class="queue-system"  name="queue-system" id="queue-system">
+            <option value="private" selected="selected"><%- labels.privateQueue %></option>
+            <% queues.each(function (queue) { %>
+              <option value="<%- queue.id %>"><%- queue.get('name') %></option>
+            <% }); %>
+          </select>
+        </div>
+
+        <div class="form-item private-room">
+          <input name="private" id="private" name="private" type="checkbox" <% if (invite) { %> checked="checked" disabled="disabled"<% } %>/>
+          <label for="private"><%= labels.private %></label>
+        </div>
+
+        <input name="invite-id" id="invite-id" type="hidden" value="<%- invite %>" />
+
       </div>
+    </div>
+  </form>
+</script>
 
-      <div class="form-item">
-        <label for="max-size"><%- labels.size %></label>
-        <select class="max-size" name="max-size">
-          <option value="2" selected="selected">2 <%- labels.users %></option>
-          <option value="5">5 <%- labels.users %></option>
-          <option value="6">6 <%- labels.users %></option>
-          <option value="7">7 <%- labels.users %></option>
-          <option value="8">8 <%- labels.users %></option>
-          <option value="9">9 <%- labels.users %></option>
-          <option value="10">10 <%- labels.users %></option>
-          <option value="15">15 <%- labels.users %></option>
-        </select>
-
-      <div class="form-item">
-        <label for="ip-location"><%- labels.iPLocation %></label>
-        <select class="ip-location"  name="ip-location">
-          <option value="Any" selected="selected"><%- labels.any %></option>
-          <option value="Denmark"><%- labels.dk %></option>
-          <option value="Scandinavia"><%- labels.outDk %></option>
-        </select>
+<script id="opeka_create_invite_tmpl" type="application/template">
+  <form action="#" class="invite-form" id="opeka-invite-create-form" accept-charset="UTF-8" _lpchecked="1">
+    <div>
+      <div class="control-group form-type-textfield form-item-name form-item">
+        <label for="edit-name" class="control-label"><%= labels.name %></label>
+        <div class="controls">
+          <input type="text" id="edit-name" name="name" value="" size="60" maxlength="128" class="form-text" placeholder="Chat with John Doe">
+        </div>
       </div>
-
-      <div class="form-item">
-        <label for="queue-system"><%- labels.queueSystem %></label>
-        <select class="queue-system"  name="queue-system">
-          <option value="private" selected="selected"><%- labels.privateQueue %></option>
-          <% queues.each(function (queue) { %>
-            <option value="<%- queue.id %>"><%- queue.get('name') %></option>
-          <% }); %>
-        </select>
+      <div class="container-inline-date">
+        <div class="control-group form-type-date-popup form-item-datetime form-item">
+          <div class="controls">
+            <div id="edit-datetime" class="date-padding">
+              <div class="control-group form-type-textfield form-item-datetime-date form-item">
+                <label for="opeka-invite-datepicker-popup" class="control-label"><%= labels.date %><span class="form-required">*</span></label>
+                <div class="controls">
+                  <input type="text" id="opeka-invite-datepicker-popup" name="datetime[date]" value="" size="20" maxlength="30" class="form-text" placeholder="31/12/2018">
+                </div>
+              </div>
+              <div class="control-group form-type-textfield form-item-datetime-time form-item">
+                <label for="opeka-invite-timeentry-popup" class="control-label"><%= labels.time %><span class="form-required">*</span></label>
+                <div class="controls">
+                  <input type="text" id="opeka-invite-timeentry-popup" name="datetime[time]" value="" size="15" maxlength="10" class="form-text" placeholder="18:15">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div class="form-item private-room">
-        <input class="private" name="private" id="private" type="checkbox" value="true" />
-        <label for="private-room"><%= labels.training %></label>
+      <div class="control-group form-type-textfield form-item-counselor form-item">
+        <label for="edit-counselor" class="control-label"><%= labels.counselor %></label>
+        <div class="controls"><input type="text" id="edit-counselor" name="counselor" value="" size="60" maxlength="128" class="form-text" placeholder="Counselor">
+        </div>
+      </div>
+      <div class="control-group form-type-textfield form-item-invitee form-item">
+        <label for="edit-invitee" class="control-label"><%= labels.invitee %><span class="form-required">*</span></label>
+        <div class="controls"><input type="text" id="edit-invitee" name="invitee" value="" size="60" maxlength="128" class="form-text" placeholder="John Doe">
+        </div>
+      </div>
+      <div class="control-group form-type-textfield form-item-email form-item">
+        <label for="edit-email" class="control-label"><%= labels.email %><span class="form-required">*</span></label>
+        <div class="controls"><input type="text" id="edit-email" name="email" value="" size="60" maxlength="128" class="form-text" placeholder="john.doe@example.com">
+        </div>
+      </div>
+      <div class="control-group form-type-textarea form-item-comment form-item">
+        <label for="edit-comment" class="control-label"><%= labels.comment %></label>
+        <div class="controls">
+          <div class="form-textarea-wrapper resizable textarea-processed resizable-textarea"><textarea id="edit-comment" name="comment" cols="60" rows="5" class="form-textarea" placeholder="Hey, Joe! Waiting you in the chat."></textarea>
+            <div class="grippie"></div>
+          </div>
+        </div>
       </div>
     </div>
   </form>

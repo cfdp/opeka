@@ -1,18 +1,15 @@
 /* Styling for the header widget */
 // Utilities
 @import "variables";
-
-/* Buttons */
-.login-button {
-  bottom: 30px;
-  position: absolute;
-  right: 15px;
-}
+@import "mixins";
 
 .status-content {
   margin: 0;
   max-width: 300px;
-  
+  @include smart-width {
+    display: inline-block;
+    margin-right: 1em;
+  }
   ul {
     margin: 0;
     padding: 0;
@@ -23,8 +20,6 @@
   }
 }
 
-.status-info {
-}
 .read-more {
   display: inline-block; 
   margin: 10px 0 0; 
@@ -36,3 +31,28 @@
     text-decoration: none;
   }
 }
+
+/* Buttons */
+.login-button {
+  @include smart-width {
+    position: absolute;
+    right: 2em;
+    bottom: 2em;
+    margin-right: 1em;
+  }
+  .btn {
+    color: $text-color;
+  }
+  .button-subtext {
+    font-style: italic;
+    margin-top: .3em;
+    max-width: 170px;
+  }
+}
+body.chat-open {
+  .login-button .btn {
+    background-color: #ffffff;
+    color: $text-color;
+  }
+}
+

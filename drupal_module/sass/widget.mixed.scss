@@ -1,0 +1,304 @@
+// Utilities
+@import "compass";
+@import "variables";
+@import "mixins";
+
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section {
+  display: block;
+}
+
+html,body,div,form,fieldset,legend,label,ol,ul,li,h1,h2,h3,h4,h5,h6,th,td,caption,p {
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+}
+
+html p, body p {
+    color: #4a4a4a;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+th,td {
+  text-align: left;
+  vertical-align: top;
+}
+
+img {
+  border: 0;
+}
+
+body {
+  font-family: Lato,sans-serif;
+  font-size: 13px;
+  color: #4a4a4a;
+}
+
+#widget {
+  background: #fff;
+  min-width: 210px;
+  max-width: 380px;
+  border: 1px solid #ccc;
+  padding: 15px;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 400;
+  color: #339fd4;
+  padding-bottom: 2px;
+}
+
+.subtle-text {
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #999;
+}
+
+body h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  line-height: 32px;
+}
+
+h3 a:hover i.arrow:after {
+  border-color: #339fd4;
+}
+
+h3 i[class^="icn-"] {
+  display: block;
+  float: left;
+  position: relative;
+  margin-right: 10px;
+}
+
+h3 i.icn-chat {
+  background-image: url(../widgets/mixed/img/icon-chat.png);
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: block;
+  height: 24px;
+  width: 32px;
+  top: 4px;
+}
+
+.chat-open {
+  i.icn-chat {
+    background-image: url(../widgets/mixed/img/icon-chat-open.png);
+  }
+}
+.chat-busy {
+  i.icn-chat {
+    //background-image: url(../widgets/mixed/img/icon-chat-busy.png);
+  }
+}
+
+h3 i.icn-letterbox {
+  background-image: url(../widgets/mixed/img/icon-letterbox.png);
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: block;
+  height: 25px;
+  width: 32px;
+}
+
+h3 i.icn-forum {
+  background-image: url(../widgets/mixed/img/icon-forum.png);
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: block;
+  height: 28px;
+  width: 28px;
+}
+
+h3 i.arrow {
+  margin-top: 4px;
+  float: right;
+}
+
+h3 i.arrow:after {
+  width: 12px;
+  height: 12px;
+  border-color: #d9d9d9;
+  border-width: 0 3px 3px 0;
+}
+
+a,a:visited,a:hover,a:focus {
+  text-decoration: none;
+}
+
+li {
+  list-style-type: none;
+  line-height: normal;
+}
+
+i.arrow {
+  display: inline-block;
+}
+
+i.arrow:after {
+  content: '';
+  display: block;
+  border: solid #000;
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+header {
+  border-bottom: 1px solid #d4d4d4;
+  margin-bottom: 20px;
+  padding: 20px 0;
+}
+
+section {
+  margin-bottom: 25px;
+}
+
+section ul li {
+  margin-bottom: 8px;
+  zoom: 1;
+}
+
+section ul li a:first-letter {
+  text-transform: uppercase;
+}
+
+section ul li a:hover i.arrow:after {
+  border-color: #2582af;
+}
+
+section ul i.arrow {
+  float: left;
+  padding: 5px 5px 5px 0;
+}
+
+section ul i.arrow:after {
+  width: 5px;
+  height: 5px;
+  border-color: #339fd4;
+  border-width: 0 2px 2px 0;
+}
+
+section ul time {
+  color: #999;
+}
+
+section ul time:before {
+  content: "· ";
+}
+
+footer {
+  border-top: 1px solid #d4d4d4;
+  padding-top: 10px;
+  zoom: 1;
+}
+
+footer p {
+  padding-bottom: 15px;
+  letter-spacing: 0 !important;
+}
+
+a[class^="logo-"] {
+  float: left;
+}
+
+a.logo-cyberhus i {
+  background-image: url(../widgets/mixed/img/logo-cyberhus.png);
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: block;
+  height: 29px;
+  width: 149px;
+}
+
+a.logo-kk i {
+  background-image: url(../widgets/mixed/img/logo-kk.png);
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: block;
+  height: 37px;
+  width: 91px;
+  position: relative;
+  top: -5px;
+}
+
+h3 a,section ul li a {
+  color: #4a4a4a;
+  display: block;
+}
+
+h3 a:hover,section ul li a:hover {
+  color: #339fd4;
+}
+
+section ul li:after,footer:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+// Opeka widget overrides
+.login-button {
+  position: relative;
+  .btn {
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #4a4a4a;
+    font-size: 14px;
+    position: absolute;
+    right: 0;
+    text-transform: none;
+    top: -2px;
+    padding: 8px;
+  }
+}
+
+body.page-opeka-widgets-mixed {
+  &.chat-open,
+  &.chat-busy {
+    background-color: white;
+  }
+  &.chat-open {
+    .login-button .btn {
+      background-color: $neonGreen;
+      border: none;
+      color: #fff;
+      &:hover {
+        background-color: darken($neonGreen, 20%);
+        border-color: $neonGreen;
+      }
+    }
+  }
+}
+
+@include small-smart-width {
+  section {
+    margin-bottom: 15px;
+  }
+  .chat h3 {
+    margin-bottom: 4px;
+  }
+  .login-button {
+    .btn {
+      border: 1px solid #ccc;
+      color: #4a4a4a;
+      font-size: 16px;
+      margin-top: 8px;
+      min-width: 110px;
+      right: inherit;
+      padding: 8px;
+      position: inherit;
+    }
+  }
+  .logo-cyberhus,
+  .logo-partner {
+    display: none;
+  }
+}

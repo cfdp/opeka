@@ -2,6 +2,7 @@
 
 // Utilities
 @import "variables";
+@import "mixins";
 
 /* inline widget */
 
@@ -72,7 +73,7 @@ body.page-opeka-widgets-inline {
   }
 }
 
-@media (min-width: $smart) {
+@include smart-width {
   body.page-opeka-widgets-inline {
     .status-content {
       width: 67%;

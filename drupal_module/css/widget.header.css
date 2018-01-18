@@ -1,28 +1,77 @@
+@charset "UTF-8";
 /* Styling for the header widget */
-/* Mixin */
-/* Variables */
-/* $green: #72d477; */
+/*
+* — Variables —
+*/
+/* Responsive media query breakpoints */
+/* Bootstrap overrides */
 /* Typography */
-/* Buttons */
-.login-button {
-  bottom: 30px;
-  position: absolute;
-  right: 15px; }
-
+/* Cyberhus Clean theme (used in widgets) */
+/* Base colors*/
+/* Text Colors */
+/* Curachat additions */
+/*
+* — Mixins —
+*/
+/* Trying to target case when soft keyboard pops up */
+/* line 6, ../sass/widget.header.scss */
 .status-content {
   margin: 0;
-  max-width: 300px; }
-  .status-content ul {
-    margin: 0;
-    padding: 0; }
-  .status-content li {
-    list-style: none; }
+  max-width: 300px;
+}
+@media (min-width: 480px) {
+  /* line 6, ../sass/widget.header.scss */
+  .status-content {
+    display: inline-block;
+    margin-right: 1em;
+  }
+}
+/* line 13, ../sass/widget.header.scss */
+.status-content ul {
+  margin: 0;
+  padding: 0;
+}
+/* line 18, ../sass/widget.header.scss */
+.status-content li {
+  list-style: none;
+}
 
+/* line 23, ../sass/widget.header.scss */
 .read-more {
   display: inline-block;
   margin: 10px 0 0;
   text-align: center;
-  width: 100%; }
-  .read-more a {
-    color: #3a404c;
-    text-decoration: none; }
+  width: 100%;
+}
+/* line 29, ../sass/widget.header.scss */
+.read-more a {
+  color: #3a404c;
+  text-decoration: none;
+}
+
+/* Buttons */
+@media (min-width: 480px) {
+  /* line 36, ../sass/widget.header.scss */
+  .login-button {
+    position: absolute;
+    right: 2em;
+    bottom: 2em;
+    margin-right: 1em;
+  }
+}
+/* line 43, ../sass/widget.header.scss */
+.login-button .btn {
+  color: #1b1d1f;
+}
+/* line 46, ../sass/widget.header.scss */
+.login-button .button-subtext {
+  font-style: italic;
+  margin-top: .3em;
+  max-width: 170px;
+}
+
+/* line 53, ../sass/widget.header.scss */
+body.chat-open .login-button .btn {
+  background-color: #ffffff;
+  color: #1b1d1f;
+}

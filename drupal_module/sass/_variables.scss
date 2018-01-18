@@ -1,28 +1,111 @@
-/* Mixin */
-@mixin vertical-align($position: relative) {
-  position: $position;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
+/*
+* — Variables —
+*/
 
-/* Variables */
-$mob: 11.250em; //180px
-$smart: 30em; //480px
-$tab: 36.625em; //586px
-$desk: 70em; // 1120px
+/* Responsive media query breakpoints */
+$mob: 180px; //11.250em; //
+$micro-height: 230px; // 20em; //
+$tiny-height: 320px;
+$mini-height: 480px;
+$small-width: 230px; // 20em; //
+$small-height: 560px; // 35em; //
+$small-smart-width: 352px; // 22em; //
+$small-smart-height: 640px; // 40em; //
+$smart-width: 480px; //  30em; //
+$tablet-width: 586px; // 36.625em; //
+$tablet-height: 1024px; // 64em; // 
+$narrow-width: 768px; // 48em; //
+$small-desktop-width: 1024px; // 64em; // 
+$desktop-width: 1120px; //  70em; // 
+
+$onepx: 0.063em;
+
 
 $ccBlack: rgb(35, 30, 25);
 $ccGreen: #27ae61;
-/* $green: #72d477; */
 $ccOrange: #e67e22;
 $ccRed: #ED2E3A;
 $ccBlue: #3a404c;
 $ccGray: #BFBFBF;
+$ccGreen: #25AD60;
+$ccDarkGray: #333333;
 $ccLightGray: #e6e6e6;
+$ccLighterGray: #F8F8F8;
 $ccWhite: #fff;
+$neonGreen: #51E789;
+
+$gray-light2: #F8F8F8;
+$gray-darker: #222;
+$pairChatBodyBgColor: $gray-light2;
+$groupChatBodyBgColor: $gray-light2;
+$defaultBodyBgColor: $gray-light2;
+
+$btnBgColor: $ccWhite;
+$disabledBtnBgColor: #e7e7e7;
+$disabledBtnBorderColor: darken( $disabledBtnBgColor, 40% );
+$bntSuccessColor: #27ae61;
+
+$wrapperBgColor: transparent;
+$borderColor: #cccccc;
+$contentBgColor: #ffffff;
+$borderRadius: 5px;
+$bgImage: url("images/repeat_main.png");
+$bgImagePair: url("images/bg_img_pair.png");
+$bgImageGroup: url("images/bg_img_group.png");
+// Room list colors
+$roomInfoColor: #ffffff;
+// Message callout colors
+$messageBgColor: whitesmoke;
+$messageCounselorBgColor: #f4faf4;
+$messageClientBgColor: #f5f9fc;
+// Message callout border left colors
+$messageBorderLeftColor: #cccccc;
+$messageCounselorBLColor: darken( $messageCounselorBgColor, 40% );
+$messageClientBLColor: darken( $messageClientBgColor, 40% );
+// Message callout meta data (time etc) color
+$messageMetaDataColor: #999999;
+$messageCounselorMDColor: #a3d7a3;
+$messageClientMDColor: #91bce0;
+$messageHighlight: #ffffff;
+
+/* Bootstrap overrides */
+$brand-success: $ccGreen;
+
+$btn-success-color:              #fff;
+$btn-success-bg:                 $brand-success;
+$btn-success-border:             darken($btn-success-bg, 5%);
+
 
 /* Typography */
-$font-std: 1em;
-$font-large: 1.2em;
+$font-smallest: 10px;
+$font-smaller: 12px;
+$font-sm: 13px;
+$font-std: 14px;
+$font-large: 16px;
+
+/* Cyberhus Clean theme (used in widgets) */
+/* Base colors*/
+$color-red: #c34b4b;
+$color-green: #688e36;
+$color-blue: #1d9ed0;
+$color-purple: #8d62a4;
+$color-turquoise: #3f9b91;
+$color-orange: #e19214;
+
+$color-gray-dark: #1b1d1f;
+$color-gray: #c7c7c7;
+$color-gray-light: #f1f1f1;
+
+$color-beige: #d4d3d3;
+
+/* Text Colors */
+$text-color: $color-gray-dark;
+$text-color-light: #a1a1a1;
+$link-color: $color-red;
+
+/* Curachat additions */
+$color-green-light: #80B45A;
+$color-orange-light: #EBB560;
+$color-sand: #F5D9AD;
+$color-green-dark: #4d6928;
+

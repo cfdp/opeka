@@ -75,4 +75,7 @@ if (!client) {
 // Load bans from the database before starting the server.
 opeka.ban.loadAll();
 
+// Load invites from the database before starting the server.
+opeka.invites.loadAll();
+
 server = new opeka.Server(nconf, logger);

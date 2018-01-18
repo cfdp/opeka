@@ -13,23 +13,25 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var Opeka = {
-      'status': {},
-      'clientSideMethods': {},
-      'clientData': {
-        'clientId': null,
-        'isBanned': false,
-        'isAdmin': false,
-        'isSignedIn': false
-      },
-      // Placeholder for remote methods, will be set to the dnode remote object when connected
-      'remote': null,
-      'dnode': null,
-      // Boolean specifying whether the serverside Javascript loaded successfully
-      'serverJSLoaded': false,
-      'doorBellSound': null
+    'status': {},
+    'clientSideMethods': {},
+    'clientData': {
+      'clientId': null,
+      'isBanned': false,
+      'isAdmin': false,
+      'isSignedIn': false
     },
-    // Initialise window.JST if it does not exist.
-    JST = JST || {};
+    // Placeholder for remote methods, will be set to the dnode remote object when connected
+    'remote': null,
+    'dnode': null,
+    // Boolean specifying whether the serverside Javascript loaded successfully
+    'serverJSLoaded': false,
+    'doorBellSound': null
+  },
+  // Initialise window.JST if it does not exist.
+  JST = JST || {},
+  Backbone = Backbone || {},
+  Drupal = Drupal || {};
 
 (function ($) {
   "use strict";
@@ -43,7 +45,7 @@ var Opeka = {
     notFound: function (path) {
       var errorMessage = $('<p class="opeka-message error"></p>');
 
-      errorMessage.append(Drupal.t('Page @path was not found.', { '@path': path }));
+      errorMessage.append(Drupal.t('Page @path was not found.', {'@path': path}));
 
       // Replace the app body with our message
       $('#opeka-app').html(errorMessage);
@@ -60,6 +62,8 @@ var Opeka = {
       'rooms': 'roomList',
       'queues/:queueId': 'queue',
       'queues': 'queueList',
+      'invites': 'inviteList',
+      'invites/:token': 'inviteRedirect',
       'feedback/:chatType': 'feedbackPage',
       'goodbye': 'goodbye'
     },
@@ -67,7 +71,6 @@ var Opeka = {
     // Check that the user is signed in, and if not, redirect to the
     // signIn page.
     checkSignIn: function () {
-      // All signed in users are supposed to have the changeRoom method.
       if (!Opeka.clientData.isSignedIn) {
         this.navigate("", {trigger: true});
       }
@@ -85,7 +88,7 @@ var Opeka = {
       });
 
       if (nonce) {
-        // Reserve our spot as soon as the Now server is able.
+        // Reserve our spot as soon as the client is connected.
         $(Opeka).on('connected', function () {
           Opeka.remote.reserveRoomSpot(nonce, function (roomId) {
             view.roomId = roomId;
@@ -124,25 +127,44 @@ var Opeka = {
 
     // The feedback page
     feedbackPage: function (chatType) {
-        var view = new Opeka.UserFeedback({
-          chatType: chatType
-        });
+      var view = new Opeka.UserFeedback({
+        chatType: chatType
+      });
 
-        Opeka.appViewInstance.replaceContent(view.render().el);
-        Opeka.cleanAfterChat();
+      Opeka.appViewInstance.replaceContent(view.render().el);
+      Opeka.cleanAfterChat();
     },
 
     // The actual chatroom page.
     room: function (roomId) {
       var admin = Opeka.clientData.isAdmin,
-          room = Opeka.roomList.get(roomId),
-          sidebar,
-          that = this;
+        room = Opeka.roomList.get(roomId),
+        sidebar,
+        that = this;
 
+      Drupal.settings.opeka.user.roomId = roomId;
       if (this.checkSignIn()) {
+        // Try to load room (it might be private).
         if (!room) {
-          this.navigate('404', { trigger: true });
+          if (Opeka.remote) {
+            Opeka.remote.getRoomById(roomId, function (room) {
+              if (room) {
+                Opeka.roomList.add(room);
+                that.room(roomId);
+              }
+              else {
+                Drupal.settings.opeka.user.roomId = null;
+                that.navigate('rooms', {trigger: true});
+              }
+            });
+          }
+          else {
+            setTimeout(that.room(roomId), 100);
+          }
+          return;
         }
+
+        Drupal.settings.opeka.user.roomId = null;
 
         Opeka.chatView = new Opeka.ChatView({
           admin: admin,
@@ -153,7 +175,8 @@ var Opeka = {
         if (Opeka) {
           sidebar = new Opeka.ChatSidebarView({
             admin: admin,
-            model: room
+            model: room,
+            banCodeGenerator: Opeka.clientData.canGenerateBanCode
           });
         }
 
@@ -196,17 +219,67 @@ var Opeka = {
       Opeka.cleanAfterChat();
     },
 
-    queue: function(queueId) {
+    inviteList: function () {
+      var admin = Opeka.clientData.isAdmin;
+      if (this.checkSignIn() && admin && Drupal.settings.opeka && Drupal.settings.opeka.invite) {
+        var view = new Opeka.InviteListView({});
+
+        Opeka.appViewInstance.replaceContent(view.render().el);
+      }
+      // Need to make sure the chat view is not set. @todo - needs testing
+      Opeka.cleanAfterChat();
+    },
+
+    inviteRedirect: function (token) {
+      var self = this;
+      if (Opeka.remote) {
+        Opeka.remote.getInviteRoomByToken(token, function (room) {
+          if (room) {
+            if (room == 'cancelled') {
+              self.navigate('rooms', {trigger: true});
+              var view = new Opeka.DialogView({
+                content: Backbone.View.prototype.make('p', 'message', Drupal.t('This chat has been cancelled by counselor.')),
+                title: Drupal.t('Chat is cancelled')
+              });
+
+              view.render();
+            }
+            Opeka.roomList.add(room);
+            Drupal.settings.opeka.user.roomId = room.id;
+            if (self.checkSignIn()) {
+              self.navigate('rooms/' + room.id, {trigger: true});
+            }
+          }
+          else {
+            // alert(Drupal.t('It seems your counselor is not available yet, try again in a few minutes'));
+            self.navigate('rooms', {trigger: true});
+            var view = new Opeka.DialogView({
+              content: Backbone.View.prototype.make('p', 'message', Drupal.t('It seems your counselor is not available yet, try again in a few minutes.')),
+              title: Drupal.t('Chat not available')
+            });
+
+            view.render();
+          }
+        });
+      }
+      else {
+        setTimeout(function () {
+          self.inviteRedirect(token);
+        }, 100);
+      }
+    },
+
+    queue: function (queueId) {
       // Need to make sure the chat view is not set. @todo - needs testing
       Opeka.cleanAfterChat();
 
       var queue = Opeka.queueList.get(queueId),
-          that = this,
-          sidebar;
+        that = this,
+        sidebar;
 
       if (this.checkSignIn()) {
         if (!queue) {
-          this.navigate('404', { trigger: true });
+          this.navigate('404', {trigger: true});
         }
         else {
           Opeka.queueView = new Opeka.QueueView({
@@ -261,7 +334,7 @@ var Opeka = {
     }
     // This will react for the private queue only - when the user is in the queue on the room page.
     else if (Opeka.chatView && Opeka.chatView.model.id === roomId && Opeka.chatView.inQueue !== false) {
-      Opeka.remote.roomGetQueueNumber(roomId, function(index) {
+      Opeka.remote.roomGetQueueNumber(roomId, function (index) {
         // Error, user is no longer in the queue, maybe he just joined the
         // room or an error happened.
         if (index === null) {
@@ -349,6 +422,50 @@ var Opeka = {
     Opeka.queueList.reset(queues);
   };
 
+  // For when the server has an updated invites list for us.
+  Opeka.clientSideMethods.receiveInviteList = function (invites) {
+    // This triggers a reset even on the queueList instance, so any views
+    // that use this list can listen to that for updates.
+    Opeka.inviteList.reset(invites);
+  };
+
+  // For when the server has an updated invites list for us.
+  Opeka.clientSideMethods.inviteCreated = function (newInvite) {
+    // This triggers a reset even on the queueList instance, so any views
+    // that use this list can listen to that for updates.
+    var existing  = _.find(Opeka.inviteList.models, function (invite, delta) {
+      return invite.id == newInvite.id;
+    });
+    if (!existing) {
+      Opeka.inviteList.add(newInvite);
+      Opeka.inviteList.trigger('change');
+    }
+  };
+
+  // For when the server has an updated invites list for us.
+  Opeka.clientSideMethods.inviteCancelled = function (inviteId) {
+    // This triggers a reset even on the queueList instance, so any views
+    // that use this list can listen to that for updates.
+    _.each(Opeka.inviteList.models, function (invite, delta) {
+      if (invite.id == inviteId) {
+        Opeka.inviteList.models[delta].set('status', false);
+      }
+    });
+    Opeka.inviteList.trigger('change');
+  };
+
+  // For when the server has an updated invites list for us.
+  Opeka.clientSideMethods.inviteDeleted = function (inviteId) {
+    // This triggers a reset even on the queueList instance, so any views
+    // that use this list can listen to that for updates.
+    _.each(Opeka.inviteList.models, function (invite, delta) {
+      if (invite.id == inviteId) {
+        delete(Opeka.inviteList.models[delta]);
+      }
+    });
+    Opeka.inviteList.trigger('delete');
+  };
+
   // Add the new room to our local room list.
   Opeka.clientSideMethods.roomCreated = function (room) {
     var roomIsAdded = Opeka.roomList.get(room.id);
@@ -430,7 +547,7 @@ var Opeka = {
         Opeka.userJoinedSound();
       }
       var messageObj = {
-        message: Drupal.t('@user has joined the room.', { '@user': nickname }),
+        message: Drupal.t('@user has joined the room.', {'@user': nickname}),
         system: true
       };
       Opeka.chatView.receiveMessage(messageObj);
@@ -454,7 +571,7 @@ var Opeka = {
     }
     else if (Opeka.chatView.model.id === roomId) {
       var messageObj = {
-        message: Drupal.t('User @user was kicked from the chat.', { '@user': user }),
+        message: Drupal.t('User @user was kicked from the chat.', {'@user': user}),
         system: true
       };
       Opeka.chatView.receiveMessage(messageObj);
@@ -462,7 +579,7 @@ var Opeka = {
   };
 
   // Respond to a queue being flushed.
-  Opeka.clientSideMethods.queueIsFlushed = function(clientId) {
+  Opeka.clientSideMethods.queueIsFlushed = function (clientId) {
     // The queue is flushed, navigate to a different page and
     // use a FatalErrorDialog to force them to reload the page.
     if (Opeka.clientData.clientId === clientId) {
@@ -480,7 +597,7 @@ var Opeka = {
   Opeka.clientSideMethods.roomUserLeft = function (roomId, nickname, chatDuration) {
     if (Opeka.chatView.model.id === roomId) {
       var messageObj = {
-        message: Drupal.t('@user has left the room. Chat duration: @chatDuration minutes.', { '@user': nickname, '@chatDuration': chatDuration }),
+        message: Drupal.t('@user has left the room. Chat duration: @chatDuration minutes.', {'@user': nickname, '@chatDuration': chatDuration}),
         system: true
       };
       Opeka.chatView.receiveMessage(messageObj);
@@ -490,13 +607,13 @@ var Opeka = {
   // Response to a user being muted.
   Opeka.clientSideMethods.roomUserMuted = function (roomId, clientId, user, nickname) {
     var room = Opeka.roomList.get(roomId),
-        messageObj = {};
+      messageObj = {};
     // Make sure we only mute the correct user and we got the room.
     if (Opeka.clientData.clientId === clientId && room) {
       room.set('activeUser', user);
       if (Opeka.chatView.model.id === roomId) {
         messageObj = {
-          message: Drupal.t('You have been muted by @user.', { '@user': nickname }),
+          message: Drupal.t('You have been muted by @user.', {'@user': nickname}),
           system: true,
           name: nickname
         };
@@ -505,7 +622,7 @@ var Opeka = {
     }
     else if (room && Opeka.chatView.model.id === roomId) {
       messageObj = {
-        message: Drupal.t('@user have been muted.', { '@user': user.name }),
+        message: Drupal.t('@user have been muted.', {'@user': user.name}),
         system: true,
         name: nickname
       };
@@ -516,13 +633,13 @@ var Opeka = {
   // Response to a user being unmuted.
   Opeka.clientSideMethods.roomUserUnmuted = function (roomId, clientId, user, nickname, messageText) {
     var room = Opeka.roomList.get(roomId),
-        messageObj = {};
+      messageObj = {};
     // Make sure we only unmute the correct user and we got the room.
     if (Opeka.clientData.clientId === clientId && room) {
       room.set('activeUser', user);
       if (Opeka.chatView.model.id === roomId) {
         messageObj = {
-          message: Drupal.t('You have been unmuted by @user.', { '@user': nickname }),
+          message: Drupal.t('You have been unmuted by @user.', {'@user': nickname}),
           system: true,
           name: nickname
         };
@@ -531,7 +648,7 @@ var Opeka = {
     }
     else if (room && Opeka.chatView.model.id === roomId) {
       messageObj = {
-        message: Drupal.t('@user have been unmuted.', { '@user': user.name }),
+        message: Drupal.t('@user have been unmuted.', {'@user': user.name}),
         system: true,
         name: nickname
       };
@@ -539,18 +656,18 @@ var Opeka = {
     }
   };
 
-  Opeka.clientSideMethods.setIsBanned = function(isBanned) {
+  Opeka.clientSideMethods.setIsBanned = function (isBanned) {
     Opeka.clientData.isBanned = isBanned;
   }
 
   // Response to a user not entering the correct access code
   Opeka.clientSideMethods.accessDenied = function (clientId) {
-      var view = new Opeka.FatalErrorDialogView({
-        message: Drupal.t("Sorry, you did not enter the correct code."),
-        title: Drupal.t('Wrong code.')
-      });
+    var view = new Opeka.FatalErrorDialogView({
+      message: Drupal.t("Sorry, you did not enter the correct code."),
+      title: Drupal.t('Wrong code.')
+    });
 
-      view.render();
+    view.render();
   };
 
   // Response to a user not being logged in when required
@@ -568,9 +685,9 @@ var Opeka = {
    * If the client user is leaving a pair room and hidePairRoomsOnRoomList is true
    * send him to the goodbye page
    */
-  Opeka.getExitRoute = function(room) {
+  Opeka.getExitRoute = function (room) {
     var admin = Opeka.clientData.isAdmin;
-    if (!admin && room.get('maxSize') === 2  && Opeka.features.hidePairRoomsOnRoomList === true) {
+    if (!admin && room.get('maxSize') === 2 && Opeka.features.hidePairRoomsOnRoomList === true) {
       Opeka.router.navigate("goodbye", {trigger: true});
     }
     else {
@@ -581,7 +698,7 @@ var Opeka = {
   /**
    * Make sure user is properly removed from room
    */
-  Opeka.cleanAfterChat = function() {
+  Opeka.cleanAfterChat = function () {
     // Need to make sure the chat view and sidebar is not set.
     Opeka.chatView = null;
     Opeka.appViewInstance.$el.find('.sidebar').html('');
@@ -590,7 +707,7 @@ var Opeka = {
     Opeka.removeRoomSizeClass();
     // We check if the user is signed in
     if (Opeka.clientData.isSignedIn) {
-      Opeka.remote.cleanAfterChat(Opeka.clientData.clientId, function() {
+      Opeka.remote.cleanAfterChat(Opeka.clientData.clientId, function () {
         // If we need to take action depending on the results from the server,
         // it can be done here...
       });
@@ -601,7 +718,7 @@ var Opeka = {
   Opeka.signIn = function (user, callback) {
     Opeka.remote.signIn(user, function (clientData) {
       var destination = 'rooms',
-          footer;
+        onlineStatus;
 
       _.extend(Opeka.clientData, clientData);
 
@@ -616,23 +733,11 @@ var Opeka = {
 
       Opeka.router.navigate(destination, {trigger: true});
 
-      footer = new Opeka.ChatFooterView({
-        model: Opeka.status,
-        banCodeGenerator: Opeka.clientData.canGenerateBanCode
+      onlineStatus = new Opeka.ChatStatusView({
+        model: Opeka.status
       });
 
-      /**
-       * @todo sometimes this function runs twice, it's going from user.authenticate function.
-       * let's check if '.opeka-chat-footer' not created yet.
-       */
-      var footerblock = $('#opeka-app .footer');
-      if (footerblock.find('.opeka-chat-footer').length) {
-        footerblock.html(footer.render().el);
-      }
-      else {
-        footerblock.append(footer.render().el);
-      }
-
+      $('#navbar').find('.navbar-nav.secondary').prepend(onlineStatus.render().el);
     });
   };
 
@@ -647,8 +752,8 @@ var Opeka = {
 
   // Adds CSS class to the body element of the page
   // allows us to style group chats and pair room chats differently
-  Opeka.addRoomSizeToBody = function() {
-    if ($( "#room-size" ).data( "room-size" ) == 2) {
+  Opeka.addRoomSizeToBody = function () {
+    if ($("#room-size").data("room-size") == 2) {
       $('body').removeClass('room-size-2 groupchat').addClass('room-size-2');
     }
     else {
@@ -657,16 +762,16 @@ var Opeka = {
   };
 
   // Remove room size info from body tag
-  Opeka.removeRoomSizeClass = function() {
-      $('body').removeClass('room-size-2 groupchat');
+  Opeka.removeRoomSizeClass = function () {
+    $('body').removeClass('room-size-2 groupchat');
   };
-  
+
   // Handler for closing the screeningPopover upon click outside element    
-  Opeka.screeningPopoverClose = function() {
-    $('body').on('click', function(event) {
+  Opeka.screeningPopoverClose = function () {
+    $('body').on('click', function (event) {
       var content;
       // if we are clicking somewhere off the button, hide the popover
-      if( !$(event.target).closest('.screening-wrapper').length ) {
+      if (!$(event.target).closest('.screening-wrapper').length) {
         content = $('.screening-question');
         content.hide();
       }
@@ -674,7 +779,7 @@ var Opeka = {
   };
 
   // Play a sound when a client joins the chat
-  Opeka.userJoinedSound = function() {
+  Opeka.userJoinedSound = function () {
     Opeka.doorBellSound.play();
   };
 
@@ -692,22 +797,23 @@ var Opeka = {
 
     Opeka.roomList = new Opeka.RoomList();
     Opeka.queueList = new Opeka.QueueList();
+    Opeka.inviteList = new Opeka.InviteList();
 
     Opeka.appViewInstance = new Opeka.AppView();
     Opeka.statusViewInstance = new Opeka.OnlineStatusView({
       model: Opeka.status
     });
 
-    Opeka.appViewInstance.on('render', function(view) {
-      view.$el.find('.footer').append(Opeka.statusViewInstance.render().el);
+    Opeka.appViewInstance.on('render', function (view) {
+      $('#navbar').find('.navbar-nav.secondary').prepend(Opeka.statusViewInstance.render().el);
     });
 
     $('#opeka-app').html(Opeka.appViewInstance.render().el);
-    
+
     // If the connection is dropped, advise the user that he has to
     // reload the page.
 
-    Opeka.onDisconnect = function() {
+    Opeka.onDisconnect = function () {
 
       // If the user is banned, tell him to go away.
       if (Opeka.clientData.isBanned) {
@@ -728,7 +834,7 @@ var Opeka = {
 
     // Check whether the serverside javascript has loaded
     window.setTimeout(function () {
-      if(!Opeka.serverJSLoaded) {
+      if (!Opeka.serverJSLoaded) {
         $(window).unbind('beforeunload.opeka');
         view = new Opeka.FatalErrorDialogView({
           message: Drupal.t('Your connection to the chat server was lost. Please reconnect. Contact support if problem persists.'),
@@ -746,9 +852,9 @@ var Opeka = {
   });
 
   // Set up connect handler.
-  Opeka.onConnect = function(remote) {
+  Opeka.onConnect = function (remote) {
     Opeka.remote = remote;
-    Opeka.remote.getFeatures(function(features) {
+    Opeka.remote.getFeatures(function (features) {
       Opeka.features = features;
     });
     $(Opeka).trigger("connected");

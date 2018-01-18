@@ -4,7 +4,7 @@
  * Advanced admin settings form for Opeka.
  */
 function opeka_admin_advanced_settings_form($form, &$form_state) {
-  form_load_include($form_state, 'admin.inc', 'lol_queue');
+  form_load_include($form_state, 'admin.inc');
 
   $form['opeka_connectjs_url'] = array(
     '#type' => 'textfield',
@@ -68,6 +68,14 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#description' => t('If the popup or the multi widgets are used, please provide the URL of the client site, eg. http://mysite.com.'),
     '#required' => FALSE,
     '#default_value' => variable_get('opeka_client_url', ''),
+  );
+  
+  $form['opeka_mixed_widget_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Mixed widget'),
+    '#description' => t('If the mixed widget is used, please provide the URL of the jsonp resource, e.g. https://mysite.com/resource?.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_mixed_widget_url', ''),
   );
 
   $form['opeka_custom_css'] = array(
