@@ -495,3 +495,15 @@ function opeka_user_login(&$edit, $account) {
     $_GET['destination'] = 'admin/opeka';
   }
 }
+
+function opeka_disable_block($module, $delta) {
+  db_update('block')
+    ->fields([
+      'status' => 0,
+    ])
+    ->condition('theme', 'curachat_v2')
+    ->condition('module', $module)
+    ->condition('delta', $delta)
+    ->execute()
+  ;
+}
