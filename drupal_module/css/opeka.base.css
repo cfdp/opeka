@@ -1031,24 +1031,29 @@ body.opeka-client #opeka-app .signin-view .signin-footnote {
   font-size: 13px;
 }
 /* line 870, ../sass/opeka.base.scss */
+body.opeka-client #opeka-app ul.room-list {
+  max-width: 500px;
+  margin: 20px auto;
+}
+/* line 875, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .content.client-sidebar-0 {
   width: 100%;
 }
-/* line 873, ../sass/opeka.base.scss */
+/* line 878, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .content.client-sidebar-1 {
   width: 66%;
 }
-/* line 876, ../sass/opeka.base.scss */
+/* line 881, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .opeka-chat-sidebar {
   margin-top: 0;
 }
 @media (min-width: 1120px) {
-  /* line 876, ../sass/opeka.base.scss */
+  /* line 881, ../sass/opeka.base.scss */
   body.opeka-client #opeka-app .opeka-chat-sidebar {
     margin-top: 60px;
   }
 }
-/* line 884, ../sass/opeka.base.scss */
+/* line 889, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app ul.chat-message-list {
   position: fixed;
   top: 45px;
@@ -1056,7 +1061,7 @@ body.opeka-client #opeka-app ul.chat-message-list {
   width: 90%;
 }
 @media (min-width: 1120px) {
-  /* line 884, ../sass/opeka.base.scss */
+  /* line 889, ../sass/opeka.base.scss */
   body.opeka-client #opeka-app ul.chat-message-list {
     position: relative;
     width: 100%;
@@ -1064,50 +1069,51 @@ body.opeka-client #opeka-app ul.chat-message-list {
     bottom: auto;
   }
 }
-/* line 898, ../sass/opeka.base.scss */
+/* line 903, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .footer {
   display: none;
 }
-/* line 904, ../sass/opeka.base.scss */
+/* line 909, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app {
-  /* Hide sidebar in group chats on small screens */
+  /* Show user list in sidebar as dropdown in group chats on small screens */
 }
-/* line 906, ../sass/opeka.base.scss */
+/* line 911, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .sidebar {
   display: block;
   position: fixed;
   top: 9px;
   right: 81px;
   z-index: 3;
+  width: 190px;
 }
 @media (min-width: 1120px) {
-  /* line 906, ../sass/opeka.base.scss */
+  /* line 911, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .sidebar {
     position: relative;
     top: auto;
     right: auto;
   }
 }
-/* line 917, ../sass/opeka.base.scss */
+/* line 923, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .sidebar .sidebar-block {
   margin: 0;
   position: absolute;
   right: 33px;
 }
 @media (min-width: 1120px) {
-  /* line 917, ../sass/opeka.base.scss */
+  /* line 923, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .sidebar .sidebar-block {
     position: relative;
     right: auto;
   }
 }
 @media (min-width: 1120px) {
-  /* line 926, ../sass/opeka.base.scss */
+  /* line 932, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .sidebar .opeka-chat-sidebar {
     margin-top: 40px;
   }
 }
-/* line 931, ../sass/opeka.base.scss */
+/* line 937, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .sidebar .sidebar-block-heading {
   display: inline-block;
   margin-bottom: 0;
@@ -1131,7 +1137,7 @@ body.opeka-client.groupchat #opeka-app .sidebar .sidebar-block-heading {
   margin-top: 0;
 }
 @media (min-width: 1120px) {
-  /* line 931, ../sass/opeka.base.scss */
+  /* line 937, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .sidebar .sidebar-block-heading {
     font-size: 14px;
     background-color: transparent;
@@ -1139,43 +1145,44 @@ body.opeka-client.groupchat #opeka-app .sidebar .sidebar-block-heading {
     border: none;
   }
 }
-/* line 941, ../sass/opeka.base.scss */
+/* line 947, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .sidebar .user-list {
   border: 1px solid #cccccc;
   border-radius: 5px;
   background-color: #fff;
   padding: 5px;
-  width: 177px;
+  width: 181px;
+  position: absolute;
 }
 @media (min-width: 1120px) {
-  /* line 941, ../sass/opeka.base.scss */
+  /* line 947, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .sidebar .user-list {
     background-color: transparent;
     border: none;
   }
 }
-/* line 952, ../sass/opeka.base.scss */
+/* line 959, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .sidebar li.user-list-item {
   font-size: 12px;
 }
-/* line 956, ../sass/opeka.base.scss */
+/* line 963, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .client-header {
   padding: 5px 10px 0 10px;
   z-index: 2;
 }
 @media (min-width: 586px) {
-  /* line 956, ../sass/opeka.base.scss */
+  /* line 963, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .client-header {
     padding: 10px 10px 0 15px;
   }
 }
 @media (min-width: 1120px) {
-  /* line 956, ../sass/opeka.base.scss */
+  /* line 963, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .client-header {
     padding: 0 10px 0 0;
   }
 }
-/* line 966, ../sass/opeka.base.scss */
+/* line 973, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .chat-name {
   font-size: 13px;
   height: 35px;
@@ -1184,29 +1191,29 @@ body.opeka-client.groupchat #opeka-app .chat-name {
   width: 120px;
 }
 @media (min-width: 586px) {
-  /* line 966, ../sass/opeka.base.scss */
+  /* line 973, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .chat-name {
     font-size: 18px;
     width: 50%;
   }
 }
-/* line 977, ../sass/opeka.base.scss */
+/* line 984, ../sass/opeka.base.scss */
 body.opeka-client.groupchat #opeka-app .content.client-sidebar-0 {
   width: 100%;
 }
 @media (min-width: 586px) {
-  /* line 977, ../sass/opeka.base.scss */
+  /* line 984, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .content.client-sidebar-0 {
     width: 66%;
   }
 }
 @media (min-width: 1120px) {
-  /* line 977, ../sass/opeka.base.scss */
+  /* line 984, ../sass/opeka.base.scss */
   body.opeka-client.groupchat #opeka-app .content.client-sidebar-0 {
     width: 66%;
   }
 }
-/* line 987, ../sass/opeka.base.scss */
+/* line 994, ../sass/opeka.base.scss */
 body.opeka-client .menu {
   float: right;
   margin-right: 0;
