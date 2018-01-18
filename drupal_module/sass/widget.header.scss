@@ -1,11 +1,12 @@
 /* Styling for the header widget */
 // Utilities
 @import "variables";
+@import "mixins";
 
 .status-content {
   margin: 0;
   max-width: 300px;
-  @media (min-width: $smart) {
+  @include smart-width {
     display: inline-block;
     margin-right: 1em;
   }
@@ -33,7 +34,7 @@
 
 /* Buttons */
 .login-button {
-  @media (min-width: $smart) {
+  @include smart-width {
     position: absolute;
     right: 2em;
     bottom: 2em;

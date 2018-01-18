@@ -168,7 +168,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
     'jquery.ui.theme.css',*/
   ), $stylesheets);
   foreach ($stylesheets as $filename) {
-    drupal_add_css($path . '/css/' . $filename);
+    drupal_add_css($path . '/css/' . $filename, array('weight' => CSS_THEME + 1));
   }
 
   // Get settings from the admin interface
@@ -201,6 +201,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $mixed_widget_url = check_plain(variable_get('opeka_mixed_widget_url', ''));
   $age_min = check_plain(variable_get('opeka_age_min', 9));
   $age_max = check_plain(variable_get('opeka_age_max', 23));
+  $clients_writing_message = check_plain(variable_get('opeka_clients_writing_message', 0));
+
 
 
   // Settings to expose to the JavaScript client.
@@ -227,8 +229,9 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['mixed_widget_url'] = $mixed_widget_url;
   $settings['age_min'] = $age_min;
   $settings['age_max'] = $age_max;
+  $settings['clients_writing_message'] = $clients_writing_message;
 
-  // Add js files and settings
+    // Add js files and settings
   drupal_add_js(array('opeka' => $settings), 'setting');
 
   // Load the required JavaScript libraries.
@@ -373,7 +376,8 @@ function opeka_theme($existing, $type, $theme, $path) {
 
 /*
  * Implements hook_preprocess_html
- * Add html template suggestions
+ *
+ * Add html template suggestions and chat role css class to body
  */
 function opeka_preprocess_html(&$vars) {
   $path_array = explode("/",current_path());
@@ -384,7 +388,16 @@ function opeka_preprocess_html(&$vars) {
       $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype'); // Get the value
     }
   }
+  $opeka_role = "opeka-no-access";
+  if (user_access('administer opeka chat')) {
+    $opeka_role = "opeka-counselor";
+  }
+  else if (user_access('access opeka chat')) {
+    $opeka_role = "opeka-client";
+  }
+  $vars['classes_array'][] = drupal_clean_css_identifier($opeka_role);
 }
+
 
 /*
  * Implements hook_preprocess_page
@@ -481,4 +494,16 @@ function opeka_user_login(&$edit, $account) {
   if ($_POST['form_id'] != 'user_pass_reset') {
     $_GET['destination'] = 'admin/opeka';
   }
+}
+
+function opeka_disable_block($module, $delta) {
+  db_update('block')
+    ->fields([
+      'status' => 0,
+    ])
+    ->condition('theme', 'curachat_v2')
+    ->condition('module', $module)
+    ->condition('delta', $delta)
+    ->execute()
+  ;
 }

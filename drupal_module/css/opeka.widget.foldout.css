@@ -1,15 +1,22 @@
+@charset "UTF-8";
 /* Styling for the foldout widget
  * This file is included via embedded javascript client side (popupController.js)
  */
-/* Mixin */
-/* Variables */
+/*
+* — Variables —
+*/
+/* Responsive media query breakpoints */
+/* Bootstrap overrides */
 /* Typography */
-/* Cyberhus Clean theme */
+/* Cyberhus Clean theme (used in widgets) */
 /* Base colors*/
 /* Text Colors */
 /* Curachat additions */
-/* Breakpoints */
-/* line 7, ../sass/opeka.widget.foldout.scss */
+/*
+* — Mixins —
+*/
+/* Trying to target case when soft keyboard pops up */
+/* line 8, ../sass/opeka.widget.foldout.scss */
 .opeka-chat-foldout-wrapper {
   top: 15%;
   position: fixed;
@@ -17,7 +24,7 @@
   z-index: 10;
 }
 
-/* line 14, ../sass/opeka.widget.foldout.scss */
+/* line 15, ../sass/opeka.widget.foldout.scss */
 .opeka-chat-foldout-wrapper.demo-group-chat {
   top: 45%;
 }

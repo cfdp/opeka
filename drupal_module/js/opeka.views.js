@@ -57,7 +57,7 @@
       "submit .leave-room-form": "leaveRoom",
       "click .reply-to-whisper": "whisperReply",
       "click .return-writers-msg": "toggleWritersMessage",
-      "scroll": "updateScrollPosition"
+      "scroll": "updateScrollPosition",
     },
 
     initialize: function (options) {
@@ -99,8 +99,7 @@
     },
 
     render: function () {
-      // We need to make sure that the writersMessage is rendered
-      // if it changed state
+      // We need to make sure that the writersMessage is updated if it changed state
       var writersMessageChanged = false;
       if ((this.$el.find('.writers-message').length) && (this.writersMessage !== this.$el.find('.writers-message').text)) {
         writersMessageChanged = true;
@@ -112,7 +111,9 @@
       var activeUser = this.model.get('activeUser'),
         inQueueMessage = '',
         hideForm = false,
-        formPresent = true;
+        formPresent = true,
+        showWritingMsg = (Drupal.settings.opeka.clients_writing_message || this.admin) ? true : false;
+
       if (!activeUser) {
         activeUser = {muted: false};
       }
@@ -141,6 +142,8 @@
       this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
         formatTimestamp: this.formatTimestamp,
+        chatName: this.model.get('maxSize') === 2 ? Drupal.settings.opeka.pair_chat_name : Drupal.settings.opeka.group_chat_name,
+        showWritingMsg: (Drupal.settings.opeka.clients_writing_message === 1 || this.admin),
         labels: {
           deleteMessage: Drupal.t('Delete'),
           whispered: Drupal.t('Whispered'),
@@ -189,7 +192,7 @@
         }));
       }
       // Render the writersMessage
-      if (this.writersMessage) {
+      if (this.writersMessage && showWritingMsg) {
         if (this.$el.find('.writers-message').length) {
           this.$el.find('.writers-message').text(this.writersMessage)
         }
@@ -444,7 +447,7 @@
           return true;
         }
       });
-    }
+    },
   });// END ChatView
 
   // Sidebar for the chat with user lists and admin options.
@@ -461,12 +464,14 @@
       "click .pause-toggle": "pauseToggle",
       "click .unmute-user": "unmuteUser",
       "click .whisper": "whisper",
-      "click .screening-wrapper": "screeningToggle"
+      "click .dropdown-toggler": "dropdownToggler",
+      "click .generate-ban-code": "generateBanCode"
     },
 
     initialize: function (options) {
       var self = this;
       this.admin = options.admin;
+      this.banCodeGenerator = options.banCodeGenerator;
       _.bindAll(this);
 
       this.model.on('change:userList', this.render, this);
@@ -488,6 +493,7 @@
         this.$el.html(JST.opeka_chat_sidebar_tmpl({
           admin: this.admin,
           clientId: Opeka.clientData.clientId,
+          banCodeGenerator: this.banCodeGenerator,
           labels: {
             userListHeading: Drupal.t('User list'),
             roomActions: Drupal.t('Room actions'),
@@ -618,12 +624,17 @@
       }
     },
 
-
-    // For toggling visibility of screening questions
-    screeningToggle: function (event) {
+    // For toggling visibility of user list (for clients )and screening questions
+    dropdownToggler: function (event) {
       var btn = $(event.currentTarget),
-        content = btn.children('.screening-question');
+          content;
 
+      if ($(event.target).hasClass('sidebar-block-heading') && !this.admin) {
+        content = btn.siblings('.sidebar-block-content').children('.user-list');
+      }
+      else if ($(event.target).hasClass('screening-wrapper')) {
+        content = btn.children('.screening-question');
+      }
       content.toggle();
 
       if (event) {
@@ -631,6 +642,17 @@
       }
     },
 
+    generateBanCode: function (event) {
+      Opeka.remote.getBanCode(function (banCode) {
+        var dialog = new Opeka.BanCodeDialogView({banCode: banCode});
+
+        dialog.render();
+      });
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
 
     // Open dialog to whisper to an user.
     whisper: function (event) {
@@ -650,18 +672,12 @@
   });// END ChatSidebarView
 
   // Footer for the chat with generate ban code and open/close button.
-  Opeka.ChatFooterView = Backbone.View.extend({
+  Opeka.ChatStatusView = Backbone.View.extend({
     className: 'opeka-chat-footer',
-
-    events: {
-      "click .generate-ban-code": "generateBanCode"
-    },
 
     initialize: function (options) {
       var self = this;
-      this.banCodeGenerator = options.banCodeGenerator;
       _.bindAll(this);
-
     },
 
     render: function () {
@@ -674,20 +690,7 @@
           }
         }));
       }
-
       return this;
-    },
-
-    generateBanCode: function (event) {
-      Opeka.remote.getBanCode(function (banCode) {
-        var dialog = new Opeka.BanCodeDialogView({banCode: banCode});
-
-        dialog.render();
-      });
-
-      if (event) {
-        event.preventDefault();
-      }
     },
   });
 
@@ -864,7 +867,7 @@
 
   // Simple view displayed in the footer containing status for the chat.
   Opeka.OnlineStatusView = Backbone.View.extend({
-    tagName: 'p',
+    tagName: 'li',
     className: 'online-status-view',
 
     initialize: function (options) {
@@ -879,14 +882,33 @@
     },
 
     render: function () {
+      var chatStatus,
+          statusTextGuests,
+          statusTextcounselors,
+          guests = this.model.get('guests'),
+          counselors = this.model.get('councellors');
+
       // Don’t render if we don’t have a status.
       if (this.model.has('councellors') && this.model.has('guests')) {
+        if (this.model.get('chatOpen') === true) {
+          chatStatus = "chat-open";
+        }
+        else {
+          chatStatus = "chat-closed"
+        }
+        statusTextGuests = Drupal.formatPlural(guests, '1 guest', '@count guests');
+        statusTextcounselors = Drupal.formatPlural(counselors, '1 counselor', '@count counselors');
         this.$el.html(JST.opeka_online_status_tmpl({
-          content: Drupal.t('There are !guests guests and !councellors councellors online', {
-            '!guests': '<span class="guests">' + this.model.get('guests') + '</span>',
-            '!councellors': '<span class="councellors">' + this.model.get('councellors') + '</span>'
-          })
+          content: '<span class="status ' + chatStatus + '"></span>' + statusTextGuests + ", " + statusTextcounselors
         }));
+
+
+//        this.$el.html(JST.opeka_online_status_tmpl({
+//          content: '<span class="status ' + chatStatus + '"></span>' + '!guests guests !councellors councellors online', {
+//            '!guests': this.model.get('guests')
+//            '!councellors': '<span class="councellors">' + this.model.get('councellors') + '</span>'
+//          }
+//        }));
       }
 
       return this;
@@ -1422,7 +1444,8 @@
           fullRoomLink: Opeka.features.fullRoomLink,
           pausedRoomText: Drupal.t('Paused'),
           privateRoomText: Drupal.t('Private'),
-          chatClosed: Drupal.t('The chat is closed. Users will not be able to log into chat rooms before it is opened by a coordinator. When turned on the chatsign will appear as "Occupied" until you create a room.')
+          chatClosed: Drupal.t('The chat is closed. Users will not be able to log into chat rooms before it is opened by a coordinator. When turned on the chatsign will appear as "Occupied" until you create a room.'),
+          editOpeningHours: Drupal.t('Edit opening hours')
         },
         hidePairRooms: hidePairRooms,
         rooms: roomList,

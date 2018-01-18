@@ -1,13 +1,20 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=Montserrat:400,500,700,800");
-/* Mixin */
-/* Variables */
+/*
+* — Variables —
+*/
+/* Responsive media query breakpoints */
+/* Bootstrap overrides */
 /* Typography */
-/* Cyberhus Clean theme */
+/* Cyberhus Clean theme (used in widgets) */
 /* Base colors*/
 /* Text Colors */
 /* Curachat additions */
-/* Breakpoints */
-/* line 6, ../sass/widget.scss */
+/*
+* — Mixins —
+*/
+/* Trying to target case when soft keyboard pops up */
+/* line 7, ../sass/widget.scss */
 html,
 body {
   background: none transparent;
@@ -20,54 +27,54 @@ body {
   padding: 0px;
   margin: 0;
 }
-/* line 17, ../sass/widget.scss */
+/* line 18, ../sass/widget.scss */
 html p,
 body p {
   color: #fff;
   margin: 0 0 5px 0;
 }
-/* line 21, ../sass/widget.scss */
+/* line 22, ../sass/widget.scss */
 html body.admin-menu.page-opeka-widgets,
 body body.admin-menu.page-opeka-widgets {
   margin-top: 0px !important;
 }
-/* line 24, ../sass/widget.scss */
+/* line 25, ../sass/widget.scss */
 html body.admin-menu.page-opeka-widgets #admin-menu,
 body body.admin-menu.page-opeka-widgets #admin-menu {
   display: none;
 }
 
-/* line 29, ../sass/widget.scss */
+/* line 30, ../sass/widget.scss */
 body.chat-open,
 body.chat-busy {
   background-image: none;
 }
 
-/* line 34, ../sass/widget.scss */
+/* line 35, ../sass/widget.scss */
 body.chat-open,
 body.chat-open .status-wrapper,
 body.chat-open .name-tab {
   background-color: #80B45A;
 }
-/* line 39, ../sass/widget.scss */
+/* line 40, ../sass/widget.scss */
 body.chat-open .login-button .btn {
   background-color: #4d6928;
   color: white;
 }
 
-/* line 46, ../sass/widget.scss */
+/* line 47, ../sass/widget.scss */
 body.chat-busy,
 body.chat-busy .status-wrapper,
 body.chat-busy .name-tab {
   background-color: #e19214;
 }
 
-/* line 53, ../sass/widget.scss */
+/* line 54, ../sass/widget.scss */
 .name-tab {
   background-color: #BFBFBF;
 }
 
-/* line 57, ../sass/widget.scss */
+/* line 58, ../sass/widget.scss */
 .status-tab {
   color: #fff;
   font-weight: 700;
@@ -76,7 +83,7 @@ body.chat-busy .name-tab {
   width: 100%;
 }
 
-/* line 65, ../sass/widget.scss */
+/* line 66, ../sass/widget.scss */
 .status-wrapper {
   background-color: #BFBFBF;
   font-size: 1em;
@@ -85,56 +92,56 @@ body.chat-busy .name-tab {
   box-sizing: border-box;
 }
 
-/* line 74, ../sass/widget.scss */
+/* line 75, ../sass/widget.scss */
 .chat-closed .status-wrapper,
 .chat-closed .name-tab {
   background-color: #c7c7c7;
 }
 
-/* line 80, ../sass/widget.scss */
+/* line 81, ../sass/widget.scss */
 .status-content {
   margin: 0;
 }
-/* line 82, ../sass/widget.scss */
+/* line 83, ../sass/widget.scss */
 .status-content a {
   color: white;
   text-decoration: underline;
 }
 
-/* line 89, ../sass/widget.scss */
+/* line 90, ../sass/widget.scss */
 .status-content,
 .status-content ul {
   margin: 0;
   padding: 0;
 }
-/* line 93, ../sass/widget.scss */
+/* line 94, ../sass/widget.scss */
 .status-content li,
 .status-content ul li {
   list-style: none;
 }
-/* line 97, ../sass/widget.scss */
+/* line 98, ../sass/widget.scss */
 .status-content ul,
 .status-content .opening-hours {
   margin-bottom: 10px;
 }
 
-/* line 103, ../sass/widget.scss */
+/* line 104, ../sass/widget.scss */
 .read-more {
   display: inline-block;
   margin: 10px 0 0;
   text-align: center;
   width: 100%;
 }
-/* line 108, ../sass/widget.scss */
+/* line 109, ../sass/widget.scss */
 .read-more a {
   text-decoration: underline;
 }
-/* line 110, ../sass/widget.scss */
+/* line 111, ../sass/widget.scss */
 .read-more a:hover {
   text-decoration: underline;
 }
 
-/* line 116, ../sass/widget.scss */
+/* line 117, ../sass/widget.scss */
 .login-button .btn {
   display: inline-block;
   background-color: white;

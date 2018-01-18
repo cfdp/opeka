@@ -37,7 +37,7 @@ function opeka_admin_page() {
  * Admin settings form for Opeka.
  */
 function opeka_admin_settings_form($form, &$form_state) {
-  form_load_include($form_state, 'admin.inc', 'lol_queue');
+  form_load_include($form_state, 'admin.inc');
 
   $form['opeka_reg_pair_url'] = array(
     '#type' => 'textfield',
@@ -61,6 +61,14 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#description' => t('Toggle the user list visibility in the pair chat. Check it if the user list should be visible'),
     '#required' => FALSE,
     '#default_value' => variable_get('opeka_pairchat_user_list', 0),
+  );
+
+  $form['opeka_clients_writing_message'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Clients can see the "User is writing" message'),
+    '#description' => t('Toggle the ability for clients to see the "User is writing" message. Check it if the clients should be able to see the message.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_clients_writing_message', 0),
   );
 
   $form['opeka_widget_header_button_subtext'] = array(

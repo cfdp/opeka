@@ -200,3 +200,14 @@ function opeka_update_7004() {
   $schema = opeka_schema();
   db_add_field('opeka_stats', 'chat_duration', $schema['opeka_stats']['fields']['chat_duration']);
 }
+
+/**
+ * Disable default blocks after Bootstrap theme update.
+ */
+function opeka_update_7005() {
+  $module = "system";
+  $delta = "navigation";
+  opeka_disable_block($module, $delta);
+  $delta = "powered-by";
+  opeka_disable_block($module, $delta);
+}

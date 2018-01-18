@@ -1,0 +1,120 @@
+// Utilities
+@import "compass";
+@import "variables";
+
+/*
+* — Mixins —
+*/
+@mixin vertical-align($position: relative) {
+  position: $position;
+  top: 50%;
+  -webkit-transform: perspective(1px) translateY(-50%);
+  -ms-transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(-50%);
+}
+
+/* Trying to target case when soft keyboard pops up */
+@mixin micro-height {
+  @media (min-height: #{$micro-height}) {
+    @content;
+  }
+}
+
+@mixin tiny-height {
+  @media (min-height: #{$tiny-height}) {
+    @content;
+  }
+}
+
+@mixin mini-height {
+  @media (min-height: #{$mini-height}) {
+    @content;
+  }
+}
+
+@mixin small-width {
+  @media (min-width: #{$small-width}) {
+    @content;
+  }
+}
+
+@mixin small-height {
+  @media (min-width: #{$small-height}) {
+    @content;
+  }
+}
+
+@mixin small {
+  @media (min-width: #{$small-width}) and (min-height: #{$small-height}) {
+    @content;
+  }
+}
+
+@mixin small-smart-width {
+  @media (min-width: #{$small-smart-width}) {
+    @content;
+  }
+}
+
+@mixin small-smart {
+  @media (min-width: #{$small-smart-width}) and (min-height: #{$small-smart-height}) {
+    @content;
+  }
+}
+@mixin smart-width {
+  @media (min-width: #{$smart-width}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$tablet-width}) and (min-height: #{$tablet-height}) {
+    @content;
+  }
+}
+
+@mixin tablet-width {
+  @media (min-width: #{$tablet-width}) {
+    @content;
+  }
+}
+
+@mixin narrow-width {
+  @media (min-width: #{$narrow-width}) {
+    @content;
+  }
+}
+
+@mixin small-desktop-width {
+  @media (min-width: #{$small-desktop-width}) {
+    @content;
+  }
+}
+
+@mixin desktop-width {
+  @media (min-width: #{$desktop-width}) {
+    @content;
+  }
+}
+
+@mixin btn($font-size: 14px, $padding: 6px 12px, $border-color: $borderColor, $bg-color: $btnBgColor) {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  background-color: $btnBgColor;
+  border: 1px solid $border-color;
+  white-space: nowrap;
+  padding: $padding;
+  font-size: $font-size;
+  line-height: 1.5;
+  border-radius: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
