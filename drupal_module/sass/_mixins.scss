@@ -85,14 +85,32 @@
   }
 }
 
+@mixin narrow {
+  @media (min-width: #{$narrow-width}) and (min-height: #{$narrow-height}){
+    @content;
+  }
+}
+
 @mixin small-desktop-width {
   @media (min-width: #{$small-desktop-width}) {
     @content;
   }
 }
 
+@mixin small-desktop {
+  @media (min-width: #{$small-desktop-width}) and (min-height: #{$small-desktop-height}){
+    @content;
+  }
+}
+
 @mixin desktop-width {
   @media (min-width: #{$desktop-width}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$desktop-width}) and (min-height: #{$desktop-height}) {
     @content;
   }
 }
