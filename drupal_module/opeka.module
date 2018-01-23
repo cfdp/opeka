@@ -171,7 +171,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
     drupal_add_css($path . '/css/' . $filename, array('weight' => CSS_THEME));
   }
 
-  drupal_add_css('https://fonts.googleapis.com/css?family=Montserrat', array('group' => CSS_THEME, 'type' => 'external'));
+  drupal_add_css('https://fonts.googleapis.com/css?family=Montserrat:400,700', array('group' => CSS_THEME, 'type' => 'external'));
 
   // Get settings from the admin interface
   $js_url = check_plain(variable_get('opeka_connectjs_url', 'https://localhost:3000/connect.js'));

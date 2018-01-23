@@ -19,7 +19,7 @@ body.page-opeka-widgets-popup {
     @include small-desktop-width {
       max-width: 960px;
     }
-    @include small-desktop-width {
+    @include desktop-width {
       max-width: 1180px;
     }
     @media (max-height: 50px) {
@@ -28,6 +28,10 @@ body.page-opeka-widgets-popup {
     }
     @media (max-height: 50px) and (min-width: 768px){
     }
+  }
+
+  &.chat-open {
+    background-color: $color-green-light;
   }
 
   &.chat-busy {
@@ -47,15 +51,16 @@ body.page-opeka-widgets-popup {
 
   .chat-name {
     display: inline-block;
-    font-size: 1em;
+    font-size: $font-std;
     font-weight: 700;
     width: 100px;
+    line-height: 16px;
     margin-right: 1em;
     vertical-align: top;
     @include vertical-align();
 
     @include narrow-width {
-      font-size: 1.4em;
+      font-size: $font-large;
       width: 200px;
     }
     @include desktop-width {
@@ -106,7 +111,7 @@ body.page-opeka-widgets-popup {
       font-size: 12px;
       padding: 0.65em 1.2em;
       border-radius: 2em;
-      width: 120px;
+      width: 150px;
       @include vertical-align();
 
       @include narrow-width {
