@@ -127,8 +127,6 @@
       // Hide the send message form if room is paused, user is muted,
       //  is reconnecting or in queue.
       hideForm = !Opeka.shownReconnectingDialog && !this.model.get('paused') && !activeUser.muted && this.inQueue === false;
-      
-      console.log('eeeeujjjj');
 
       // Figure out if the message form is currently present.
       formPresent = this.$el.find(".message-form").length > 0;

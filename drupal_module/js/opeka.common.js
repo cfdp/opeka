@@ -683,7 +683,9 @@ var Opeka = {
   // The server pings client to determine connection status and latency
   Opeka.clientSideMethods.ping = function (serverTime, cb) {
     Opeka.lastPingReceivedServerTime = serverTime;
+    console.log('PING received, serverTime is ' + serverTime);
     Opeka.lastPingReceivedClientTime = (new Date()).getTime();
+    console.log('PING received, clientTime is ' + Opeka.lastPingReceivedClientTime);
     cb(null, Opeka.lastPingReceivedClientTime);
   };
   
@@ -876,6 +878,7 @@ var Opeka = {
         console.log('on connected disconnected called');
         Opeka.shownReconnectingDialog = false;
         view.remove();
+        console.log('Client id is ' + Opeka.clientData.clientId);
       });
     };
 
@@ -925,9 +928,7 @@ var Opeka = {
 
   // Set up connect handler.
   Opeka.onConnect = function (remote) {
-    console.log('alrighty - we are connecting!');
-    console.log('onConnect: Opeka.reconnectTimerId is ', Opeka.reconnectTimerId);
-    console.log('onConnect: Opeka.checkOnlineTimerId is ', Opeka.checkOnlineTimerId);
+    console.log('Connecting!');
 
     Opeka.remote = remote;
     Opeka.numReconnects = 0;

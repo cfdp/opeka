@@ -29,7 +29,7 @@ var Client = function (server, stream, remote, conn) {
   var self = this;
 
   self.construct = function () {
-    self.state = CREATED;
+    self.changeState(CREATED);
     self.clientId = uuid();
 
     self.server = server;
@@ -110,7 +110,12 @@ var Client = function (server, stream, remote, conn) {
 
     server.logger.info("Connection ready for user with IP ", ip);
 
-    self.state = CONNECTED;
+    var currentTime = (new Date()).getTime();
+    self.connectionData.lastPingSuccess = currentTime;
+    self.connectionData.pingDelay = 0;
+    self.connectionData.online = true;
+
+    self.changeState(CONNECTED);
 
     banInfo = ban.checkIP(ip, server.config.get('ban:salt'));
 
@@ -122,11 +127,7 @@ var Client = function (server, stream, remote, conn) {
       setTimeout(function () {
         stream.end();
       }, 500);
-    };
-    currentTime = (new Date()).getTime();
-    self.connectionData.lastPingSuccess = currentTime;
-    self.connectionData.pingDelay = 0;
-    self.connectionData.online = true;
+    }
 
     server.updateUserStatus(self);
   };
@@ -149,35 +150,63 @@ var Client = function (server, stream, remote, conn) {
         break;
     }
   }
-  
+
+  self.changeState = function (newState) {
+    self.state = newState;
+    console.log('newState for ' + self.clientId + ' is: ', newState);
+    switch(newState) {
+      case CREATED:
+        break;
+      case CONNECTED:
+        break;
+      case PENDING_TIMEOUT:
+        break;
+      case DISCONNECTED:
+        // update userlist with new client offline state
+        self.updateClientOnlineState(false, false);
+        groups.unregisterClient(self);
+        if (self.server) {
+          self.server.handleConnectionClosed(self);
+        }
+        else {
+          console.error('could not close connection for clientId = ' + self.clientId + ' - self.server undefined.');
+          return;
+        }
+        self.breakRelations();
+        break
+      default:
+        break;
+    }
+  }
+
   self.onConnectionClosed = function () {
-    self.state = DISCONNECTED;
-    groups.unregisterClient(self);
-    if (self.server) {
-      self.server.handleConnectionClosed(self);
-    }
-    else {
-      console.error('could not close connection for clientId = ' + self.clientId + ' - self.server undefined.');
-    }
-    // Break relations to objects that might be troublesome to garbage collect
-    self.server = null;
-    self.stream = null;
-    self.clientSideMethods = null;
-    self.conn = null;
+    console.log(
+      "Client disconnected: onConnectionClosed " + self.clientId
+    );
+    self.changeState(PENDING_TIMEOUT);
   };
 
   self.onReconnect = function (newClient) {
-    util.log('Replacing user ' + self.clientId + ' with ' + newClient.clientId);
+    // The client was offline for too long, so disconnecting him
     if (self.connectionData.serverDisconnect) {
       console.log('client.js: user has been disconnected by server, calling reconnectTimeout for ' + self.clientId);
       self.remote('reconnectTimeout');
+      self.changeState(DISCONNECTED);
+      return;
     }
-    for (var id in rooms.list) {
-      rooms.list[id].replaceUser(self.clientId, newClient);
-    }
-    groups.unregisterClient(self);
+    self.remote = newClient.remote;
+    self.stream = newClient.stream;
+    self.conn = newClient.conn;
+    util.log('onReconnect: ' + self.clientId + ' takes over ' + newClient.clientId + 's remote, stream and connection.');
+    self.changeState(CONNECTED);
+    newClient.breakRelations();
+    newClient = null;
+//    for (var id in rooms.list) {
+//      rooms.list[id].replaceUser(self.clientId, newClient);
+//    }
+    //groups.unregisterClient(self);
     
-    self.breakRelations();
+    //self.breakRelations();
   };
 
   // Break relations to objects that might be troublesome to garbage collect
@@ -223,14 +252,13 @@ var Client = function (server, stream, remote, conn) {
     var sinceTimeout = self.now - self.connectionData.lastPingSuccess;
 
     if (sinceTimeout > self.connectionData.disconnectLimit) {
-      // Move user state PENDING_TIMEOUT
       console.log(
         'latency > disconnectLimit: Time to disconnect user ', self.clientId
       );
-      self.state = PENDING_TIMEOUT;
       self.connectionData.serverDisconnect = true;
-
       self.updateClientOnlineState(false, true);
+      self.changeState(PENDING_TIMEOUT);
+
     }
   };
 
@@ -239,10 +267,11 @@ var Client = function (server, stream, remote, conn) {
       return;
     }
     var sinceTimeout = self.now - self.connectionData.lastPingSuccess;
-    if (sinceTimeout > self.connectionData.reconnectLimit) {
-      self.state = DISCONNECTED;
-      // update userlist with new client offline state
-      self.updateClientOnlineState(false, false);
+    if (sinceTimeout > self.connectionData.disconnectLimit) {
+      console.log(
+        "Client disconnected: sinceTimeout > disconnectLimit for " + self.clientId
+      );
+      self.changeState(DISCONNECTED);
     }
   }
 
@@ -289,7 +318,7 @@ var Client = function (server, stream, remote, conn) {
       args.push(v)
     });
 
-    // Remove first arg
+    // Remove first argument
     args.shift();
 
     var fn;
