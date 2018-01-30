@@ -194,12 +194,13 @@ var Client = function (server, stream, remote, conn) {
       self.changeState(DISCONNECTED);
       return;
     }
-    self.remote = newClient.remote;
+    self.clientSideMethods = newClient.clientSideMethods;
     self.stream = newClient.stream;
     self.conn = newClient.conn;
     util.log('onReconnect: ' + self.clientId + ' takes over ' + newClient.clientId + 's remote, stream and connection.');
     self.changeState(CONNECTED);
     newClient.breakRelations();
+    newClient.changeState(DISCONNECTED);
     newClient = null;
 //    for (var id in rooms.list) {
 //      rooms.list[id].replaceUser(self.clientId, newClient);
