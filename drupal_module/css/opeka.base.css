@@ -1027,7 +1027,7 @@ body.opeka-client #opeka-app .signin-view .screening-questions {
 }
 /* line 863, ../sass/opeka.base.scss */
 body.opeka-client #opeka-app .signin-view span.screening-option {
-  line-height: 25px;
+  line-height: 1.5;
   padding-left: 8px;
 }
 /* line 867, ../sass/opeka.base.scss */

@@ -23,58 +23,59 @@ body {
   font-family: "Montserrat", sans-serif;
   font-size: 13px;
   height: 100%;
+  line-height: 1;
   overflow: hidden;
   padding: 0px;
   margin: 0;
 }
-/* line 18, ../sass/widget.scss */
+/* line 19, ../sass/widget.scss */
 html p,
 body p {
   color: #fff;
   margin: 0 0 5px 0;
 }
-/* line 22, ../sass/widget.scss */
+/* line 23, ../sass/widget.scss */
 html body.admin-menu.page-opeka-widgets,
 body body.admin-menu.page-opeka-widgets {
   margin-top: 0px !important;
 }
-/* line 25, ../sass/widget.scss */
+/* line 26, ../sass/widget.scss */
 html body.admin-menu.page-opeka-widgets #admin-menu,
 body body.admin-menu.page-opeka-widgets #admin-menu {
   display: none;
 }
 
-/* line 30, ../sass/widget.scss */
+/* line 31, ../sass/widget.scss */
 body.chat-open,
 body.chat-busy {
   background-image: none;
 }
 
-/* line 35, ../sass/widget.scss */
+/* line 36, ../sass/widget.scss */
 body.chat-open,
 body.chat-open .status-wrapper,
 body.chat-open .name-tab {
   background-color: #80B45A;
 }
-/* line 40, ../sass/widget.scss */
+/* line 41, ../sass/widget.scss */
 body.chat-open .login-button .btn {
   background-color: #4d6928;
   color: white;
 }
 
-/* line 47, ../sass/widget.scss */
+/* line 48, ../sass/widget.scss */
 body.chat-busy,
 body.chat-busy .status-wrapper,
 body.chat-busy .name-tab {
   background-color: #e19214;
 }
 
-/* line 54, ../sass/widget.scss */
+/* line 55, ../sass/widget.scss */
 .name-tab {
   background-color: #BFBFBF;
 }
 
-/* line 58, ../sass/widget.scss */
+/* line 59, ../sass/widget.scss */
 .status-tab {
   color: #fff;
   font-weight: 700;
@@ -83,7 +84,7 @@ body.chat-busy .name-tab {
   width: 100%;
 }
 
-/* line 66, ../sass/widget.scss */
+/* line 67, ../sass/widget.scss */
 .status-wrapper {
   background-color: #BFBFBF;
   font-size: 1em;
@@ -92,56 +93,56 @@ body.chat-busy .name-tab {
   box-sizing: border-box;
 }
 
-/* line 75, ../sass/widget.scss */
+/* line 76, ../sass/widget.scss */
 .chat-closed .status-wrapper,
 .chat-closed .name-tab {
   background-color: #c7c7c7;
 }
 
-/* line 81, ../sass/widget.scss */
+/* line 82, ../sass/widget.scss */
 .status-content {
   margin: 0;
 }
-/* line 83, ../sass/widget.scss */
+/* line 84, ../sass/widget.scss */
 .status-content a {
   color: white;
   text-decoration: underline;
 }
 
-/* line 90, ../sass/widget.scss */
+/* line 91, ../sass/widget.scss */
 .status-content,
 .status-content ul {
   margin: 0;
   padding: 0;
 }
-/* line 94, ../sass/widget.scss */
+/* line 95, ../sass/widget.scss */
 .status-content li,
 .status-content ul li {
   list-style: none;
 }
-/* line 98, ../sass/widget.scss */
+/* line 99, ../sass/widget.scss */
 .status-content ul,
 .status-content .opening-hours {
   margin-bottom: 10px;
 }
 
-/* line 104, ../sass/widget.scss */
+/* line 105, ../sass/widget.scss */
 .read-more {
   display: inline-block;
   margin: 10px 0 0;
   text-align: center;
   width: 100%;
 }
-/* line 109, ../sass/widget.scss */
+/* line 110, ../sass/widget.scss */
 .read-more a {
   text-decoration: underline;
 }
-/* line 111, ../sass/widget.scss */
+/* line 112, ../sass/widget.scss */
 .read-more a:hover {
   text-decoration: underline;
 }
 
-/* line 117, ../sass/widget.scss */
+/* line 118, ../sass/widget.scss */
 .login-button .btn {
   display: inline-block;
   background-color: white;
