@@ -51,7 +51,7 @@ body.page-opeka-widgets-inline .login-button .btn {
   box-sizing: border-box;
   display: inline-block;
   height: 100%;
-  line-height: 24px;
+  line-height: 1.5;
   padding: .7em;
   width: 100%;
   max-width: 24em;
