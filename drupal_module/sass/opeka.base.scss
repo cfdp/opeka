@@ -139,20 +139,9 @@ li.leaf {
 
 ul.chat-message-list {
   background: $contentBgColor;
-  height: 200px;
   list-style: none;
   margin: 0 0 10px 0;
   overflow-y: auto;
-
-  @include narrow {
-    height: 400px;
-  }
-
-  @include desktop {
-    height: 580px;
-    border: 1px solid $borderColor;
-    border-radius: $borderRadius;
-  }
 }
 
 .chat-message,
@@ -300,6 +289,7 @@ ul.chat-message-list {
 
 .chat-view-form {
   background-color: $defaultBodyBgColor;
+  margin-top: 5px;
   padding: 5px;
   position: fixed;
   bottom: 0;
@@ -581,6 +571,12 @@ ul.chat-message-list {
     font-weight: normal;
     position: fixed;
     bottom: 103px;
+
+    @include desktop {
+      bottom: inherit;
+      float: none;
+      padding-top: 0;
+    }
   }
   .return-sends-msg,
   .dont-auto-scroll,
@@ -787,13 +783,9 @@ ul.chat-message-list {
     }
 
     ul.chat-message-list {
-      background: $contentBgColor;
       border: 1px solid $borderColor;
       border-radius: $borderRadius;
-      height: 100px;
-      list-style: none;
-      margin: 0 0 10px 0;
-      overflow-y: auto;
+
       @include micro-height {
         height: 80px;
       }
@@ -861,7 +853,7 @@ body.opeka-client {
         margin: 0 0 5px 15px;
       }
       span.screening-option {
-        line-height: 25px;
+        line-height: 1.5;
         padding-left: 8px;
       }
       .signin-footnote {
@@ -901,10 +893,18 @@ body.opeka-client {
       @include desktop-width {
         border: 1px solid $borderColor;
         border-radius: $borderRadius;
+        height: 300px;
         position: relative;
         width: 100%;
         top: auto;
         bottom: auto;
+      }
+
+      @include small-desktop {
+        height: 500px;
+      }
+      @include desktop {
+        height: 600px;
       }
     }
 

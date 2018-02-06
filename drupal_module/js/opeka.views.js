@@ -112,7 +112,9 @@
         inQueueMessage = '',
         hideForm = false,
         formPresent = true,
-        showWritingMsg = (Drupal.settings.opeka.clients_writing_message || this.admin) ? true : false;
+        // In the Drupal administration for the Opeka module there's a setting for showing / hiding
+        // the "Client is writing" msg for non-admins.
+        showWritingMsg = (Drupal.settings.opeka.clients_writing_message === "1" || this.admin) ? true : false;
 
       if (!activeUser) {
         activeUser = {muted: false};
@@ -143,7 +145,6 @@
         admin: this.admin,
         formatTimestamp: this.formatTimestamp,
         chatName: this.model.get('maxSize') === 2 ? Drupal.settings.opeka.pair_chat_name : Drupal.settings.opeka.group_chat_name,
-        showWritingMsg: (Drupal.settings.opeka.clients_writing_message === 1 || this.admin),
         labels: {
           deleteMessage: Drupal.t('Delete'),
           whispered: Drupal.t('Whispered'),
@@ -191,7 +192,7 @@
           dontAutoScroll: this.dontAutoScroll
         }));
       }
-      // Render the writersMessage
+      // Render the writersMessage if the conditions are met
       if (this.writersMessage && showWritingMsg) {
         if (this.$el.find('.writers-message').length) {
           this.$el.find('.writers-message').text(this.writersMessage)
