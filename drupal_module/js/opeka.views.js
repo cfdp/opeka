@@ -113,7 +113,7 @@
         hideForm = false,
         formPresent = true,
         // In the Drupal administration for the Opeka module there's a setting for showing / hiding
-        // the "Client is writing" msg for non-admins.
+        // the "User is writing" msg for non-admins.
         showWritingMsg = (Drupal.settings.opeka.clients_writing_message === "1" || this.admin) ? true : false;
 
       if (!activeUser) {
@@ -1982,8 +1982,8 @@
       var user = Drupal.settings.opeka.user || {},
         view = this;
 
-      //add a random number to each anonymous user to help in distinguishing them
-      var x = Math.floor((Math.random() * 50) + 1);
+      //add a number to each anonymous user to help in distinguishing them
+      var x = Math.floor((Math.random() * 999) + 1);
 
       var question = this.$el.find('p.screening-question').text();
       var answer = this.$el.find('input[name=screening]:checked').val();
