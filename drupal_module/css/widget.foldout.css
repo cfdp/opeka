@@ -4,6 +4,7 @@
 * — Variables —
 */
 /* Responsive media query breakpoints */
+/* Palette for client chat messages */
 /* Bootstrap overrides */
 /* Typography */
 /* Cyberhus Clean theme (used in widgets) */
@@ -14,13 +15,11 @@
 * — Mixins —
 */
 /* Trying to target case when soft keyboard pops up */
-/* line 7, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout {
   background: transparent;
   position: relative;
   /* Name tab */
 }
-/* line 11, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout .name-tab {
   background-image: url(../img/chat_icon.svg);
   background-position: 5px 5px;
@@ -44,39 +43,32 @@ body.page-opeka-widgets-foldout .name-tab {
   -o-transform-origin: left top;
   transform-origin: left top;
 }
-/* line 34, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout .status-wrapper {
   display: inline-block;
   margin-left: 40px;
   position: absolute;
   width: 260px;
 }
-/* line 40, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout .login-button {
   margin: 10px 0;
   text-align: center;
 }
-/* line 45, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout.multi .status-wrapper {
   width: 370px;
 }
-/* line 49, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout .opeka-multi-widget-iframe {
   height: 37px;
   margin-bottom: .5em;
 }
-/* line 52, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout .opeka-multi-widget-iframe > * {
   vertical-align: middle;
 }
-/* line 56, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout .multi-widget-chat-label {
   display: inline-block;
   height: 37px;
   padding-top: 5px;
   width: 140px;
 }
-/* line 62, ../sass/widget.foldout.scss */
 body.page-opeka-widgets-foldout .curachat-widgets-multi {
   height: 50px;
   width: 175px;

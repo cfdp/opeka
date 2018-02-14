@@ -89,6 +89,7 @@ module.exports.filterData = function (client) {
     chatStart_Min: client.chatStart_Min,
     chatEnd_Min: client.chatEnd_Min,
     clientId: client.clientId,
+    colorId: client.colorId,
     gender: client.gender,
     screening: client.screening,
     isAdmin: client.isAdmin,

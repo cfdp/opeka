@@ -95,7 +95,6 @@ function Server(config, logger) {
     }
 
     // When a socket.io user connects, tell them about current room status
-    // When a socket.io user connects, tell them about current room status
     self.io_server.on("connection", function (socket) {
       // Make getDirectSignInURL available through the io_socket server as well
       socket.on("getDirectSignInURL", function (roomType, callback) {
@@ -192,6 +191,7 @@ function Server(config, logger) {
             var roomData = {
               maxSize: room.maxSize,
               memberCount: room.memberCount,
+              aggregatedCount: room.aggregatedList.length,
               name: room.name,
               id: room.id
             };
@@ -342,9 +342,7 @@ function Server(config, logger) {
       else {
         client.screening = null;
       }
-
       client.accessCode = clientUser.accessCode;
-
 
       // Update online users count for all clients.
       self.updateUserStatus(self.everyone);
@@ -949,7 +947,7 @@ function Server(config, logger) {
     client.whisperPartners = {};
     self.logger.info('Login: User chat start: ', client.chatStart_Min);
 
-    // add the chat session data for client to the db
+    // Add the chat session data for client to the db
     if (!client.account.isAdmin) {
       opeka.statistics.save(client.age, client.gender, client.screening, function (session_id) {
         client.stats_id = session_id;
@@ -1007,6 +1005,7 @@ function Server(config, logger) {
         args: {'@user': client.nickname}
       });
 
+      client.colorId = String(newRoom.aggregatedList.length % 12);
       newRoom.group.remote('roomUserJoined', newRoom.id, client.nickname, client.account.isAdmin);
     }
     else {
@@ -1089,6 +1088,7 @@ function Server(config, logger) {
         messageId: uuid(),
         sender: {
           clientId: client.clientId,
+          colorId: client.colorId,
           isCouncellor: isCouncellor,
           name: client.nickname,
         }
