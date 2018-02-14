@@ -37,6 +37,23 @@ $ccLighterGray: #F8F8F8;
 $ccWhite: #fff;
 $neonGreen: #51E789;
 
+/* Palette for client chat messages */
+$userColorList: (
+  #E6CDFE,
+  #CB8391,
+  #F8FECE,
+  #CEFFFF,
+  #FEE6CD,
+  #CCCDFD,
+  #FECDE6,
+  #CDFECE,
+  #E6FEF2,
+  #FECCCD,
+  #CDE6FE,
+  #FFFECE,
+);
+
+
 $gray-light2: #F8F8F8;
 $gray-darker: #222;
 $pairChatBodyBgColor: $gray-light2;
@@ -61,14 +78,14 @@ $roomInfoColor: #ffffff;
 $messageBgColor: whitesmoke;
 $messageCounselorBgColor: #f4faf4;
 $messageClientBgColor: #f5f9fc;
-// Message callout border left colors
+// Message callout border colors
 $messageBorderLeftColor: #cccccc;
 $messageCounselorBLColor: darken( $messageCounselorBgColor, 40% );
 $messageClientBLColor: darken( $messageClientBgColor, 40% );
 // Message callout meta data (time etc) color
 $messageMetaDataColor: #999999;
-$messageCounselorMDColor: #a3d7a3;
-$messageClientMDColor: #91bce0;
+$messageCounselorMDColor: $ccBlack;
+$messageClientMDColor: $ccBlack;
 $messageHighlight: #ffffff;
 
 /* Bootstrap overrides */

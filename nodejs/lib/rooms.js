@@ -56,7 +56,6 @@ var getOpenRoom = function (roomType) {
   });
 };
 
-
 // Sums together a room list into empty, active and full rooms.
 // @todo: the "full" variable should be renamed to e.g. inaccessible
 // signaling that it reflects the paused property also
@@ -132,6 +131,8 @@ var Room = function (options) {
     self.queueSystem = options.queueSystem || 'private' // Default to private queue system.
     // When a room is created, the creator will join setting the member count to init value to 1.
     self.memberCount = 1;
+    // We keep track of all the non-counselor users that visited the room in this array. Used e.g. for assigning different colors to users front-end.
+    self.aggregatedList = [];
     // A room can be paused by the counselor and an autoPauseRoom setting is available as well in config.json
     self.paused = false;
     // Is it allowed for clients to be alone in a room without a counselor?
@@ -216,7 +217,8 @@ var Room = function (options) {
         util.log('Admin user added to room ' + self.id);
       }
       else {
-        util.log('Regular user added to room ' + self.id);
+        self.aggregatedList.push(client.clientId);
+        util.log('Regular user added to room ' + self.id, ' aggregated count is ' + self.aggregatedList.length);
       }
 
       updateRoomCounts();
