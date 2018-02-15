@@ -350,7 +350,7 @@ var Room = function (options) {
       newColorId = String(colorsAvailable[0]);
     }
     else {
-      newColorId = String(Math.floor((Math.random() * numberOfUserColors) + 1));
+      newColorId = String(Math.floor((Math.random() * numberOfUserColors)));
     }
     if (callback) {
       this.users[clientId].colorId = newColorId;
