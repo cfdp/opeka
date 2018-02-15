@@ -29,7 +29,8 @@ var _ = require('underscore'),
       active: 0,
       full: 0
     }
-  };
+  },
+  numberOfUserColors = 12;
 
 /**
  * Get an open room of a specific type - pair or group.
@@ -131,8 +132,6 @@ var Room = function (options) {
     self.queueSystem = options.queueSystem || 'private' // Default to private queue system.
     // When a room is created, the creator will join setting the member count to init value to 1.
     self.memberCount = 1;
-    // We keep track of all the non-counselor users that visited the room in this array. Used e.g. for assigning different colors to users front-end.
-    self.aggregatedList = [];
     // A room can be paused by the counselor and an autoPauseRoom setting is available as well in config.json
     self.paused = false;
     // Is it allowed for clients to be alone in a room without a counselor?
@@ -217,8 +216,7 @@ var Room = function (options) {
         util.log('Admin user added to room ' + self.id);
       }
       else {
-        self.aggregatedList.push(client.clientId);
-        util.log('Regular user added to room ' + self.id, ' aggregated count is ' + self.aggregatedList.length);
+        util.log('Regular user added to room ' + self.id);
       }
 
       updateRoomCounts();
@@ -328,6 +326,37 @@ var Room = function (options) {
     }
     return false;
   }
+
+  // Assign an available colorId to a new user in the room.
+  self.assignColorId = function (clientId, callback) {
+    var i = 0;
+    var newColorId;
+    var colorsAvailable = _.range(numberOfUserColors);
+    var colorsTaken = [];
+    // Filter out the colorIds that have been taken already
+    _.each(this.users, function (user, index) {
+      if (user.colorId != null && user.clientId != clientId) {
+        colorsTaken.push(parseInt(user.colorId));
+      }
+      if (i >= numberOfUserColors) {
+        // There were no available colorIds - hand out a random one.
+        util.log('More users than user colors, assigning random value.');
+        colorsAvailable = false;
+      }
+      i++;
+    });
+    if (colorsAvailable) {
+      colorsAvailable = _.difference(colorsAvailable, colorsTaken);
+      newColorId = String(colorsAvailable[0]);
+    }
+    else {
+      newColorId = String(Math.floor((Math.random() * numberOfUserColors) + 1));
+    }
+    if (callback) {
+      this.users[clientId].colorId = newColorId;
+      callback(newColorId);
+    }
+  };
 
   // Return the current group metadata in an object that is safe to send
   // to the client side.

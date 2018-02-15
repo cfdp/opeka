@@ -191,7 +191,6 @@ function Server(config, logger) {
             var roomData = {
               maxSize: room.maxSize,
               memberCount: room.memberCount,
-              aggregatedCount: room.aggregatedList.length,
               name: room.name,
               id: room.id
             };
@@ -1004,8 +1003,9 @@ function Server(config, logger) {
         system: true,
         args: {'@user': client.nickname}
       });
-
-      client.colorId = String(newRoom.aggregatedList.length % 12);
+      newRoom.assignColorId(client.clientId, function(colorId) {
+        client.colorId = colorId;
+      });
       newRoom.group.remote('roomUserJoined', newRoom.id, client.nickname, client.account.isAdmin);
     }
     else {
