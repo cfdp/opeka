@@ -151,7 +151,7 @@ ul.chat-message-list {
   padding: 5px 0;
   clear: both;
   @include desktop-width {
-    margin: 0 10px 10px 5px;
+    margin: 0 10px 5px 5px;
     padding: 5px;
   }
 }
@@ -235,8 +235,7 @@ ul.chat-message-list {
     margin-right: 0;
     margin-left: auto;
   }
-  .sender-name,
-  .time {
+  .sender-name {
     color: $messageCounselorMDColor;
   }
 }
@@ -977,6 +976,7 @@ body.opeka-client {
           background-color: transparent;
           border: none;
           display: block;
+          width: 225px;
         }
       }
       li.user-list-item {

@@ -170,7 +170,7 @@ ul.chat-message-list {
   .chat-message,
   .system-message,
   .whisper-message {
-    margin: 0 10px 10px 5px;
+    margin: 0 10px 5px 5px;
     padding: 5px;
   }
 }
@@ -254,8 +254,7 @@ ul.chat-message-list {
   margin-right: 0;
   margin-left: auto;
 }
-.bs-callout-counselor .sender-name,
-.bs-callout-counselor .time {
+.bs-callout-counselor .sender-name {
   color: #231e19;
 }
 
@@ -273,7 +272,7 @@ ul.chat-message-list {
   background-color: #E6CDFE;
 }
 .bs-callout-client.color-id-1 .chat-message-content {
-  background-color: #CB8391;
+  background-color: #CDE6FE;
 }
 .bs-callout-client.color-id-2 .chat-message-content {
   background-color: #F8FECE;
@@ -300,7 +299,7 @@ ul.chat-message-list {
   background-color: #FECCCD;
 }
 .bs-callout-client.color-id-10 .chat-message-content {
-  background-color: #CDE6FE;
+  background-color: #CB8391;
 }
 .bs-callout-client.color-id-11 .chat-message-content {
   background-color: #FFFECE;
@@ -1028,6 +1027,7 @@ body.opeka-client.groupchat #opeka-app .sidebar .user-list {
     background-color: transparent;
     border: none;
     display: block;
+    width: 225px;
   }
 }
 body.opeka-client.groupchat #opeka-app .sidebar li.user-list-item {
