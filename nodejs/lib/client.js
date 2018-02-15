@@ -36,6 +36,7 @@ var Client = function(server, stream, remote, conn) {
         self.gender = null;
         self.age = null;
         self.accessCode = null;
+        self.colorId = null;
         self.city = null;
         self.state = null;
 
