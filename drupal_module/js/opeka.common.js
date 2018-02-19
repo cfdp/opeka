@@ -660,11 +660,11 @@ var Opeka = {
     Opeka.clientData.isBanned = isBanned;
   }
 
-  // Response to a user not entering the correct access code
+  // Response to a user when server responds with access denied
   Opeka.clientSideMethods.accessDenied = function (clientId) {
     var view = new Opeka.FatalErrorDialogView({
-      message: Drupal.t("Sorry, you did not enter the correct code."),
-      title: Drupal.t('Wrong code.')
+      message: Drupal.t("Sorry, something went wrong in the authentication process. Please contact support."),
+      title: Drupal.t('Access denied.')
     });
 
     view.render();
