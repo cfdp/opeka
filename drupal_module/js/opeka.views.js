@@ -2025,11 +2025,9 @@
       "click .enter-site": "enterSite",
     },
     render: function() {
-      var chatName = Drupal.settings.opeka.pair_chat_name || {},
-          form = JST.opeka_enter_form_tmpl({
+      var form = JST.opeka_enter_form_tmpl({
             message: Drupal.settings.opeka.enter_site_message,
             labels: {
-              heading: chatName,
               confirm: Drupal.settings.opeka.enter_site_confirm,
               leave: Drupal.settings.opeka.enter_site_leave,
             },
