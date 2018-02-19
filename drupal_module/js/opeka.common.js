@@ -737,7 +737,7 @@ var Opeka = {
         model: Opeka.status
       });
 
-      $('#navbar').find('.navbar-nav.secondary').prepend(onlineStatus.render().el);
+      $('#navbar').find('.online-status').prepend(onlineStatus.render().el);
     });
   };
 
@@ -805,7 +805,7 @@ var Opeka = {
     });
 
     Opeka.appViewInstance.on('render', function (view) {
-      $('#navbar').find('.navbar-nav.secondary').prepend(Opeka.statusViewInstance.render().el);
+      $('#navbar').find('.online-status').prepend(Opeka.statusViewInstance.render().el);
     });
 
     $('#opeka-app').html(Opeka.appViewInstance.render().el);

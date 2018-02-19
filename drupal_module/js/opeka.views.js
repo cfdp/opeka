@@ -902,14 +902,6 @@
         this.$el.html(JST.opeka_online_status_tmpl({
           content: '<span class="status ' + chatStatus + '"></span>' + statusTextGuests + ", " + statusTextcounselors
         }));
-
-
-//        this.$el.html(JST.opeka_online_status_tmpl({
-//          content: '<span class="status ' + chatStatus + '"></span>' + '!guests guests !councellors councellors online', {
-//            '!guests': this.model.get('guests')
-//            '!councellors': '<span class="councellors">' + this.model.get('councellors') + '</span>'
-//          }
-//        }));
       }
 
       return this;

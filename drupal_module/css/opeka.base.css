@@ -122,7 +122,11 @@ li.leaf {
   padding: 0;
 }
 
-/* Chat status in nav header */
+/* Chat status element */
+.online-status {
+  list-style: none;
+}
+
 .online-status-view .status {
   display: inline-block;
   text-indent: -9999px;
