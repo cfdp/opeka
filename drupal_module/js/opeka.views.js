@@ -902,14 +902,6 @@
         this.$el.html(JST.opeka_online_status_tmpl({
           content: '<span class="status ' + chatStatus + '"></span>' + statusTextGuests + ", " + statusTextcounselors
         }));
-
-
-//        this.$el.html(JST.opeka_online_status_tmpl({
-//          content: '<span class="status ' + chatStatus + '"></span>' + '!guests guests !councellors councellors online', {
-//            '!guests': this.model.get('guests')
-//            '!councellors': '<span class="councellors">' + this.model.get('councellors') + '</span>'
-//          }
-//        }));
       }
 
       return this;
@@ -2025,11 +2017,9 @@
       "click .enter-site": "enterSite",
     },
     render: function() {
-      var chatName = Drupal.settings.opeka.pair_chat_name || {},
-          form = JST.opeka_enter_form_tmpl({
+      var form = JST.opeka_enter_form_tmpl({
             message: Drupal.settings.opeka.enter_site_message,
             labels: {
-              heading: chatName,
               confirm: Drupal.settings.opeka.enter_site_confirm,
               leave: Drupal.settings.opeka.enter_site_leave,
             },

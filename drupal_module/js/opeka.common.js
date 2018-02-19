@@ -660,11 +660,11 @@ var Opeka = {
     Opeka.clientData.isBanned = isBanned;
   }
 
-  // Response to a user not entering the correct access code
+  // Response to a user when server responds with access denied
   Opeka.clientSideMethods.accessDenied = function (clientId) {
     var view = new Opeka.FatalErrorDialogView({
-      message: Drupal.t("Sorry, you did not enter the correct code."),
-      title: Drupal.t('Wrong code.')
+      message: Drupal.t("Sorry, something went wrong in the authentication process. Please contact support."),
+      title: Drupal.t('Access denied.')
     });
 
     view.render();
@@ -737,7 +737,7 @@ var Opeka = {
         model: Opeka.status
       });
 
-      $('#navbar').find('.navbar-nav.secondary').prepend(onlineStatus.render().el);
+      $('#navbar').find('.online-status').prepend(onlineStatus.render().el);
     });
   };
 
@@ -805,7 +805,7 @@ var Opeka = {
     });
 
     Opeka.appViewInstance.on('render', function (view) {
-      $('#navbar').find('.navbar-nav.secondary').prepend(Opeka.statusViewInstance.render().el);
+      $('#navbar').find('.online-status').prepend(Opeka.statusViewInstance.render().el);
     });
 
     $('#opeka-app').html(Opeka.appViewInstance.render().el);
