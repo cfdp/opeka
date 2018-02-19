@@ -5,7 +5,7 @@ body.page-admin .form-type-select {
   max-width: 500px;
 }
 body.page-admin .form-submit {
-  margin-top: 1em;
+  margin: 1em 0;
 }
 
 body.page-admin-config-services-opeka-screening #fieldset-opeka-screening-options .form-item {

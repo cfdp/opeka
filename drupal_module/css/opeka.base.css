@@ -870,7 +870,11 @@ body.opeka-client #opeka-app {
   /* Chat message area */
 }
 body.opeka-client #opeka-app .signin-view {
+  /* "Enter site" feature */
   /* Screening radios */
+}
+body.opeka-client #opeka-app .signin-view .leave-link {
+  margin: 10px 0;
 }
 body.opeka-client #opeka-app .signin-view select.form-select.gender,
 body.opeka-client #opeka-app .signin-view select.form-select.age {

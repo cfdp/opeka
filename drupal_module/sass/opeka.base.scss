@@ -847,6 +847,10 @@ body.opeka-client {
   #opeka-app {
     /* The signin view. Logging into the chat. */
     .signin-view {
+      /* "Enter site" feature */
+      .leave-link {
+        margin: 10px 0;
+      }
       /* Screening radios */
       select.form-select.gender,
       select.form-select.age {
