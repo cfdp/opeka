@@ -1,0 +1,78 @@
+@charset "UTF-8";
+/*
+* — Variables —
+*/
+/* Responsive media query breakpoints */
+/* Palette for client chat messages */
+/* Bootstrap overrides */
+/* Typography */
+/* Cyberhus Clean theme (used in widgets) */
+/* Base colors*/
+/* Text Colors */
+/* Curachat additions */
+/*
+* — Mixins —
+*/
+/* Trying to target case when soft keyboard pops up */
+/* General styles that are needed on non-opeka pages */
+/* Footer */
+/* Branding */
+body.logged-in footer.footer,
+body.not-logged-in footer.footer {
+  display: none;
+  border: none;
+  padding: 0;
+}
+@media (min-width: 1200px) {
+  body.logged-in footer.footer,
+  body.not-logged-in footer.footer {
+    display: block;
+  }
+  body.logged-in .logo1,
+  body.not-logged-in .logo1 {
+    display: inline-block;
+    margin-right: 20px;
+    max-width: 200px;
+  }
+  body.logged-in .logo2,
+  body.not-logged-in .logo2 {
+    display: inline-block;
+    max-width: 440px;
+  }
+  body.logged-in .footer-branding,
+  body.not-logged-in .footer-branding {
+    float: right;
+  }
+}
+
+/* Drupal administration pages */
+body.page-admin .form-type-textarea,
+body.page-admin .form-type-textfield,
+body.page-admin .form-type-select {
+  max-width: 500px;
+}
+body.page-admin .form-submit {
+  margin: 1em 0;
+}
+
+body.page-admin-config-services-opeka-screening #fieldset-opeka-screening-options .form-item {
+  max-width: 300px;
+  margin-bottom: .5em;
+}
+body.page-admin-config-services-opeka-screening .btn.btn-info {
+  margin-bottom: 1em;
+}
+
+body.page-admin-config-services-opeka-opening-hours #fieldset-opeka-opening-hours-datetimes {
+  margin-bottom: 1em;
+}
+body.page-admin-config-services-opeka-opening-hours #fieldset-opeka-opening-hours-datetimes .form-item {
+  float: left;
+}
+body.page-admin-config-services-opeka-opening-hours #fieldset-opeka-opening-hours-datetimes .form-type-select {
+  clear: left;
+}
+body.page-admin-config-services-opeka-opening-hours #fieldset-opeka-opening-hours-datetimes button.form-submit {
+  clear: left;
+  float: left;
+}

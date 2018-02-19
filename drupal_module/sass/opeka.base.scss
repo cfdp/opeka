@@ -364,7 +364,7 @@ ul.chat-message-list {
 }
 
 
-/* CHAT PRESENTATION PAGE */
+/* Chat presentation page */
 
 .teaser {
   float: left;
@@ -408,35 +408,7 @@ ul.chat-message-list {
   }
 }
 
-
-/* FOOTER */
-
-
-/* Branding */
-
-.logo1 {
-  display: none;
-}
-.footer {
-  padding: 0;
-  margin: 0;
-}
-
-@include tablet-width {
-  .logo1 {
-    display: inline-block;
-    margin-right: 20px;
-    max-width: 200px;
-  }
-  .logo2 {
-    display: inline-block;
-    max-width: 440px;
-  }
-  .footer-branding {
-    float: right;
-    max-width: 72%;
-  }
-}
+/* Opeka app */
 
 #opeka-app {
   .header,
@@ -847,6 +819,10 @@ body.opeka-client {
   #opeka-app {
     /* The signin view. Logging into the chat. */
     .signin-view {
+      /* Centering the sign-in view */
+      & {
+        margin: 20px auto;
+      }
       /* "Enter site" feature */
       .leave-link {
         margin: 10px 0;

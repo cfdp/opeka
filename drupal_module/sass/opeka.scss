@@ -1,3 +1,42 @@
+// Utilities
+@import "compass";
+@import "variables";
+@import "mixins";
+
+/* General styles that are needed on non-opeka pages */
+
+/* Footer */
+
+/* Branding */
+
+body.logged-in,
+body.not-logged-in {
+  footer.footer {
+    display: none;
+    border: none;
+    padding: 0;
+  }
+
+  @include desktop-width {
+    footer.footer {
+      display: block;
+    }
+    .logo1 {
+      display: inline-block;
+      margin-right: 20px;
+      max-width: 200px;
+    }
+    .logo2 {
+      display: inline-block;
+      max-width: 440px;
+    }
+    .footer-branding {
+      float: right;
+    }
+  }
+}
+
+
 /* Drupal administration pages */
 
 body.page-admin {
@@ -22,6 +61,7 @@ body.page-admin-config-services-opeka-screening {
     margin-bottom: 1em;
   }
 }
+
 body.page-admin-config-services-opeka-opening-hours {
   #fieldset-opeka-opening-hours-datetimes {
     margin-bottom: 1em;
