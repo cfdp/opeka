@@ -14,7 +14,15 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_connectjs_url', ''),
   );
 
-  $form['opeka_pair_chat_name'] = array(
+  $form['opeka_chat_names'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Opeka chat name settings'),
+    '#weight' => 4,
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['opeka_chat_names']['opeka_pair_chat_name'] = array(
     '#type' => 'textfield',
     '#title' => t('Pair chat name'),
     '#description' => t('The pair chat name can be shown in some chat widgets'),
@@ -22,7 +30,7 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_pair_chat_name', ''),
   );
 
-  $form['opeka_group_chat_name'] = array(
+  $form['opeka_chat_names']['opeka_group_chat_name'] = array(
     '#type' => 'textfield',
     '#title' => t('Group chat name'),
     '#description' => t('The group chat name can be shown in some chat widgets'),
@@ -38,7 +46,31 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3'),
   );
 
-  $form['opeka_feedback_url'] = array(
+  $form['opeka_pairchat_user_list'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Pair chat user list visibility'),
+    '#description' => t('Toggle the user list visibility in the pair chat. Check it if the user list should be visible'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_pairchat_user_list', 0),
+  );
+
+  $form['opeka_clients_writing_message'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Clients can see the "User is writing" message'),
+    '#description' => t('Toggle the ability for clients to see the "User is writing" message. Check it if the clients should be able to see the message.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_clients_writing_message', 0),
+  );
+
+  $form['opeka_feedback'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Opeka feedback settings'),
+    '#weight' => 4,
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['opeka_feedback']['opeka_feedback_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Feedback URL'),
     '#description' => t('URL to a feedback page, e.g. a Google Form, where clients can enter evaluation data after a chat.'),
@@ -46,7 +78,7 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_feedback_url', ''),
   );
 
-  $form['opeka_groupchat_feedback_url'] = array(
+  $form['opeka_feedback']['opeka_groupchat_feedback_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Group Chat feedback URL'),
     '#description' => t('URL to a feedback page, e.g. a Google Form, where group chat clients can enter evaluation data after a chat.'),
@@ -54,7 +86,7 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_groupchat_feedback_url', ''),
   );
 
-  $form['opeka_feedback_auto_redirect'] = array(
+  $form['opeka_feedback']['opeka_feedback_auto_redirect'] = array(
     '#type' => 'checkbox',
     '#title' => t('Automatic redirection to questionnaire in external window?'),
     '#description' => t('Check this box if the feedback form should be opened automatically for clients.'),
@@ -62,7 +94,15 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_feedback_auto_redirect', 0),
   );
 
-  $form['opeka_client_url'] = array(
+  $form['opeka_widget_advanced'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Opeka widget settings'),
+    '#weight' => 4,
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['opeka_widget_advanced']['opeka_client_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Popup widget'),
     '#description' => t('If the popup or the multi widgets are used, please provide the URL of the client site, eg. http://mysite.com.'),
@@ -70,7 +110,7 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_client_url', ''),
   );
   
-  $form['opeka_mixed_widget_url'] = array(
+  $form['opeka_widget_advanced']['opeka_mixed_widget_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Mixed widget'),
     '#description' => t('If the mixed widget is used, please provide the URL of the jsonp resource, e.g. https://mysite.com/resource?.'),
@@ -78,7 +118,7 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_mixed_widget_url', ''),
   );
 
-  $form['opeka_custom_css'] = array(
+  $form['opeka_widget_advanced']['opeka_custom_css'] = array(
     '#type' => 'textfield',
     '#title' => t('Custom css file for widget styles'),
     '#description' => t('URL to a custom css file for the widgets.'),
