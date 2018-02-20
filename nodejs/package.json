@@ -1,0 +1,57 @@
+{
+  "name": "opeka",
+  "description": "Opeka: A secure anonymous chat, built with dnode and Drupal",
+  "homepage": "http://cyberhus.dk/",
+  "version": "2.3.9",
+  "author": "Green Volcano <udvikling@greenvolcano.dk>",
+  "contributors": [
+    "Angelo Agatino Nicolosi",
+    "Jakob Torp <jakob@revealit.dk> (http://googletorp.com/)",
+    "Mikkel Hoegh <mikkel@hoegh.org> (http://mikkel.hoegh.org/)",
+    "Benjamin Christensen <benjamin@greenvolcano.dk> (https://greenvolcano.dk/)",
+    "Alex Bukach"
+  ],
+  "main": "main.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "engines": {
+    "node": "6.x"
+  },
+  "dependencies": {
+    "async": "^2.1.4",
+    "date-format": "^1.1.0",
+    "dnode": "^1.2.2",
+    "drupal": "git+https://git@github.com/benjamin-dk/node-drupal.git",
+    "ecstatic": "^2.1.0",
+    "emoticons": "^0.1.8",
+    "nconf": "^0.8.4",
+    "node-uuid": "^1.4.7",
+    "php-unserialize": "^0.0.1",
+    "shoe": "0.0.15",
+    "socket.io": "^1.7.2",
+    "underscore": "^1.8.3",
+    "validator": "^7.0.0",
+    "winston": "^2.3.0"
+  },
+  "devDependencies": {
+    "forever": "0.10.x",
+    "browserify": "*"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cfdp/opeka.git"
+  },
+  "keywords": [
+    "anonymous",
+    "chat",
+    "Drupal"
+  ],
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/cfdp/opeka/issues"
+  }
+}

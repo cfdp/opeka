@@ -1,0 +1,354 @@
+<div id="opeka-app"></div>
+<script id="opeka_chat_sidebar_tmpl" type="application/template">
+  <audio id="audiotag1" src="<%= drupalSettings.opeka.client_login_sound %>" preload="auto"></audio>
+  <div id="room-size" data-room-size="<%- room.get('maxSize') %>"></div>
+  <% /* Only display sidebar for anonymous clients in pair rooms if this settings is set to 1*/ %>
+  <% if ((admin) || (!((drupalSettings.opeka.pairchat_user_list === 0) && (room.get('maxSize') === 2)))) { %>
+    <div id="user-list-block">
+      <h5 class="sidebar-block-heading"><%= labels.userListHeading %><span class="arrow up"></span></h5>
+      <div class="sidebar-block-content">
+        <ul class="user-list">
+        <% if (!users) { %>
+          <li class="placeholder"><%= labels.placeholder %></li>
+        <% } %>
+        <% _.each(users, function (user) { %>
+          <li class="user-list-item" data-client-id="<%= user.clientId %>">
+
+            <% if (user.clientId !== clientId && admin) { %>
+              <div class="actions btn-group">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+            <% } %>
+
+                <i class="icon-user"></i><span class="name"><%- user.name %></span>
+                <% if (user.age || user.gender) { %>
+                  <span class="meta">
+                    (
+                    <span class="age"><%- user.age %></span>/
+                    <span class="gender"><%= labels.gender[user.gender] %></span>
+                    )
+                  </span>
+                <% } %>
+
+            <% if (user.clientId !== clientId && admin) { %>
+              <span class="caret"></span>
+              </a>
+                <ul class="dropdown-menu">
+                  <li class="ban-user"><%= labels.banUser %></li>
+                  <li class="kick-user"><%= labels.kickUser %></li>
+                  <% if (user.muted) { %>
+                    <li class="unmute-user"><%= labels.unmuteUser %></li>
+                  <% }
+                     else { %>
+                    <li class="mute-user"><%= labels.muteUser %></li>
+                  <% } %>
+                  <li class="whisper"><%= labels.whisper %></li>
+                </ul>
+              </div>
+              <!-- end dropdown btn-group -->
+            <% } %>
+
+          </li>
+
+
+        <% }); %>
+        </ul>
+      </div>
+    </div>
+  <% } %>
+  <% if (admin) { %>
+    <div class="sidebar-block">
+      <h5 class="sidebar-block-heading"><%= labels.roomActions %><span class="arrow down"></span></h5>
+      <div class="sidebar-block-content room-actions btn-group"  style="display: block;">
+        <button class="pause-toggle btn btn-small"><%= labels.pauseToggle %></button>
+        <button class="clear-messages btn btn-small"><%= labels.clearMessages %></button>
+        <button class="change-room-size btn btn-small"><%= labels.changeRoomSize %></button>
+        <button class="delete-room btn btn-small"><%= labels.deleteRoom %></button>
+      </div>
+    </div>
+    <div class="sidebar-block">
+      <h5 class="sidebar-block-heading"><%= labels.registrationForm %><span class="arrow down"></span></h5>
+      <div class="sidebar-block-content">
+        <% if (room.get('maxSize') === 2 && (drupalSettings.opeka.reg_pair_url !== '')) { %>
+          <a class="registrationform btn" href="<%= drupalSettings.opeka.reg_pair_url %>" target="_blank"><%= labels.registrationFormLink %></a>
+        <% } else if (drupalSettings.opeka.reg_group_url != '') { %>
+          <a class="registrationform btn" href="<%= drupalSettings.opeka.reg_group_url %>" target="_blank"><%= labels.registrationFormLink %></a> 
+        <% } else { %>
+          <p><%= labels.noRegistrationForm %></p>
+      <% } %>
+      </div>
+    </div>
+  <% } %>
+</script>
+
+<script id="opeka_chat_footer_tmpl" type="application/template">
+  <% if (banCodeGenerator) { %>
+    <% if (!chatOpen) { %>
+      <button class="chat-toggle btn-success btn"><%- labels.chatOpen %></button>
+    <% }else{ %>
+      <button class="chat-toggle btn-danger btn"><%- labels.chatClose %></button>
+    <% } %>
+    <button class="generate-ban-code btn-util btn"><%- labels.banCode %></button>
+  <% } %>
+</script>
+
+<script id="opeka_app_tmpl" type="application/template">
+  <div class="header"></div>
+  <div class="content client-sidebar-<%= drupalSettings.opeka.pairchat_user_list %>"><%= content %></div>
+  <div class="sidebar"></div>
+  <div class="footer"></div>
+</script>
+
+<script id="opeka_online_status_tmpl" type="application/template">
+  <%= content %>
+</script>
+
+<script id="opeka_connect_form_tmpl" type="application/template">
+ <div class="welcome-message"><%= drupalSettings.opeka.welcome_message %></div>
+ <form action="#" class="form-horizontal well">
+    <div class="control-group">
+      <label class="control-label nickname-label">
+        <%= labels.nick %>
+      </label>
+      <div class="controls">
+        <input class="form-text nickname" placeholder="<%= labels.placeholder %>" type="text" value="<%- name %>" maxlength="25" />
+        <% if (name != 'Rådgiver') { %>
+        <!--<span class="label-tooltip"><%= labels.nick_tooltip %></span>-->
+        <% } %>
+      </div>
+    </div>
+    <% if (!name) { %>
+
+      <div class="control-group">
+        <label class="control-label age-label">
+          <%= labels.age %>
+        </label>
+        <div class="controls">
+          <input class="form-text age" type="text" maxlength="2" />
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label gender-label">
+          <%= labels.gender %>
+        </label>
+        <div class="controls">
+          <select class="form-select gender">
+            <option value="" selected="selected"></option>
+            <option value="m"><%= labels.male %></option>
+            <option value="f"><%= labels.female %></option>
+            <option value="n"><%= labels.nonbinary %></option>
+          </select>
+        </div>
+      </div>
+
+      <% if (accessCodeEnabled) { %>
+        <div class="control-group">
+          <label class="control-label accesscode-label">
+            <%= labels.accessCode %>
+          </label>
+          <div class="controls">
+            <input class="form-text accesscode" type="text" maxlength="10" />
+          </div>
+        </div>
+      <% } %>
+
+    <% } %>
+    <div class="control-group">
+      <div class="controls">
+        <input class="connect form-submit btn btn-success" type="submit" value="<%= labels.action %>" />
+        <span class="cyberhus-logo"></span>
+      </div>
+    </div>
+
+  </form>
+</script>
+
+<script id="opeka_room_list_tmpl" type="application/template">
+  <% if (admin) { %>
+    <div class="queue-utils">
+      <% if (queueSystem) { %>
+        <a href="#queues" class="go-to-queues btn-util btn btn-small"><%= labels.queueLink %></a>
+      <% } %>
+      <button class="create-room btn btn-small btn-success"><%= labels.createRoom %></button>
+      <% if (!chatOpen) { %>
+        <div class="chat-state alert"><%= labels.chatClosed %></div>
+      <% } %>
+    </div>
+
+  <% } %>
+  <ul class="room-list">
+  <% rooms.each(function (room) { %>
+    <% /* Show the room list - show all rooms for counselors */ %>
+    <% if (admin || (!room.attributes.private && (room.attributes.maxSize !== 2 || (room.attributes.maxSize === 2 &&  hidePairRooms === false)))) { %>
+      <% labels.placeholder = ''; %>
+      <li class="room well">
+      <div class="room-details badge badge-info <% if (room.get('memberCount') === room.get('maxSize')){ %>full<% } %><% if (room.attributes.paused){ %> paused<% } %>">
+        <span class="room-size"><%- room.get('memberCount') %>/<%- room.get('maxSize') %></span>
+        <% if (room.get('memberCount') === room.get('maxSize')){ %>
+          <span class="room-status full"><%= labels.fullRoomText %></span>
+        <% } %>
+        <% if (room.attributes.paused){ %>
+          <span class="room-status paused"><%= labels.pausedRoomText %></span>
+        <% } %>
+      </div>
+      <p class="room-description"><%- room.get('name') %></p>
+      <% if (room.attributes.private){ %>
+          <div class="badge badge-important private-room">Training room</div>
+      <% } %>
+      <% /* Only admins should be able to enter a full or paused room */ %>
+      <% if (admin || ((room.get('memberCount') != room.get('maxSize')) && (!room.attributes.paused))) { %>
+        <a href="#rooms/<%= room.id %>" class="room-enter btn btn-success"><%= labels.enterRoom %></a>
+      <% }else{ %>
+        <a href="<%= labels.fullRoomLink %>" target="_blank" class="meantime btn btn-warning"><%= labels.fullRoomLinkText %></a>
+      <% }%>  
+      </li>
+    <% } %>
+  <% }); %>
+  <% if (labels.placeholder && !admin) { %>
+    <li class="placeholder norooms"><%= labels.placeholder %></li>
+    <li><a class="btn btn-success" href="#" onclick="javascript: window.close();"><%= labels.closeWindowText %></a></li>
+  <% } %>
+  </ul>
+
+</script>
+
+<script id="opeka_queue_list_tmpl" type="application/template">
+  <div>
+  <a href="#rooms" class="go-back-to-rooms btn-util"><%= labels.roomLink %></a>
+  <button class="create-queue btn btn-small"><%= labels.createQueue %></button>
+  </div>
+  <ul class="queue-list">
+  <% queues.each(function (queue) { %>
+      <% labels.placeholder = ''; %>
+      <li class="queue"><%- queue.get('name') %></li>
+  <% }); %>
+  <% if (labels.placeholder) { %>
+    <li class="placeholder noqueues"><%= labels.placeholder %></li>
+  <% } %>
+  </ul>
+
+</script>
+
+
+
+<script id="opeka_queue_page_tmpl" type="application/template">
+  <p><%= labels.placeholder %></p>
+
+  <form action="#" class="leave-queue-form">
+    <input class="form-submit leave-queue" type="submit" value="<%= labels.leaveQueue %>" />
+  </form>
+
+</script>
+
+<script id="opeka_room_list_create_room_tmpl" type="application/template">
+  <!--<button class="create-room btn btn-small"><%= labels.createRoom %></button>-->
+</script>
+
+<script id="opeka_chat_tmpl" type="application/template">
+<div class="chat-message-list-wrapper">
+  <ul class="chat-message-list list-unstyled">
+  <% _.each(messages, function (message) { %>
+    <% if (message.system) { %>
+      <li class="system-message"><span>system:</span><%- message.message %></li>
+    <% } else if (message.whisper) { %>
+      <li class="whisper-message bs-callout" data-message-id="<%= message.messageId %>">
+        <div class="top-info clearfix">
+          <% if (message.receiver) { %>
+            <div class="sender-name pull-left"><%- message.sender.name %> - <%= labels.whispered %></div>
+            <% } else { %>
+            <div class="sender-name pull-left"><%= labels.whisperedTo %> - <%- message.sender.name %></div>
+            <% } %>
+            <div class="time pull-right"><%= formatTimestamp(message.date) %></div>
+            <% if (message.receiver) { %>
+            <div class="actions pull-right">
+              <button class="reply-to-whisper btn-link pull-right" data-reply-to="<%- message.sender.name %>">
+                <%= labels.replyToWhisper %>
+              </button>
+            </div>
+            <% } %>
+          </div>
+        <div class="message"><%- message.message %></div>
+      </li>
+    <% } else { %>
+      <li class="chat-message bs-callout <% if(message.sender.isCouncellor) { %>bs-callout-counselor<% }else{ %>bs-callout-client<% } %>" data-message-id="<%= message.messageId %>">
+        <div class="top-info clearfix">
+          <div class="sender-name pull-left"><%- message.sender.name %></div>
+          <div class="time pull-right"><%= formatTimestamp(message.date) %></div>
+          <% if (admin) { %>
+            <div class="actions pull-right">
+              <button class="delete-message btn-link pull-right"><%= labels.deleteMessage %></button>
+            </div>
+          <% } %>
+        </div>
+        <div class="message"><%- message.message %></div>
+      </li>
+    <% } %>
+  <% }); %>
+  </ul>
+  </div>
+</script>
+
+<script id="opeka_chat_form_tmpl" type="application/template">
+  <% if (!room.get('paused') && !activeUser.muted && inQueue === false) { %>
+  <form action="#" class="message-form">
+    <!--<input autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" size="50" type="text" />-->
+    <div class="form-text-container">
+      <textarea autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" ></textarea>
+    </div>
+    <input class="form-submit send btn btn-success" type="submit" value="<%= labels.messageButton %>" />
+    <input class="return-sends-msg" name="return-sends-msg" id="return-sends-msg" type="checkbox" <%= returnSendsMessage %> >
+    <label for="return-sends-msg"><%= labels.returnSendsMessageLabel %></label>
+  </form>
+  <% } else if (activeUser.muted) { %>
+    <div class="userMuted">
+      <p><%= labels.userMuted %></p>
+      <span class="help-text"><%= labels.mutehelptext %></span>
+    </div>
+  <% } else if (inQueue === false) { %>
+    <div class="roomPaused">
+      <p><%= labels.roomPaused %></p>
+      <span class="help-text"><%= labels.roomPausedHelpText %></span>
+    </div>
+  <% } %>
+  <% if (inQueue !== false) { %>
+    <p><%= labels.inQueueMessage %></p>
+    <form action="#" class="leave-queue-form">
+      <input class="form-submit send" type="submit" value="<%= labels.leaveQueueButton %>" />
+    </form>
+  <% } else { %>
+    <form action="#" class="leave-room-form">
+      <input class="form-submit send btn btn-success" type="submit" value="<%= labels.leaveRoomButton %>" />
+    </form>
+  <% } %>
+</script>
+
+<script id="opeka_user_feedback_tmpl" type="application/template">
+  <% if(admin) { %>
+    <p>The chat session has ended.</p>
+  <% }else{ %>
+    <p><%= labels.farewellMessage %></p>
+    <% if (drupalSettings.opeka.feedback_auto_redirect) { %>
+      <p><%= labels.feedbackRedirectText %> </p>
+    <% } %>
+    <% if ((drupalSettings.opeka.feedback_url != '') && ( chatType == "pair") && !autoRedirect) { %>
+      <p><a href="<%= drupalSettings.opeka.feedback_url %>" target="_blank"><%= labels.feedbackLinkText %></a></p>
+    <% } else if ((drupalSettings.opeka.groupchat_feedback_url != '') && ( chatType == "group") && !autoRedirect) { %>
+      <p><a href="<%= drupalSettings.opeka.groupchat_feedback_url %>" target="_blank"><%= labels.feedbackLinkText %></a></p>
+    <% } %>
+    <p><a class="btn btn-success" href="#" onclick="javascript: window.close();"><%= labels.closeWindowText %></a></p>
+  <% } %>
+</script>
+
+<script id="opeka_goodbye_tmpl" type="application/template">
+  <p><%= labels.message %></p>
+  <p><a class="btn btn-success" href="#" onclick="javascript: window.close();"><%= labels.closeWindowText %></a></p>
+</script>
+
+<script id="opeka_whisper_tmpl" type="application/template">
+  <form action="#" class="whisper-form">
+    <label><%= labels.whisperMessage %></label>
+    <!--<input class="form-text whisper-message" name="name" type="textfield" />-->
+    <textarea class="form-text whisper-message" name="name" rows=3 cols=32></textarea>
+    <span class="help-text"><%= labels.whisperHelpText %></span>
+  </form>
+</script>

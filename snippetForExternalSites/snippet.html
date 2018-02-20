@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>External Customer Site</title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+<script src="http://dev.cfdpchat:3000/socket.io/socket.io.js"></script>
+
+<script>
+
+(function ($) {
+  var chatStatus = {};
+
+  // The following callback is called by the server in order to
+  // advertise its status.
+  now.updateStatus = function (attributes) {
+    chatStatus = attributes;
+    $(window).trigger('opekaChatStatusUpdate', [attributes]);
+  };
+
+  // When the DOM is ready, set up the widget.
+  $(function () {
+    var statusText = $('#status'),
+        pairButton = $('#join-pair-chat'),
+        groupButton = $('#join-group-chat'),
+        groupRoomList = $('#group-chat-rooms'),
+        queueList = $("#queue-list");
+
+    // Updates the actual status text.
+    var updateDisplay = function (attributes) {
+      // If there are any active one-to-one rooms.
+      if (chatStatus.chatOpen && chatStatus.rooms && chatStatus.rooms.pair.active > 0) {
+        statusText.text("Chat active");
+
+        pairButton.show();
+
+      // If not, check if there are any active group rooms.
+      } else if (chatStatus.chatOpen && chatStatus.rooms && chatStatus.rooms.pair.full > 0) {
+        statusText.text("Chat busy");
+        pairButton.hide();
+      } else {
+        statusText.text("Chat not active");
+        pairButton.hide();
+      };
+
+      if (chatStatus.chatOpen && chatStatus.roomsList && chatStatus.roomsList.length) {
+        statusText.text("Chat active");
+        groupButton.show();
+        var liHtml = '';
+        $.each(chatStatus.roomsList, function(i, room) {
+          liHtml += '<li>' + room.name + ' (' + room.memberCount + ' &#47; ' + room.maxSize + ')</li>';
+        });
+        groupRoomList.find('ul').html(liHtml).end().show();
+      }
+      else {
+        groupButton.hide();
+        groupRoomList.hide();
+      }
+
+      if (!chatStatus.chatOpen || chatStatus.queues === false || !chatStatus.queueList) {
+        queueList.hide();
+      }
+      else {
+        var liHtml = '';
+        $.each(chatStatus.queueList, function(i, queue) {
+          liHtml += '<li>' + queue.name + ' (' + queue.inQueue + ' in queue) <button class="' + i + '">Join chat</button></li>';
+        });
+        queueList.find('ul').html(liHtml).end().show();
+      }
+    };
+
+    // When the document is ready, update the status, and bind the event
+    // to have it update automatically later.
+    $(window).bind('opekaChatStatusUpdate', updateDisplay);
+
+    // When the user clicks the button, ask the chat server to join a room.
+    pairButton.click(function () {
+      now.getDirectSignInURL('pair', function (signInURL) {
+        window.location = signInURL;
+      });
+    });
+
+    groupButton.click(function() {
+      window.location = chatStatus.chatPageURL;
+    });
+
+    queueList.delegate('ul button', 'click', function() {
+      var queueId = $(this).attr('class');
+      window.location = chatStatus.chatPageURL + '#signIn/queues/' + queueId;
+    });
+
+    // Run updateDisplay once manually so we have the initial text
+    // nailed down.
+    updateDisplay();
+  });
+}(jQuery));
+
+</script>
+</head>
+<body>
+  <div id="status">Chat not active</div>
+  <div id="queue-list" style="display:none;">
+    <p>Join chat about:</p>
+    <ul></ul>
+  </div>
+  <div id="group-chat-rooms" style="display:none;">
+    <p>Group rooms:</p>
+    <ul></ul>
+  </div>
+  <input id="join-group-chat" type="button" style="display:none" value="Join group chat" />
+  <input id="join-pair-chat" type="button" style="display:none" value="Join chat" />
+</body>
+</html>

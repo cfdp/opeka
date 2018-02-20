@@ -1,0 +1,35 @@
+connectjs_url: //10.19.168.13:3001
+age_max: 23
+age_min: 9
+clients_writing_message: 1
+client_login_sound: '../sites/all/modules/custom/opeka/media/doorbell.mp3'
+client_url: https://dev.ch3
+connectjs_url: http://10.19.168.13:3001/connect.js
+custom_css: ''
+enter_site_confirm: Yes, I am from X municipality
+enter_site_feature: 0
+enter_site_leave: 'I am from another municipality, what do I do?'
+enter_site_message: 'Chat 100% anonymously with counselors from X municipality. NOTE'
+feedback_auto_redirect: 1
+feedback_url: https://ineva.typeform.com/to/ktU21w
+groupchat_feedback_url: https://docs.google.com/forms/d/1l42HSL22bicOsYtiK_hbakLETUh4CbHtSB29wmE1Rbw/viewform
+group_chat_name: Cyberhus
+mixed_widget_url: ''
+nowjs_url: https://demo.curachat.com:3001/connect.js
+opening_hours_datetimes: {}
+opening_hours_message: 'Du kan chatte med rådgiver 9-11'
+pairchat_user_list: 0
+pair_chat_name: '1-1 Demochat hat'
+popup_text: ''
+reg_group_url: ''
+reg_pair_url: ''
+schedule: 'Online thursday the 22. of september\r\n10.00-10.30 CET'
+screening_main: 'Her er mit spørgsmål til dig...'
+screening_options: {}
+signin_footnote: ''
+test_mode: 1
+welcome_message: 'Velkommen til demo-versionen af CuraChat!'
+widget_header_button_subtext: 'Chats are for young people aged 9 to 23 years.'
+widget_popup_link_text: ''
+widget_popup_link_url: ''
+widget_popup_text: 'Chat anonymously with a counselor'

@@ -1,0 +1,21 @@
+access opeka chat:
+  title: 'Access the chat system'
+  description: 'Grants a user normal access to the Opeka chat system.'
+administer opeka chat:
+  title: 'Administer the chat system'
+  description: 'Grants a user access to log in as counselor / coordinator in the Opeka chat system.'
+administer opeka settings:
+  title: 'Administer the Opeka settings'
+  description: 'Grants a user access to the settings of the Opeka chat system.'
+generate opeka chat ban codes:
+  title: 'Generate opeka chat ban codes'
+  description: 'Grants a user access to generate opeka chat ban codes.'
+hide typing message:
+  title: 'Hide typing message'
+  description: 'Grants a user access to hide typing message.'
+pause opeka chat autoscroll:
+  title: 'Pause opeka chat auto-scroll'
+  description: 'Grants a user access to pause opeka chat auto-scrolling.'
+access chat history:
+  title: 'Access chat history'
+  description: 'Grants a user access to view opeka chat messages sent before user logged in.'
