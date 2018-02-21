@@ -188,8 +188,8 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $feedback_auto_redirect = variable_get('opeka_feedback_auto_redirect', '');
   $reg_pair_url = variable_get('opeka_reg_pair_url', '');
   $reg_group_url = variable_get('opeka_reg_group_url', '');
-  /* Get the pair chat user list setting */
   $pairchat_user_list = variable_get('opeka_pairchat_user_list', 0);
+  $pairchat_room_list_entry = variable_get('opeka_pairchat_room_list_entry', 0);
   $client_login_sound = check_plain(variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3'));
   $client_url = check_plain(variable_get('opeka_client_url', ''));
   $pair_chat_name = check_plain(variable_get('opeka_pair_chat_name', ''));
@@ -217,6 +217,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['reg_group_url'] = $reg_group_url;
   $settings['client_login_sound'] = $client_login_sound;
   $settings['pairchat_user_list'] = $pairchat_user_list;
+  $settings['pairchat_room_list_entry'] = $pairchat_room_list_entry;
   $settings['dnode_endpoint'] = preg_replace('/\/connect[.]js$/', '/opeka', $js_url);
   $settings['socket_io_url'] = preg_replace('/\/connect[.]js$/', '/', $js_url);
   $settings['client_url'] = $client_url;
