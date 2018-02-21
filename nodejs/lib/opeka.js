@@ -878,6 +878,7 @@ function Server(config, logger) {
       var room = opeka.rooms.list[roomId];
       if (room && newSize != room.maxSize && newSize > 0) {
         room.maxSize = newSize;
+        opeka.rooms.updateRoomCounts();
         self.updateUserStatus(self.everyone);
         self.broadcastChatStatus();
         self.sendSystemMessage("Room size changed to " + newSize, room.group, room);

@@ -32,6 +32,9 @@ body.page-opeka-widgets-popup {
 
   &.chat-open {
     background-color: $color-green-light;
+    .login-button .btn {
+      background-color: $color-green-dark;
+    }
   }
 
   &.chat-busy {
@@ -46,6 +49,11 @@ body.page-opeka-widgets-popup {
     .login-button .btn {
       background-color: $color-orange-light;
       color: #ffffff;
+    }
+  }
+  &.chat-closed {
+    .login-button .btn {
+      background-color: $ccWhite;
     }
   }
 
@@ -101,12 +109,17 @@ body.page-opeka-widgets-popup {
     bottom:auto;
     right: auto;
     vertical-align: top;
+    /* Avoid text overflow */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
     @include narrow-width {
       padding-left: 2em;
     }
 
     .btn {
-      background-color: #3C5E22;
+      background-color: $ccWhite;
       background-image: none;
       font-size: 12px;
       padding: 0.65em 1.2em;
