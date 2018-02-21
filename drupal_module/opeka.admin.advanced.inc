@@ -14,6 +14,38 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_connectjs_url', ''),
   );
 
+  $form['opeka_client_login_sound'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Login sound file'),
+    '#description' => t('URL to a sound file that is played for the counselor when a client logs in.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3'),
+  );
+
+  $form['opeka_pairchat_user_list'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Pair chat user list visibility'),
+    '#description' => t('Toggle the user list visibility in the pair chat. Check it if the user list should be visible'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_pairchat_user_list', 0),
+  );
+
+  $form['opeka_pairchat_room_list_entry'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Pair chat room list entry'),
+    '#description' => t('Check this if the user should be sent to the room list instead of joining the first available room.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_pairchat_room_list_entry', 0),
+  );
+
+  $form['opeka_clients_writing_message'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Clients can see the "User is writing" message'),
+    '#description' => t('Toggle the ability for clients to see the "User is writing" message. Check it if the clients should be able to see the message.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_clients_writing_message', 0),
+  );
+
   $form['opeka_chat_names'] = array(
     '#type' => 'fieldset',
     '#title' => t('Opeka chat name settings'),
@@ -36,30 +68,6 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#description' => t('The group chat name can be shown in some chat widgets'),
     '#required' => FALSE,
     '#default_value' => variable_get('opeka_group_chat_name', ''),
-  );
-
-  $form['opeka_client_login_sound'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Login sound file'),
-    '#description' => t('URL to a sound file that is played for the counselor when a client logs in.'),
-    '#required' => FALSE,
-    '#default_value' => variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3'),
-  );
-
-  $form['opeka_pairchat_user_list'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Pair chat user list visibility'),
-    '#description' => t('Toggle the user list visibility in the pair chat. Check it if the user list should be visible'),
-    '#required' => FALSE,
-    '#default_value' => variable_get('opeka_pairchat_user_list', 0),
-  );
-
-  $form['opeka_clients_writing_message'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Clients can see the "User is writing" message'),
-    '#description' => t('Toggle the ability for clients to see the "User is writing" message. Check it if the clients should be able to see the message.'),
-    '#required' => FALSE,
-    '#default_value' => variable_get('opeka_clients_writing_message', 0),
   );
 
   $form['opeka_feedback'] = array(

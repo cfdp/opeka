@@ -11,6 +11,7 @@ var Opeka = Opeka || {};
           opekaBaseURL = location.protocol + '//' + location.hostname || "https://localhost:3000",
           pairChatName = Drupal.settings.opeka.pair_chat_name || Drupal.t("The 1-to-1 chat"),
           groupChatName = Drupal.settings.opeka.group_chat_name || Drupal.t("The group chat"),
+          pairChatRoomListEntry = Drupal.settings.opeka.pairchat_room_list_entry || false,
           textStrings = {
             buttonAvailable : Drupal.t("The chat is open"),
             buttonOccupied : Drupal.t("The chat is occupied"),
@@ -35,7 +36,6 @@ var Opeka = Opeka || {};
         chatStatus = data;
         $(window).trigger('opekaChatStatusUpdate', data);
       });
-      
 
       // When the DOM is ready, set up the widget.
       $(function () {
@@ -163,6 +163,9 @@ var Opeka = Opeka || {};
 
           var w = window.open(opekaBaseURL+'/opeka');
 
+          if (pairChatRoomListEntry) {
+            roomType = "pair-room-list-entry"
+          }
           switch(roomType) {
             case "pair":
               io_socket.emit("getDirectSignInURL", roomType, function(err, result) {
@@ -174,6 +177,7 @@ var Opeka = Opeka || {};
                 }
               });
               break;
+            case "pair-room-list-entry":
             case "group":
               w.location = chatStatus.chatPageURL;
               break;
