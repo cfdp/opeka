@@ -41,17 +41,19 @@ var Opeka = Opeka || {};
       $(function () {
         var statusTab = $('.status-tab'),
             chatButton = $('.login-button .chat'),
-            statusContent = $('.status-content'),
             chatLink = false,
             body = $('body'),
-            roomType = "pair",
+            roomType = "all",
             closeBtn = $(".opeka-chat-popup.close");
-            
-        
-        // The group class is added to the body tag by requesting the widget URL and appending /group at the end
+
+        // The group or pair class is added to the body tag by requesting the widget URL and appending e.g. /group at the end
         // e.g. https://demo.curachat.com/opeka-widgets/header/group
-        if (body.hasClass("group")) { roomType = "group"; }
-        
+        if (body.hasClass("group")) {
+          roomType = "group";
+        }
+        else if (body.hasClass("pair")) {
+          roomType = "pair";
+        }
         // Send close iframe message to parent window when button is clicked
         closeBtn.on( "click",  function() {
           var closeMsg = roomType+"-CloseIframe";
@@ -84,6 +86,7 @@ var Opeka = Opeka || {};
             chatLink = false;
             return;
           }
+          console.log('roomtype ', roomType);
           switch(roomType) {
             case "pair":
               // If chat is open and there are available one-to-one rooms (chat open).
@@ -111,6 +114,19 @@ var Opeka = Opeka || {};
                 calculatePassiveState();
               }
               break;
+            case "all":
+              // If chat is open and there are available rooms of any kind (chat open).
+              if (chatStatus.chatOpen && chatStatus.rooms && chatStatus.rooms.total.active > 0) {
+                console.log('all');
+                body.removeClass('chat-closed chat-busy').addClass('chat-open');
+                statusTab.text(textStrings.statusAvailable_group);
+                chatLink = true;
+                chatButton.text(textStrings.buttonAvailable);
+                opekaChatPopup(roomType+"-Open");
+              }
+              else {
+                calculatePassiveState();
+              }
             }
          };
 
@@ -178,6 +194,7 @@ var Opeka = Opeka || {};
               });
               break;
             case "pair-room-list-entry":
+            case "all":
             case "group":
               w.location = chatStatus.chatPageURL;
               break;
@@ -188,11 +205,6 @@ var Opeka = Opeka || {};
               console.warn('Opeka error: ' + err);
               w.location = opekaBaseURL+'/error';
               return;
-            }
-            // Double-check chat status - close window if chat is unavailable
-            if (!(chatStatus.rooms && chatStatus.rooms.pair.active > 0) && !(chatStatus.rooms && chatStatus.rooms.pair.full > 0)) {
-              console.warn('Opeka error: chat unavailable ');
-              w.close();
             }
             else {
               // It's a pair chat
