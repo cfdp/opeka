@@ -48,6 +48,9 @@ body.page-opeka-widgets-popup .status-wrapper {
 body.page-opeka-widgets-popup.chat-open {
   background-color: #80B45A;
 }
+body.page-opeka-widgets-popup.chat-open .login-button .btn {
+  background-color: #3C5E22;
+}
 body.page-opeka-widgets-popup.chat-busy {
   background-color: #F5D9AD;
 }
@@ -60,6 +63,9 @@ body.page-opeka-widgets-popup.chat-busy .chat-name {
 body.page-opeka-widgets-popup.chat-busy .login-button .btn {
   background-color: #EBB560;
   color: #ffffff;
+}
+body.page-opeka-widgets-popup.chat-closed .login-button .btn {
+  background-color: #fff;
 }
 body.page-opeka-widgets-popup .chat-name {
   display: inline-block;
@@ -122,6 +128,10 @@ body.page-opeka-widgets-popup .login-button {
   bottom: auto;
   right: auto;
   vertical-align: top;
+  /* Avoid text overflow */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 @media (min-width: 768px) {
   body.page-opeka-widgets-popup .login-button {
@@ -129,7 +139,7 @@ body.page-opeka-widgets-popup .login-button {
   }
 }
 body.page-opeka-widgets-popup .login-button .btn {
-  background-color: #3C5E22;
+  background-color: #fff;
   background-image: none;
   font-size: 12px;
   padding: 0.65em 1.2em;
