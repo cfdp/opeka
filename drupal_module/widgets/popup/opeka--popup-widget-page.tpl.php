@@ -5,6 +5,7 @@
         print render($variables['opeka_pair_chat_name']);
       elseif ($variables['opeka_widget_roomtype'] == "group"):
         print render($variables['opeka_group_chat_name']);
+      else: print render($variables['opeka_default_chat_name']);
       endif;
     ?>
   </div>
