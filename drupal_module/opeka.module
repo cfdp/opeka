@@ -192,6 +192,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $pairchat_room_list_entry = variable_get('opeka_pairchat_room_list_entry', 0);
   $client_login_sound = check_plain(variable_get('opeka_client_login_sound', '../sites/all/modules/custom/opeka/media/bell.mp3'));
   $client_url = check_plain(variable_get('opeka_client_url', ''));
+  $default_chat_name = check_plain(variable_get('site_name', ''));
   $pair_chat_name = check_plain(variable_get('opeka_pair_chat_name', ''));
   $group_chat_name = check_plain(variable_get('opeka_group_chat_name', ''));
   $popup_text = check_plain(variable_get('opeka_popup_text', ''));
@@ -221,8 +222,9 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['dnode_endpoint'] = preg_replace('/\/connect[.]js$/', '/opeka', $js_url);
   $settings['socket_io_url'] = preg_replace('/\/connect[.]js$/', '/', $js_url);
   $settings['client_url'] = $client_url;
-  $settings['pair_chat_name'] = $pair_chat_name ;
-  $settings['group_chat_name'] = $group_chat_name;
+  $settings['default_chat_name'] = $default_chat_name;
+  $settings['pair_chat_name'] = decode_entities($pair_chat_name);
+  $settings['group_chat_name'] = decode_entities($group_chat_name);
   $settings['popup_text'] = $popup_text;
   $settings['enter_site_feature'] = $enter_site_feature;
   $settings['enter_site_message'] = $enter_site_message;
@@ -418,6 +420,7 @@ function opeka_preprocess_page(&$vars) {
   $vars['opeka_widget_popup_text'] = check_plain(variable_get('opeka_widget_popup_text', ''));
   $vars['opeka_widget_popup_link_text'] = check_plain(variable_get('opeka_widget_popup_link_text', ''));
   $vars['opeka_widget_popup_link_url'] = check_plain(variable_get('opeka_widget_popup_link_url', ''));
+  $vars['opeka_default_chat_name'] = check_plain(variable_get('site_name', ''));
   $vars['opeka_pair_chat_name'] = check_plain(variable_get('opeka_pair_chat_name', ''));
   $vars['opeka_group_chat_name'] = check_plain(variable_get('opeka_group_chat_name', ''));
   $path_array = explode("/",current_path());
@@ -440,11 +443,11 @@ function opeka_preprocess_page(&$vars) {
       $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "pair"); // Set the value and retrieve it
     }
     else {
-      $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "none"); // Set the value and retrieve it
+      $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "default"); // Set the value and retrieve it
     }
   }
   else {
-    $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "none"); // Set the value and retrieve it
+    $vars['opeka_widget_roomtype'] = _opeka_var('opeka_widget_roomtype', "default"); // Set the value and retrieve it
   }
 }
 

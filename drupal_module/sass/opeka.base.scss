@@ -824,7 +824,7 @@ body.opeka-client {
     .signin-view {
       /* Centering the sign-in view */
       & {
-        margin: 20px auto;
+        margin: 10px auto 20px;
       }
       /* "Enter site" feature */
       .leave-link {
@@ -843,8 +843,9 @@ body.opeka-client {
       input.screening {
         margin-top: 0;
       }
-      .screening-questions {
-        margin: 0 0 5px 15px;
+      .screening-questions,
+      .signin-footnote {
+        margin: 0 0 10px 15px;
       }
       span.screening-option {
         line-height: 1.5;
