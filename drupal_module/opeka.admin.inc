@@ -117,6 +117,15 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_welcome_message', ''),
   );
 
+  $form['opeka_sign_in_settings']['opeka_signin_footnote'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Signin footnote'),
+    '#maxlength' => 1024,
+    '#description' => t('Footnote below the signin form.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_signin_footnote', ''),
+  );
+
   $form['opeka_widget'] = array(
     '#type' => 'fieldset',
     '#title' => t('Opeka widget settings'),
