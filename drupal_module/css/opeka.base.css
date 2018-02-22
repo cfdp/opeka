@@ -852,7 +852,7 @@ body.opeka-client #opeka-app .signin-view {
   /* Screening radios */
 }
 body.opeka-client #opeka-app .signin-view {
-  margin: 20px auto;
+  margin: 10px auto 20px;
 }
 body.opeka-client #opeka-app .signin-view .leave-link {
   margin: 10px 0;
@@ -869,8 +869,9 @@ body.opeka-client #opeka-app .signin-view label.screening-label {
 body.opeka-client #opeka-app .signin-view input.screening {
   margin-top: 0;
 }
-body.opeka-client #opeka-app .signin-view .screening-questions {
-  margin: 0 0 5px 15px;
+body.opeka-client #opeka-app .signin-view .screening-questions,
+body.opeka-client #opeka-app .signin-view .signin-footnote {
+  margin: 0 0 10px 15px;
 }
 body.opeka-client #opeka-app .signin-view span.screening-option {
   line-height: 1.5;
