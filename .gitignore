@@ -7,7 +7,8 @@
 /drupal/img/*
 /drupal_module/.sass-cache
 /drupal_module/.ruby-version
-/drupal_module/widgets/css/custom.css
+/drupal_module/css/*.custom.css
+/drupal_module/sass/*.custom.scss
 /drupal_module/scripts/startchat.sh
 /drupal_module/scripts/start_ch_chat.sh
 /drupal_module/scripts/stopchat.sh
