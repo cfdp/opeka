@@ -382,7 +382,7 @@ function opeka_theme($existing, $type, $theme, $path) {
 /*
  * Implements hook_preprocess_html
  *
- * Add html template suggestions and chat role css class to body
+ * Add html template suggestions, global and custom css files and chat role css class to body
  */
 function opeka_preprocess_html(&$vars) {
   $path_array = explode("/",current_path());
@@ -401,6 +401,14 @@ function opeka_preprocess_html(&$vars) {
     $opeka_role = "opeka-client";
   }
   $vars['classes_array'][] = drupal_clean_css_identifier($opeka_role);
+  
+  // Add global css
+  drupal_add_css(drupal_get_path('module', 'opeka') . '/css/opeka.css', array('group' => CSS_THEME, 'type' => 'file', 'weight' => 10));
+  // Add custom css file provided through admin interface - if present
+  $custom_css = check_plain(variable_get('opeka_custom_css', ''));
+  if (strlen($custom_css) > 0) {
+    drupal_add_css($custom_css, array('group' => CSS_THEME, 'type' => 'external', 'weight' => 11));
+  }
 }
 
 

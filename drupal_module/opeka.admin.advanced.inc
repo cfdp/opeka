@@ -14,6 +14,14 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_connectjs_url', ''),
   );
 
+  $form['opeka_custom_css'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Custom css file'),
+    '#description' => t('URL to a custom css, where additional styles can be added.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_custom_css', ''),
+  );
+
   $form['opeka_client_login_sound'] = array(
     '#type' => 'textfield',
     '#title' => t('Login sound file'),
@@ -24,8 +32,8 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
 
   $form['opeka_pairchat_user_list'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Pair chat user list visibility'),
-    '#description' => t('Toggle the user list visibility in the pair chat. Check it if the user list should be visible'),
+    '#title' => t('Pair chat user list visibility for clients'),
+    '#description' => t('Toggle the user list visibility in the pair chat. Check it if the user list should be visible to clients.'),
     '#required' => FALSE,
     '#default_value' => variable_get('opeka_pairchat_user_list', 0),
   );
@@ -124,14 +132,6 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#description' => t('If the mixed widget is used, please provide the URL of the jsonp resource, e.g. https://mysite.com/resource?.'),
     '#required' => FALSE,
     '#default_value' => variable_get('opeka_mixed_widget_url', ''),
-  );
-
-  $form['opeka_widget_advanced']['opeka_custom_css'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Custom css file for widget styles'),
-    '#description' => t('URL to a custom css file for the widgets.'),
-    '#required' => FALSE,
-    '#default_value' => variable_get('opeka_custom_css', ''),
   );
 
   $form['submit']['#validate'][] = 'opeka_admin_settings_form_validate';
