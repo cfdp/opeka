@@ -2,12 +2,14 @@
   min-width: 0;
 }
 #fieldset-opeka-screening-options fieldset .control-group .form-type-textfield {
-  margin-right: 15ex;
+  display: inline-block;
+  margin-right: 2ex;
 }
 #fieldset-opeka-screening-options fieldset .control-group .form-type-textfield input {
   width: 100%;
 }
 #fieldset-opeka-screening-options fieldset .control-group .form-submit {
+  display: inline-block;
+  margin-top: 10px;
   width: 13ex;
-  float: right;
 }

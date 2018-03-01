@@ -49,6 +49,16 @@ function opeka_screening_admin_form($form, &$form_state) {
   // Add as many answer options as the values we have, and one more.
   foreach ($opeka_screening_options_array as $delta => $opeka_screening_options) {
     $form[$element_name][$delta] = array(
+      'answer_option' => array(
+        '#type' => 'textfield',
+        '#default_value' => $opeka_screening_options['answer_option'],
+        '#size' => 80,
+        '#attributes' => array(
+          'class' => array('clearfix'),
+          'placeholder' => t('Answer option...'),
+          'required' => TRUE,
+        ),
+      ),
       'remove' => array(
         '#element_name' => $element_name,
         '#type' => 'submit',
@@ -58,16 +68,6 @@ function opeka_screening_admin_form($form, &$form_state) {
         '#ajax' => array(
           'callback' => 'opeka_screening_ajax',
           'wrapper' => $fieldset_id,
-        ),
-      ),
-      'answer_option' => array(
-        '#type' => 'textfield',
-        '#default_value' => $opeka_screening_options['answer_option'],
-        '#size' => 80,
-        '#attributes' => array(
-          'class' => array('clearfix'),
-          'placeholder' => t('Answer option...'),
-          'required' => TRUE,
         ),
       ),
       '#prefix' => '<div id="' . $element_name . '_' . $delta . '" class="control-group">',
