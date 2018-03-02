@@ -845,9 +845,8 @@ function Server(config, logger) {
     if (room) {
       self.deleteRoom(room, lastRoom, counselor, queue, finalMessage);
     } else {
-      // @todo: the line below throws an error (see issue #37)
-      // this.remote('displayError', "Error deleting room: a room with the specified ID does not exist.");
-      self.logger.warning('@debug deleteRoom: Room could not be deleted by counselor.');
+      this.remote('displayError', "Error deleting room: a room with the specified ID does not exist.");
+      self.logger.warning('deleteRoom: Room could not be deleted by counselor. room undefined.');
     }
   });
 
