@@ -1,0 +1,29 @@
+#fieldset-opeka-opening-hours-datetimes {
+  margin-bottom: 1em;
+  .form-item {
+    float: left;
+  }
+
+  fieldset {
+    min-width: 0;
+    .control-group .form-type-textfield {
+      display: inline-block;
+    }
+    .form-type-select {
+      clear: left;
+    }
+    .control-group .form-type-textfield input {
+      width: 100%;
+    }
+    .control-group button.form-submit {
+      clear: none;
+      display: inline-block;
+      width: 13ex;
+      margin: 0 0 0 2ex;
+    }
+    button.form-submit {
+      clear: both;
+      float: left;
+    }
+  }
+}

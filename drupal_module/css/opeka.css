@@ -62,17 +62,3 @@ body.page-admin-config-services-opeka-screening #fieldset-opeka-screening-option
 body.page-admin-config-services-opeka-screening .btn.btn-info {
   margin-bottom: 1em;
 }
-
-body.page-admin-config-services-opeka-opening-hours #fieldset-opeka-opening-hours-datetimes {
-  margin-bottom: 1em;
-}
-body.page-admin-config-services-opeka-opening-hours #fieldset-opeka-opening-hours-datetimes .form-item {
-  float: left;
-}
-body.page-admin-config-services-opeka-opening-hours #fieldset-opeka-opening-hours-datetimes .form-type-select {
-  clear: left;
-}
-body.page-admin-config-services-opeka-opening-hours #fieldset-opeka-opening-hours-datetimes button.form-submit {
-  clear: left;
-  float: left;
-}

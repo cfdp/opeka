@@ -1,0 +1,28 @@
+#fieldset-opeka-opening-hours-datetimes {
+  margin-bottom: 1em;
+}
+#fieldset-opeka-opening-hours-datetimes .form-item {
+  float: left;
+}
+#fieldset-opeka-opening-hours-datetimes fieldset {
+  min-width: 0;
+}
+#fieldset-opeka-opening-hours-datetimes fieldset .control-group .form-type-textfield {
+  display: inline-block;
+}
+#fieldset-opeka-opening-hours-datetimes fieldset .form-type-select {
+  clear: left;
+}
+#fieldset-opeka-opening-hours-datetimes fieldset .control-group .form-type-textfield input {
+  width: 100%;
+}
+#fieldset-opeka-opening-hours-datetimes fieldset .control-group button.form-submit {
+  clear: none;
+  display: inline-block;
+  width: 13ex;
+  margin: 0 0 0 2ex;
+}
+#fieldset-opeka-opening-hours-datetimes fieldset button.form-submit {
+  clear: both;
+  float: left;
+}
