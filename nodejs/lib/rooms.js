@@ -134,8 +134,6 @@ var Room = function (options) {
     self.memberCount = 1;
     // A room can be paused by the counselor and an autoPauseRoom setting is available as well in config.json
     self.paused = false;
-    // Is it allowed for clients to be alone in a room without a counselor?
-    self.soloClientsAllowed = false; //@todo: should probably be a setting in config.json
 
     // Keep track of counselor presence
     self.counselorPresent = true;
@@ -204,9 +202,9 @@ var Room = function (options) {
     // If we have both rooms and groups, check that
     // - we don't exceed the room size (if set)
     // - that the room is not paused
-    // - that we have a counselor present (if needed)
+    // - that we have a counselor present
     // before adding the person to the room.
-    if (client.account.isAdmin || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && (self.hascounselor() && !self.soloClientsAllowed)) && client) {
+    if (client.account.isAdmin || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && self.hascounselor()) && client) {
       self.users[client.clientId] = opeka.user.filterData(client);
       self.group.addUser(client.clientId);
 

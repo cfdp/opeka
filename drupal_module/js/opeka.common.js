@@ -680,6 +680,15 @@ var Opeka = {
     view.render();
   };
 
+  // Show error message
+  Opeka.clientSideMethods.displayError = function (messageText) {
+    var view = new Opeka.FatalErrorDialogView({
+      message: Drupal.t(messageText),
+      title: Drupal.t('Error')
+    });
+
+    view.render();
+  };
 
   /**
    * If the client user is leaving a pair room and hidePairRoomsOnRoomList is true
