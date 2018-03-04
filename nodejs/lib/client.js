@@ -40,7 +40,7 @@ var Client = function(server, stream, remote, conn) {
         self.city = null;
         self.state = null;
 
-        self.chatStart_Min = null;
+        self.chatStartMin = null;
 
         self.activeRoomId = null;
         self.activeQueueRoomId = null;

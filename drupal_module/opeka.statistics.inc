@@ -38,7 +38,7 @@ function opeka_statistics_display_results_table() {
       'data' => array(
         format_date($subm->submission_date),
         $subm->chat_duration !== NULL ? $subm->chat_duration : t('-'),
-        $subm->age,
+        $subm->age !== ("") ? $subm->age : t("age not set"),
         _opeka_statistics_expand_gender($subm->gender),
         $subm->question,
         $subm->answer
@@ -52,7 +52,7 @@ function opeka_statistics_display_results_table() {
       //Optional to indicate whether the table headers should be sticky
       'sticky' => TRUE,
       //Optional empty text for the table if resultset is empty
-      'empty' => 'No screening results yet...',
+      'empty' => t('No screening results yet...'),
     )
   );
 
