@@ -7,13 +7,13 @@ var _ = require('underscore'),
   ban = require('./ban'),
   rooms = require('./rooms'),
   user = require('./user.js'),
-  util = require("util")
+  util = require("util");
 
   // Connection states
-  CREATED = 0,
-  CONNECTED = 1,
-  PENDING_TIMEOUT = 2,
-  DISCONNECTED = 3
+  CREATED = 0;
+  CONNECTED = 1;
+  PENDING_TIMEOUT = 2;
+  DISCONNECTED = 3;
 
   PING_INTERVAL = 5000;
 
@@ -29,7 +29,6 @@ var Client = function (server, stream, remote, conn) {
   var self = this;
 
   self.construct = function () {
-    self.changeState(CREATED);
     self.clientId = uuid();
 
     self.server = server;
@@ -73,6 +72,8 @@ var Client = function (server, stream, remote, conn) {
 
     self.screening = null;
     self.now = (new Date()).getTime();
+
+    self.changeState(CREATED);
 
     groups.registerClient(self);
     conn.on('ready', function () {
@@ -145,11 +146,11 @@ var Client = function (server, stream, remote, conn) {
         self.checkDisconnect();
         break;
       case DISCONNECTED:
-        break
+        break;
       default:
         break;
     }
-  }
+  };
 
   self.changeState = function (newState) {
     self.state = newState;
@@ -173,11 +174,11 @@ var Client = function (server, stream, remote, conn) {
           return;
         }
         self.breakRelations();
-        break
+        break;
       default:
         break;
     }
-  }
+  };
 
   self.onConnectionClosed = function () {
     console.log(
@@ -197,7 +198,10 @@ var Client = function (server, stream, remote, conn) {
     self.clientSideMethods = newClient.clientSideMethods;
     self.stream = newClient.stream;
     self.conn = newClient.conn;
-    util.log('onReconnect: ' + self.clientId + ' takes over ' + newClient.clientId + 's remote, stream and connection.');
+    self.server.logger.info(
+      'onReconnect: ' + self.clientId + ' takes over ' +
+      newClient.clientId + 's remote, stream and connection.'
+    );
     self.changeState(CONNECTED);
     newClient.breakRelations();
     newClient.changeState(DISCONNECTED);
@@ -274,7 +278,7 @@ var Client = function (server, stream, remote, conn) {
       );
       self.changeState(DISCONNECTED);
     }
-  }
+  };
 
 /**
  * Update client online state and disconnect them if disconnectLimit is passed
@@ -316,7 +320,7 @@ var Client = function (server, stream, remote, conn) {
     // Copy arguments to writeable array
     args = [];
     _.each(arguments, function (v) {
-      args.push(v)
+      args.push(v);
     });
 
     // Remove first argument

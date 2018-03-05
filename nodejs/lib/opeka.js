@@ -68,7 +68,7 @@ function Server(config, logger) {
     var sock = shoe(function (stream) {
       var d = dnode(function (remote, conn) {
         var client = new opeka.Client(self, stream, remote, conn);
-        return client.getServerSideMethods()
+        return client.getServerSideMethods();
       });
       d.pipe(stream).pipe(d);
     });
@@ -247,32 +247,6 @@ function Server(config, logger) {
     var oldClient,
         reconnectTimeout;
     
-//    console.log('signIn: opeka.rooms.list: ');
-//    console.dir(opeka.rooms.list);        
-//    _.forEach(opeka.rooms.list, function (loopRoom) {
-//        console.log('loop room users');
-//        console.dir(loopRoom.users);
-//        console.log('loop room group members');
-//        console.dir(loopRoom.group.members);
-//      });
-//      _.forEach(opeka.rooms.list, function (loopRoom) {
-//        console.log('loop room users');
-//        console.dir(loopRoom.users);
-//      });
-
-    if (clientUser.clientId) {
-      oldClient = opeka.groups.getClient(clientUser.clientId);
-      if (oldClient){
-        self.logger.info("Reconnected user: ", clientUser.clientId, ' -> ', this.clientId);
-      }
-      else {
-        console.log('Reconnected user: user not in any groups, setting reconnectTimeout=true for : ', clientUser.clientId);
-        reconnectTimeout= true;
-      }
-      delete(clientUser.clientId);
-    } else {
-      console.log('signIn: user had no clientId');
-    }
     var client = this,
       accessCode = self.config.get('accessCode'),
       accessCodeEnabled = self.config.get('features:accessCodeEnabled'),
@@ -388,21 +362,55 @@ function Server(config, logger) {
         }
       );
 
-      if (oldClient){
-        oldClient.onReconnect(client);
-      }
-      // If we had a reconnect timeout then the client needs an update. 
-      else if (reconnectTimeout) {
-        console.log('calling reconnect timeout on new client...');
-        client.remote('reconnectTimeout');
-      }
-
       if (callback) {
         callback(clientData);
       }
 
     });
   });
+
+  self.everyone.addServerMethod('reconnect', function (clientUser, callback) {
+    var newClient = this,
+        client,
+        accessCode = self.config.get('accessCode'),
+        accessCodeEnabled = self.config.get('features:accessCodeEnabled');
+
+    if (clientUser.clientId) {
+      client = opeka.groups.getClient(clientUser.clientId);
+      if (client){
+        self.logger.info(
+          "Reconnected user: ", this.clientId, " taking over ",
+          clientUser.clientId
+        );
+      } else {
+        self.logger.warn('Reconnect from unknown user', clientUser.clientId);
+        return;
+      }
+      delete(clientUser.clientId);
+    } else {
+      console.log('reconnect: user had no clientId');
+      return;
+    }
+
+    // Make sure the user is who they claim to be
+    opeka.user.authenticate(clientUser, client.clientId, accessCodeEnabled, accessCode, function (err, account) {
+      if (err) {
+        self.logger.info('Authentication failed: ' + err.message);
+        newClient.remote('accessDenied', client.clientId);
+        return;
+      }
+      // Check whether the user is required to be logged into Drupal
+      if (self.config.get("features:requireDrupalLogin") && !account.uid) {
+        self.logger.info('User without Drupal login tried to access the chat.');
+        newClient.remote('loginRequiredMessage', client.clientId);
+        return;
+      }
+      // Update the old client with the new remote end
+      client.onReconnect(newClient);
+    });
+
+  });
+
 
   // Give the client a URL where he can sign in and go directly to a
   // room of the requested type.
