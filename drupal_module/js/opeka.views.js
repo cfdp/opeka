@@ -12,7 +12,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*global _, Backbone, Drupal, JST, now, Opeka, window */
+/* global _, Backbone, Drupal, JST, Opeka, window */
 (function ($) {
   "use strict";
 
@@ -1385,17 +1385,19 @@
         event.preventDefault();
       }
     }
-  });// END RoomEditView
+  });
 
   // List of rooms the user can enter.
   Opeka.RoomListView = Backbone.View.extend({
     events: {
       "click .create-room": "createRoom",
-      "click .chat-toggle": "toggleChat"
+      "click .chat-toggle": "toggleChat",
+      "click .room-enter": "enterRoom"
     },
 
     initialize: function (options) {
       _.bindAll(this);
+      this.admin =  Opeka.clientData.isAdmin;
 
       // Bind to the global status model.
       if (Opeka.status) {
@@ -1424,7 +1426,7 @@
       }
 
       html = JST.opeka_room_list_tmpl({
-        admin: Opeka.clientData.isAdmin,
+        admin: this.admin,
         labels: {
           createRoom: Drupal.t('Create new room'),
           inviteRooms: (Drupal.settings.opeka && Drupal.settings.opeka.invite) ? Drupal.t('Invitations list') : false,
@@ -1473,7 +1475,18 @@
       if (event) {
         event.preventDefault();
       }
-    }
+    },
+
+    // Enter a chat room - dialog warning if counselor is already present.
+    enterRoom: function (event) {
+      if (event && this.admin && event.target.getAttribute('data-counselor-present')) {
+        var dialog = new Opeka.confirmEnterCounselorRoomDialogView({
+          destination: event.target.getAttribute('href')
+        });
+        dialog.render();
+        event.preventDefault();
+      }
+    },
 
   });// END RoomListView
 
@@ -1535,7 +1548,7 @@
     }
   });// END UserFeedback
 
-  // The user ends on this page after pair chat when hidepairroomsonroomlist is true
+  // The user ends on this page after pair chat when hidePairRoomsOnRoomList is true
   Opeka.GoodbyeView = Backbone.View.extend({
     className: 'goodbye-view well',
     initialize: function (options) {
@@ -1600,7 +1613,7 @@
 
       dialog.render();
     }
-  });
+  }); // END QueueListView
 
   Opeka.InviteListView = Backbone.View.extend({
     events: {
@@ -1709,7 +1722,7 @@
       }
     },
 
-  });
+  }); // END InviteListView
 
   // Dialog for confirming that user should be kicked.
   Opeka.RoomKickUserView = Opeka.DialogView.extend({
@@ -1826,7 +1839,7 @@
       this.remove();
     }
 
-  });
+  }); // END RoomBanUserView
 
   Opeka.RoomWhisperView = Opeka.DialogView.extend({
     initialize: function (options) {
@@ -1944,14 +1957,14 @@
           name: name
         });
       }
-      else if (this.model.get('chatOpen') === false) {
-        var form = Drupal.t('The chat is closed');
+      else if (chatOpen === false) {
+        form = Drupal.t('The chat is closed');
       }
       // chatOpen is undefined
       else {
-        var form = Drupal.t('Loading...');
+        form = Drupal.t('Loading...');
       }
-      // Render the Enter Site Button for clients if feature is enabled
+      // Render the "Enter Site" button for clients if feature is enabled
       if (!isAdmin && (enterSiteButtonEnabled === "1") && showSignInForm !== true) {
         this.$el.empty();
         this.$el.append(this.inner.$el);
@@ -1985,7 +1998,7 @@
       var errMsg = Drupal.t('You must answer the question before you can enter the chat.');
       // Check if an option has been chosen if answering is required
       if (screeningRequired && (answer === undefined) && !user.admin) {
-        alert(errMsg);
+        window.alert(errMsg);
         validationError = true;
       }
 
@@ -2036,5 +2049,50 @@
       this.unbind();
     },
   });// END EnterSiteView
+
+  Opeka.confirmEnterCounselorRoomDialogView = Opeka.DialogView.extend({
+    initialize: function (options) {
+      _.bindAll(this);
+      this.destination = options.destination;
+
+      // For when creating new room.
+      options.content = JST.opeka_confirm_enter_counselor_room_tmpl({
+        labels: {
+          explanation: Drupal.t('You are about to enter a room that is already occupied by a counselor. Are you sure you want to do this?'),
+        }
+      });
+      options.dialogOptions = {
+        buttons: {},
+        title: Drupal.t('Confirm: Enter room'),
+        width: 400
+      };
+      options.dialogOptions.buttons[Drupal.t('Enter room')] = this.enterRoom;
+      options.dialogOptions.buttons[Drupal.t('Cancel')] = this.cancel;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      return this;
+    },
+
+    cancel: function (event) {
+      this.remove();
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    enterRoom: function (event) {
+      // Proceed entering the room.
+      Opeka.router.navigate(this.destination, {trigger: true});
+      this.remove();
+
+      if (event) {
+        event.preventDefault();
+      }
+    }
+  }); // END confirmEnterCounselorRoomDialogView
+
 
 }(jQuery));

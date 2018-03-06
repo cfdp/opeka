@@ -173,7 +173,7 @@ var Room = function (options) {
   };
 
   // Method used to see if there is a counselor in the room
-  self.hascounselor = function () {
+  self.hasCounselor = function () {
     var count;
     var setCount = function (response) {
       count = response;
@@ -204,7 +204,7 @@ var Room = function (options) {
     // - that the room is not paused
     // - that we have a counselor present
     // before adding the person to the room.
-    if (client.account.isAdmin || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && self.hascounselor()) && client) {
+    if (client.account.isAdmin || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && self.hasCounselor()) && client) {
       self.users[client.clientId] = opeka.user.filterData(client);
       self.group.addUser(client.clientId);
 
@@ -249,7 +249,7 @@ var Room = function (options) {
       delete self.users[clientId];
 
       // Update counselorPresent state
-      self.hascounselor();
+      self.hasCounselor();
 
       updateRoomCounts();
     }
@@ -369,7 +369,8 @@ var Room = function (options) {
       paused: self.paused || false,
       private: self.private,
       queueSystem: self.queueSystem,
-      messages: self.messages
+      messages: self.messages,
+      counselorPresent: self.counselorPresent
     };
   };
 

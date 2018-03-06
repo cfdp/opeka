@@ -740,7 +740,7 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId],
       roomGroup = opeka.groups.getGroup(roomId),
       userData = room.users[clientId],
-      councillor = this,
+      councelor = this,
       mutedClient = roomGroup.getClient(clientId);
 
     // Mute the user.
@@ -751,7 +751,7 @@ function Server(config, logger) {
     opeka.user.sendUserList(room.counselorGroup, room.id, room.users);
 
     // Tell the user that he was muted.
-    roomGroup.remote('roomUserMuted', roomId, clientId, userData, councillor.nickname);
+    roomGroup.remote('roomUserMuted', roomId, clientId, userData, councelor.nickname);
   });
 
   /* Function used in order to unmute a single user */
