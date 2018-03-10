@@ -142,7 +142,7 @@ var Opeka = {
         sidebar,
         that = this;
 
-      Drupal.settings.opeka.user.roomId = roomId;
+      drupalSettings.opeka.user.roomId = roomId;
       if (this.checkSignIn()) {
         // Try to load room (it might be private).
         if (!room) {
@@ -153,7 +153,7 @@ var Opeka = {
                 that.room(roomId);
               }
               else {
-                Drupal.settings.opeka.user.roomId = null;
+                drupalSettings.opeka.user.roomId = null;
                 that.navigate('rooms', {trigger: true});
               }
             });
@@ -164,7 +164,7 @@ var Opeka = {
           return;
         }
 
-        Drupal.settings.opeka.user.roomId = null;
+        drupalSettings.opeka.user.roomId = null;
 
         Opeka.chatView = new Opeka.ChatView({
           admin: admin,
@@ -221,7 +221,7 @@ var Opeka = {
 
     inviteList: function () {
       var admin = Opeka.clientData.isAdmin;
-      if (this.checkSignIn() && admin && Drupal.settings.opeka && Drupal.settings.opeka.invite) {
+      if (this.checkSignIn() && admin && drupalSettings.opeka && drupalSettings.opeka.invite) {
         var view = new Opeka.InviteListView({});
 
         Opeka.appViewInstance.replaceContent(view.render().el);
@@ -245,7 +245,7 @@ var Opeka = {
               view.render();
             }
             Opeka.roomList.add(room);
-            Drupal.settings.opeka.user.roomId = room.id;
+            drupalSettings.opeka.user.roomId = room.id;
             if (self.checkSignIn()) {
               self.navigate('rooms/' + room.id, {trigger: true});
             }
@@ -795,9 +795,9 @@ var Opeka = {
   // Basic setup for the app when the DOM is loaded.
   $(function () {
     var view;
-    Opeka.doorBellSound = new Howl({
-      src: [Drupal.settings.opeka.client_login_sound]
-    });
+//    Opeka.doorBellSound = new Howl({
+//      src: [drupalSettings.opeka.client_login_sound]
+//    });
     Opeka.compileTemplates();
 
     // We use a bare Backbone model for containing server status.

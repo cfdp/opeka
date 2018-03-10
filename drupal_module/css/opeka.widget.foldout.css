@@ -6,7 +6,6 @@
 * — Variables —
 */
 /* Responsive media query breakpoints */
-/* Palette for client chat messages */
 /* Bootstrap overrides */
 /* Typography */
 /* Cyberhus Clean theme (used in widgets) */
@@ -17,6 +16,7 @@
 * — Mixins —
 */
 /* Trying to target case when soft keyboard pops up */
+/* line 8, ../sass/opeka.widget.foldout.scss */
 .opeka-chat-foldout-wrapper {
   top: 15%;
   position: fixed;
@@ -24,6 +24,7 @@
   z-index: 10;
 }
 
+/* line 15, ../sass/opeka.widget.foldout.scss */
 .opeka-chat-foldout-wrapper.demo-group-chat {
   top: 45%;
 }

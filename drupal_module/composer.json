@@ -1,0 +1,14 @@
+{
+  "name": "drupal/opeka",
+  "type": "drupal-module",
+  "description": "Secure anonymous chat system, built with Drupal and dnode.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/opeka",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/opeka",
+    "source": "http://cgit.drupalcode.org/opeka"
+  },
+  "require": { }
+}

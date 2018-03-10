@@ -22,7 +22,8 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
         return;
       }
 
-      if (session.uid !== clientUser.uid) {
+      // Strict numerical comparison.
+      if (parseInt(session.uid) !== parseInt(clientUser.uid)) {
         throw 'Possible hacking attempt. sid/uid mismatch.';
       }
 

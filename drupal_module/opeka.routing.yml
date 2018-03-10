@@ -1,0 +1,24 @@
+opeka.chat_controller_mainChatPage:
+  path: '/opeka'
+  defaults:
+    _controller: '\Drupal\opeka\Controller\ChatController::mainChatPage'
+    _title: 'Chat'
+  requirements:
+    _permission: 'access opeka chat'
+
+opeka.chat_controller_adminChatPage:
+  path: '/admin/opeka'
+  defaults:
+    _controller: '\Drupal\opeka\Controller\ChatController::adminChatPage'
+    _title: 'Chat'
+  requirements:
+    _permission: 'administer opeka chat'
+    
+opeka.chat_configuration_main:
+  path: '/admin/config/services/opeka'
+  defaults:
+    _form: '\Drupal\opeka\Form\ChatConfigurationForm'
+    _title: 'Opeka - Chat system'
+  requirements:
+    _permission: 'administer site configuration'
+  

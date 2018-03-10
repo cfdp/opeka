@@ -114,7 +114,7 @@
         formPresent = true,
         // In the Drupal administration for the Opeka module there's a setting for showing / hiding
         // the "User is writing" msg for non-admins.
-        showWritingMsg = (Drupal.settings.opeka.clients_writing_message === "1" || this.admin) ? true : false;
+        showWritingMsg = (drupalSettings.opeka.clients_writing_message === "1" || this.admin) ? true : false;
 
       if (!activeUser) {
         activeUser = {muted: false};
@@ -144,7 +144,7 @@
       this.$el.find('.chat-view-window').html(JST.opeka_chat_tmpl({
         admin: this.admin,
         formatTimestamp: this.formatTimestamp,
-        chatName: this.model.get('maxSize') === 2 ? Drupal.settings.opeka.pair_chat_name : Drupal.settings.opeka.group_chat_name,
+        chatName: this.model.get('maxSize') === 2 ? drupalSettings.opeka.pair_chat_name : drupalSettings.opeka.group_chat_name,
         labels: {
           deleteMessage: Drupal.t('Delete'),
           whispered: Drupal.t('Whispered'),
@@ -250,7 +250,7 @@
       var chatType = "pair";
 
       // Special case for owner leaving the room.
-      if (maxSize === 2 && (Drupal.settings.opeka.user && this.model.get('uid') === Drupal.settings.opeka.user.uid)) {
+      if (maxSize === 2 && (drupalSettings.opeka.user && this.model.get('uid') === drupalSettings.opeka.user.uid)) {
         var dialog = new Opeka.RoomLeaveOwnPairRoomDialogView({
           roomId: this.model.id
         });
@@ -1427,7 +1427,7 @@
         admin: Opeka.clientData.isAdmin,
         labels: {
           createRoom: Drupal.t('Create new room'),
-          inviteRooms: (Drupal.settings.opeka && Drupal.settings.opeka.invite) ? Drupal.t('Invitations list') : false,
+          inviteRooms: (drupalSettings.opeka && drupalSettings.opeka.invite) ? Drupal.t('Invitations list') : false,
           placeholder: Drupal.t('No rooms created'),
           closeWindowText: Drupal.t('Close window'),
           queueLink: Drupal.t('Go to queue list'),
@@ -1483,7 +1483,7 @@
     initialize: function (options) {
       _.bindAll(this);
       this.chatType = options.chatType;
-      this.autoRedirect = Drupal.settings.opeka.feedback_auto_redirect;
+      this.autoRedirect = drupalSettings.opeka.feedback_auto_redirect;
       return this;
     },
     render: function () {
@@ -1507,11 +1507,11 @@
 
       // Auto redirect baseWindow to questionnaire if it exists and close chat window
       if (this.autoRedirect && baseWindow) {
-        if ((Drupal.settings.opeka.feedback_url != '') && (this.chatType == 'pair')) {
-          baseWindow.location.href = Drupal.settings.opeka.feedback_url;
+        if ((drupalSettings.opeka.feedback_url != '') && (this.chatType == 'pair')) {
+          baseWindow.location.href = drupalSettings.opeka.feedback_url;
         }
-        else if ((Drupal.settings.opeka.groupchat_feedback_url != '') && (this.chatType == 'group')) {
-          baseWindow.location.href = Drupal.settings.opeka.groupchat_feedback_url;
+        else if ((drupalSettings.opeka.groupchat_feedback_url != '') && (this.chatType == 'group')) {
+          baseWindow.location.href = drupalSettings.opeka.groupchat_feedback_url;
         }
       }
       // If window.opener has been closed, just redirect the window itself
@@ -1528,7 +1528,7 @@
           closeWindowText: Drupal.t('Close the window')
         },
         chatType: this.chatType,
-        autoRedirect: Drupal.settings.opeka.feedback_auto_redirect
+        autoRedirect: drupalSettings.opeka.feedback_auto_redirect
       }));
 
       return this;
@@ -1650,9 +1650,9 @@
         html = '';
 
       // Format time.
-      moment.locale(Drupal.settings.userLang);
+      moment.locale(drupalSettings.userLang);
       _.each(inviteList.models, function(invite) {
-        invite.set("formatted_time", moment((invite.get("time") + Drupal.settings.userTimeZoneOffset - moment().utcOffset() * 60) * 1000).format("dddd D MMMM YYYY, H:mm"));
+        invite.set("formatted_time", moment((invite.get("time") + drupalSettings.userTimeZoneOffset - moment().utcOffset() * 60) * 1000).format("dddd D MMMM YYYY, H:mm"));
       });
       html = JST.opeka_invite_list_tmpl({
         labels: {
@@ -1678,7 +1678,7 @@
 
     // Open the dialog to create a new invitation.
     createInvite: function () {
-      if (Drupal.settings.opeka && Drupal.settings.opeka.invite) {
+      if (drupalSettings.opeka && drupalSettings.opeka.invite) {
         var dialog = new Opeka.InviteCreateView();
         dialog.render();
         Drupal.behaviors.date_popup.attach('body');
@@ -1910,27 +1910,27 @@
 
     render: function (showSignInForm) {
       var name = '',
-        isAdmin = (Drupal.settings.opeka.user && Drupal.settings.opeka.user.admin) ? true : false,
+        isAdmin = (drupalSettings.opeka.user && drupalSettings.opeka.user.admin) ? true : false,
         chatOpen = this.model.get('chatOpen'),
-        enterSiteButtonEnabled = Drupal.settings.opeka.enter_site_feature;
+        enterSiteButtonEnabled = drupalSettings.opeka.enter_site_feature;
 
       //@todo: the visibility of the name should probably be a setting somewhere
       //Replace the Drupal username with rådgiver(counselor), not using the actual user name
-      //name = Drupal.settings.opeka.user.name;
+      //name = drupalSettings.opeka.user.name;
       if (isAdmin) {
         name = Drupal.t('Counselor');
       }
       // If the chat is closed, only authenticated Drupal users is presented with the sign in form
-      if (Drupal.settings.opeka.user || this.model.get('chatOpen')) {
+      if (drupalSettings.opeka.user || this.model.get('chatOpen')) {
         var form = JST.opeka_connect_form_tmpl({
           accessCodeEnabled: Opeka.status.attributes.accessCodeEnabled,
           screeningQuestions: Opeka.status.attributes.screeningQuestions,
-          signInFootNote: Drupal.settings.opeka.signin_footnote,
+          signInFootNote: drupalSettings.opeka.signin_footnote,
           labels: {
             action: Drupal.t('Ready for chat'),
             age: Drupal.t('Age'),
-            ageMin: parseInt(Drupal.settings.opeka.age_min),
-            ageMax: parseInt(Drupal.settings.opeka.age_max),
+            ageMin: parseInt(drupalSettings.opeka.age_min),
+            ageMax: parseInt(drupalSettings.opeka.age_max),
             gender: Drupal.t('Gender'),
             female: Drupal.t('Female'),
             nonbinary: Drupal.t('non-binary'),
@@ -1971,15 +1971,15 @@
     },
 
     signIn: function (event) {
-      var user = Drupal.settings.opeka.user || {},
+      var user = drupalSettings.opeka.user || {},
         view = this;
 
-      //add a number to each anonymous user to help in distinguishing them
-      var x = Math.floor((Math.random() * 999) + 1);
+      // Add a number to each anonymous user to help in distinguishing them.
+      var x = Math.floor((Math.random() * 50) + 1);
 
       var question = this.$el.find('p.screening-question').text();
       var answer = this.$el.find('input[name=screening]:checked').val();
-      var screeningRequired = (Drupal.settings.opeka_screening && Drupal.settings.opeka_screening.opeka_screening_required);
+      var screeningRequired = (drupalSettings.opeka_screening && drupalSettings.opeka_screening.opeka_screening_required);
       var validationError;
 
       var errMsg = Drupal.t('You must answer the question before you can enter the chat.');
@@ -2018,10 +2018,10 @@
     },
     render: function() {
       var form = JST.opeka_enter_form_tmpl({
-            message: Drupal.settings.opeka.enter_site_message,
+            message: drupalSettings.opeka.enter_site_message,
             labels: {
-              confirm: Drupal.settings.opeka.enter_site_confirm,
-              leave: Drupal.settings.opeka.enter_site_leave,
+              confirm: drupalSettings.opeka.enter_site_confirm,
+              leave: drupalSettings.opeka.enter_site_leave,
             },
           });
       this.$el.html(form);

@@ -4,7 +4,6 @@
 * — Variables —
 */
 /* Responsive media query breakpoints */
-/* Palette for client chat messages */
 /* Bootstrap overrides */
 /* Typography */
 /* Cyberhus Clean theme (used in widgets) */
@@ -16,29 +15,37 @@
 */
 /* Trying to target case when soft keyboard pops up */
 /* inline widget */
+/* line 9, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline {
   background: none transparent;
 }
+/* line 11, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline .status-content {
   display: inline-block;
   margin: 0;
 }
+/* line 12, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline .status-content p, body.page-opeka-widgets-inline .status-content ul {
   color: #231e19;
 }
+/* line 15, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline .status-content li {
   display: inline;
 }
+/* line 17, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline .status-content li:after {
   content: ",";
 }
+/* line 20, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline .status-content li.last:after {
   content: none;
 }
+/* line 27, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline .login-button {
   display: block;
   text-align: center;
 }
+/* line 30, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline .login-button .btn {
   background-color: #BFBFBF;
   box-sizing: border-box;
@@ -49,39 +56,49 @@ body.page-opeka-widgets-inline .login-button .btn {
   width: 100%;
   max-width: 24em;
 }
+/* line 41, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline.chat-closed .login-button .btn {
   background-color: #BFBFBF;
   cursor: default;
 }
+/* line 45, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline.chat-busy .login-button .btn {
   background-color: #bf6516;
   cursor: default;
 }
+/* line 49, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline.chat-open .login-button .btn {
   background-color: #25AD60;
 }
+/* line 51, ../sass/widget.inline.scss */
 body.page-opeka-widgets-inline.chat-open .login-button .btn:hover {
   background-color: #1c8349;
 }
 
 @media (max-width: 180px) {
+  /* line 59, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline .status-content {
     display: none;
   }
+  /* line 63, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline .login-button .btn {
     padding: .4em 0;
   }
+  /* line 67, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline.chat-open .login-button .btn {
     background-color: #1c8349;
   }
+  /* line 69, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline.chat-open .login-button .btn:hover {
     background-color: #135931;
   }
 }
 @media (min-width: 480px) {
+  /* line 78, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline .status-content {
     width: 67%;
   }
+  /* line 81, ../sass/widget.inline.scss */
   body.page-opeka-widgets-inline .login-button {
     position: absolute;
     top: 5px;

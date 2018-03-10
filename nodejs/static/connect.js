@@ -9322,7 +9322,7 @@ var shoe = require('shoe'),
 (function($) {
     Opeka.serverJSLoaded = true;
     $(function() {
-        var server_url = Drupal.settings.opeka.dnode_endpoint ||
+        var server_url = drupalSettings.opeka.dnode_endpoint ||
                          'http://localhost:3000/opeka';
         var stream = shoe(server_url);
         var d = dnode(Opeka.clientSideMethods);

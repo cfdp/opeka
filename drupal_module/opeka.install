@@ -8,206 +8,106 @@
  * Implements hook_schema().
  */
 function opeka_schema() {
-  $schema = array();
+  $schema = [];
 
-  $schema['opeka_bans'] = array(
+  $schema['opeka_bans'] = [
     'description' => 'Keeps track of bans, so that certain IP-addresses can be denied access to the chat for limited periods of time.',
-    'fields' => array(
-      'ban_id' => array(
+    'fields' => [
+      'ban_id' => [
         'description' => 'Unique ban ID.',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'ip_hash' => array(
+      ],
+      'ip_hash' => [
         'description' => 'SHA512 hash of the user’s IP address, for identification.',
         'type' => 'varchar',
         'length' => 128,
         'not null' => TRUE,
-      ),
-      'expiry' => array(
+      ],
+      'expiry' => [
         'description' => 'Unix timestamp for when the ban expires. NULL for never.',
         'type' => 'int',
         'unsigned' => TRUE,
-      ),
-    ),
-    'primary key' => array('ban_id'),
-    'indexes' => array('ip_expires' => array('ip_hash', 'expiry')),
-  );
+      ],
+    ],
+    'primary key' => ['ban_id'],
+    'indexes' => [
+      'ip_expires' => ['ip_hash', 'expiry'],
+    ],
+  ];
 
-  $schema['opeka_chats'] = array(
+  $schema['opeka_chats'] = [
     'description' => 'A log of chats on the site, so we can see if someone has been here before.',
-    'fields' => array(
-      'chat_id' => array(
+    'fields' => [
+      'chat_id' => [
         'description' => 'Unique chat ID.',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'ip_hash' => array(
+      ],
+      'ip_hash' => [
         'description' => 'SHA512 hash of the user’s IP address, for identification.',
         'type' => 'varchar',
         'length' => 128,
         'not null' => TRUE,
-      ),
-      'quarter' => array(
+      ],
+      'quarter' => [
         'description' => 'A simple year/quarter datestamp for when the chat occurred, eg. 2011Q3.',
         'type' => 'varchar',
         'length' => 6,
-      ),
-    ),
-    'primary key' => array('chat_id'),
-    'indexes' => array('ip_hash' => array('ip_hash')),
-  );
+      ],
+    ],
+    'primary key' => ['chat_id'],
+    'indexes' => [
+      'ip_hash' => ['ip_hash'],
+    ],
+  ];
 
-  $schema['opeka_stats'] = array(
+  $schema['opeka_stats'] = [
     'description' => 'We save gender, age and time about the chat sessions for statistical purposes. Furthermore we save the screening question and answer, if present',
-    'fields' => array(
-      'submission_id' => array(
+    'fields' => [
+      'submission_id' => [
         'description' => 'Unique submission ID.',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'age' => array(
+      ],
+      'age' => [
         'description' => 'User age.',
         'type' => 'varchar',
         'length' => 255,
-      ),
-      'gender' => array(
+      ],
+      'gender' => [
         'description' => 'User gender.',
         'type' => 'varchar',
         'length' => 12,
-      ),
-      'question' => array(
+      ],
+      'question' => [
         'description' => 'Screening question.',
         'type' => 'text',
-      ),
-      'answer' => array(
+      ],
+      'answer' => [
         'description' => 'Screening answer.',
         'type' => 'text',
-      ),
-      'submission_date' => array(
+      ],
+      'submission_date' => [
         'description' => 'Unix timestamp representing the time when the submission was made.',
         'type' => 'int',
         'unsigned' => TRUE,
-      ),
-      'chat_duration' => array(
+      ],
+      'chat_duration' => [
         'description' => 'Session duration in minutes.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => FALSE,
-      ),
-    ),
-    'primary key' => array('submission_id'),
-    'indexes' => array('submission_date' => array('submission_date')),
-  );
+      ],
+    ],
+    'primary key' => ['submission_id'],
+    'indexes' => [
+      'submission_date' => ['submission_date'],
+    ],
+  ];
 
   return $schema;
-}
-
-/**
- * Install our new database schema.
- */
-function opeka_update_7000(&$sandbox) {
-  drupal_install_schema('opeka');
-}
-
-/**
- * Revert / import settings for the opeka permissions
- */
-function opeka_update_7001() {
-  drupal_set_message(t('Enabling modules...'), 'status');
-
-  module_enable(array('features'));
-  module_enable(array('opeka_features_permissions'));
-  module_enable(array('opeka_screening'));
-  module_enable(array('opeka_opening_hours'));
-
-  if (module_exists('features') && module_exists('opeka_screening') && module_exists('opeka_opening_hours')) {
-
-    drupal_set_message(t('Reverting the opeka permissions'), 'status');
-    features_revert(array('opeka_features_permissions' => array('user_permission')));
-  }
-  else {
-    drupal_set_message(t('Some modules needed for feature reverting not enabled. Not reverting.'), 'warning');
-  }
-}
-
-/**
- * Revert / import settings for the opeka screening permissions
- */
-function opeka_update_7002() {
-  drupal_set_message(t('Enabling modules...'), 'status');
-
-  module_enable(array('features'));
-  module_enable(array('opeka_features_permissions'));
-  module_enable(array('opeka_screening'));
-  module_enable(array('opeka_opening_hours'));
-
-  if (module_exists('features') && module_exists('opeka_screening') && module_exists('opeka_opening_hours')) {
-
-    drupal_set_message(t('Reverting the opeka screening permissions'), 'status');
-    features_revert(array('opeka_features_permissions' => array('user_permission')));
-  }
-  else {
-    drupal_set_message(t('Some modules needed for feature reverting not enabled. Not reverting.'), 'warning');
-  }
-}
-
-/**
- * Create new table for chat statistics and copy existing data from screening module
- */
-function opeka_update_7003() {
-  $schema = opeka_schema();
-  if (!db_table_exists('opeka_stats')) {
-    drupal_set_message(t('Creating table opeka_stats.'), 'status');
-    db_create_table('opeka_stats', $schema['opeka_stats']);
-    if (db_table_exists('opeka_screening_submissions')) {
-      // @todo: move existing entries from opeka_submissions to new table
-      drupal_set_message(t('Moving existing data from table opeka_screening_submissions.'), 'status');
-      $query = "INSERT INTO opeka_stats (age, gender, question, answer, submission_date) SELECT age, gender, question, answer, submission_date FROM opeka_screening_submissions;";
-      $result = db_query($query);
-      // delete old table   db_drop_table('opeka_screening_submissions');
-    }
-  }
-  else {
-    drupal_set_message(t('Table opeka_stats already exists.'), 'status');
-  }
-
-  // Revert permission features
-  drupal_set_message(t('Enabling modules...'), 'status');
-
-  module_enable(array('features'));
-  module_enable(array('opeka_features_permissions'));
-  module_enable(array('opeka_screening'));
-  module_enable(array('opeka_opening_hours'));
-
-  if (module_exists('features') && module_exists('opeka_screening') && module_exists('opeka_opening_hours')) {
-
-    drupal_set_message(t('Reverting the opeka screening permissions'), 'status');
-    features_revert(array('opeka_features_permissions' => array('user_permission')));
-  }
-  else {
-    drupal_set_message(t('Some modules needed for feature reverting not enabled. Not reverting.'), 'warning');
-  }
-}
-
-/**
- * Add chat duration column to the statistics table.
- */
-function opeka_update_7004() {
-  $schema = opeka_schema();
-  db_add_field('opeka_stats', 'chat_duration', $schema['opeka_stats']['fields']['chat_duration']);
-}
-
-/**
- * Disable default blocks after Bootstrap theme update.
- */
-function opeka_update_7005() {
-  $module = "system";
-  $delta = "navigation";
-  opeka_disable_block($module, $delta);
-  $delta = "powered-by";
-  opeka_disable_block($module, $delta);
 }

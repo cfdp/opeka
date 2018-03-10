@@ -22,7 +22,7 @@
     "async": "^2.1.4",
     "date-format": "^1.1.0",
     "dnode": "^1.2.2",
-    "drupal": "git+https://git@github.com/benjamin-dk/node-drupal.git",
+    "drupal": "git+https://git@github.com/stefanospetrakis/node-drupal/#drupal8",
     "ecstatic": "^2.1.0",
     "emoticons": "^0.1.8",
     "nconf": "^0.8.4",

@@ -3,7 +3,6 @@
 * — Variables —
 */
 /* Responsive media query breakpoints */
-/* Palette for client chat messages */
 /* Bootstrap overrides */
 /* Typography */
 /* Cyberhus Clean theme (used in widgets) */
@@ -14,40 +13,48 @@
 * — Mixins —
 */
 /* Trying to target case when soft keyboard pops up */
+/* line 6, ../sass/widget.mixed.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
   display: block;
 }
 
+/* line 10, ../sass/widget.mixed.scss */
 html, body, div, form, fieldset, legend, label, ol, ul, li, h1, h2, h3, h4, h5, h6, th, td, caption, p {
   font-weight: 400;
   margin: 0;
   padding: 0;
 }
 
+/* line 16, ../sass/widget.mixed.scss */
 html p, body p {
   color: #4a4a4a;
 }
 
+/* line 20, ../sass/widget.mixed.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
+/* line 25, ../sass/widget.mixed.scss */
 th, td {
   text-align: left;
   vertical-align: top;
 }
 
+/* line 30, ../sass/widget.mixed.scss */
 img {
   border: 0;
 }
 
+/* line 34, ../sass/widget.mixed.scss */
 body {
   font-family: Lato,sans-serif;
   font-size: 13px;
   color: #4a4a4a;
 }
 
+/* line 40, ../sass/widget.mixed.scss */
 #widget {
   background: #fff;
   min-width: 210px;
@@ -56,6 +63,7 @@ body {
   padding: 15px;
 }
 
+/* line 48, ../sass/widget.mixed.scss */
 h1 {
   font-size: 24px;
   font-weight: 400;
@@ -63,22 +71,26 @@ h1 {
   padding-bottom: 2px;
 }
 
+/* line 55, ../sass/widget.mixed.scss */
 .subtle-text {
   font-size: 13px;
   letter-spacing: 1px;
   color: #999;
 }
 
+/* line 61, ../sass/widget.mixed.scss */
 body h3 {
   font-size: 18px;
   margin-bottom: 10px;
   line-height: 32px;
 }
 
+/* line 67, ../sass/widget.mixed.scss */
 h3 a:hover i.arrow:after {
   border-color: #339fd4;
 }
 
+/* line 71, ../sass/widget.mixed.scss */
 h3 i[class^="icn-"] {
   display: block;
   float: left;
@@ -86,6 +98,7 @@ h3 i[class^="icn-"] {
   margin-right: 10px;
 }
 
+/* line 78, ../sass/widget.mixed.scss */
 h3 i.icn-chat {
   background-image: url(../widgets/mixed/img/icon-chat.png);
   background-repeat: no-repeat;
@@ -96,10 +109,12 @@ h3 i.icn-chat {
   top: 4px;
 }
 
+/* line 89, ../sass/widget.mixed.scss */
 .chat-open i.icn-chat {
   background-image: url(../widgets/mixed/img/icon-chat-open.png);
 }
 
+/* line 99, ../sass/widget.mixed.scss */
 h3 i.icn-letterbox {
   background-image: url(../widgets/mixed/img/icon-letterbox.png);
   background-repeat: no-repeat;
@@ -109,6 +124,7 @@ h3 i.icn-letterbox {
   width: 32px;
 }
 
+/* line 108, ../sass/widget.mixed.scss */
 h3 i.icn-forum {
   background-image: url(../widgets/mixed/img/icon-forum.png);
   background-repeat: no-repeat;
@@ -118,11 +134,13 @@ h3 i.icn-forum {
   width: 28px;
 }
 
+/* line 117, ../sass/widget.mixed.scss */
 h3 i.arrow {
   margin-top: 4px;
   float: right;
 }
 
+/* line 122, ../sass/widget.mixed.scss */
 h3 i.arrow:after {
   width: 12px;
   height: 12px;
@@ -130,19 +148,23 @@ h3 i.arrow:after {
   border-width: 0 3px 3px 0;
 }
 
+/* line 129, ../sass/widget.mixed.scss */
 a, a:visited, a:hover, a:focus {
   text-decoration: none;
 }
 
+/* line 133, ../sass/widget.mixed.scss */
 li {
   list-style-type: none;
   line-height: normal;
 }
 
+/* line 138, ../sass/widget.mixed.scss */
 i.arrow {
   display: inline-block;
 }
 
+/* line 142, ../sass/widget.mixed.scss */
 i.arrow:after {
   content: '';
   display: block;
@@ -154,34 +176,41 @@ i.arrow:after {
   transform: rotate(-45deg);
 }
 
+/* line 153, ../sass/widget.mixed.scss */
 header {
   border-bottom: 1px solid #d4d4d4;
   margin-bottom: 20px;
   padding: 20px 0;
 }
 
+/* line 159, ../sass/widget.mixed.scss */
 section {
   margin-bottom: 25px;
 }
 
+/* line 163, ../sass/widget.mixed.scss */
 section ul li {
   margin-bottom: 8px;
   zoom: 1;
 }
 
+/* line 168, ../sass/widget.mixed.scss */
 section ul li a:first-letter {
   text-transform: uppercase;
 }
 
+/* line 172, ../sass/widget.mixed.scss */
 section ul li a:hover i.arrow:after {
   border-color: #2582af;
 }
 
+/* line 176, ../sass/widget.mixed.scss */
 section ul i.arrow {
   float: left;
   padding: 5px 5px 5px 0;
 }
 
+/* line 181, ../sass/widget.mixed.scss */
 section ul i.arrow:after {
   width: 5px;
   height: 5px;
@@ -189,29 +218,35 @@ section ul i.arrow:after {
   border-width: 0 2px 2px 0;
 }
 
+/* line 188, ../sass/widget.mixed.scss */
 section ul time {
   color: #999;
 }
 
+/* line 192, ../sass/widget.mixed.scss */
 section ul time:before {
   content: "· ";
 }
 
+/* line 196, ../sass/widget.mixed.scss */
 footer {
   border-top: 1px solid #d4d4d4;
   padding-top: 10px;
   zoom: 1;
 }
 
+/* line 202, ../sass/widget.mixed.scss */
 footer p {
   padding-bottom: 15px;
   letter-spacing: 0 !important;
 }
 
+/* line 207, ../sass/widget.mixed.scss */
 a[class^="logo-"] {
   float: left;
 }
 
+/* line 211, ../sass/widget.mixed.scss */
 a.logo-cyberhus i {
   background-image: url(../widgets/mixed/img/logo-cyberhus.png);
   background-repeat: no-repeat;
@@ -221,6 +256,7 @@ a.logo-cyberhus i {
   width: 149px;
 }
 
+/* line 220, ../sass/widget.mixed.scss */
 a.logo-kk i {
   background-image: url(../widgets/mixed/img/logo-kk.png);
   background-repeat: no-repeat;
@@ -232,30 +268,35 @@ a.logo-kk i {
   top: -5px;
 }
 
+/* line 231, ../sass/widget.mixed.scss */
 h3 a, section ul li a {
   color: #4a4a4a;
   display: block;
 }
 
+/* line 236, ../sass/widget.mixed.scss */
 h3 a:hover, section ul li a:hover {
   color: #339fd4;
 }
 
+/* line 240, ../sass/widget.mixed.scss */
 section ul li:after, footer:after {
   content: "";
   display: table;
   clear: both;
 }
 
+/* line 247, ../sass/widget.mixed.scss */
 .login-button {
   position: relative;
 }
+/* line 249, ../sass/widget.mixed.scss */
 .login-button .btn {
   background-image: none;
   border: 1px solid #ccc;
   border-radius: 4px;
   color: #4a4a4a;
-  font-size: 13px;
+  font-size: 14px;
   position: absolute;
   right: 0;
   text-transform: none;
@@ -263,31 +304,38 @@ section ul li:after, footer:after {
   padding: 8px;
 }
 
+/* line 264, ../sass/widget.mixed.scss */
 body.page-opeka-widgets-mixed.chat-open, body.page-opeka-widgets-mixed.chat-busy {
   background-color: white;
 }
+/* line 269, ../sass/widget.mixed.scss */
 body.page-opeka-widgets-mixed.chat-open .login-button .btn {
   background-color: #51E789;
   border: none;
   color: #fff;
 }
+/* line 273, ../sass/widget.mixed.scss */
 body.page-opeka-widgets-mixed.chat-open .login-button .btn:hover {
   background-color: #19b955;
   border-color: #51E789;
 }
 
 @media (min-width: 352px) {
+  /* line 282, ../sass/widget.mixed.scss */
   section {
     margin-bottom: 15px;
   }
 
+  /* line 285, ../sass/widget.mixed.scss */
   .chat h3 {
     margin-bottom: 4px;
   }
 
+  /* line 289, ../sass/widget.mixed.scss */
   .login-button .btn {
     border: 1px solid #ccc;
     color: #4a4a4a;
+    font-size: 16px;
     margin-top: 8px;
     min-width: 110px;
     right: inherit;
@@ -295,6 +343,7 @@ body.page-opeka-widgets-mixed.chat-open .login-button .btn:hover {
     position: inherit;
   }
 
+  /* line 300, ../sass/widget.mixed.scss */
   .logo-cyberhus,
   .logo-partner {
     display: none;

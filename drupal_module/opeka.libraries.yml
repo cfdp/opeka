@@ -1,0 +1,45 @@
+chat:
+  version: 1.x
+  css:
+    theme:
+      css/opeka.base.css: {}
+  js:
+    js/opeka.frontend.js: {}
+    js/jquery.geowidget-1.0.js: {}
+    js/underscore.js: {}
+    js/backbone.js: {}
+    js/opeka.common.js: {}
+    js/opeka.models.js: {}
+    js/opeka.views.js: {}
+    js/emoticons-support.js: {}
+    emoticons/lib/emoticons.js: {}
+    js/howler.min.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.ui.dialog
+    - core/drupal
+    - core/drupalSettings
+
+admin.chat:
+  version: 1.x
+  css:
+    theme:
+      css/opeka.base.css: {}
+      css/opeka.admin.css: {}
+  js:
+    js/jquery.geowidget-1.0.js: {}
+    js/underscore.js: {}
+    js/backbone.js: {}
+    js/opeka.common.js: {}
+    js/opeka.models.js: {}
+    js/opeka.views.js: {}
+    js/emoticons-support.js: {}
+    emoticons/lib/emoticons.js: {}
+    js/howler.min.js: {}
+    js/opeka.backend.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.ui.dialog
+    - core/drupal
+    - core/drupalSettings
+        
