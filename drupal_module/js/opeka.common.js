@@ -1024,14 +1024,16 @@ var Opeka = {
           Drupal.settings.opeka.user,
           {'clientId': Opeka.clientData.clientId}
         );
+        // Tell the server to reconnect us with the previous client. If this
+        // succeeds the server will call the clientSideMethod "reconnectDone".
         Opeka.remote.reconnect(userdataWithClientId, function() {
-          console.log("In sign in callback");
+          console.log("Server reconnected us!");
           Opeka.remote.getFeatures(function (features) {
             Opeka.features = features;
+            // TODO: Show a message to the user about the connection being
+            // reestablished?
           });
         });
-        // TODO: Show a message to the user about the connection being
-        // reestablished?
     };
 
     // If the connection is dropped, advise the user that he has to

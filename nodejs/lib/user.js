@@ -113,7 +113,7 @@ module.exports.filterData = function (client) {
     viewChatHistory: client.viewChatHistory,
     name: client.nickname || client.account.name,
     drupal_uid: client.drupal_uid,
-    online: client.connectionData.online,
+    online: client.online,
   };
 };
 

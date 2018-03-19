@@ -176,17 +176,20 @@ Groups.unregisterClient = function(client) {
  * that the client does not access methods that they do not have access to.
  */
 Groups.buildServerSideAPI = function(client) {
-    var methods = client.serverSideMethods;
+    var ssm = client.serverSideMethods,
+        methods = ssm.methods;
     _.each(_.values(registeredGroups), function(grp) {
         if(grp.name === "everyone") {
             // Methods available for everyone does not need to be validated
             _.each(grp.serverMethods, function(fn, name) {
-                methods[name] = function() { fn.apply(client, arguments) };
-            })
+                methods[name] = function() {
+                    fn.apply(ssm.client, arguments);
+                };
+            });
         } else {
             _.each(grp.serverMethods, function(fn, name) {
                 methods[name] = function() {
-                    if(!grp.getClient(client.clientId)) {
+                    if(!grp.getClient(ssm.client.clientId)) {
                         client.server.logger.warning(
                             "Client " + client.clientId + " tried to call method '" + name + "' which they " +
                             "do not have access to."
@@ -197,9 +200,9 @@ Groups.buildServerSideAPI = function(client) {
                         );
                         return;
                     }
-                    fn.apply(client, arguments)
+                    fn.apply(ssm.client, arguments);
                 };
-            })
+            });
         }
     });
 };

@@ -37,7 +37,13 @@ var Client = function (server, stream, remote, conn) {
 
     self.conn = conn;
 
-    self.serverSideMethods = {};
+    self.serverSideMethods = {
+      methods: {},
+      // This is a reference to the client the serverside methods will be
+      // called on. It needs to be registered here in order to make it possible
+      // for reconnected clients to take over an existing client.
+      client: self,
+    };
 
     self.account = {};
 
@@ -51,8 +57,8 @@ var Client = function (server, stream, remote, conn) {
     self.state = null;
 
     self.chatStart_Min = null;
+    self.online = "not-connected";
     self.connectionData = {
-      online: null,
       serverDisconnect: null,
       lastPingSent: 0,
       lastPingSuccess: null,
@@ -90,7 +96,7 @@ var Client = function (server, stream, remote, conn) {
   };
 
   self.getServerSideMethods = function () {
-    return self.serverSideMethods;
+    return self.serverSideMethods.methods;
   };
 
   self.getClientSideMethods = function () {
@@ -114,7 +120,6 @@ var Client = function (server, stream, remote, conn) {
     var currentTime = (new Date()).getTime();
     self.connectionData.lastPingSuccess = currentTime;
     self.connectionData.pingDelay = 0;
-    self.connectionData.online = true;
 
     self.changeState(CONNECTED);
 
@@ -154,6 +159,7 @@ var Client = function (server, stream, remote, conn) {
 
   self.changeState = function (newState) {
     self.state = newState;
+    self.updateClientOnlineState();
     console.log('newState for ' + self.clientId + ' is: ', newState);
     switch(newState) {
       case CREATED:
@@ -164,7 +170,6 @@ var Client = function (server, stream, remote, conn) {
         break;
       case DISCONNECTED:
         // update userlist with new client offline state
-        self.updateClientOnlineState(false, false);
         groups.unregisterClient(self);
         if (self.server) {
           self.server.handleConnectionClosed(self);
@@ -188,14 +193,9 @@ var Client = function (server, stream, remote, conn) {
   };
 
   self.onReconnect = function (newClient) {
-    // The client was offline for too long, so disconnecting him
-    if (self.connectionData.serverDisconnect) {
-      console.log('client.js: user has been disconnected by server, calling reconnectTimeout for ' + self.clientId);
-      self.remote('reconnectTimeout');
-      self.changeState(DISCONNECTED);
-      return;
-    }
     self.clientSideMethods = newClient.clientSideMethods;
+    self.serverSideMethods = newClient.serverSideMethods;
+    self.serverSideMethods.client = self;
     self.stream = newClient.stream;
     self.conn = newClient.conn;
     self.server.logger.info(
@@ -219,6 +219,7 @@ var Client = function (server, stream, remote, conn) {
     self.server = null;
     self.stream = null;
     self.clientSideMethods = null;
+    self.serverSideMethods = null;
     self.conn = null;
     self.activeRoomId = null;
   };
@@ -260,10 +261,7 @@ var Client = function (server, stream, remote, conn) {
       console.log(
         'latency > disconnectLimit: Time to disconnect user ', self.clientId
       );
-      self.connectionData.serverDisconnect = true;
-      self.updateClientOnlineState(false, true);
       self.changeState(PENDING_TIMEOUT);
-
     }
   };
 
@@ -284,36 +282,51 @@ var Client = function (server, stream, remote, conn) {
  * Update client online state and disconnect them if disconnectLimit is passed
  *
  */
-  self.updateClientOnlineState = function (newState, disconnect) {
-    var currentClient,
-        room;
-    for (var id in rooms.list) {
-      room = rooms.list[id];
-      _.find(room.users,function(val){
-          if (_.contains(val, self.clientId)) {
-            currentClient = room.users[self.clientId];
-            if (disconnect) {
-              self.server.removeUserFromRoom(room, self.clientId, room.id, currentClient.chatStart_Min, function (err, users) {
+  self.updateClientOnlineState = function () {
+    var old_online_state = self.online;
+    switch(self.state) {
+      case CREATED:
+        self.online = "connecting";
+        break;
+      case CONNECTED:
+        self.online = "online";
+        break;
+      case PENDING_TIMEOUT:
+        self.online = "timing-out";
+        break;
+      case DISCONNECTED:
+        self.online = "disconnected";
+        break;
+      default:
+        self.online = "online";
+    }
+    // If state was changed, make sure other clients are notified
+    if(old_online_state != self.online) {
+      var removeFromRooms = (self.online === "disconnected");
+
+      _.find(rooms.list, function(room) {
+        if (_.contains(_.keys(room.users), self.clientId)) {
+          currentClient = room.users[self.clientId];
+          // If user was disconnected, just remove them.
+          if (removeFromRooms) {
+            self.server.removeUserFromRoom(
+              room, self.clientId, room.id,
+              currentClient.chatStart_Min,
+              function (err, users) {
                 if (err) return console.warn(err);
                 user.sendUserList(room.group, room.id, users);
                 self.server.updateUserStatus(self.everyone);
-              });
-              return;
-            }
-            currentClient.online = newState;
-            self.connectionData.online = newState;
-            user.sendUserList(room.group, room.id, room.users);
-            return;
+              }
+            );
+            return true;
           }
+          // Notify users in the same room as the changed user that their
+          // connection status has changed.
+          user.sendUserList(room.group, room.id, room.users);
+          return true;
+        }
       });
     }
-    // The user is not present in any rooms
-    console.warn('Tried to update client online state, but user not found in any room.');
-    if (disconnect) {
-      //console.log('call breakrelations in updateClientOnlineState.');
-      //self.breakRelations();
-    }
-    return;
   };
 
   self.remote = function (functionName) {

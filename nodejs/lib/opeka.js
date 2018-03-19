@@ -383,7 +383,7 @@ function Server(config, logger) {
           clientUser.clientId
         );
       } else {
-        self.logger.warn('Reconnect from unknown user', clientUser.clientId);
+        console.log('Reconnect from unknown user', clientUser.clientId);
         return;
       }
       delete(clientUser.clientId);
@@ -407,6 +407,9 @@ function Server(config, logger) {
       }
       // Update the old client with the new remote end
       client.onReconnect(newClient);
+      // Tell other clients about the reconnect
+      client.updateClientOnlineState();
+      callback();
     });
 
   });
