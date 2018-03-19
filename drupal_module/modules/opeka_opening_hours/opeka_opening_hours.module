@@ -90,5 +90,7 @@ function opeka_opening_hours_weekdays() {
     'wednesday' => t('Wednesday'),
     'thursday' => t('Thursday'),
     'friday' => t('Friday'),
+    'saturday' => t('Saturday'),
+    'sunday' => t('Sunday'),
   );
 }
