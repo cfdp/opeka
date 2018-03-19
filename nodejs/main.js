@@ -31,7 +31,9 @@ nconf.defaults({
     "exposeDrupalUIDs": false,
     "requireDrupalLogin": false,
     "chatHistory": true,
-    "screeningQuestions": false
+    "screeningQuestions": false,
+    "reconnectLimit": 10000,
+    "disconnectLimit": 60000
   },
   "authentication": {
     "accessCode": ""

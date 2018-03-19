@@ -127,9 +127,9 @@
         inQueueMessage = Drupal.t('Chat room is full, you are currently in queue as number: @number. You can stay and wait until you can enter or leave the queue.', {'@number': this.inQueue + 1});
       }
 
-      // Hide the send message form if room is paused, user is muted or
-      // in queue.
-      hideForm = !this.model.get('paused') && !activeUser.muted && this.inQueue === false;
+      // Hide the send message form if room is paused, user is muted,
+      //  is reconnecting or in queue.
+      hideForm = !Opeka.shownReconnectingDialog && !this.model.get('paused') && !activeUser.muted && this.inQueue === false;
 
       // Figure out if the message form is currently present.
       formPresent = this.$el.find(".message-form").length > 0;
@@ -348,7 +348,7 @@
     // Enable sending messages when pressing the ENTER (return) key
     sendMessageonEnter: function (event) {
       var message = this.$el.find('textarea.message').val();
-      var code = (event.keyCode || event.which);
+      var code = event.charCode ? event.charCode : event.keyCode ? event.keyCode : 0;
       var returnSendsMessage = this.returnSendsMessage;
 
       // Listen for the key code
@@ -514,7 +514,9 @@
             registrationFormLink: Drupal.t('Open registration form'),
             noRegistrationForm: Drupal.t('No registration form entered'),
             banCode: Drupal.t('Generate new ban code'),
-            leaveRoomButton: Drupal.t("Leave chat room")
+            leaveRoomButton: Drupal.t("Leave chat room"),
+            online: Drupal.t('online'),
+            offline: Drupal.t('connecting...'),
           },
           screeningQuestions: screeningQuestions,
           room: this.model,
@@ -836,6 +838,33 @@
       options.message = options.message || Drupal.t('The IP address you are currently visiting the site from is banned from the chat system. You will not be able to participate in the chat.');
 
       options.content = this.make('p', {'class': "message"}, options.message);
+
+      // Call the parent initialize once we're done customising.
+      return Opeka.DialogView.prototype.initialize.call(this, options);
+    }
+  });
+
+  // Message dialog lets the user know he's banned from the system.
+  Opeka.ReconnectingDialogView = Opeka.DialogView.extend({
+    initialize: function (options) {
+      // Make sure options is an object.
+      options = options || {};
+
+      // Provide a default title.
+      options.title = options.title || Drupal.t('Reconnecting');
+
+      // Provide a default message.
+      options.message = options.message || Drupal.t('Your connection to the chat server was lost. Please wait, we are trying to reconnect.');
+
+      options.content = this.make('p', {'class': "message"}, options.message);
+
+      options.dialogOptions = {
+        closeOnEscape: false,
+        open: function (event, ui) {
+          $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+        }
+      };
+
 
       // Call the parent initialize once we're done customising.
       return Opeka.DialogView.prototype.initialize.call(this, options);

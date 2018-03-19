@@ -45,7 +45,11 @@
                     )
                   </span>
                 <% } %>
-
+                <span class="online-status">
+                <% if (!user.online) { %>
+                    (<%= labels.offline %>)
+                <% } %>
+                </span>
             <% if (user.clientId !== clientId && admin) { %>
               <span class="caret"></span>
               </a>

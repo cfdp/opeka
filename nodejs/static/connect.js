@@ -7558,6 +7558,9 @@ var unload_triggered = function() {
     trigger_unload_callbacks();
 };
 
+// Onbeforeunload alone is not reliable. We could use only 'unload'
+// but it's not working in opera within an iframe. Let's use both.
+utils.attachEvent('beforeunload', unload_triggered);
 utils.attachEvent('unload', unload_triggered);
 
 utils.unload_add = function(listener) {
@@ -9320,15 +9323,11 @@ var shoe = require('shoe'),
 /* global jQuery, Opeka, Drupal */
 
 (function($) {
-    Opeka.serverJSLoaded = true;
-    $(function() {
-        var server_url = Drupal.settings.opeka.dnode_endpoint ||
-                         'http://localhost:3000/opeka';
-        var stream = shoe(server_url);
-        var d = dnode(Opeka.clientSideMethods);
-        d.on("remote", Opeka.onConnect);
-        d.on("end", Opeka.onDisconnect);
-        d.pipe(stream).pipe(d);
-    });
+  Opeka.serverJSLoaded = true;
+  $(function() {
+    Opeka.initialize_from_drupal(shoe, dnode, Drupal.settings.opeka);
+    var dnode_instance = Opeka.connect();
+  });
 })(jQuery);
+
 },{"dnode":28,"shoe":39}]},{},[41]);

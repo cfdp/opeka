@@ -394,6 +394,22 @@ var Room = function (options) {
     return self.users[clientId].muted;
   };
 
+  /**
+   * Replaces the user with clientId with the newClient
+   *
+   * Used in the reconnect feature
+   */
+  self.replaceUser = function (clientId, newClient) {
+    if (self.users[clientId]) {
+      if (clientId !== newClient.clientId) {
+        util.log('Replaced user ' + clientId + ' with ' + newClient.clientId + ' in room ' + self.id);
+        self.removeUser(clientId);
+        self.addUser(newClient);
+        opeka.user.sendUserList(self.group, self.id, self.users);
+      }
+    }
+  };
+
   return self.construct();
 };
 
