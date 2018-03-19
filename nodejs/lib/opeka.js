@@ -1157,7 +1157,7 @@ function Server(config, logger) {
         'chatStartMin': user.chatStartMin,
         'statsId': user.statsId,
         'isAdmin': user.account.isAdmin
-      };
+      },
       err = null;
     // If the user is leaving a room, make sure he is removed properly
     if (user.activeRoomId) {
