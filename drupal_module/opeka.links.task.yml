@@ -1,0 +1,12 @@
+opeka.chat_configuration_main:
+  route_name: opeka.chat_configuration_main
+  title: 'Chat statistics'
+  base_route: opeka.chat_configuration_main
+opeka.chat_configuration_general_settings:
+  route_name: opeka.chat_configuration_general_settings
+  title: 'General settings'
+  base_route: opeka.chat_configuration_main
+opeka.chat_configuration_advanced_settings:
+  route_name: opeka.chat_configuration_advanced_settings
+  title: 'Advanced settings'
+  base_route: opeka.chat_configuration_main

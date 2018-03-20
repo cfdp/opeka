@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Component\Utility\Crypt;
 
 /**
  * Implements hook_help().
@@ -71,7 +72,7 @@ function opeka_preprocess_opeka_admin_chat(&$variables) {
 /**
  * Helper function for getting all relevant JS settings.
  */
-function _opeka_compile_javascript_settings() {  
+function _opeka_compile_javascript_settings() {
   $opeka_config = \Drupal::config('opeka.settings');
 
   $js_url = $opeka_config->get('connectjs_url');
@@ -82,10 +83,10 @@ function _opeka_compile_javascript_settings() {
     'user' => [
       'name' => \Drupal::currentUser()->getUsername(),
       'uid' => \Drupal::currentUser()->id(),
-      'sid' => \Drupal\Component\Utility\Crypt::hashBase64(\Drupal::service('session_manager')->getId()),
+      'sid' => Crypt::hashBase64(\Drupal::service('session_manager')->getId()),
     ],
   ];
 
   return $settings;
-  
+
 }

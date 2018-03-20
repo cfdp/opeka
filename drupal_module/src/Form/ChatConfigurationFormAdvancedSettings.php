@@ -14,7 +14,7 @@ use Drupal\Component\Utility\UrlHelper;
 /**
  * Class ChatConfigurationForm.
  */
-class ChatConfigurationForm extends ConfigFormBase {
+class ChatConfigurationFormAdvancedSettings extends ConfigFormBase {
 
   /**
    * The http client.
@@ -60,7 +60,7 @@ class ChatConfigurationForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'opeka_admin_settings_form';
+    return 'opeka_admin_advanced_settings_form';
   }
 
   /**
@@ -68,7 +68,7 @@ class ChatConfigurationForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'opeka.settings',
+      'opeka.advanced_settings',
     ];
   }
 
@@ -79,7 +79,7 @@ class ChatConfigurationForm extends ConfigFormBase {
 
     $url_validation_checkbox_label = $this->t('Check public access to URL?');
     $url_validation_checkbox_description = $this->t('Check this box if you want to check whether this URL is "alive".');
-    $config = $this->config('opeka.settings');
+    $config = $this->config('opeka.advanced_settings');
 
     $form['connectjs_url_fieldset'] = [
       '#type' => 'fieldset',
@@ -100,37 +100,12 @@ class ChatConfigurationForm extends ConfigFormBase {
       '#default_value' => 0,
     ];
 
-    $form['opeka_schedule'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('Chat schedule'),
-      '#description' => $this->t('The schedule for the upcoming chat sessions'),
-      '#required' => TRUE,
-      '#default_value' => $config->get('schedule'),
-    ];
-
-    $form['pair_chat_name'] = [
+    $form['custom_css'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Pair chat name'),
-      '#description' => $this->t('The pair chat name can be shown in some chat widgets'),
+      '#title' => $this->t('Custom css file for widget styles'),
+      '#description' => $this->t('URL to a custom css, where additional styles can be added.'),
       '#required' => FALSE,
-      '#default_value' => $config->get('pair_chat_name'),
-    ];
-
-    $form['group_chat_name'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Group chat name'),
-      '#description' => $this->t('The group chat name can be shown in some chat widgets'),
-      '#required' => FALSE,
-      '#default_value' => $config->get('group_chat_name'),
-    ];
-
-    $form['welcome_message'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('Welcome message'),
-      '#maxlength' => 1024,
-      '#description' => $this->t('Text shown before user logs into the chat.'),
-      '#required' => FALSE,
-      '#default_value' => $config->get('welcome_message') ?: $this->t('Welcome to the chat! You can customize this message at Admin => config => services => opeka'),
+      '#default_value' => $config->get('custom_css'),
     ];
 
     $form['client_login_sound'] = [
@@ -138,21 +113,70 @@ class ChatConfigurationForm extends ConfigFormBase {
       '#title' => $this->t('Login sound file'),
       '#description' => $this->t('URL to a sound file that is played for the counselor when a client logs in.'),
       '#required' => FALSE,
-      '#default_value' => $config->get('client_login_sound') ?: '../sites/all/modules/custom/opeka/media/bell.mp3',
+      '#default_value' => $config->get('client_login_sound'),
     ];
 
-    $form['feedback_url_fieldset'] = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('Feedback'),
+    $form['pairchat_user_list'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Pair chat user list visibility for clients'),
+      '#description' => $this->t('Toggle the user list visibility in the pair chat. Check it if the user list should be visible to clients.'),
+      '#required' => FALSE,
+      '#default_value' => $config->get('pairchat_user_list'),
     ];
-    $form['feedback_url_fieldset']['feedback_url'] = [
+
+    $form['pairchat_room_list_entry'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Pair chat room list entry'),
+      '#description' => $this->t('Check this if the user should be sent to the room list instead of joining the first available room.'),
+      '#required' => FALSE,
+      '#default_value' => $config->get('pairchat_user_list'),
+    ];
+
+    $form['clients_writing_message'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Clients can see the "User is writing" message'),
+      '#description' => $this->t('Toggle the ability for clients to see the "User is writing" message. Check it if the clients should be able to see the message.'),
+      '#required' => FALSE,
+      '#default_value' => $config->get('pairchat_user_list'),
+    ];
+
+    $form['chat_names'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Opeka chat name settings'),
+    ];
+
+    $form['chat_names']['pair_chat_name'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Pair chat name'),
+      '#description' => $this->t('The pair chat name can be shown in some chat widgets'),
+      '#required' => FALSE,
+      '#default_value' => $config->get('pair_chat_name'),
+    ];
+
+    $form['chat_names']['group_chat_name'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Group chat name'),
+      '#description' => $this->t('The group chat name can be shown in some chat widgets'),
+      '#required' => FALSE,
+      '#default_value' => $config->get('group_chat_name'),
+    ];
+
+    $form['feedback_url_master_fieldset'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Opeka feedback settings'),
+    ];
+    $form['feedback_url_master_fieldset']['feedback_url_fieldset'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Feedback URL'),
+    ];
+    $form['feedback_url_master_fieldset']['feedback_url_fieldset']['feedback_url'] = [
       '#type' => 'textfield',
       '#title' => $this->t('URL'),
       '#description' => $this->t('URL to a feedback page, e.g. a Google Form, where clients can enter evaluation data after a chat.'),
       '#required' => FALSE,
       '#default_value' => $config->get('feedback_url'),
     ];
-    $form['feedback_url_fieldset']['feedback_url_validate'] = [
+    $form['feedback_url_master_fieldset']['feedback_url_fieldset']['feedback_url_validate'] = [
       '#type' => 'checkbox',
       '#title' => $url_validation_checkbox_label,
       '#description' => $url_validation_checkbox_description,
@@ -160,58 +184,40 @@ class ChatConfigurationForm extends ConfigFormBase {
       '#default_value' => 0,
     ];
 
-    $form['groupchat_feedback_url_fieldset'] = [
+    $form['feedback_url_master_fieldset']['groupchat_feedback_url_fieldset'] = [
       '#type' => 'fieldset',
-      '#title' => $this->t('Group Chat feedback '),
+      '#title' => $this->t('Group Chat feedback URL'),
     ];
-    $form['groupchat_feedback_url_fieldset']['groupchat_feedback_url'] = [
+    $form['feedback_url_master_fieldset']['groupchat_feedback_url_fieldset']['groupchat_feedback_url'] = [
       '#type' => 'textfield',
       '#title' => $this->t('URL'),
       '#description' => $this->t('URL to a feedback page, e.g. a Google Form, where group chat clients can enter evaluation data after a chat.'),
       '#required' => FALSE,
       '#default_value' => $config->get('groupchat_feedback_url'),
     ];
-    $form['groupchat_feedback_url_fieldset']['groupchat_feedback_url_validate'] = [
+    $form['feedback_url_master_fieldset']['groupchat_feedback_url_fieldset']['groupchat_feedback_url_validate'] = [
       '#type' => 'checkbox',
       '#title' => $url_validation_checkbox_label,
       '#description' => $url_validation_checkbox_description,
       '#required' => FALSE,
       '#default_value' => 0,
     ];
-
-    $form['feedback_auto_redirect'] = [
+    $form['feedback_url_master_fieldset']['feedback_auto_redirect'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Automatic redirection to questionnaire in external window?'),
       '#description' => $this->t('Check this box if the feedback form should be opened automatically for clients.'),
       '#required' => FALSE,
-      '#default_value' => $config->get('feedback_auto_redirect', 0),
+      '#default_value' => $config->get('feedback_auto_redirect'),
     ];
 
-    $form['reg_pair_url'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('1-to-1 chat registration form'),
-      '#description' => $this->t('URL to a registration form, where counselors can enter data after a 1-to-1 chat.'),
-      '#required' => FALSE,
-      '#default_value' => $config->get('reg_pair_url'),
+    $form['widget_advanced'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Opeka widget settings'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
     ];
 
-    $form['reg_group_url'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Group chat registration form'),
-      '#description' => $this->t('URL to a registration form, where counselors can enter data after a group chat.'),
-      '#required' => FALSE,
-      '#default_value' => $config->get('reg_group_url'),
-    ];
-
-    $form['pairchat_user_list'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Pair chat user list visibility'),
-      '#description' => $this->t('Toggle the user list visibility in the pair chat. Check it if the user list should be visible'),
-      '#required' => FALSE,
-      '#default_value' => $config->get('pairchat_user_list', 0),
-    ];
-
-    $form['client_url'] = [
+    $form['widget_advanced']['client_url'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Popup widget'),
       '#description' => $this->t('If the popup or the multi widgets are used, please provide the URL of the client site, eg. http://mysite.com.'),
@@ -219,18 +225,12 @@ class ChatConfigurationForm extends ConfigFormBase {
       '#default_value' => $config->get('client_url'),
     ];
 
-    $form['custom_css'] = [
+    $form['widget_advanced']['mixed_widget_url'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Custom css file for widget styles'),
-      '#description' => $this->t('URL to a custom css file for the widgets.'),
+      '#title' => t('Mixed widget'),
+      '#description' => $this->t('If the mixed widget is used, please provide the URL of the jsonp resource, e.g. https://mysite.com/resource?.'),
       '#required' => FALSE,
-      '#default_value' => $config->get('custom_css'),
-    ];
-
-    $form['server_restart'] = [
-      '#type' => 'submit',
-      '#value' => 'Restart server',
-      '#submit' => ['restart_server'],
+      '#default_value' => $config->get('mixed_widget_url'),
     ];
 
     $form['actions']['submit'] = [
@@ -282,7 +282,7 @@ class ChatConfigurationForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $opeka_settings_config = $this->configFactory->getEditable('opeka.settings');
+    $opeka_settings_config = $this->configFactory->getEditable('opeka.advanced_settings');
     foreach ($form_state->getValues() as $key => $value) {
       $opeka_settings_config->set($key, $form_state->getValue($key));
     }
