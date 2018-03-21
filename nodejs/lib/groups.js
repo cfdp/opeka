@@ -55,7 +55,7 @@ Group = function(name) {
     /**
      * Get the client specified by the client Id. Will return
      * @param clientId -
-     * @returns {*} - will return null if the client is not part of the group
+     * @returns {*} - will return null if the client is not part of the
      *                or if the client has been unregistered
      */
     self.getClient = function(clientId) {
@@ -176,20 +176,17 @@ Groups.unregisterClient = function(client) {
  * that the client does not access methods that they do not have access to.
  */
 Groups.buildServerSideAPI = function(client) {
-    var ssm = client.serverSideMethods,
-        methods = ssm.methods;
+    var methods = client.serverSideMethods;
     _.each(_.values(registeredGroups), function(grp) {
         if(grp.name === "everyone") {
             // Methods available for everyone does not need to be validated
             _.each(grp.serverMethods, function(fn, name) {
-                methods[name] = function() {
-                    fn.apply(ssm.client, arguments);
-                };
-            });
+                methods[name] = function() { fn.apply(client, arguments) };
+            })
         } else {
             _.each(grp.serverMethods, function(fn, name) {
                 methods[name] = function() {
-                    if(!grp.getClient(ssm.client.clientId)) {
+                    if(!grp.getClient(client.clientId)) {
                         client.server.logger.warning(
                             "Client " + client.clientId + " tried to call method '" + name + "' which they " +
                             "do not have access to."
@@ -200,9 +197,9 @@ Groups.buildServerSideAPI = function(client) {
                         );
                         return;
                     }
-                    fn.apply(ssm.client, arguments);
+                    fn.apply(client, arguments)
                 };
-            });
+            })
         }
     });
 };

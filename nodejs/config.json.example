@@ -22,9 +22,7 @@
     "requireDrupalLogin": false,
     "chatHistory": true,
     "screeningQuestions": false,
-    "soloClientsAllowed": false,
-    "reconnectLimit": 10000,
-    "disconnectLimit": 60000
+    "soloClientsAllowed": false
   },
   "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
   "server": {

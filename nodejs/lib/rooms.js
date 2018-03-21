@@ -173,7 +173,7 @@ var Room = function (options) {
   };
 
   // Method used to see if there is a counselor in the room
-  self.hasCounselor = function () {
+  self.hascounselor = function () {
     var count;
     var setCount = function (response) {
       count = response;
@@ -204,7 +204,7 @@ var Room = function (options) {
     // - that the room is not paused
     // - that we have a counselor present
     // before adding the person to the room.
-    if (client.account.isAdmin || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && self.hasCounselor()) && client) {
+    if (client.account.isAdmin || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && self.hascounselor()) && client) {
       self.users[client.clientId] = opeka.user.filterData(client);
       self.group.addUser(client.clientId);
 
@@ -249,7 +249,7 @@ var Room = function (options) {
       delete self.users[clientId];
 
       // Update counselorPresent state
-      self.hasCounselor();
+      self.hascounselor();
 
       updateRoomCounts();
     }
@@ -369,8 +369,7 @@ var Room = function (options) {
       paused: self.paused || false,
       private: self.private,
       queueSystem: self.queueSystem,
-      messages: self.messages,
-      counselorPresent: self.counselorPresent
+      messages: self.messages
     };
   };
 
@@ -392,22 +391,6 @@ var Room = function (options) {
    */
   self.userIsMuted = function (clientId) {
     return self.users[clientId].muted;
-  };
-
-  /**
-   * Replaces the user with clientId with the newClient
-   *
-   * Used in the reconnect feature
-   */
-  self.replaceUser = function (clientId, newClient) {
-    if (self.users[clientId]) {
-      if (clientId !== newClient.clientId) {
-        util.log('Replaced user ' + clientId + ' with ' + newClient.clientId + ' in room ' + self.id);
-        self.removeUser(clientId);
-        self.addUser(newClient);
-        opeka.user.sendUserList(self.group, self.id, self.users);
-      }
-    }
   };
 
   return self.construct();
