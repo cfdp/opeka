@@ -109,8 +109,6 @@ function opeka_opening_hours_admin_form($form, &$form_state) {
     '#maxlength' => 85,
   );
 
-  $form['#attached']['css'][] = drupal_get_path('module', 'opeka') . '/css/opeka_opening_hours.forms.css';
-  
   // Our submit function will take care of removing empty values, if needed.
   $form['#submit'][] = 'opeka_opening_hours_admin_form_submit';
   return system_settings_form($form);

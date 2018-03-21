@@ -100,7 +100,7 @@ function opeka_screening_admin_form($form, &$form_state) {
       'wrapper' => $fieldset_id,
     ),
   );
-  $form['#attached']['css'][] = drupal_get_path('module', 'opeka') . '/css/opeka_screening.forms.css';
+  $form['#attached']['css'][] = drupal_get_path('module', 'opeka_screening') . '/css/opeka_screening.forms.css';
 
   // Our submit function will take care of removing empty values, if needed.
   $form['#submit'][] = 'opeka_screening_admin_form_submit';

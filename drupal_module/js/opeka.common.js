@@ -23,22 +23,10 @@ var Opeka = {
     },
     // Placeholder for remote methods, will be set to the dnode remote object when connected
     'remote': null,
-    'shoe': null,
     'dnode': null,
     // Boolean specifying whether the serverside Javascript loaded successfully
     'serverJSLoaded': false,
-    'doorBellSound': null,
-    'reconnectHandlers': false,
-    'lastPingReceivedClientTime': null,
-    'lastPingReceivedServerTime': null,
-    'state': null,
-    'initial_connections': 0,
-    'use_reconnect': false,
-    'max_reconnects': 10,
-    'number_of_reconnects_tried': 0,
-    'reconnect_interval': 5000,
-    'connection_timeout': 6000,
-    'reconnect_connections': [],
+    'doorBellSound': null
   },
   // Initialise window.JST if it does not exist.
   JST = JST || {},
@@ -441,7 +429,7 @@ var Opeka = {
     Opeka.inviteList.reset(invites);
   };
 
-  // For when the server has a new invite for us.
+  // For when the server has an updated invites list for us.
   Opeka.clientSideMethods.inviteCreated = function (newInvite) {
     // This triggers a reset even on the queueList instance, so any views
     // that use this list can listen to that for updates.
@@ -454,7 +442,7 @@ var Opeka = {
     }
   };
 
-  // For when the server has an invite cancellation.
+  // For when the server has an updated invites list for us.
   Opeka.clientSideMethods.inviteCancelled = function (inviteId) {
     // This triggers a reset even on the queueList instance, so any views
     // that use this list can listen to that for updates.
@@ -466,7 +454,7 @@ var Opeka = {
     Opeka.inviteList.trigger('change');
   };
 
-  // For when the server reports an invite is deleted.
+  // For when the server has an updated invites list for us.
   Opeka.clientSideMethods.inviteDeleted = function (inviteId) {
     // This triggers a reset even on the queueList instance, so any views
     // that use this list can listen to that for updates.
@@ -607,7 +595,7 @@ var Opeka = {
 
   // Response to a user leaving the room.
   Opeka.clientSideMethods.roomUserLeft = function (roomId, nickname, chatDuration) {
-    if (Opeka.chatView && Opeka.chatView.model.id === roomId) {
+    if (Opeka.chatView.model.id === roomId) {
       var messageObj = {
         message: Drupal.t('@user has left the room. Chat duration: @chatDuration minutes.', {'@user': nickname, '@chatDuration': chatDuration}),
         system: true
@@ -670,7 +658,7 @@ var Opeka = {
 
   Opeka.clientSideMethods.setIsBanned = function (isBanned) {
     Opeka.clientData.isBanned = isBanned;
-  };
+  }
 
   // Response to a user when server responds with access denied
   Opeka.clientSideMethods.accessDenied = function (clientId) {
@@ -700,34 +688,6 @@ var Opeka = {
     });
 
     view.render();
-  };
-
-  // The server pings client to determine connection status and latency
-  Opeka.clientSideMethods.ping = function (serverTime, cb) {
-    Opeka.lastPingReceivedServerTime = serverTime;
-    // console.log('PING received, serverTime is ' + serverTime);
-    Opeka.lastPingReceivedClientTime = (new Date()).getTime();
-    // console.log('PING received, clientTime is ' + Opeka.lastPingReceivedClientTime);
-    cb(null, Opeka.lastPingReceivedClientTime);
-  };
-
-   // If the client was offline too long, inform him and force a reload
-  Opeka.clientSideMethods.reconnectTimeout = function () {
-    console.log('reconnectTimeout called...');
-    clearInterval(Opeka.checkOnlineTimerId);
-
-    if (Opeka.shownFatalErrorDialog) {
-      return;
-    }
-    $(window).unbind('beforeunload.opeka');
-    $(Opeka).trigger("disconnected");
-    Opeka.cleanAfterChat();
-    Opeka.router.navigate("rooms", {trigger: true});
-    Opeka.shownFatalErrorDialog = true;
-    var view = new Opeka.FatalErrorDialogView({
-      message: Drupal.t('Sorry, you were offline for too long. Please reload the page to reconnect.'),
-      title: Drupal.t('Reconnect timeout')
-    }).render();
   };
 
   /**
@@ -766,32 +726,13 @@ var Opeka = {
   // Sign in to the chat app.
   Opeka.signIn = function (user, callback) {
     Opeka.remote.signIn(user, function (clientData) {
-      // We attach the handler with 'one' to ensure we don't send stale data to the server
-      $(Opeka).one('connected', function() {
-        var matches = Backbone.history.getFragment().match(/^rooms\/(.*)$/);
-        if (matches) {
-          clientData.roomId = matches[1];
-        }
-        Opeka.signIn(clientData, function () {
-          console.log('User re-signin.');
-          $(window).bind('beforeunload.opeka', function () {
-            return Drupal.t('Do you really want to leave this page?');
-          });
-        });
-      });
-
       var destination = 'rooms',
-        onlineStatus,
-        footer;
+        onlineStatus;
 
-      // Update the clientside clientData object with new values from the server
       _.extend(Opeka.clientData, clientData);
-      if (user.roomId && Opeka.roomList.models) {
-        for (var delta in Opeka.roomList.models){
-          if (Opeka.roomList.models[delta].id == user.roomId){
-            destination = destination + '/' + user.roomId;
-          }
-        }
+
+      if (user.roomId) {
+        destination = destination + '/' + user.roomId;
       }
       else if (user.queueId) {
         destination = 'queues' + '/' + user.queueId;
@@ -854,113 +795,6 @@ var Opeka = {
   // Basic setup for the app when the DOM is loaded.
   $(function () {
     var view;
-
-    Opeka.CREATED = 1;
-    Opeka.CONNECTING = 2;
-    Opeka.CONNECTED = 3;
-    Opeka.TRYING_RECONNECT = 4;
-    Opeka.DISCONNECTED = 6;
-
-    Opeka.changeState = function(newState) {
-      var oldState = Opeka.state;
-      switch(newState) {
-        case Opeka.CREATED:
-          Opeka.state = newState;
-          break;
-        case Opeka.CONNECTING:
-          Opeka.state = newState;
-          Opeka.startTicker();
-          break;
-        case Opeka.CONNECTED:
-          Opeka.lastPingReceivedClientTime = (new Date()).getTime();
-          if(oldState == Opeka.TRYING_RECONNECT) {
-            Opeka.onReconnect();
-          } else {
-            Opeka.onConnect();
-          }
-          Opeka.state = newState;
-          break;
-        case Opeka.TRYING_RECONNECT:
-          Opeka.state = newState;
-          Opeka.onTryReconnect();
-          break;
-        case Opeka.DISCONNECTED:
-          Opeka.state = newState;
-          Opeka.onDisconnect();
-          break;
-        default:
-          break;
-      }
-    };
-
-    Opeka.changeState(Opeka.CREATED);
-
-    Opeka.connect = function() {
-      var stream = Opeka.shoe(Opeka.server_url);
-      var d = Opeka.dnode(Opeka.clientSideMethods);
-
-      d.on("remote", Opeka.onStreamConnected);
-      d.on("end", Opeka.onStreamDisconnected);
-      d.pipe(stream).pipe(d);
-
-      if(Opeka.state == Opeka.CREATED) {
-        Opeka.initial_connections += 1;
-        d.connection_id = "initial_" + Opeka.initial_connections;
-        Opeka.changeState(Opeka.CONNECTING);
-      } else if(Opeka.state == Opeka.TRYING_RECONNECT) {
-        d.connection_id = "reconnect_" + Opeka.number_of_reconnects_tried;
-      }
-
-      return d;
-    };
-
-    Opeka.initialize_from_drupal = function(shoe, dnode, drupal_settings) {
-      Opeka.shoe = shoe;
-      Opeka.dnode = dnode;
-      Opeka.use_reconnect = drupal_settings.reconnect;
-      if(drupal_settings.max_reconnects) {
-        Opeka.max_reconnects = drupal_settings.max_reconnects;
-      }
-      if(drupal_settings.reconnect_interval) {
-        Opeka.reconnect_interval = drupal_settings.reconnect_interval;
-      }
-      Opeka.server_url = drupal_settings.dnode_endpoint ||
-        'http://localhost:3000/opeka';
-    };
-
-    Opeka.startTicker = function() {
-      if(!Opeka.tickId) {
-        Opeka.tickId = setInterval(
-          function () { Opeka.tick(); },
-          1000
-        );
-      }
-    };
-
-    Opeka.tick = function() {
-      switch(Opeka.state) {
-        case Opeka.CONNECTED:
-          Opeka.checkTimeout();
-          break;
-        case Opeka.TRYING_RECONNECT:
-          Opeka.onTryReconnect();
-          break;
-        default:
-          break;
-      }
-    };
-
-    Opeka.checkTimeout = function() {
-      // While connected, check to see if we are timing out
-      var currentTime = (new Date()).getTime();
-      var delay = currentTime - Opeka.lastPingReceivedClientTime;
-
-      if (delay > Opeka.connection_timeout) {
-        console.log('Connection timed out after ', delay);
-        Opeka.changeState(Opeka.TRYING_RECONNECT);
-      }
-    };
-
     Opeka.doorBellSound = new Howl({
       src: [Drupal.settings.opeka.client_login_sound]
     });
@@ -985,75 +819,11 @@ var Opeka = {
 
     $('#opeka-app').html(Opeka.appViewInstance.render().el);
 
-    // Show / remove reconnect dialog
-    Opeka.onTryReconnect = function () {
-      var conn = Opeka.reconnect_connections,
-          currentTime = (new Date()).getTime(),
-          lastReconnectTime = Opeka.lastReconnectTime || 0,
-          sinceLastAttempt = currentTime - lastReconnectTime;
-
-      if(conn.length === 0 || (sinceLastAttempt >= Opeka.reconnect_interval)) {
-        // Increase attempt counter and go to state DISCONNECTED if max number
-        // of reconnect attemps has been reached.
-        Opeka.number_of_reconnects_tried += 1;
-        if(Opeka.number_of_reconnects_tried > Opeka.max_reconnects) {
-          Opeka.changeState(Opeka.DISCONNECTED);
-          return;
-        }
-        conn.push(Opeka.connect());
-        console.log("Retry connections", conn);
-        Opeka.lastReconnectTime = currentTime;
-      }
-
-      if (Opeka.shownReconnectingDialog || Opeka.shownFatalErrorDialog) {
-        return;
-      }
-      Opeka.shownReconnectingDialog = true;
-      Opeka.reconnectView = new Opeka.ReconnectingDialogView().render();
-      if(Opeka.chatView) {
-        Opeka.chatView.render();
-      }
-    };
-
-    Opeka.onReconnect = function() {
-        Opeka.shownReconnectingDialog = false;
-        if(Opeka.reconnectView) {
-          Opeka.reconnectView.remove();
-        }
-        // Sign the user in again to re-establish their permissions, adding
-        // the clientId to the userdata sent to the server, so it can know
-        // we are reconnecting.
-        var  userdataWithClientId = _.extend(
-          Drupal.settings.opeka.user,
-          {'clientId': Opeka.clientData.clientId}
-        );
-        // Tell the server to reconnect us with the previous client. If this
-        // succeeds the server will call the clientSideMethod "reconnectDone".
-        Opeka.remote.reconnect(userdataWithClientId, function() {
-          console.log("Server reconnected us!");
-          Opeka.remote.getFeatures(function (features) {
-            Opeka.features = features;
-            // TODO: Show a message to the user about the connection being
-            // reestablished?
-          });
-        });
-    };
-
     // If the connection is dropped, advise the user that he has to
     // reload the page.
-    Opeka.onStreamDisconnected = function() {
-      if(Opeka.use_reconnect) {
-        if(Opeka.state != Opeka.TRYING_RECONNECT) {
-          Opeka.changeState(Opeka.TRYING_RECONNECT);
-        }
-      } else {
-        Opeka.changeState(Opeka.DISCONNECTED);
-      }
-    };
-    // This happens when the connection is finally terminated, after
-    // any attempts to reconnect have failed. Can also be triggered by a
-    // client-side or server-side teardown.
+
     Opeka.onDisconnect = function () {
+
       // If the user is banned, tell him to go away.
       if (Opeka.clientData.isBanned) {
         view = new Opeka.BannedDialogView().render();
@@ -1063,16 +833,7 @@ var Opeka = {
       // Wait five seconds before showing the dialog, in case the
       // disconnect was caused by the user reloading the page.
       window.setTimeout(function () {
-        if (Opeka.shownFatalErrorDialog) {
-          return;
-        }
-        // Remove any reconnectview that is currently being shown
-        if(Opeka.reconnectView) {
-          Opeka.reconnectView.remove();
-        }
-        Opeka.shownFatalErrorDialog = true;
         $(window).unbind('beforeunload.opeka');
-        $(Opeka).trigger("disconnected");
         view = new Opeka.FatalErrorDialogView({
           message: Drupal.t('Your connection to the chat server was lost. Please reconnect. Contact support if problem persists.'),
           title: Drupal.t('Disconnected')
@@ -1100,49 +861,8 @@ var Opeka = {
   });
 
   // Set up connect handler.
-  Opeka.onStreamConnected = function (remote, dnode_instance) {
-    console.log("Stream connected for ", dnode_instance.connection_id);
-    if(dnode_instance._reconnect_handled) {
-      console.log("Skipping handled dnode instance", dnode_instance.connection_id);
-      return;
-    }
-    // Register new remote method proxy.
+  Opeka.onConnect = function (remote) {
     Opeka.remote = remote;
-
-    // If we connected to a reconnect-attempt-stream, we need to cancel
-    // other reconnect attempts.
-    if(Opeka.state == Opeka.TRYING_RECONNECT) {
-      // Try to close any other pending connection attemps. They need to be
-      // closed while still in TRYING_RECONNECT as they otherwise would
-      // cause the client to go back into TRYING_RECONNECT mode.
-      console.log('Reconnect connection established!');
-
-      // Destroy original dnode connection unless it is the one that
-      // reconnected.
-      if(Opeka.dnode_instance &&
-         Opeka.dnode_instance.connection_id != dnode_instance.connection_id) {
-        Opeka.dnode_instance._reconnect_handled = true;
-        Opeka.dnode_instance.destroy();
-      }
-      // Destroy any dnode connections except for the one that reconnected.
-      var attempts = Opeka.reconnect_connections;
-      _.each(attempts, function(attempt) {
-        console.log("Cleaning up old connection: ", attempt.connection_id, dnode_instance.connection_id);
-        if(attempt.connection_id !== dnode_instance.connection_id) {
-          attempt._reconnect_handled = true;
-          attempt.destroy();
-        }
-      });
-      Opeka.reconnect_connections = [];
-    } else {
-      console.log('Initial connection established!');
-    }
-    Opeka.dnode_instance = dnode_instance;
-    Opeka.changeState(Opeka.CONNECTED);
-  };
-
-  Opeka.onConnect = function() {
-    Opeka.number_of_reconnects_tried = 0;
     Opeka.remote.getFeatures(function (features) {
       Opeka.features = features;
     });
