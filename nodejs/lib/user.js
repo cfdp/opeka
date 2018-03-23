@@ -86,8 +86,8 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
 module.exports.filterData = function (client) {
   return {
     age: client.age,
-    chatStartMin: client.chatStartMin,
-    ChatEndMin: client.ChatEndMin,
+    chatStart_Min: client.chatStart_Min,
+    chatEnd_Min: client.chatEnd_Min,
     clientId: client.clientId,
     colorId: client.colorId,
     gender: client.gender,
