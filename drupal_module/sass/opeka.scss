@@ -50,30 +50,3 @@ body.page-admin {
   }
 }
 
-body.page-admin-config-services-opeka-screening {
-  #fieldset-opeka-screening-options {
-    .form-item {
-      max-width: 300px;
-      margin-bottom: .5em;
-    }
-  }
-  .btn.btn-info {
-    margin-bottom: 1em;
-  }
-}
-
-body.page-admin-config-services-opeka-opening-hours {
-  #fieldset-opeka-opening-hours-datetimes {
-    margin-bottom: 1em;
-    .form-item {
-      float: left;
-    }
-    .form-type-select {
-      clear: left;
-    }
-    button.form-submit {
-      clear: left;
-      float: left;
-    }
-  }
-}
