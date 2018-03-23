@@ -16,10 +16,10 @@ module.exports.save = function (age, gender, screening, callback) {
   });
 };
 
-module.exports.saveChatDuration = function(statsId, duration) {
+module.exports.saveChatDuration = function(stats_id, duration) {
   drupal.db.query('SHOW TABLES LIKE ?', ['opeka_stats'], function (err, result) {
     if (result) {
-      return saveChatDuration(statsId, duration);
+      return saveChatDuration(stats_id, duration);
     }
     else {
       util.log('Error: The opeka_stats table does not appear to be present ind the DB.');
@@ -50,7 +50,7 @@ function saveData(age, gender, screening, callback) {
 
   drupal.db.query('INSERT INTO opeka_stats SET ?', record, function (err, result) {
     if (result) {
-      util.log('Info: Saved preliminary chat sessions stats.');
+      util.log('Info: Saved chat sessions stats.');
       if (callback) {
         callback(result.insertId);
       }
@@ -63,9 +63,9 @@ function saveData(age, gender, screening, callback) {
 }
 
 // Add the chat duration to the database.
-function saveChatDuration(statsId, duration) {
+function saveChatDuration(stats_id, duration) {
 
-  drupal.db.query('UPDATE opeka_stats SET chat_duration = ? WHERE submission_id = ?', [duration, statsId], function (err, result) {
+  drupal.db.query('UPDATE opeka_stats SET chat_duration = ? WHERE submission_id = ?', [duration, stats_id], function (err, result) {
     if (result) {
       util.log('Info: Saved chat duration into stats.');
     }
