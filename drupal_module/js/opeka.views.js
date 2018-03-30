@@ -1450,10 +1450,10 @@
 
       // Toggle create-room button state depending on chat state
       if (chatOpen) {
-        this.$el.find('.create-room').removeProp("disabled");
+        this.$el.find('.create-room').prop('disabled', false);
       }
       else {
-        this.$el.find('.create-room').prop("disabled");
+        this.$el.find('.create-room').prop('disabled', true);;
       }
 
       return this;

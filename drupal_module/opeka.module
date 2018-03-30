@@ -7,6 +7,28 @@
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Template\Attribute;
+
+/**
+ * Implements template_preprocess_html().
+ *
+ * Adds user permission classes to body
+ */
+function opeka_preprocess_html(&$vars) {
+  $user = \Drupal::currentUser();
+  $opeka_role = "opeka-no-access";
+  if ($user->hasPermission('administer opeka chat')) {
+    $opeka_role = "opeka-counselor";
+  }
+  else if ($user->hasPermission('access opeka chat')) {
+    $opeka_role = "opeka-client";
+  }
+
+  if (is_array($vars['attributes'])) {
+    $vars['attributes'] = new Attribute();
+  }
+  $vars['attributes']->addClass($opeka_role);
+}
 
 /**
  * Implements hook_help().
@@ -38,7 +60,7 @@ function opeka_theme() {
  * Implements hook_library_info_build().
  */
 function opeka_library_info_build() {
-  $js_url = \Drupal::config('opeka.settings')->get('connectjs_url');
+  $js_url = \Drupal::config('opeka.advanced_settings')->get('connectjs_url');
   $libraries = [
     'dnode.connect' => [
       'js' => [
@@ -73,10 +95,10 @@ function opeka_preprocess_opeka_admin_chat(&$variables) {
  * Helper function for getting all relevant JS settings.
  */
 function _opeka_compile_javascript_settings() {
-  $opeka_config = \Drupal::config('opeka.settings');
+  $opeka_adv_config = \Drupal::config('opeka.advanced_settings');
 
-  $js_url = $opeka_config->get('connectjs_url');
-  $settings = $opeka_config->get() + [
+  $js_url = $opeka_adv_config->get('connectjs_url');
+  $settings = $opeka_adv_config->get() + [
     'path' => base_path() . drupal_get_path('module', 'opeka'),
     'dnode_endpoint' => preg_replace('/\/connect[.]js$/', '/opeka', $js_url),
     'socket_io_url' => preg_replace('/\/connect[.]js$/', '/', $js_url),

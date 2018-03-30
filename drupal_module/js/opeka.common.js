@@ -775,7 +775,7 @@ var Opeka = {
     $('body').removeClass('room-size-2 groupchat');
   };
 
-  // Handler for closing the screeningPopover upon click outside element    
+  // Handler for closing the screeningPopover upon click outside element
   Opeka.screeningPopoverClose = function () {
     $('body').on('click', function (event) {
       var content;
@@ -789,7 +789,7 @@ var Opeka = {
 
   // Play a sound when a client joins the chat
   Opeka.userJoinedSound = function () {
-    Opeka.doorBellSound.play();
+    //Opeka.doorBellSound.play();
   };
 
   // Basic setup for the app when the DOM is loaded.
