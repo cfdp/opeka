@@ -51,12 +51,11 @@ body.opeka-regular {
     }
   }
 
-  /* smaller containers for clients */
-  &.page-opeka {
-    &>.container {
+  &.path-opeka {
+    .main-container {
       max-width: 960px;
     }
-    &.room-size-2>.container {
+    &.room-size-2 .main-container {
       max-width: 640px;
     }
   }
@@ -243,7 +242,7 @@ ul.chat-message-list {
   }
 }
 
-.bs-callout-client {
+.bs-callout-regular {
   .meta-info {
     right: 0;
   }
@@ -255,7 +254,7 @@ ul.chat-message-list {
     color: $messageClientMDColor;
   }
 
-  // Alternating colors for clients' messages
+  // Alternating colors for regular users' messages
   $class-slug: color-id;
   @each $current-color in $userColorList {
     $i: index($userColorList, $current-color) - 1;
@@ -392,7 +391,7 @@ ul.chat-message-list {
 
 /* MODAL DIALOG / POPUP WINDOWS */
 
-.page-opeka,
+.path-opeka,
 .page-admin-opeka {
   .ui-icon,
   .ui-dialog .ui-dialog-titlebar-close {
@@ -861,7 +860,7 @@ body.opeka-regular {
       max-width: 500px;
       margin: 20px auto;
     }
-    /* Clients can have the sidebar disabled */
+    /* Regular users can have the sidebar disabled */
     .content.client-sidebar-0 {
       width: 100%;
     }

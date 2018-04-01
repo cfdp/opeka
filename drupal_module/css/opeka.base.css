@@ -32,7 +32,6 @@ body.opeka-regular {
   font-family: "Montserrat", sans-serif;
   /* Drupal messages */
   /* Forms */
-  /* smaller containers for clients */
 }
 body.opeka-counselor .messages,
 body.opeka-regular .messages {
@@ -65,12 +64,12 @@ body.opeka-regular .form-wrapper .btn.form-submit {
   clear: left;
   float: left;
 }
-body.opeka-counselor.page-opeka > .container,
-body.opeka-regular.page-opeka > .container {
+body.opeka-counselor.path-opeka .main-container,
+body.opeka-regular.path-opeka .main-container {
   max-width: 960px;
 }
-body.opeka-counselor.page-opeka.room-size-2 > .container,
-body.opeka-regular.page-opeka.room-size-2 > .container {
+body.opeka-counselor.path-opeka.room-size-2 .main-container,
+body.opeka-regular.path-opeka.room-size-2 .main-container {
   max-width: 640px;
 }
 @media (min-width: 1200px) {
@@ -262,50 +261,50 @@ ul.chat-message-list {
   color: #231e19;
 }
 
-.bs-callout-client .meta-info {
+.bs-callout-regular .meta-info {
   right: 0;
 }
-.bs-callout-client .chat-message-content {
+.bs-callout-regular .chat-message-content {
   margin-right: auto;
   margin-left: 0;
 }
-.bs-callout-client .sender-name {
+.bs-callout-regular .sender-name {
   color: #231e19;
 }
-.bs-callout-client.color-id-0 .chat-message-content {
+.bs-callout-regular.color-id-0 .chat-message-content {
   background-color: #E6CDFE;
 }
-.bs-callout-client.color-id-1 .chat-message-content {
+.bs-callout-regular.color-id-1 .chat-message-content {
   background-color: #CDE6FE;
 }
-.bs-callout-client.color-id-2 .chat-message-content {
+.bs-callout-regular.color-id-2 .chat-message-content {
   background-color: #F8FECE;
 }
-.bs-callout-client.color-id-3 .chat-message-content {
+.bs-callout-regular.color-id-3 .chat-message-content {
   background-color: #CEFFFF;
 }
-.bs-callout-client.color-id-4 .chat-message-content {
+.bs-callout-regular.color-id-4 .chat-message-content {
   background-color: #FEE6CD;
 }
-.bs-callout-client.color-id-5 .chat-message-content {
+.bs-callout-regular.color-id-5 .chat-message-content {
   background-color: #CCCDFD;
 }
-.bs-callout-client.color-id-6 .chat-message-content {
+.bs-callout-regular.color-id-6 .chat-message-content {
   background-color: #FECDE6;
 }
-.bs-callout-client.color-id-7 .chat-message-content {
+.bs-callout-regular.color-id-7 .chat-message-content {
   background-color: #CDFECE;
 }
-.bs-callout-client.color-id-8 .chat-message-content {
+.bs-callout-regular.color-id-8 .chat-message-content {
   background-color: #E6FEF2;
 }
-.bs-callout-client.color-id-9 .chat-message-content {
+.bs-callout-regular.color-id-9 .chat-message-content {
   background-color: #FECCCD;
 }
-.bs-callout-client.color-id-10 .chat-message-content {
+.bs-callout-regular.color-id-10 .chat-message-content {
   background-color: #CB8391;
 }
-.bs-callout-client.color-id-11 .chat-message-content {
+.bs-callout-regular.color-id-11 .chat-message-content {
   background-color: #FFFECE;
 }
 
@@ -437,21 +436,21 @@ ul.chat-message-list {
 }
 
 /* MODAL DIALOG / POPUP WINDOWS */
-.page-opeka .ui-icon,
-.page-opeka .ui-dialog .ui-dialog-titlebar-close,
+.path-opeka .ui-icon,
+.path-opeka .ui-dialog .ui-dialog-titlebar-close,
 .page-admin-opeka .ui-icon,
 .page-admin-opeka .ui-dialog .ui-dialog-titlebar-close {
   overflow: hidden;
   background-repeat: no-repeat;
   background-position: -96px -128px;
 }
-.page-opeka .ui-widget-header .ui-icon,
-.page-opeka .ui-dialog .ui-dialog-titlebar-close,
+.path-opeka .ui-widget-header .ui-icon,
+.path-opeka .ui-dialog .ui-dialog-titlebar-close,
 .page-admin-opeka .ui-widget-header .ui-icon,
 .page-admin-opeka .ui-dialog .ui-dialog-titlebar-close {
   background-image: url(images/ui-icons_222222_256x240.png);
 }
-.page-opeka .ui-dialog .ui-dialog-titlebar-close span,
+.path-opeka .ui-dialog .ui-dialog-titlebar-close span,
 .page-admin-opeka .ui-dialog .ui-dialog-titlebar-close span {
   display: block;
   margin: 1px;
@@ -843,7 +842,7 @@ body.opeka-regular {
 }
 body.opeka-regular #opeka-app {
   /* The signin view. Logging into the chat. */
-  /* Clients can have the sidebar disabled */
+  /* Regular users can have the sidebar disabled */
   /* Chat message area */
 }
 body.opeka-regular #opeka-app .signin-view {

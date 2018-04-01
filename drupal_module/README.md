@@ -1,5 +1,30 @@
-Opeka
+#Opeka
 
+
+##Description
+
+
+##Benefits
+
+
+##Notices
+
+##Installing 
+1.
+2.
+3.
+
+##Credits:
+
+The original module was made by Mikkel Høgh (mikl)
+
+Significant enhancements were contributed by Jørgen Ulrik B. Kragh, Stefanos Petrakis and Alexander Bukach.
+
+Current maintainers:
+
+- Benjamin Christensen
+
+##TODOs
 
 Using HowlerJS as external library (add the following to *.libraries.yml):
 

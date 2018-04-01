@@ -1,7 +1,7 @@
 <div id="opeka-app"></div>
 <script id="opeka_chat_sidebar_tmpl" type="application/template">
   <div id="room-size" data-room-size="<%- room.get('maxSize') %>"></div>
-  <% /* Only display sidebar for anonymous clients in pair rooms if this settings is set to 1*/ %>
+  <% /* Only display sidebar for regular users in pair rooms if this settings is set to 1*/ %>
   <% if ((admin) || (!((drupalSettings.opeka.pairchat_user_list === 0) && (room.get('maxSize') === 2)))) { %>
     <% if (admin) { %>
       <form action="#" class="leave-room-form">
@@ -380,7 +380,7 @@
         <div class="message"><%- message.message %></div>
       </li>
     <% } else { %>
-      <li class="chat-message bs-callout color-id-<%- message.sender.colorId %> <% if(message.sender.isCouncellor) { %>bs-callout-counselor<% }else{ %>bs-callout-client<% } %>" data-message-id="<%= message.messageId %>">
+      <li class="chat-message bs-callout color-id-<%- message.sender.colorId %> <% if(message.sender.isCouncellor) { %>bs-callout-counselor<% }else{ %>bs-callout-regular<% } %>" data-message-id="<%= message.messageId %>">
         <div class="chat-message-content">
           <span class="sender-name"><%- message.sender.name %></span>
           <span class="message"><%- message.message %></span>
