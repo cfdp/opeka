@@ -15,8 +15,8 @@ ul {
   padding-left: 16px;
 }
 
-body.logged-in,
-body.not-logged-in {
+body.opeka-counselor,
+body.opeka-regular {
   background-color: $defaultBodyBgColor;
   font-size: $font-std;
   font-family: "Montserrat", sans-serif;
@@ -817,7 +817,7 @@ ul.chat-message-list {
 
 /* Client specific */
 
-body.opeka-client {
+body.opeka-regular {
   background-color: $contentBgColor;
   #opeka-app {
     /* The signin view. Logging into the chat. */

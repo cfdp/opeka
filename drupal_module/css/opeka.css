@@ -17,30 +17,30 @@
 /* General styles that are needed on non-opeka pages */
 /* Footer */
 /* Branding */
-body.logged-in footer.footer,
-body.not-logged-in footer.footer {
+body.opeka-counselor footer.footer,
+body.opeka-regular footer.footer {
   display: none;
   border: none;
   padding: 0;
 }
 @media (min-width: 1200px) {
-  body.logged-in footer.footer,
-  body.not-logged-in footer.footer {
+  body.opeka-counselor footer.footer,
+  body.opeka-regular footer.footer {
     display: block;
   }
-  body.logged-in .logo1,
-  body.not-logged-in .logo1 {
+  body.opeka-counselor .logo1,
+  body.opeka-regular .logo1 {
     display: inline-block;
     margin-right: 20px;
     max-width: 200px;
   }
-  body.logged-in .logo2,
-  body.not-logged-in .logo2 {
+  body.opeka-counselor .logo2,
+  body.opeka-regular .logo2 {
     display: inline-block;
     max-width: 440px;
   }
-  body.logged-in .footer-branding,
-  body.not-logged-in .footer-branding {
+  body.opeka-counselor .footer-branding,
+  body.opeka-regular .footer-branding {
     float: right;
   }
 }

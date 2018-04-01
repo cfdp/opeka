@@ -21,7 +21,7 @@ function opeka_preprocess_html(&$vars) {
     $opeka_role = "opeka-counselor";
   }
   else if ($user->hasPermission('access opeka chat')) {
-    $opeka_role = "opeka-client";
+    $opeka_role = "opeka-regular";
   }
 
   if (is_array($vars['attributes'])) {
