@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies: {  }
+id: coordinator
+label: Coordinator
+weight: 3
+is_admin: null
+permissions:
+  - 'access chat history'
+  - 'administer opeka settings'
+  - 'generate opeka chat ban codes'
+  - 'hide typing message'
+  - 'pause opeka chat autoscroll'

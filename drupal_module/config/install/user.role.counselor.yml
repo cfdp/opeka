@@ -1,0 +1,12 @@
+langcode: en
+status: true
+dependencies: {  }
+id: counselor
+label: Counselor
+weight: 4
+is_admin: null
+permissions:
+  - 'access chat history'
+  - 'administer opeka settings'
+  - 'hide typing message'
+  - 'pause opeka chat autoscroll'

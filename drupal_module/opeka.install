@@ -1,8 +1,21 @@
 <?php
+
 /**
  * @file
- * Database scema and installation code for Opeka.
+ * Database schema and installation code for Opeka.
  */
+
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_install().
+ */
+function opeka_install() {
+  user_role_change_permissions(RoleInterface::ANONYMOUS_ID, array(
+    'access opeka chat' => TRUE,
+  ));
+}
+
 
 /**
  * Implements hook_schema().
