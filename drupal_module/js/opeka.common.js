@@ -789,15 +789,15 @@ var Opeka = {
 
   // Play a sound when a client joins the chat
   Opeka.userJoinedSound = function () {
-    //Opeka.doorBellSound.play();
+    Opeka.doorBellSound.play();
   };
 
   // Basic setup for the app when the DOM is loaded.
   $(function () {
     var view;
-//    Opeka.doorBellSound = new Howl({
-//      src: [drupalSettings.opeka.client_login_sound]
-//    });
+    Opeka.doorBellSound = new Howl({
+      src: [drupalSettings.opeka.client_login_sound]
+    });
     Opeka.compileTemplates();
 
     // We use a bare Backbone model for containing server status.
@@ -851,7 +851,6 @@ var Opeka = {
         }).render();
       }
     }, 2000);
-
 
     // Once the page is loaded, start our app.
     var nf = new Opeka.NotFoundRouter();
