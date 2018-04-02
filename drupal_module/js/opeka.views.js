@@ -1138,7 +1138,6 @@
           title: options.private ? Drupal.t('Create new private room') : Drupal.t('Create new room'),
           width: 500
         };
-
         options.dialogOptions.buttons[options.private ? Drupal.t('Create new private room') : Drupal.t('Create new room')] = this.saveRoom;
       }
 
@@ -1152,7 +1151,6 @@
 
     render: function () {
       Opeka.DialogView.prototype.render.call(this);
-
       this.dialogElement.find('form').submit(this.saveRoom);
     },
 
@@ -1391,6 +1389,8 @@
   Opeka.RoomListView = Backbone.View.extend({
     events: {
       "click .create-room": "createRoom",
+      "click .create-pair-room": "createDefaultRoom",
+      "click .create-group-room": "createDefaultRoom",
       "click .chat-toggle": "toggleChat"
     },
 
@@ -1427,6 +1427,8 @@
         admin: Opeka.clientData.isAdmin,
         labels: {
           createRoom: Drupal.t('Create new room'),
+          createPairRoom: Drupal.t('New 1-1 chat'),
+          createGroupRoom: Drupal.t('New groupchat'),
           inviteRooms: (drupalSettings.opeka && drupalSettings.opeka.invite) ? Drupal.t('Invitations list') : false,
           placeholder: Drupal.t('No rooms created'),
           closeWindowText: Drupal.t('Close window'),
@@ -1450,10 +1452,10 @@
 
       // Toggle create-room button state depending on chat state
       if (chatOpen) {
-        this.$el.find('.create-room').prop('disabled', false);
+        this.$el.find('.create-room, .create-pair-room, .create-group-room').prop('disabled', false);
       }
       else {
-        this.$el.find('.create-room').prop('disabled', true);;
+        this.$el.find('.create-room, .create-pair-room, .create-group-room').prop('disabled', true);
       }
 
       return this;
@@ -1464,6 +1466,31 @@
       var dialog = new Opeka.RoomEditView();
 
       dialog.render();
+    },
+
+    // Create a new pair or group room with default settings.
+    createDefaultRoom: function (event) {
+      var values = {
+        name: Drupal.t('Chat room'),
+        maxSize: 2,
+        ipLocation: 'Any',
+        private: 0,
+        queueSystem: 'private',
+        invite: '',
+      },
+      newRoom = new Opeka.Room();
+      if ($(event.target).hasClass('create-group-room')){
+        values.maxSize = 10;
+      }
+      newRoom.save(values, {
+        success: function (self, newRoom) {
+            Opeka.roomList.add(newRoom);
+            Opeka.router.navigate("rooms/" + newRoom.id, {trigger: true});
+          }
+      });
+      if (event) {
+        event.preventDefault();
+      }
     },
 
     toggleChat: function (event) {

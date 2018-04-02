@@ -22,7 +22,7 @@
       </button>
     <% } %>
     <div id="user-list-block" class="sidebar-block">
-      <h5 class="sidebar-block-heading dropdown-toggler"><%= labels.userListHeading %><span class="arrow up"></span></h5>
+      <h5 class="sidebar-block-heading dropdown-toggler"><%= labels.userListHeading %> (<%- room.get('memberCount') %>/<%- room.get('maxSize') %>)</h5>
       <div class="sidebar-block-content">
         <ul class="user-list">
         <% if (!users) { %>
@@ -234,6 +234,8 @@
         <a href="#queues" class="go-to-queues btn-default btn"><%= labels.queueLink %></a>
       <% } %>
       <button class="create-room btn btn-success" disabled><%= labels.createRoom %></button>
+      <button class="create-pair-room btn btn-success" disabled><%= labels.createPairRoom %></button>
+      <button class="create-group-room btn btn-success" disabled><%= labels.createGroupRoom %></button>
       <% if (labels.inviteRooms) { %>
         <a href="#invites" class="invite-rooms btn btn-default"><%= labels.inviteRooms %></a>
       <% } %>

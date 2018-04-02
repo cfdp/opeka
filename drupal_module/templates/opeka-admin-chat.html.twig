@@ -3,7 +3,7 @@
 <script id="opeka_chat_sidebar_tmpl" type="application/template">
 <div id="sidebar">
   <div class="sidebar-block">
-    <h5 class="sidebar-block-heading">Room actions<span class="arrow up"></span></h5>
+    <h5 class="sidebar-block-heading">Room actions</h5>
     <div class="sidebar-block-content room-actions">
       <button class="pause-toggle"><%= labels.pauseToggle %></button>
       <button class="clear-messages"><%= labels.clearMessages %></button>
@@ -11,7 +11,7 @@
     </div>
   </div>
   <div class="sidebar-block">
-    <h5 class="sidebar-block-heading">User list<span class="arrow up"></span></h5>
+    <h5 class="sidebar-block-heading">User list (<%- room.get('memberCount') %>/<%- room.get('maxSize') %>)</h5>
     <div class="sidebar-block-content">
       <ul class="user-list">
       <% if (!users) { %>
@@ -47,14 +47,14 @@
     </div>
   </div>
   <div class="sidebar-block">
-    <h5 class="sidebar-block-heading"><%= labels.registrationform %><span class="arrow up"></span></h5>
+    <h5 class="sidebar-block-heading"><%= labels.registrationform %></h5>
     <div class="sidebar-block-content">
       <a class="registrationform" href="https://docs.google.com/a/cyberhus.dk/spreadsheet/embeddedform?formkey=dHBub0M0LW5GbWpNWndqTGdDQjNwZEE6MQ" target="_blank"><%= labels.registrationform %></a>
     </div>
   </div>
   <!--
   <div class="sidebar-block">
-    <h5 class="sidebar-block-heading">Room actions test<span class="arrow up"></span></h5>
+    <h5 class="sidebar-block-heading">Room actions test</h5>
     <div class="sidebar-block-content">
       <span class="remove-room" title="<%= labels.deleteRoom %>">X</span>
       <% if (room.get('paused')) { %>
@@ -113,8 +113,6 @@
 
 <script id="opeka_room_edit_tmpl" type="application/template">
   <form action="#" class="room-edit-form">
-    <!--<p>To create a simple 1 to 1 chat, please click the green button below.</p>
-      <button class="ui-button ui-button-text-only"><span class="ui-button-text">Create a 1 to 1 chat room</span></button>-->
     <div class="create-groupchat-room">
       <div class="groupchat-room-settings">
         <div class="form-item">

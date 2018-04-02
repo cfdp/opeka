@@ -717,12 +717,19 @@ ul.chat-message-list {
   float: right;
   margin-left: 10px;
 }
-.opeka-counselor #opeka-app .app-view button.create-room, .opeka-counselor #opeka-app .app-view button.invite-rooms,
+.opeka-counselor #opeka-app .app-view button.create-room, .opeka-counselor #opeka-app .app-view button.create-predefined-room, .opeka-counselor #opeka-app .app-view button.invite-rooms,
 .opeka-counselor #opeka-app .app-view button .create-invite {
   margin-bottom: 20px;
 }
 .opeka-counselor #opeka-app .chat-toggle-container {
   margin-bottom: 20px;
+}
+.opeka-counselor #opeka-app ul.predefined-rooms-list {
+  list-style: none;
+  padding-left: 0;
+}
+.opeka-counselor #opeka-app ul.predefined-rooms-list li {
+  display: inline-block;
 }
 .opeka-counselor #opeka-app ul.room-list a.admin-enter {
   float: right;

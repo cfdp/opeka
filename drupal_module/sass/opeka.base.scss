@@ -689,6 +689,7 @@ ul.chat-message-list {
 
     .app-view button {
       &.create-room,
+      &.create-predefined-room,
       &.invite-rooms,
       .create-invite {
         margin-bottom: 20px;
@@ -699,6 +700,13 @@ ul.chat-message-list {
       margin-bottom: 20px;
     }
 
+    ul.predefined-rooms-list {
+      list-style: none;
+      padding-left: 0;
+      li {
+        display: inline-block;
+      }
+    }
     ul.room-list a.admin-enter {
       float: right;
       padding: 10px 0 0 0;
