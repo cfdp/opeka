@@ -227,15 +227,14 @@
           <% } %>
         </div>
         <% if (!chatOpen) { %>
-          <div class="messages error alert chat-state"><%= labels.chatClosed %></div>
+          <div class="messages alert alert-warning chat-state"><%= labels.chatClosed %></div>
         <% } %>
       </div>
       <% if (queueSystem) { %>
         <a href="#queues" class="go-to-queues btn-default btn"><%= labels.queueLink %></a>
       <% } %>
       <button class="create-room btn btn-success" disabled><%= labels.createRoom %></button>
-      <button class="create-pair-room btn btn-success" disabled><%= labels.createPairRoom %></button>
-      <button class="create-group-room btn btn-success" disabled><%= labels.createGroupRoom %></button>
+      <div class="predefined-rooms"></div>
       <% if (labels.inviteRooms) { %>
         <a href="#invites" class="invite-rooms btn btn-default"><%= labels.inviteRooms %></a>
       <% } %>
@@ -284,6 +283,18 @@
     </div>
     
   <% } %>
+</script>
+
+<script id="opeka_predefined_rooms_list_tmpl" type="application/template">
+  <ul class="predefined-rooms-list">
+  <% _.each(predefinedRooms, function (room) { %>
+      <% labels.placeholder = ''; %>
+      <li class="predefined-room"><button class="create-predefined-room btn btn-success" data-room-mid="<%- room.mid %>" disabled><%= labels.createRoom %> <%- room.name %></button></li>
+  <% }); %>
+  <% if (labels.placeholder) { %>
+    <li class="placeholder nopredefinedrooms"><%= labels.placeholder %></li>
+  <% } %>
+  </ul>
 </script>
 
 <script id="opeka_queue_list_tmpl" type="application/template">

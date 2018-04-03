@@ -477,6 +477,7 @@
 
       this.model.on('change:userList', this.render, this);
       this.model.on('change:paused', this.render, this);
+      this.model.on('change:memberCount', this.render, this);
       $(window).bind('leaveRoom', function () {
         self.remove();
       });
@@ -1389,13 +1390,13 @@
   Opeka.RoomListView = Backbone.View.extend({
     events: {
       "click .create-room": "createRoom",
-      "click .create-pair-room": "createDefaultRoom",
-      "click .create-group-room": "createDefaultRoom",
+      "click .create-predefined-room": "createPredefinedRoom",
       "click .chat-toggle": "toggleChat"
     },
 
     initialize: function (options) {
       _.bindAll(this);
+      this.predefinedRooms = Opeka.status.attributes.predefinedRooms;
 
       // Bind to the global status model.
       if (Opeka.status) {
@@ -1416,7 +1417,8 @@
         hidePairRooms = false,
         chatOpen = Opeka.status.attributes.chatOpen,
         queueSystem = Opeka.status.attributes.queueSystem,
-        html = '';
+        html = '',
+        htmlPredefinedRooms = '';
 
       // Hide rooms with only two slots.
       if (Opeka.features && Opeka.features.hidePairRoomsOnRoomList) {
@@ -1427,8 +1429,6 @@
         admin: Opeka.clientData.isAdmin,
         labels: {
           createRoom: Drupal.t('Create new room'),
-          createPairRoom: Drupal.t('New 1-1 chat'),
-          createGroupRoom: Drupal.t('New groupchat'),
           inviteRooms: (drupalSettings.opeka && drupalSettings.opeka.invite) ? Drupal.t('Invitations list') : false,
           placeholder: Drupal.t('No rooms created'),
           closeWindowText: Drupal.t('Close window'),
@@ -1450,12 +1450,23 @@
 
       this.$el.html(html);
 
+
+      htmlPredefinedRooms = JST.opeka_predefined_rooms_list_tmpl({
+        labels: {
+          placeholder: Drupal.t('No predefined rooms created'),
+          createRoom: Drupal.t('Create')
+        },
+        predefinedRooms: this.predefinedRooms
+      });
+
+      this.$el.find('.predefined-rooms').html(htmlPredefinedRooms);
+
       // Toggle create-room button state depending on chat state
       if (chatOpen) {
-        this.$el.find('.create-room, .create-pair-room, .create-group-room').prop('disabled', false);
+        this.$el.find('.create-room, .create-predefined-room').prop('disabled', false);
       }
       else {
-        this.$el.find('.create-room, .create-pair-room, .create-group-room').prop('disabled', true);
+        this.$el.find('.create-room, .create-predefined-room').prop('disabled', true);
       }
 
       return this;
@@ -1468,9 +1479,9 @@
       dialog.render();
     },
 
-    // Create a new pair or group room with default settings.
-    createDefaultRoom: function (event) {
-      var values = {
+    // Create a new pair or group room with settings defined in config.json.
+    createPredefinedRoom: function (event) {
+      var defaultValues = {
         name: Drupal.t('Chat room'),
         maxSize: 2,
         ipLocation: 'Any',
@@ -1478,15 +1489,20 @@
         queueSystem: 'private',
         invite: '',
       },
+      requestedRoomId = $(event.target).attr('data-room-mid'),
+      roomValues = {},
       newRoom = new Opeka.Room();
-      if ($(event.target).hasClass('create-group-room')){
-        values.maxSize = 10;
-      }
-      newRoom.save(values, {
+
+      roomValues = _.find(this.predefinedRooms, function (obj) { return obj.mid === requestedRoomId; });
+
+      // Merge with the default values
+      roomValues = _.extend(defaultValues, roomValues);
+
+      newRoom.save(roomValues, {
         success: function (self, newRoom) {
-            Opeka.roomList.add(newRoom);
-            Opeka.router.navigate("rooms/" + newRoom.id, {trigger: true});
-          }
+          Opeka.roomList.add(newRoom);
+          Opeka.router.navigate("rooms/" + newRoom.id, {trigger: true});
+        }
       });
       if (event) {
         event.preventDefault();
