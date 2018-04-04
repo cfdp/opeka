@@ -2,7 +2,10 @@ langcode: en
 status: true
 dependencies:
   module:
+    - opeka
     - user
+_core:
+  default_config_hash: RQPNa2_DeY4aCbT8g8hyJCn9icCpFbZRipEDJnBg92c
 id: opeka_statistics
 label: Statistics
 module: views
@@ -87,17 +90,14 @@ display:
       row:
         type: fields
       fields:
-        submission_id:
+        submission_date:
+          id: submission_date
           table: opeka_stats
-          field: submission_id
-          id: submission_id
-          entity_type: null
-          entity_field: null
-          plugin_id: numeric
+          field: submission_date
           relationship: none
           group_type: group
           admin_label: ''
-          label: ''
+          label: 'Submission date'
           exclude: false
           alter:
             alter_text: false
@@ -138,6 +138,58 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
+          date_format: medium
+          custom_date_format: ''
+          timezone: ''
+          plugin_id: date
+        chat_duration:
+          id: chat_duration
+          table: opeka_stats
+          field: chat_duration
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Session duration (mins)'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
           set_precision: false
           precision: 0
           decimal: .
@@ -146,8 +198,218 @@ display:
           format_plural_string: !!binary MQNAY291bnQ=
           prefix: ''
           suffix: ''
+          plugin_id: numeric
+        age:
+          id: age
+          table: opeka_stats
+          field: age
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Age
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          plugin_id: standard
+        gender:
+          id: gender
+          table: opeka_stats
+          field: gender
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Gender
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          plugin_id: standard
+        answer:
+          id: answer
+          table: opeka_stats
+          field: answer
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Answer text'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          plugin_id: standard
+        question:
+          id: question
+          table: opeka_stats
+          field: question
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Question text'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          plugin_id: standard
       filters: {  }
-      sorts: {  }
+      sorts:
+        submission_date:
+          id: submission_date
+          table: opeka_stats
+          field: submission_date
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          granularity: minute
+          plugin_id: date
       title: 'Chat administration'
       header: {  }
       footer: {  }
@@ -167,7 +429,7 @@ display:
       arguments: {  }
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_interface'
         - url.query_args
@@ -196,7 +458,7 @@ display:
         description: ''
         weight: 0
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_interface'
         - url.query_args
