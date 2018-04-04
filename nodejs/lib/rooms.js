@@ -138,7 +138,7 @@ var Room = function (options) {
     // Keep track of counselor presence
     self.counselorPresent = true;
 
-    // Create groups for connected users and councellors.
+    // Create groups for connected users and counselors.
     self.group = opeka.groups.getGroup(self.id);
     self.counselorGroup = opeka.groups.getGroup("counselors-" + self.id);
 
@@ -308,7 +308,7 @@ var Room = function (options) {
     return userIndex;
   };
 
-  // Reserve spot in room.
+  // Reserve spot in room. @todo
   self.reserveSpot = function (clientId) {
   };
 
@@ -325,12 +325,14 @@ var Room = function (options) {
     return false;
   }
 
-  // Assign an available colorId to a new user in the room.
+  // Assign an available colorId (an integer in the range 0 to numberOfUserColors)
+  // to a new user in the room.
   self.assignColorId = function (clientId, callback) {
-    var i = 0;
-    var newColorId;
-    var colorsAvailable = _.range(numberOfUserColors);
-    var colorsTaken = [];
+    var i = 0,
+      newColorId,
+      colorsAvailable = _.range(numberOfUserColors),
+      colorsTaken = [];
+
     // Filter out the colorIds that have been taken already
     _.each(this.users, function (user, index) {
       if (user.colorId != null && user.clientId != clientId) {

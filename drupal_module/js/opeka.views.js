@@ -485,11 +485,14 @@
 
     render: function () {
       var pauseLabel = Drupal.t('Pause chat'),
-        screeningQuestions = Opeka.status.attributes.screeningQuestions;
+        screeningQuestions = Opeka.status.attributes.screeningQuestions,
+        users = this.model.get('userList');
 
       if (this.model.get('paused')) {
         pauseLabel = Drupal.t('Unpause chat');
       }
+
+      this.updateInlineCSS(users);
 
       if (JST.opeka_chat_sidebar_tmpl) {
         this.$el.html(JST.opeka_chat_sidebar_tmpl({
@@ -519,11 +522,29 @@
           },
           screeningQuestions: screeningQuestions,
           room: this.model,
-          users: this.model.get('userList')
+          users: users
         }));
       }
 
       return this;
+    },
+
+    // Update CSS with paths to user pictures
+    updateInlineCSS: function (users) {
+      var id = 'none',
+        rule,
+        div;
+      _.each(users, function (obj) {
+        id = 'client-id-'+obj.clientId;
+        // Only inject style if it isn't already defined in the DOM
+        if (obj.clientId && $('#' + id).length == 0) {
+          rule = '.'+id+' .chat-message-wrapper {background-image: url('+obj.picture_path+'); }';
+          div = document.createElement('div');
+          div.id = id;
+          div.innerHTML = '<style>' + rule + '</style>';
+          document.body.appendChild(div);
+        }
+      });
     },
 
     clearMessages: function (event) {

@@ -84,14 +84,14 @@
   <% } %>
   <% if (admin) { %>
     <div class="sidebar-block">
-      <h5 class="sidebar-block-heading"><%= labels.roomActions %><span class="arrow down"></span></h5>
+      <h5 class="sidebar-block-heading"><%= labels.roomActions %></h5>
       <div class="sidebar-block-content room-actions"  style="display: block;">
         <button class="clear-messages btn btn-sm btn-default"><%= labels.clearMessages %></button>
         <button class="change-room-size btn btn-sm btn-default"><%= labels.changeRoomSize %></button>
       </div>
     </div>
     <div class="sidebar-block">
-      <h5 class="sidebar-block-heading"><%= labels.registrationForm %><span class="arrow down"></span></h5>
+      <h5 class="sidebar-block-heading"><%= labels.registrationForm %></h5>
       <div class="sidebar-block-content">
         <% if (room.get('maxSize') === 2 && (drupalSettings.opeka.reg_pair_url !== '')) { %>
           <a class="registrationform btn" href="<%= drupalSettings.opeka.reg_pair_url %>" target="_blank"><%= labels.registrationFormLink %></a>
@@ -393,10 +393,12 @@
         <div class="message"><%- message.message %></div>
       </li>
     <% } else { %>
-      <li class="chat-message bs-callout color-id-<%- message.sender.colorId %> <% if(message.sender.isCouncellor) { %>bs-callout-counselor<% }else{ %>bs-callout-regular<% } %>" data-message-id="<%= message.messageId %>">
-        <div class="chat-message-content">
-          <span class="sender-name"><%- message.sender.name %></span>
-          <span class="message"><%- message.message %></span>
+      <li class="chat-message bs-callout color-id-<%- message.sender.colorId %> client-id-<%- message.sender.clientId %> <% if(message.sender.isCouncellor) { %>bs-callout-counselor<% }else{ %>bs-callout-regular<% } %>" data-message-id="<%= message.messageId %>">
+        <div class="chat-message-wrapper">
+          <div class="chat-message-content">
+            <span class="sender-name"><%- message.sender.name %></span>
+            <span class="message"><%- message.message %></span>
+          </div>
         </div>
         <div class="meta-info">
           <span class="time pull-right"><%= formatTimestamp(message.date) %></span>

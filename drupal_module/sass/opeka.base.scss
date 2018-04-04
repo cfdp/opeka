@@ -195,8 +195,13 @@ ul.chat-message-list {
     top: 0;
     margin: 10px;
   }
+  .chat-message-wrapper {
+    width: 70%;
+    background-position: 0px 5px;
+    background-repeat: no-repeat;
+  }
   .chat-message-content {
-    width: 75%;
+    margin-left: 48px;
     padding: 8px;
     background: $messageBgColor;
     border-radius: $borderRadius;
@@ -231,11 +236,13 @@ ul.chat-message-list {
 /* Variations */
 
 .bs-callout-counselor {
+  .chat-message-wrapper {
+    margin-right: 0;
+    margin-left: auto;
+  }
   .chat-message-content {
     background-color: $messageCounselorBgColor;
     border: 1px solid $messageCounselorBLColor;
-    margin-right: 0;
-    margin-left: auto;
   }
   .sender-name {
     color: $messageCounselorMDColor;
@@ -246,7 +253,7 @@ ul.chat-message-list {
   .meta-info {
     right: 0;
   }
-  .chat-message-content {
+  .chat-message-wrapper {
     margin-right: auto;
     margin-left: 0;
   }

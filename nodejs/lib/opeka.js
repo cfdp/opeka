@@ -255,8 +255,6 @@ function Server(config, logger) {
       genderRange = {min: 1, max: 25},
       ageRange = {min: 0, max: 99};
 
-    self.logger.info("Drupal user ID:", clientUser.uid);
-
     opeka.user.authenticate(clientUser, accessCodeEnabled, accessCode, function (err, account) {
       if (err) {
         self.logger.info('Authentication failed: ' + err.message);
@@ -274,11 +272,10 @@ function Server(config, logger) {
       // Add the user to the signedIn group.
       self.signedIn.addUser(client.clientId);
 
-
       // Expose the drupal client drupal uid if they provided one and we're configured to do so
       if (self.config.get('features:exposeDrupalUIDs') && account.uid) {
         if (!clientUser.want_to_be_anonymous) {
-          client.drupal_uid = account.uid
+          client.drupal_uid = account.uid;
         }
       }
 
@@ -316,7 +313,7 @@ function Server(config, logger) {
       // Store the account and nickname for later use.
       client.account = account;
       // Validate user input to prevent abuse (e.g. very long usernames)
-      // @todo: find better way of handling invalid input and log abuse attempts
+      // @todo: find better way of sanitizing input and log abuse attempts
       if ((clientUser.nickname != null) && validator.isLength(clientUser.nickname, nicknameRange)) {
         client.nickname = clientUser.nickname;
       }
@@ -342,6 +339,12 @@ function Server(config, logger) {
       else {
         client.screening = null;
       }
+      // Expose the drupal client user picture path if it's provided and we're configured to do so
+      if (self.config.get('features:profilePictures') && clientUser.picture_path) {
+        if (!clientUser.want_to_be_anonymous) {
+          client.picture_path = clientUser.picture_path;
+        }
+      }
       client.accessCode = clientUser.accessCode;
 
       // Update online users count for all clients.
@@ -352,7 +355,7 @@ function Server(config, logger) {
 
       // Only copy safe values from the account-data to the callback object
       _.each(
-        ['canGenerateBanCode', 'isAdmin', 'language', 'name', 'nickname', 'sid', 'uid', 'hideTypingMessage', 'allowPauseAutoScroll', 'viewChatHistory'],
+        ['canGenerateBanCode', 'isAdmin', 'language', 'name', 'nickname', 'sid', 'uid', 'picture_path', 'hideTypingMessage', 'allowPauseAutoScroll', 'viewChatHistory'],
         function (k) {
           if (k in account) {
             clientData[k] = account[k]
@@ -741,7 +744,7 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId],
       roomGroup = opeka.groups.getGroup(roomId),
       userData = room.users[clientId],
-      councillor = this,
+      counselor = this,
       mutedClient = roomGroup.getClient(clientId);
 
     // Mute the user.
@@ -752,7 +755,7 @@ function Server(config, logger) {
     opeka.user.sendUserList(room.counselorGroup, room.id, room.users);
 
     // Tell the user that he was muted.
-    roomGroup.remote('roomUserMuted', roomId, clientId, userData, councillor.nickname);
+    roomGroup.remote('roomUserMuted', roomId, clientId, userData, counselor.nickname);
   });
 
   /* Function used in order to unmute a single user */
@@ -760,7 +763,7 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId],
       roomGroup = opeka.groups.getGroup(roomId),
       userData = room.users[clientId],
-      councillor = this,
+      counselor = this,
       mutedClient = roomGroup.getClient(clientId);
 
     // Unmute the user.
@@ -771,7 +774,7 @@ function Server(config, logger) {
     opeka.user.sendUserList(room.counselorGroup, room.id, room.users);
 
     // Tell the user that he was unmuted.
-    roomGroup.remote('roomUserUnmuted', roomId, clientId, userData, councillor.nickname);
+    roomGroup.remote('roomUserUnmuted', roomId, clientId, userData, counselor.nickname);
   });
 
   /* Function used by the counselors in order to whisper to a user */

@@ -8,6 +8,7 @@
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Template\Attribute;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements template_preprocess_html().
@@ -16,19 +17,67 @@ use Drupal\Core\Template\Attribute;
  */
 function opeka_preprocess_html(&$vars) {
   $user = \Drupal::currentUser();
-  $opeka_role = "opeka-no-access";
+  $opeka_role = 'opeka-no-access';
   if ($user->hasPermission('administer opeka chat')) {
-    $opeka_role = "opeka-counselor";
+    $opeka_role = 'opeka-counselor';
   }
   else if ($user->hasPermission('access opeka chat')) {
-    $opeka_role = "opeka-regular";
+    $opeka_role = 'opeka-regular';
   }
 
   if (is_array($vars['attributes'])) {
     $vars['attributes'] = new Attribute();
   }
   $vars['attributes']->addClass($opeka_role);
+
+  if (opeka_is_opeka_chat_page() === TRUE) {
+    // do stuff that can't be done with hook_preprocess_HOOK
+  }
 }
+
+/**
+ * Helper function that loads the current users profile image URI into the
+ * drupalSettings javascript object.
+ *
+ * @return string - relative path of user picture.
+ */
+function opeka_profile_pic_path() {
+  $pictureURI = FALSE;
+  if ($user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id())) {
+    // Get currently logged in user's picture
+    if (!$user->user_picture->isEmpty()) {
+      //$picture = $user->user_picture->view('large');
+      //$picture = file_create_url($file->getFileUri());
+      $pictureURI = $user->user_picture->entity->getFileUri();
+
+      /* @todo: maybe implement showing img with imagestyle?
+      remember parse_url helper
+      $url = ImageStyle::load('chatavatar30x30')->buildUrl($pictureURI);
+      dpm($url);
+      */
+
+      $pictureURL = file_create_url($user->user_picture->entity->getFileUri());
+      $picturePath = file_url_transform_relative($pictureURL);
+    }
+    else {
+      // Get default user picture if no picture is set on user profile
+      $field = \Drupal\field\Entity\FieldConfig::loadByName('user', 'user', 'user_picture');
+      $default_image = $field->getSetting('default_image');
+      $file = \Drupal::entityManager()->loadEntityByUuid('file', $default_image['uuid']);
+      if ($file !== NULL) {
+        $file->getFileUri();
+        $pictureURL= file_create_url($file->getFileUri());
+        $picturePath = file_url_transform_relative($pictureURL);
+      }
+      else {
+        drupal_set_message(t('The default profile picture is not set. No images will be shown
+        in the chat if the user profile feature is enabled.'), 'warning', TRUE);
+      }
+    }
+  }
+  return $picturePath;
+}
+
 
 /**
  * Implements hook_help().
@@ -105,10 +154,31 @@ function _opeka_compile_javascript_settings() {
     'user' => [
       'name' => \Drupal::currentUser()->getUsername(),
       'uid' => \Drupal::currentUser()->id(),
+      'picture_path' => opeka_profile_pic_path(),
       'sid' => Crypt::hashBase64(\Drupal::service('session_manager')->getId()),
     ],
   ];
 
   return $settings;
 
+}
+
+/**
+ * Checkes whether the current page is rendered using the Opeka chat system.
+ *
+ * @return boolean - TRUE if current page is an Opeka page and FALSE otherwise.
+ */
+function opeka_is_opeka_chat_page() {
+  $path = \Drupal::service('path.current')->getPath();
+  $prefixes = array(
+    "/opeka",
+    "/opeka-widgets",
+    "/admin/opeka"
+  );
+  foreach($prefixes as $prefix) {
+    if(substr($path, 0, strlen($prefix)) === $prefix) {
+      return TRUE;
+    }
+  }
+  return FALSE;
 }

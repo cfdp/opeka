@@ -1,0 +1,23 @@
+uuid: e090cf73-3335-4dbd-af39-77e1193efc8d
+langcode: en
+status: true
+dependencies: {  }
+name: chatavatar30x30
+label: 'ChatAvatar (30x30)'
+effects:
+  7ba88731-2784-419f-be2a-1fbbbf1cdd74:
+    uuid: 7ba88731-2784-419f-be2a-1fbbbf1cdd74
+    id: image_scale
+    weight: 1
+    data:
+      width: null
+      height: 30
+      upscale: false
+  3ec9a323-4d23-44b0-8367-af574a6b9e98:
+    uuid: 3ec9a323-4d23-44b0-8367-af574a6b9e98
+    id: image_crop
+    weight: 2
+    data:
+      width: 30
+      height: 30
+      anchor: left-center

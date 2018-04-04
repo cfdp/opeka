@@ -218,8 +218,13 @@ ul.chat-message-list {
   top: 0;
   margin: 10px;
 }
+.bs-callout .chat-message-wrapper {
+  width: 70%;
+  background-position: 0px 5px;
+  background-repeat: no-repeat;
+}
 .bs-callout .chat-message-content {
-  width: 75%;
+  margin-left: 48px;
   padding: 8px;
   background: whitesmoke;
   border-radius: 5px;
@@ -251,11 +256,13 @@ ul.chat-message-list {
 }
 
 /* Variations */
+.bs-callout-counselor .chat-message-wrapper {
+  margin-right: 0;
+  margin-left: auto;
+}
 .bs-callout-counselor .chat-message-content {
   background-color: #f4faf4;
   border: 1px solid #68ba68;
-  margin-right: 0;
-  margin-left: auto;
 }
 .bs-callout-counselor .sender-name {
   color: #231e19;
@@ -264,7 +271,7 @@ ul.chat-message-list {
 .bs-callout-regular .meta-info {
   right: 0;
 }
-.bs-callout-regular .chat-message-content {
+.bs-callout-regular .chat-message-wrapper {
   margin-right: auto;
   margin-left: 0;
 }
