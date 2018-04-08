@@ -144,10 +144,11 @@ function opeka_preprocess_opeka_admin_chat(&$variables) {
  * Helper function for getting all relevant JS settings.
  */
 function _opeka_compile_javascript_settings() {
-  $opeka_adv_config = \Drupal::config('opeka.advanced_settings');
+  $opeka_general_settings_config = \Drupal::config('opeka.general_settings');
+  $opeka_advanced_settings_config = \Drupal::config('opeka.advanced_settings');
+  $js_url = $opeka_advanced_settings_config->get('connectjs_url');
 
-  $js_url = $opeka_adv_config->get('connectjs_url');
-  $settings = $opeka_adv_config->get() + [
+  $settings = $opeka_general_settings_config->get() + $opeka_advanced_settings_config->get() + [
     'path' => base_path() . drupal_get_path('module', 'opeka'),
     'dnode_endpoint' => preg_replace('/\/connect[.]js$/', '/opeka', $js_url),
     'socket_io_url' => preg_replace('/\/connect[.]js$/', '/', $js_url),
