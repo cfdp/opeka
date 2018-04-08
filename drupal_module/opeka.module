@@ -63,7 +63,7 @@ function opeka_profile_pic_path() {
       // Get default user picture if no picture is set on user profile
       $field = \Drupal\field\Entity\FieldConfig::loadByName('user', 'user', 'user_picture');
       $default_image = $field->getSetting('default_image');
-      $file = \Drupal::entityManager()->loadEntityByUuid('file', $default_image['uuid']);
+      $file = $default_image['uuid'] ? \Drupal::entityManager()->loadEntityByUuid('file', $default_image['uuid']) : NULL;
       if ($file !== NULL) {
         $file->getFileUri();
         $pictureURL= file_create_url($file->getFileUri());
