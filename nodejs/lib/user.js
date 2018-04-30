@@ -34,8 +34,11 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
           callback(err);
           return;
         }
-        drupal.user.access('administer opeka chat', account, function (err, isAdmin) {
+        drupal.user.access('administer opeka chat', account, function (err, isAdmin, permissions) {
           account.isAdmin = isAdmin;
+          if (permissions) {
+            account.permissions = permissions;
+          }
           drupal.user.access('generate opeka chat ban codes', account, function (err, canGenerateBanCode) {
             account.canGenerateBanCode = canGenerateBanCode;
             drupal.user.access('pause opeka chat autoscroll', account, function (err, allowPauseAutoScroll) {

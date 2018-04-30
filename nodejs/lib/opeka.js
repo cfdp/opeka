@@ -292,6 +292,7 @@ function Server(config, logger) {
       }
       else {
         self.guests.addUser(client.clientId);
+        self.logger.info('Regular user signed in.', client.clientId);
         // The following is done in order to put each user in a single group.
         // In this way we are able to give to the counselors the ability to whisper
         opeka.groups.getGroup(client.clientId).addUser(client.clientId);
