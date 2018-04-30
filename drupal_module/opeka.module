@@ -42,7 +42,7 @@ function opeka_preprocess_html(&$vars) {
  * @return string - relative path of user picture.
  */
 function opeka_profile_pic_path() {
-  $pictureURI = FALSE;
+  $picturePath = FALSE;
   if ($user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id())) {
     // Get currently logged in user's picture
     if (!$user->user_picture->isEmpty()) {
@@ -70,8 +70,9 @@ function opeka_profile_pic_path() {
         $picturePath = file_url_transform_relative($pictureURL);
       }
       else {
-        drupal_set_message(t('The default profile picture is not set. No images will be shown
-        in the chat if the user profile feature is enabled.'), 'warning', TRUE);
+        // @todo: check if userPictures feature is on, if so, show user warning
+        /* drupal_set_message(t('The default profile picture is not set. No images will be shown
+        in the chat if the user profile feature is enabled.'), 'warning', TRUE); */
       }
     }
   }
