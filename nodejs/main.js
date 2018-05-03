@@ -2,7 +2,8 @@ var drupal = require("drupal"),
     nconf = require("nconf"),
     winston = require("winston"),
     opeka = require("./lib/opeka"),
-    util = require("util");
+    util = require("util"),
+    drupalconfig = require("./lib/drupalconfig");
 
 // Use any command-line or environment settings.
 nconf.argv().env();
@@ -44,6 +45,10 @@ nconf.defaults({
       "enabled": false,
     },
     "port": 3000
+  },
+  "drupalconfig": {
+    "opeka_reconnect_attempts": 10,
+    "opeka_reconnect_interval": 20000
   }
 });
 

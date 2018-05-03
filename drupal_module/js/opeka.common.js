@@ -43,10 +43,25 @@ var Opeka = {
   // Initialise window.JST if it does not exist.
   JST = JST || {},
   Backbone = Backbone || {},
-  Drupal = Drupal || {};
+  Drupal = Drupal || {},
+
+  // How many timeouts to expect per reconnect_interval
+  // This value should be synchronized to the one in nodejs/lib/client.js
+  TIMEOUTS_PER_INTERVAL = 2;
 
 (function ($) {
   "use strict";
+
+  // Loads reconnection values from Drupal configuration and calculates timeout
+  // values.
+  function updateReconnectTimes() {
+    var settings = Drupal.settings.opeka || {};
+    Opeka.max_reconnects = settings.reconnect_attempts;
+    Opeka.reconnect_interval = settings.reconnect_interval;
+    Opeka.connection_timeout = parseInt(
+      Opeka.reconnect_interval / TIMEOUTS_PER_INTERVAL
+    );
+  }
 
   // Catch-all router to provide a not found page if nothing else was matched.
   Opeka.NotFoundRouter = Backbone.Router.extend({
@@ -1142,6 +1157,7 @@ var Opeka = {
   };
 
   Opeka.onConnect = function() {
+    updateReconnectTimes();
     Opeka.number_of_reconnects_tried = 0;
     Opeka.remote.getFeatures(function (features) {
       Opeka.features = features;

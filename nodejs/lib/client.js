@@ -7,15 +7,34 @@ var _ = require('underscore'),
   ban = require('./ban'),
   rooms = require('./rooms'),
   user = require('./user.js'),
-  util = require("util");
+  util = require("util"),
 
   // Connection states
-  CREATED = 0;
-  CONNECTED = 1;
-  PENDING_TIMEOUT = 2;
-  DISCONNECTED = 3;
+  CREATED = 0,
+  CONNECTED = 1,
+  PENDING_TIMEOUT = 2,
+  DISCONNECTED = 3,
 
-  PING_INTERVAL = 5000;
+  // If we haven't heard from clients in half the time of the reconnect interval
+  // assume that they are timing out
+  TIMEOUTS_PER_INTERVAL = 2,
+  // Ping clients two times within each timeout interval
+  PINGS_PER_TIMEOUT = 2,
+
+  // Dynamis reconnect values, updated from Drupal configuration whenever
+  // a client connects.
+  reconnect_attempts = 10,
+  reconnect_interval = 20000,
+  client_timeout,
+  ping_interval,
+  disconnect_limit;
+
+  function updateReconnectTimes() {
+    client_timeout = parseInt(reconnect_interval / TIMEOUTS_PER_INTERVAL);
+    ping_interval = parseInt(client_timeout / PINGS_PER_TIMEOUT);
+    disconnect_limit = reconnect_attempts * reconnect_interval;
+  }
+  updateReconnectTimes();
 
 /**
  * Represents a client instance
@@ -64,10 +83,16 @@ var Client = function (server, stream, remote, conn) {
       lastPingSent: 0,
       lastPingSuccess: null,
       pingDelay: null,
-      reconnectLimit: server.config.get('features:reconnectLimit'),
-      disconnectLimit: server.config.get('features:disconnectLimit'),
     };
 
+    // Load configured reconnect values from Drupal's configuration, making
+    // sure to update the server as well.
+    self.server.reloadDrupalConfig(function(err, drupalconfig) {
+      reconnect_attempts = drupalconfig.opeka_reconnect_attempts;
+      reconnect_interval = drupalconfig.opeka_reconnect_interval;
+      updateReconnectTimes();
+    });
+    
     self.activeRoomId = null;
     self.activeQueueRoomId = null;
 
@@ -252,15 +277,16 @@ var Client = function (server, stream, remote, conn) {
     if(self.state != CONNECTED) {
       return;
     }
-    if((self.now - self.connectionData.lastPingSent) >= PING_INTERVAL) {
+    if((self.now - self.connectionData.lastPingSent) >= ping_interval) {
       self.pingClient();
     }
 
-    var sinceTimeout = self.now - self.connectionData.lastPingSuccess;
+    var sincePingSuccess = self.now - self.connectionData.lastPingSuccess;
 
-    if (sinceTimeout > self.connectionData.disconnectLimit) {
+    if (sincePingSuccess > client_timeout) {
       console.log(
-        'latency > disconnectLimit: Time to disconnect user ', self.clientId
+        'sincePingSuccess > client_timeout: Time to put user ' +
+        self.clientId + ' into pending timeout'
       );
       self.changeState(PENDING_TIMEOUT);
     }
@@ -270,10 +296,11 @@ var Client = function (server, stream, remote, conn) {
     if(self.state != PENDING_TIMEOUT) {
       return;
     }
-    var sinceTimeout = self.now - self.connectionData.lastPingSuccess;
-    if (sinceTimeout > self.connectionData.disconnectLimit) {
+    var sincePingSuccess = self.now - self.connectionData.lastPingSuccess;
+    if (sincePingSuccess > disconnect_limit) {
       console.log(
-        "Client disconnected: sinceTimeout > disconnectLimit for " + self.clientId
+        "Client disconnected: sincePingSuccess > disconnect_limit for " +
+        self.clientId
       );
       self.changeState(DISCONNECTED);
     }

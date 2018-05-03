@@ -23,6 +23,7 @@ var _ = require("underscore"),
   validator = require('validator'),
   opeka = {
     ban: require('./ban'),
+    drupalconfig: require('./drupalconfig'),
     groups: require("./groups"),
     queues: require('./queues'),
     rooms: require('./rooms'),
@@ -31,15 +32,37 @@ var _ = require("underscore"),
     user: require('./user'),
     Client: require('./client'),
     chatOpen: false,
-  };
+  },
+  drupal_config_keys = [
+    "opeka_reconnect_attempts",
+    "opeka_reconnect_interval"
+  ];
 
 function Server(config, logger) {
   var self = this;
+
+  self.drupalconfig = {};
+
+  self.reloadDrupalConfig = function(cb) {
+    // Load in some drupal config
+    opeka.drupalconfig.load_multiple(
+      drupal_config_keys,
+      function(err, result) {
+        if(err) { return cb(err); }
+        self.config.set("drupalconfig", result);
+        return cb(null, result);
+      }
+    );
+  };
 
   self.construct = function () {
     var queues = config.get('queues');
     self.config = config;
     self.logger = logger;
+
+    self.reloadDrupalConfig(function(err) {
+      if(err) { logger.error("Error while reloading drupal config: " + err); }
+    });
 
     self.browser_script_path = path.normalize(path.join(__dirname, '../static/connect.js'));
 
