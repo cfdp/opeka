@@ -1,7 +1,7 @@
 connectjs_url: 'http://demod8.test:3000/connect.js'
 age_max: 23
 age_min: 9
-clients_writing_message: 0
+clients_writing_message: 1
 client_login_sound: ../sites/all/modules/custom/opeka/media/doorbell.mp3
 client_url: 'https://dev.ch3'
 custom_css: ''

@@ -19,12 +19,14 @@
     "fullRoomLink" : "http://example.com",
     "accessCodeEnabled" : false,
     "exposeDrupalUIDs": false,
+    "exposeDrupalUserNames": false,
     "requireDrupalLogin": false,
     "chatHistory": true,
     "screeningQuestions": false,
     "soloClientsAllowed": false,
     "predefinedRooms": [{"mid": "room1", "name": "Group Chat", "maxSize":5 }, {"mid": "room2", "name": "1-1 Chat"}],
-    "profileImages": false
+    "profilePictures": false,
+    "skipSignInForm": false
   },
   "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
   "server": {

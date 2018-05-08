@@ -30,9 +30,9 @@ function opeka_preprocess_html(&$vars) {
   }
   $vars['attributes']->addClass($opeka_role);
 
-  if (opeka_is_opeka_chat_page() === TRUE) {
-    // do stuff that can't be done with hook_preprocess_HOOK
-  }
+//  if (opeka_is_opeka_chat_page() === TRUE) {
+//    // do stuff that can't be done with hook_preprocess_HOOK
+//  }
 }
 
 /**
@@ -46,8 +46,6 @@ function opeka_profile_pic_path() {
   if ($user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id())) {
     // Get currently logged in user's picture
     if (!$user->user_picture->isEmpty()) {
-      //$picture = $user->user_picture->view('large');
-      //$picture = file_create_url($file->getFileUri());
       $pictureURI = $user->user_picture->entity->getFileUri();
 
       /* @todo: maybe implement showing img with imagestyle?
@@ -101,8 +99,14 @@ function opeka_help($route_name, RouteMatchInterface $route_match) {
  */
 function opeka_theme() {
   return [
-    'opeka_chat' => [],
-    'opeka_admin_chat' => [],
+    'opeka_chat' => [
+      'variables' => [
+      ],
+    ],
+    'opeka_admin_chat' => [
+      'variables' => [
+      ],
+    ],
   ];
 }
 
@@ -125,8 +129,12 @@ function opeka_library_info_build() {
  * Implements hook_preprocess_THEME().
  */
 function opeka_preprocess_opeka_chat(&$variables) {
+  $opeka_settings = _opeka_compile_javascript_settings();
+  // Make sure to merge in any previously set opeka variables, typically 
+  // defined by custom modules
+  $variables['#attached']['drupalSettings']['opeka'] = array_replace_recursive($opeka_settings, 
+    $variables['#attached']['drupalSettings']['opeka']);
   $variables['#attached']['library'][] = 'opeka/chat';
-  $variables['#attached']['drupalSettings']['opeka'] = _opeka_compile_javascript_settings();
   $variables['#attached']['drupalSettings']['opeka']['user']['admin'] = FALSE;
   $variables['#attached']['library'][] = 'opeka/dnode.connect';
 }
@@ -135,14 +143,20 @@ function opeka_preprocess_opeka_chat(&$variables) {
  * Implements hook_preprocess_THEME().
  */
 function opeka_preprocess_opeka_admin_chat(&$variables) {
+  $opeka_settings = _opeka_compile_javascript_settings();
+  // Make sure to merge in any previously set opeka variables, typically 
+  // defined by custom modules
+  $variables['#attached']['drupalSettings']['opeka'] = array_replace_recursive($opeka_settings, 
+    $variables['#attached']['drupalSettings']['opeka']);
   $variables['#attached']['library'][] = 'opeka/admin.chat';
-  $variables['#attached']['drupalSettings']['opeka'] = _opeka_compile_javascript_settings();
   $variables['#attached']['drupalSettings']['opeka']['user']['admin'] = TRUE;
   $variables['#attached']['library'][] = 'opeka/dnode.connect';
 }
 
 /**
  * Helper function for getting all relevant JS settings.
+ * 
+ * @return array of Opeka related JS settings.
  */
 function _opeka_compile_javascript_settings() {
   $opeka_general_settings_config = \Drupal::config('opeka.general_settings');
@@ -166,11 +180,11 @@ function _opeka_compile_javascript_settings() {
 }
 
 /**
- * Checkes whether the current page is rendered using the Opeka chat system.
+ * Checks whether the current page is rendered using the Opeka chat system.
  *
  * @return boolean - TRUE if current page is an Opeka page and FALSE otherwise.
  */
-function opeka_is_opeka_chat_page() {
+function opeka_is_chat_page() {
   $path = \Drupal::service('path.current')->getPath();
   $prefixes = array(
     "/opeka",

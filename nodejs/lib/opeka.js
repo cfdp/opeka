@@ -203,6 +203,8 @@ function Server(config, logger) {
         results.queueList = queueList;
         results.queueSystem = self.config.get('features:queueSystem');
         results.predefinedRooms = self.config.get('features:predefinedRooms');
+        results.exposeDrupalUserNames = self.config.get('features:exposeDrupalUserNames');
+        results.skipSignInForm = self.config.get('features:skipSignInForm');
         results.fullRoomLink = self.config.get('features:fullRoomLink');
         results.chatPageURL = self.config.get('chatPage');
         results.accessCodeEnabled = self.config.get('features:accessCodeEnabled');
@@ -334,14 +336,15 @@ function Server(config, logger) {
         client.age = "";
       }
       // Is the screening module enabled? If screening questions haven't been defined explicitly, set variable to null
-      if (clientUser.screening.question) {
+      if (clientUser.screening && clientUser.screening.question) {
         client.screening = clientUser.screening;
       }
       else {
         client.screening = null;
       }
-      // Expose the drupal client user picture path if it's provided and we're configured to do so
-      if (self.config.get('features:profilePictures') && clientUser.picture_path) {
+      // Expose the Drupal client user picture path if it's provided and we're configured to do so
+      // Don't allow absolute URLs (could point to external sites)
+      if (self.config.get('features:profilePictures') && clientUser.picture_path != undefined && !validator.isURL(String(clientUser.picture_path))) {
         if (!clientUser.want_to_be_anonymous) {
           client.picture_path = clientUser.picture_path;
         }
@@ -722,7 +725,7 @@ function Server(config, logger) {
       client = self.everyone.getClient(clientId),
       clientData = {
         'clientId': clientId,
-        'activeRoomId': client.activeRoomId,
+        'activeRoomId': client.activeRoomId || null,
         'chatStartMin': client.chatStartMin,
         'statsId': client.statsId
       };
@@ -1253,7 +1256,7 @@ function Server(config, logger) {
       removedUser = self.everyone.getClient(clientLeaveRoomData.clientId),
       isAdmin = clientLeaveRoomData.isAdmin,
       ChatEndMin,
-      chatDuration = null,
+      chatDuration,
       checkPause = false,
       lastRoom = true;
 

@@ -13,6 +13,8 @@ opeka.chat_controller_adminChatPage:
     _title: 'Chat'
   requirements:
     _permission: 'administer opeka chat'
+  options:
+    _admin_route: FALSE
 
 opeka.chat_configuration_main:
   path: '/admin/config/services/opeka'

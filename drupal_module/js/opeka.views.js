@@ -1969,6 +1969,8 @@
       this.listenTo( Backbone, 'enter-site-clicked', function (showSignIn) {
           this.render(showSignIn);
       }, this );
+      // Add a number to each anonymous user to help in distinguishing them.
+      this.x = Math.floor((Math.random() * 500) + 1);
       return this;
     },
 
@@ -1976,16 +1978,22 @@
       var name = '',
         isAdmin = (drupalSettings.opeka.user && drupalSettings.opeka.user.admin) ? true : false,
         chatOpen = this.model.get('chatOpen'),
-        enterSiteButtonEnabled = drupalSettings.opeka.enter_site_feature;
+        enterSiteButtonEnabled = drupalSettings.opeka.enter_site_feature,
+        exposeDrupalUserNames = Opeka.status.attributes.exposeDrupalUserNames,
+        skipSignInForm = Opeka.status.attributes.skipSignInForm;
 
-      //@todo: the visibility of the name should probably be a setting somewhere
-      //Replace the Drupal username with rådgiver(counselor), not using the actual user name
-      //name = drupalSettings.opeka.user.name;
-      if (isAdmin) {
-        name = Drupal.t('Counselor');
+      if (exposeDrupalUserNames) {
+        name = drupalSettings.opeka.user.name;
+      }
+      else {
+        name = (isAdmin) ? Drupal.t('Counselor') : Drupal.t('Anonymous!x', {'!x': this.x});
+      }
+      
+      if (skipSignInForm) {
+        this.signInSkipForm(name);
       }
       // If the chat is closed, only authenticated Drupal users is presented with the sign in form
-      if (drupalSettings.opeka.user || this.model.get('chatOpen')) {
+      if (drupalSettings.opeka.user || chatOpen) {
         var form = JST.opeka_connect_form_tmpl({
           accessCodeEnabled: Opeka.status.attributes.accessCodeEnabled,
           screeningQuestions: Opeka.status.attributes.screeningQuestions,
@@ -2008,7 +2016,7 @@
           name: name
         });
       }
-      else if (this.model.get('chatOpen') === false) {
+      else if (!chatOpen) {
         var form = Drupal.t('The chat is closed');
       }
       // chatOpen is undefined
@@ -2038,9 +2046,6 @@
       var user = drupalSettings.opeka.user || {},
         view = this;
 
-      // Add a number to each anonymous user to help in distinguishing them.
-      var x = Math.floor((Math.random() * 50) + 1);
-
       var question = this.$el.find('p.screening-question').text();
       var answer = this.$el.find('input[name=screening]:checked').val();
       var screeningRequired = (drupalSettings.opeka_screening && drupalSettings.opeka_screening.opeka_screening_required);
@@ -2053,7 +2058,7 @@
         validationError = true;
       }
 
-      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous!x', {'!x': x});
+      user.nickname = this.$el.find('.nickname').val() || Drupal.t('Anonymous!x', {'!x': this.x});
       user.age = this.$el.find('.age').val();
       user.gender = this.$el.find('.gender').val();
       user.accessCode = this.$el.find('.accesscode').val();
@@ -2073,6 +2078,26 @@
       if (event) {
         event.preventDefault();
       }
+    },
+    
+    // When skipping the form, the following features are unavailable:
+    // Screening Questions, Access Code
+    signInSkipForm: function (name) {
+      
+      var user = drupalSettings.opeka.user || {};
+      
+      user.nickname = name;
+      user.age = drupalSettings.opeka.user.age;
+      user.gender = drupalSettings.opeka.user.gender;
+      user.roomId = user.roomId ? user.roomId : this.roomId;
+      user.queueId = this.queueId;
+      
+      Opeka.signIn(user, function () {
+        $(window).bind('beforeunload.opeka', function () {
+          return Drupal.t('Do you really want to leave this page?');
+        });
+      });
+
     }
   });// END SignInFormView
 
