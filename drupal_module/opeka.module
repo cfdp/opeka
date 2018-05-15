@@ -15,7 +15,7 @@ use Drupal\image\Entity\ImageStyle;
  *
  * Adds user permission classes to body
  */
-function opeka_preprocess_html(&$vars) {
+function opeka_preprocess_html(&$vars) {  
   $user = \Drupal::currentUser();
   $opeka_role = 'opeka-no-access';
   if ($user->hasPermission('administer opeka chat')) {

@@ -281,7 +281,7 @@ function Server(config, logger) {
         }
       }
 
-      if (account.canGenerateBanCode) {
+      if (account.canGenerateBanCode && account.isAdmin) {
         self.banCodeGenerator.addUser(client.clientId);
         self.logger.info('User that can generate ban codes signed in.', client.clientId);
       }

@@ -8,6 +8,7 @@ is_admin: null
 permissions:
   - 'access chat history'
   - 'administer opeka settings'
+  - 'administer opeka chat'
   - 'generate opeka chat ban codes'
   - 'hide typing message'
   - 'pause opeka chat autoscroll'
