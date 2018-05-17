@@ -8,14 +8,14 @@ util = require("util"),
 drupal = require("drupal");
 
 // Authenticate a user logging on to the chat server.
-module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCode, callback) {
+module.exports.authenticate = function (authData, callback) {
   // If the client claims he's logged in, validate that assertion.
-  util.log("User authenticating, Drupal sid: " + clientUser.sid);
-  util.log("User authenticating, Drupal uid: " + clientUser.uid);
+  util.log("User authenticating, Drupal sid: " + authData.clientUser.sid);
+  util.log("User authenticating, Drupal uid: " + authData.clientUser.uid);
 
-  if (clientUser.sid && clientUser.uid) {
+  if (authData.clientUser.sid && authData.clientUser.uid) {
     // Validate the user's session.
-    drupal.user.session_load(clientUser.sid, function (err, session) {
+    drupal.user.session_load(authData.clientUser.sid, function (err, session) {
       if (err) {
         util.log("Error: Could not load user session.");
         callback(err);
@@ -23,7 +23,7 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
       }
 
       // Strict numerical comparison.
-      if (parseInt(session.uid) !== parseInt(clientUser.uid)) {
+      if (parseInt(session.uid) !== parseInt(authData.clientUser.uid)) {
         throw 'Possible hacking attempt. sid/uid mismatch.';
       }
 
@@ -62,7 +62,7 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
     var account = {};
     account.isAdmin = false;
     // If the accessCode functionality is activated, make sure the right access code is given
-    if (accessCodeEnabled && clientUser.accessCode !== accessCode) {
+    if (authData.accessCodeEnabled && authData.clientUser.accessCode !== accessCode) {
       util.log("Error: Wrong or no access code given on signIn form.");
       callback(true);
       throw 'Wrong or no access code given on signIn form';
@@ -103,7 +103,8 @@ module.exports.filterData = function (client) {
     viewChatHistory: client.viewChatHistory,
     name: client.nickname || client.account.name,
     drupal_uid: client.drupal_uid,
-    picture_path: client.picture_path
+    picture_path: client.picture_path,
+    groupId: client.groupId
   };
 };
 

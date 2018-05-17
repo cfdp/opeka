@@ -209,6 +209,7 @@ function Server(config, logger) {
         results.chatPageURL = self.config.get('chatPage');
         results.accessCodeEnabled = self.config.get('features:accessCodeEnabled');
         results.screeningQuestions = self.config.get('features:screeningQuestions');
+        results.chatGroups = self.config.get('features:chatGroups');
         results.chatOpen = opeka.chatOpen;
 
         context.remote('updateStatus', results);
@@ -244,11 +245,23 @@ function Server(config, logger) {
    *
    * This usually means after loading client-side templates and other
    * resources required for the safe operation of the chat.
+   * 
+   * @param clientUser
+   *   Client object with raw data from client-side.
+   *
+   * @param callback
+   *   The callback function provided from clientside
+   *   
    */
   self.everyone.addServerMethod('signIn', function (clientUser, callback) {
     var client = this,
-      accessCode = self.config.get('accessCode'),
-      accessCodeEnabled = self.config.get('features:accessCodeEnabled'),
+      authData = {
+        clientUser: clientUser,
+        accessCode: self.config.get('accessCode'),
+        accessCodeEnabled: self.config.get('features:accessCodeEnabled'),
+        chatGroups: self.config.get('features:chatGroups'),
+        userGroups: clientUser.groupId
+      },
       clientData = {
         'isSignedIn': true,
         'clientId': client.clientId
@@ -256,8 +269,7 @@ function Server(config, logger) {
       nicknameRange = {min: 1, max: 25},
       genderRange = {min: 1, max: 25},
       ageRange = {min: 0, max: 99};
-
-    opeka.user.authenticate(clientUser, accessCodeEnabled, accessCode, function (err, account) {
+    opeka.user.authenticate(authData, function (err, account) {
       if (err) {
         self.logger.info('Authentication failed: ' + err.message);
         client.remote('accessDenied', client.clientId);
@@ -359,10 +371,10 @@ function Server(config, logger) {
 
       // Only copy safe values from the account-data to the callback object
       _.each(
-        ['canGenerateBanCode', 'isAdmin', 'language', 'name', 'nickname', 'sid', 'uid', 'picture_path', 'hideTypingMessage', 'allowPauseAutoScroll', 'viewChatHistory'],
+        ['canGenerateBanCode', 'isAdmin', 'language', 'name', 'nickname', 'sid', 'uid', 'picture_path', 'groupId', 'hideTypingMessage', 'allowPauseAutoScroll', 'viewChatHistory'],
         function (k) {
           if (k in account) {
-            clientData[k] = account[k]
+            clientData[k] = account[k];
           }
         }
       );

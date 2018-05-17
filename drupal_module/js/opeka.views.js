@@ -1418,6 +1418,7 @@
     initialize: function (options) {
       _.bindAll(this);
       this.predefinedRooms = Opeka.status.attributes.predefinedRooms;
+      this.banCodeGenerator = options.banCodeGenerator || null;
 
       // Bind to the global status model.
       if (Opeka.status) {
@@ -1448,6 +1449,7 @@
 
       html = JST.opeka_room_list_tmpl({
         admin: Opeka.clientData.isAdmin,
+        banCodeGenerator: this.banCodeGenerator,
         labels: {
           createRoom: Drupal.t('Create new room'),
           inviteRooms: (drupalSettings.opeka && drupalSettings.opeka.invite) ? Drupal.t('Invitations list') : false,
@@ -1989,7 +1991,7 @@
         name = (isAdmin) ? Drupal.t('Counselor') : Drupal.t('Anonymous!x', {'!x': this.x});
       }
       
-      if (skipSignInForm) {
+      if (skipSignInForm && !Opeka.clientData.isSignedIn) {
         this.signInSkipForm(name);
       }
       // If the chat is closed, only authenticated Drupal users is presented with the sign in form
@@ -2011,7 +2013,7 @@
             placeholder: Drupal.t('Anonymous'),
             screening: Drupal.t('Screening questions'),
             screeningNoParticipation: Drupal.t('I do not want to answer this.'),
-            accessCode: Drupal.t('Access code'),
+            accessCode: Drupal.t('Access code')
           },
           name: name
         });
@@ -2083,16 +2085,17 @@
     // When skipping the form, the following features are unavailable:
     // Screening Questions, Access Code
     signInSkipForm: function (name) {
-      
-      var user = drupalSettings.opeka.user || {};
-      
+
+      var user = drupalSettings.opeka.user || {},
+        view = this;
       user.nickname = name;
-      user.age = drupalSettings.opeka.user.age;
-      user.gender = drupalSettings.opeka.user.gender;
+      
       user.roomId = user.roomId ? user.roomId : this.roomId;
       user.queueId = this.queueId;
-      
+      user.groupId = JSON.parse(drupalSettings.opeka.user.groupId);
+
       Opeka.signIn(user, function () {
+        view.$el.fadeOut();
         $(window).bind('beforeunload.opeka', function () {
           return Drupal.t('Do you really want to leave this page?');
         });

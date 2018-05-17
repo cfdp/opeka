@@ -116,7 +116,9 @@ var Opeka = {
 
     roomList: function () {
       if (this.checkSignIn()) {
-        var view = new Opeka.RoomListView({});
+        var view = new Opeka.RoomListView({
+          banCodeGenerator: Opeka.clientData.canGenerateBanCode
+        });
 
         Opeka.appViewInstance.replaceContent(view.render().el);
       }
