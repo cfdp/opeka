@@ -28,7 +28,8 @@
     "predefinedRooms": [{"mid": "room1", "name": "Group Chat", "maxSize":5 }, {"mid": "room2", "name": "1-1 Chat"}],
     "profilePictures": false,
     "skipSignInForm": false,
-    "chatGroups": false
+    "chatGroups": false,
+    "restrictCounselorsByIP": ["111.111.111.111","222.222.222.222"]
   },
   "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
   "server": {

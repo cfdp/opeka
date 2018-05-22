@@ -268,7 +268,11 @@ function Server(config, logger) {
       },
       nicknameRange = {min: 1, max: 25},
       genderRange = {min: 1, max: 25},
-      ageRange = {min: 0, max: 99};
+      ageRange = {min: 0, max: 99},
+      stream = client.stream,
+      validCounselorIPs = self.config.get("features:restrictCounselorsByIP"),
+      ip;
+
     opeka.user.authenticate(authData, function (err, account) {
       if (err) {
         self.logger.info('Authentication failed: ' + err.message);
@@ -281,6 +285,21 @@ function Server(config, logger) {
         self.logger.info('User without Drupal login tried to access the chat.');
         client.remote('loginRequiredMessage', client.clientId);
         return;
+      }
+      
+      // Check whether the counselors' access is restricted by IP address
+      if (account.isAdmin && validCounselorIPs.length > 0) {
+        if (stream.headers['x-real-ip']) {
+          ip = stream.headers['x-real-ip'];
+        }
+        else {
+          ip = stream.remoteAddress;
+        }
+        if (!(_.contains(validCounselorIPs, ip))) {
+          self.logger.warning('Counselor tried to access the chat from non-whitelisted IP.');
+          client.remote('accessDenied', client.clientId);
+          return;
+        }
       }
 
       // Add the user to the signedIn group.
