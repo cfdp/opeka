@@ -294,7 +294,7 @@
   <ul class="predefined-rooms-list">
   <% _.each(predefinedRooms, function (room) { %>
       <% labels.placeholder = ''; %>
-      <li class="predefined-room"><button class="create-predefined-room btn btn-success" data-room-mid="<%- room.mid %>" disabled><%= labels.createRoom %> <%- room.name %></button></li>
+      <li class="predefined-room"><button class="create-predefined-room btn btn-success" data-room-group_id="<%- room.groupId %>" disabled><%= labels.createRoom %> <%- room.name %></button></li>
   <% }); %>
   <% if (labels.placeholder) { %>
     <li class="placeholder nopredefinedrooms"><%= labels.placeholder %></li>

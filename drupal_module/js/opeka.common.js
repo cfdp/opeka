@@ -33,7 +33,7 @@ var Opeka = {
   Backbone = Backbone || {},
   Drupal = Drupal || {};
 
-(function ($) {
+(function ($, Opeka, Backbone, Drupal, JST, undefined) {
   "use strict";
 
   // Catch-all router to provide a not found page if nothing else was matched.
@@ -115,11 +115,22 @@ var Opeka = {
     },
 
     roomList: function () {
+      var admin = Opeka.clientData.isAdmin;
       if (this.checkSignIn()) {
+        if (admin) {
+          Opeka.remote.getPredefinedRooms(function (result) {
+            renderRoomList(result);
+          });
+        }
+        else {
+          renderRoomList(null);
+        }
+      };
+      function renderRoomList(predefinedRooms) {
         var view = new Opeka.RoomListView({
-          banCodeGenerator: Opeka.clientData.canGenerateBanCode
+          banCodeGenerator: Opeka.clientData.canGenerateBanCode,
+          predefinedRooms: predefinedRooms
         });
-
         Opeka.appViewInstance.replaceContent(view.render().el);
       }
       // Need to make sure that chat view is removed and user has been properly removed from
@@ -142,9 +153,29 @@ var Opeka = {
       var admin = Opeka.clientData.isAdmin,
         room = Opeka.roomList.get(roomId),
         sidebar,
-        that = this;
+        that = this,
+        chatGroups = Opeka.status.attributes.chatGroups;
+
+      // If the chatGroups feature is enabled, make a preliminary access
+      // control check
+      if (chatGroups && room) {
+        if (Opeka.userHasGroupAccess(room.get('groupId')) === false) {
+          // Disable the popup on unload.
+          $(window).unbind('beforeunload.opeka');
+          that.navigate(drupalSettings.opeka.feedback_url);
+          var view = new Opeka.DialogView({
+            content: Backbone.View.prototype.make('p', 'message', 
+              Drupal.t('You don\'t have permission to enter this room.')),
+            title: Drupal.t('No access')
+          });
+
+          view.render();
+          return;
+        }
+      }
 
       drupalSettings.opeka.user.roomId = roomId;
+
       if (this.checkSignIn()) {
         // Try to load room (it might be private).
         if (!room) {
@@ -253,7 +284,6 @@ var Opeka = {
             }
           }
           else {
-            // alert(Drupal.t('It seems your counselor is not available yet, try again in a few minutes'));
             self.navigate('rooms', {trigger: true});
             var view = new Opeka.DialogView({
               content: Backbone.View.prototype.make('p', 'message', Drupal.t('It seems your counselor is not available yet, try again in a few minutes.')),
@@ -470,8 +500,11 @@ var Opeka = {
 
   // Add the new room to our local room list.
   Opeka.clientSideMethods.roomCreated = function (room) {
-    var roomIsAdded = Opeka.roomList.get(room.id);
-    if (!roomIsAdded) {
+    var roomIsAdded = Opeka.roomList.get(room.id),
+      chatGroups = Opeka.status.get('chatGroups'),
+      hasGroupAccess = (chatGroups && (Opeka.userHasGroupAccess(room.groupId)) === false) ? false : true;
+
+    if (!roomIsAdded && hasGroupAccess) {
       Opeka.roomList.add(room);
     }
   };
@@ -660,7 +693,7 @@ var Opeka = {
 
   Opeka.clientSideMethods.setIsBanned = function (isBanned) {
     Opeka.clientData.isBanned = isBanned;
-  }
+  };
 
   // Response to a user when server responds with access denied
   Opeka.clientSideMethods.accessDenied = function (clientId) {
@@ -793,6 +826,19 @@ var Opeka = {
   Opeka.userJoinedSound = function () {
     Opeka.doorBellSound.play();
   };
+  
+  // Check if user has group access
+  Opeka.userHasGroupAccess = function (roomId) {
+    var userGroups = drupalSettings.opeka.user.groupId,
+      hasAccess = false;
+
+    Object.keys(userGroups).forEach(function(key) {
+      if (userGroups[key] === String(roomId)) { 
+        return hasAccess = true;
+      }
+    });
+    return hasAccess;
+  };
 
   // Basic setup for the app when the DOM is loaded.
   $(function () {
@@ -870,4 +916,4 @@ var Opeka = {
     $(Opeka).trigger("connected");
   };
 
-}(jQuery));
+}(jQuery, Opeka, Backbone, Drupal, JST));

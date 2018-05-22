@@ -10,7 +10,7 @@ var _ = require('underscore'),
   opeka = {
     groups: require('./groups'),
     user: require("./user"),
-    queues: require("./queues"),
+    queues: require("./queues")
   },
   roomList = {},
   roomCounts = {
@@ -85,7 +85,7 @@ var sumRoomList = function (rooms) {
   return {
     empty: empty,
     active: active,
-    full: full,
+    full: full
   };
 };
 
@@ -129,11 +129,12 @@ var Room = function (options) {
     self.invite = options.invite;
     self.ipLocation = options.ipLocation;
     self.uid = options.uid;
-    self.queueSystem = options.queueSystem || 'private' // Default to private queue system.
+    self.queueSystem = options.queueSystem || 'private'; // Default to private queue system.
     // When a room is created, the creator will join setting the member count to init value to 1.
     self.memberCount = 1;
     // A room can be paused by the counselor and an autoPauseRoom setting is available as well in config.json
     self.paused = false;
+    self.groupId = options.groupId || null;
 
     // Keep track of counselor presence
     self.counselorPresent = true;
@@ -177,7 +178,7 @@ var Room = function (options) {
     var count;
     var setCount = function (response) {
       count = response;
-    }
+    };
     // the now js count function needs to be passed a callback function into which it feeds the user count (ct)
     self.counselorGroup.count(function (ct) {
       setCount(ct);
@@ -204,7 +205,11 @@ var Room = function (options) {
     // - that the room is not paused
     // - that we have a counselor present
     // before adding the person to the room.
-    if (client.account.isAdmin || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && self.hascounselor()) && client) {
+    if (
+      client.account.isAdmin 
+      || (((!self.maxSize || count < self.maxSize)) && (!self.paused) && self.hascounselor())
+      && client) {
+
       self.users[client.clientId] = opeka.user.filterData(client);
       self.group.addUser(client.clientId);
 
@@ -224,7 +229,8 @@ var Room = function (options) {
         try {
           callback(self.users);
         } catch (ignore) {
-          //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
+          // this is ignored since we have an exception if no counselors are in 
+          // the room. We should discuss this eventuality...
         }
       }
 
@@ -323,7 +329,7 @@ var Room = function (options) {
       return queue.addToQueue(user);
     }
     return false;
-  }
+  };
 
   // Assign an available colorId (an integer in the range 0 to numberOfUserColors)
   // to a new user in the room.
@@ -335,7 +341,7 @@ var Room = function (options) {
 
     // Filter out the colorIds that have been taken already
     _.each(this.users, function (user, index) {
-      if (user.colorId != null && user.clientId != clientId) {
+      if (user.colorId !== null && user.clientId !== clientId) {
         colorsTaken.push(parseInt(user.colorId));
       }
       if (i >= numberOfUserColors) {
@@ -364,6 +370,7 @@ var Room = function (options) {
     return {
       id: self.id,
       uid: self.uid,
+      groupId: self.groupId,
       name: self.name,
       invite: self.invite,
       maxSize: self.maxSize,
@@ -399,7 +406,8 @@ var Room = function (options) {
 };
 
 // Provide a list of rooms for the client.
-var clientData = function (includePrivateRooms) {
+var clientData = function (includePrivateRooms, chatGroups, groupId) {
+
   var rooms = [];
   _.each(roomList, function (room) {
     if (!room.private) {
@@ -410,6 +418,14 @@ var clientData = function (includePrivateRooms) {
   rooms = _.map(roomList, function (room) {
     return room.clientData();
   });
+  
+  // If the chatGroups feature is enabled:
+  // Filter out the rooms that don't match the current users groupId
+  if (chatGroups) {
+    rooms = _.filter(roomList, function (room) {
+      return _.contains(groupId, room.groupId); 
+    });
+  };
 
   rooms = _.sortBy(rooms, function (room) {
     return room.name;

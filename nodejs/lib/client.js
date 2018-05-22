@@ -19,17 +19,14 @@ var Client = function(server, stream, remote, conn) {
 
     self.construct = function() {
         self.clientId = uuid();
-
         self.server = server;
         self.stream = stream;
         self.clientSideMethods = remote;
-
         self.conn = conn;
 
         self.serverSideMethods = {};
-
         self.account = {};
-
+        self.groupId = {};
         self.whisperPartners = {};
 
         self.nickname = null;
@@ -39,18 +36,12 @@ var Client = function(server, stream, remote, conn) {
         self.colorId = null;
         self.city = null;
         self.state = null;
-
         self.chatStartMin = null;
-
         self.activeRoomId = null;
         self.activeQueueRoomId = null;
-
         self.drupal_uid = null;
-
         self.allowPauseAutoScroll = null;
-
         self.viewChatHistory = null;
-
         self.screening = null;
 
         groups.registerClient(self);

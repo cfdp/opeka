@@ -151,7 +151,7 @@ function Server(config, logger) {
       'remote': function (dummy, results) {
         target.emit('chat_status', results);
       }
-    })
+    });
   };
 
   // Update the client side guest/councellor counts.
@@ -180,7 +180,7 @@ function Server(config, logger) {
         var roomList = [],
           queueList = {},
           queues = false;
-
+        
         _.each(results.roomsList.list, function (room) {
           if (room.queueSystem !== 'private') {
             var queue = opeka.queues.list[room.queueSystem];
@@ -192,7 +192,8 @@ function Server(config, logger) {
               maxSize: room.maxSize,
               memberCount: room.memberCount,
               name: room.name,
-              id: room.id
+              id: room.id,
+              groupId: room.groupId
             };
             roomList.push(roomData);
           }
@@ -202,7 +203,6 @@ function Server(config, logger) {
         results.queues = queues;
         results.queueList = queueList;
         results.queueSystem = self.config.get('features:queueSystem');
-        results.predefinedRooms = self.config.get('features:predefinedRooms');
         results.exposeDrupalUserNames = self.config.get('features:exposeDrupalUserNames');
         results.skipSignInForm = self.config.get('features:skipSignInForm');
         results.fullRoomLink = self.config.get('features:fullRoomLink');
@@ -260,7 +260,7 @@ function Server(config, logger) {
         accessCode: self.config.get('accessCode'),
         accessCodeEnabled: self.config.get('features:accessCodeEnabled'),
         chatGroups: self.config.get('features:chatGroups'),
-        userGroups: clientUser.groupId
+        groupId: clientUser.groupId
       },
       clientData = {
         'isSignedIn': true,
@@ -301,8 +301,8 @@ function Server(config, logger) {
         self.councellors.addUser(client.clientId);
 
         self.logger.info('Admin user signed in.', client.clientId);
-
-        client.remote('receiveRoomList', opeka.rooms.clientData(true));
+   
+        client.remote('receiveRoomList', opeka.rooms.clientData(true, authData.chatGroups, authData.groupId));
       }
       else {
         self.guests.addUser(client.clientId);
@@ -318,7 +318,7 @@ function Server(config, logger) {
           client.state = add[1];
         }
 
-        client.remote('receiveRoomList', opeka.rooms.clientData());
+        client.remote('receiveRoomList', opeka.rooms.clientData(false, authData.chatGroups, authData.groupId));
       }
 
       client.remote('receiveQueueList', opeka.queues.clientData());
@@ -362,6 +362,9 @@ function Server(config, logger) {
         }
       }
       client.accessCode = clientUser.accessCode;
+
+      // @todo: the groupId of the client should be confirmed as part of authenticating.
+      client.groupId = clientUser.groupId;
 
       // Update online users count for all clients.
       self.updateUserStatus(self.everyone);
@@ -826,6 +829,24 @@ function Server(config, logger) {
       callback(true);
     }
   });
+  
+  // This function is called by the counselors in order to get the list of predefined rooms
+  self.councellors.addServerMethod('getPredefinedRooms', function (callback) {
+    var chatGroups = self.config.get('features:chatGroups'),
+      predefinedRooms = self.config.get('features:predefinedRooms'),
+      counselor = this,
+      counselorGroups = this.groupId;
+      
+    if (chatGroups) {
+      // Only return rooms that have the group ids of the counselor
+      predefinedRooms = _.filter(predefinedRooms, function(room) {
+        return _.contains(counselorGroups, room.groupId); 
+      });
+      callback(predefinedRooms);
+    } else {
+      callback(predefinedRooms);
+    }
+  });
 
   // Called by the counselors in order to create a new room.
   self.councellors.addServerMethod('createRoom', function (attributes, callback) {
@@ -934,10 +955,17 @@ function Server(config, logger) {
   // This function is used by the clients in order to change rooms
   self.signedIn.addServerMethod('changeRoom', function (roomId, callback, quit) {
     var client = this,
-      //serv = self,
       newRoom = opeka.rooms.list[roomId],
       queueSystem = self.config.get('features:queueSystem'),
-      queueFullUrl = self.config.get('features:queueFullUrl');
+      queueFullUrl = self.config.get('features:queueFullUrl'),
+      noAccessRoomUrl= self.config.get('features:noAccessRoomUrl'),
+      chatGroups = self.config.get('features:chatGroups');
+      
+    // If the chatGroups feature is enabled, make sure the user has the
+    // right groupId.
+    if (chatGroups && !(_.contains(client.groupId, newRoom.groupId))) {
+      callback(false, noAccessRoomUrl, false);
+    }
 
     // Set the chat start time
     client.chatStartMin = Math.round((new Date()).getTime() / 60000);
@@ -1062,7 +1090,7 @@ function Server(config, logger) {
         clientData = {
           'clientId': clientId,
           'activeRoomId': activeRoomId,
-          'chatStartMin': chatStartMin,
+          'chatStartMin': this.chatStartMin,
           'statsId': this.statsId
         };
 
@@ -1268,7 +1296,7 @@ function Server(config, logger) {
       removedUser = self.everyone.getClient(clientLeaveRoomData.clientId),
       isAdmin = clientLeaveRoomData.isAdmin,
       ChatEndMin,
-      chatDuration,
+      chatDuration = 0,
       checkPause = false,
       lastRoom = true;
 
@@ -1289,7 +1317,6 @@ function Server(config, logger) {
         self.logger.warning('RemoveUserFromRoom: room undefined.');
       }
     }
-
     // Calculate the duration of the chat session of the user being removed
     if (chatStartMin) {
       ChatEndMin = Math.round((new Date()).getTime() / 60000);

@@ -1153,6 +1153,7 @@
           defaultName: options.invite ? options.invite.name : '',
           private: !!options.private ? 1 : 0,
           invite: options.invite ? options.invite.id : '',
+          groupId: options.groupId
         });
         options.room = new Opeka.Room();
         options.dialogOptions = {
@@ -1186,19 +1187,27 @@
           private: form.find('input[name="private"]').is(':checked') ? 1 : 0,
           queueSystem: form.find('select.queue-system').val(),
           invite: form.find('input[name="invite-id"]').val(),
+          groupId: form.find('input[name="group-id"]').val()
         },
         view = this;
 
       if (values.name == '') {
         values.name = Drupal.t('Chat room');
       }
-
       if (values.maxSize != 2) {
         if (values.name == Drupal.t('Chat room')) {
           values.name = Drupal.t('Group room');
         }
       } else {
         values.maxSize = 2;
+      }
+      
+      // @todo: handle room group id input from form properly
+      if (values.groupId === '') {
+        values.groupId = drupalSettings.opeka.user.groupId;
+      }
+      else {
+        values.groupId = drupalSettings.opeka.user.groupId;
       }
 
       this.options.room.save(values, {
@@ -1417,9 +1426,8 @@
 
     initialize: function (options) {
       _.bindAll(this);
-      this.predefinedRooms = Opeka.status.attributes.predefinedRooms;
+      this.predefinedRooms = options.predefinedRooms;
       this.banCodeGenerator = options.banCodeGenerator || null;
-
       // Bind to the global status model.
       if (Opeka.status) {
         this.model = Opeka.status;
@@ -1511,13 +1519,12 @@
         private: 0,
         queueSystem: 'private',
         invite: '',
+        groupId: drupalSettings.opeka.user.groupId
       },
-      requestedRoomId = $(event.target).attr('data-room-mid'),
+      requestedRoomId = $(event.target).attr('data-room-group_id'),
       roomValues = {},
       newRoom = new Opeka.Room();
-
-      roomValues = _.find(this.predefinedRooms, function (obj) { return obj.mid === requestedRoomId; });
-
+      roomValues = _.find(this.predefinedRooms, function (room) { return room.groupId === requestedRoomId; });
       // Merge with the default values
       roomValues = _.extend(defaultValues, roomValues);
 
@@ -1589,7 +1596,7 @@
         admin: Opeka.clientData.isAdmin,
         labels: {
           farewellMessage: Drupal.t('Thanks for using our chat!'),
-          feedbackRedirectText: Drupal.t('You are now being redirected to a questionnaire.'),
+          feedbackRedirectText: Drupal.t('You are now being redirected.'),
           feedbackLinkText: Drupal.t('Open the feedback form.'),
           closeWindowText: Drupal.t('Close the window')
         },
