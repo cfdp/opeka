@@ -20,8 +20,6 @@ module.exports.authenticate = function (clientUser, clientId, accessCodeEnabled,
     return;
   }
   currentlyAuthenticating.push(clientId);
-  console.log('user currentlyAuth: ');
-  console.dir(currentlyAuthenticating);
 
   // If the client claims he's logged in, validate that assertion.
   if (clientUser.sid && clientUser.uid) {
@@ -114,7 +112,7 @@ module.exports.filterData = function (client) {
     viewChatHistory: client.viewChatHistory,
     name: client.nickname || client.account.name,
     drupal_uid: client.drupal_uid,
-    online: client.online,
+    online: client.online
   };
 };
 

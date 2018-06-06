@@ -236,7 +236,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['age_max'] = $age_max;
   $settings['clients_writing_message'] = $clients_writing_message;
   $settings['reconnect'] = variable_get('opeka_reconnect', TRUE) ? 1 : 0;
-  $settings['max_reconnects'] = variable_get('opeka_reconnect_attempts', 10);
+  $settings['reconnect_attempts'] = variable_get('opeka_reconnect_attempts', 10);
   $settings['reconnect_interval'] = variable_get('opeka_reconnect_interval', 2000);
 
     // Add js files and settings

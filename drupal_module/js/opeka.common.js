@@ -38,7 +38,7 @@ var Opeka = {
     'number_of_reconnects_tried': 0,
     'reconnect_interval': 5000,
     'connection_timeout': 6000,
-    'reconnect_connections': [],
+    'reconnect_connections': []
   },
   // Initialise window.JST if it does not exist.
   JST = JST || {},
@@ -56,8 +56,8 @@ var Opeka = {
   // values.
   function updateReconnectTimes() {
     var settings = Drupal.settings.opeka || {};
-    Opeka.max_reconnects = settings.reconnect_attempts;
-    Opeka.reconnect_interval = settings.reconnect_interval;
+    Opeka.max_reconnects = settings.reconnect_attempts || 10;
+    Opeka.reconnect_interval = settings.reconnect_interval || 20000;
     Opeka.connection_timeout = parseInt(
       Opeka.reconnect_interval / TIMEOUTS_PER_INTERVAL
     );
@@ -789,7 +789,7 @@ var Opeka = {
         }
         Opeka.signIn(clientData, function () {
           console.log('User re-signin.');
-          $(window).bind('beforeunload.opeka', function () {
+          $(window).bind('beforeunload.opeka', function () {       
             return Drupal.t('Do you really want to leave this page?');
           });
         });
@@ -1054,8 +1054,8 @@ var Opeka = {
         });
     };
 
-    // If the connection is dropped, advise the user that he has to
-    // reload the page.
+    // If the connection is dropped, try to reconnect if we have timed out
+    // (and are configured to reconnect), else drop connection.
     Opeka.onStreamDisconnected = function() {
       if(Opeka.use_reconnect) {
         if(Opeka.state != Opeka.TRYING_RECONNECT) {

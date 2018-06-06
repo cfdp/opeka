@@ -516,7 +516,7 @@
             banCode: Drupal.t('Generate new ban code'),
             leaveRoomButton: Drupal.t("Leave chat room"),
             online: Drupal.t('online'),
-            offline: Drupal.t('connecting...'),
+            offline: Drupal.t('connecting...')
           },
           screeningQuestions: screeningQuestions,
           room: this.model,
@@ -835,7 +835,8 @@
       options.title = options.title || Drupal.t('You are banned.');
 
       // Provide a default message.
-      options.message = options.message || Drupal.t('The IP address you are currently visiting the site from is banned from the chat system. You will not be able to participate in the chat.');
+      options.message = options.message 
+        || Drupal.t('The IP address you are currently visiting the site from is banned from the chat system. You will not be able to participate in the chat.');
 
       options.content = this.make('p', {'class': "message"}, options.message);
 
@@ -844,7 +845,8 @@
     }
   });
 
-  // Message dialog lets the user know he's banned from the system.
+  // Message dialog lets the user know the connection is lost and we are attempting
+  // a reconnect.
   Opeka.ReconnectingDialogView = Opeka.DialogView.extend({
     initialize: function (options) {
       // Make sure options is an object.
@@ -854,7 +856,10 @@
       options.title = options.title || Drupal.t('Reconnecting');
 
       // Provide a default message.
-      options.message = options.message || Drupal.t('Your connection to the chat server was lost. Please wait, we are trying to reconnect.');
+      var disconnectLimit = Math.round((Drupal.settings.opeka.reconnect_interval * Drupal.settings.opeka.reconnect_attempts) / 60000);
+      options.message = options.message 
+        || Drupal.t('Your connection to the chat server was lost. Please wait, we are trying to reconnect. If no connection is made within @count minutes, try to log in again.',
+           {'@count': disconnectLimit});
 
       options.content = this.make('p', {'class': "message"}, options.message);
 
@@ -864,7 +869,6 @@
           $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
         }
       };
-
 
       // Call the parent initialize once we're done customising.
       return Opeka.DialogView.prototype.initialize.call(this, options);
@@ -2021,7 +2025,8 @@
 
       var question = this.$el.find('p.screening-question').text();
       var answer = this.$el.find('input[name=screening]:checked').val();
-      var screeningRequired = (Drupal.settings.opeka_screening && Drupal.settings.opeka_screening.opeka_screening_required);
+      var screeningRequired = (Drupal.settings.opeka_screening 
+        && Drupal.settings.opeka_screening.opeka_screening_required);
       var validationError;
 
       var errMsg = Drupal.t('You must answer the question before you can enter the chat.');
