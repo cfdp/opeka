@@ -46,7 +46,7 @@
                   </span>
                 <% } %>
                 <span class="online-status">
-                <% if (!user.online) { %>
+                <% if (user.online !== "online") { %>
                     (<%= labels.offline %>)
                 <% } %>
                 </span>
