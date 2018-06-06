@@ -129,7 +129,7 @@ var Room = function (options) {
     self.invite = options.invite;
     self.ipLocation = options.ipLocation;
     self.uid = options.uid;
-    self.queueSystem = options.queueSystem || 'private' // Default to private queue system.
+    self.queueSystem = options.queueSystem || 'private'; // Default to private queue system.
     // When a room is created, the creator will join setting the member count to init value to 1.
     self.memberCount = 1;
     // A room can be paused by the counselor and an autoPauseRoom setting is available as well in config.json
@@ -172,12 +172,13 @@ var Room = function (options) {
     }
   };
 
-  // Method used to see if there is a counselor in the room
+  // Method used to see if there is an counselor in the room
+  // with an online connection
   self.hasCounselor = function () {
     var count;
     var setCount = function (response) {
       count = response;
-    }
+      }
     // the now js count function needs to be passed a callback function into which it feeds the user count (ct)
     self.counselorGroup.count(function (ct) {
       setCount(ct);
@@ -191,6 +192,35 @@ var Room = function (options) {
     return self.counselorPresent;
   };
 
+  // Method used to see if there is an counselor in the room
+  // with an online connection
+  self.hasCounselor = function () {
+    var count,
+        counselorOnline = false,
+        clientId;
+
+    var setCount = function (response) {
+      count = response;
+     };
+    self.counselorGroup.count(function (ct) {
+      setCount(ct);
+    });
+    // check for online counselor
+    Object.keys(self.counselorGroup.members).forEach(function(key) {
+      if (self.users[key].online === "online") {
+        counselorOnline = true;
+      }
+    });
+  
+    if (count >= 1 && counselorOnline) {
+      self.counselorPresent = true;
+    }
+    else {
+      self.counselorPresent = false;
+    }
+    return self.counselorPresent;
+  };  
+  
   // Add an user to the group.
   // Returns: 'OK' if the user has been added to the chat, an integer that is stating
   // the user place in the queue if the chat is busy, or a negative
@@ -224,7 +254,8 @@ var Room = function (options) {
         try {
           callback(self.users);
         } catch (ignore) {
-          //this is ignored since we have an exception if no counselor are in the room. We should discuss this eventuality...
+          // this is ignored since we have an exception if no counselor are in the room. 
+          // We should discuss this eventuality...
         }
       }
 
@@ -323,7 +354,7 @@ var Room = function (options) {
       return queue.addToQueue(user);
     }
     return false;
-  }
+  };
 
   // Assign an available colorId to a new user in the room.
   self.assignColorId = function (clientId, callback) {

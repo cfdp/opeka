@@ -21,7 +21,7 @@ var _ = require('underscore'),
   // Ping clients two times within each timeout interval
   PINGS_PER_TIMEOUT = 2,
 
-  // Dynamis reconnect values, updated from Drupal configuration whenever
+  // Dynamic reconnect values, updated from Drupal configuration whenever
   // a client connects.
   reconnect_attempts = 10,
   reconnect_interval = 20000,
@@ -224,6 +224,8 @@ var Client = function (server, stream, remote, conn) {
     self.serverSideMethods.client = self;
     self.stream = newClient.stream;
     self.conn = newClient.conn;
+    self.connectionData = newClient.connectionData;
+
     self.server.logger.info(
       'onReconnect: ' + self.clientId + ' takes over ' +
       newClient.clientId + 's remote, stream and connection.'
@@ -253,15 +255,10 @@ var Client = function (server, stream, remote, conn) {
   self.pingClient = function () {
     var pingSent = self.now;
 
-    console.log("PING " + self.clientId + " " + pingSent);
-
     self.connectionData.lastPingSent = pingSent;
 
     self.remote('ping', pingSent, function(err, clientTime) {
       var pingDelay = (new Date()).getTime() - pingSent;
-      console.log(
-        "PONG " + self.clientId + " " + pingSent + ": " + pingDelay
-      );
       // Ignore any PONG that arrives after PINGs older than the last
       // successful one.
       if(pingSent >= self.connectionData.lastPingSuccess) {
@@ -285,7 +282,7 @@ var Client = function (server, stream, remote, conn) {
 
     if (sincePingSuccess > client_timeout) {
       console.log(
-        'sincePingSuccess > client_timeout: Time to put user ' +
+        'sincePingSuccess = ' + sincePingSuccess + ' > client_timeout = ' + client_timeout + ': Time to put user ' +
         self.clientId + ' into pending timeout'
       );
       self.changeState(PENDING_TIMEOUT);
@@ -299,7 +296,7 @@ var Client = function (server, stream, remote, conn) {
     var sincePingSuccess = self.now - self.connectionData.lastPingSuccess;
     if (sincePingSuccess > disconnect_limit) {
       console.log(
-        "Client disconnected: sincePingSuccess > disconnect_limit for " +
+        "Client disconnected: sincePingSuccess (" + sincePingSuccess + " ms) > disconnect_limit for " +
         self.clientId
       );
       self.changeState(DISCONNECTED);
@@ -329,12 +326,23 @@ var Client = function (server, stream, remote, conn) {
         self.online = "online";
     }
     // If state was changed, make sure other clients are notified
-    if(old_online_state != self.online) {
-      var removeFromRooms = (self.online === "disconnected");
+    if (old_online_state != self.online) {
+      var removeFromRooms = (self.online === "disconnected"),
+          reconnected = (self.online === "online");
 
       _.find(rooms.list, function(room) {
         if (_.contains(_.keys(room.users), self.clientId)) {
           currentClient = room.users[self.clientId];
+          currentClient.online = self.online;
+          // Check if the room still has an online counselor, if not, pause it.
+          if (!room.hasCounselor()) {
+            self.server.sendSystemMessage('Rådgiveren har mistet forbindelsen, vent mens vi genopretter den.', room.group, room);
+            self.server.pauseRoom(room);
+          }
+          // If a user reconnects, make sure she gets the updated room status.
+          if (reconnected && room.paused) {
+            self.clientSideMethods.roomUpdated(room.id, {paused: true});
+          }
           // If user was disconnected, just remove them.
           if (removeFromRooms) {
             self.server.removeUserFromRoom(
