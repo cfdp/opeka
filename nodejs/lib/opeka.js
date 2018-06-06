@@ -660,13 +660,8 @@ function Server(config, logger) {
       return;
     }
 
-    room.paused = true;
-    self.everyone.remote('roomUpdated', roomId, {paused: true});
-    self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
-    // Update the room counts and chat status for all users
-    opeka.rooms.updateRoomCounts();
-    self.updateUserStatus(self.everyone);
-
+    self.pauseRoom(room);
+    
     if (callback) {
       callback();
     }
@@ -706,7 +701,7 @@ function Server(config, logger) {
 
     room.paused = false;
     self.everyone.remote('roomUpdated', roomId, {paused: false});
-    self.sendSystemMessage('[Pause]: Chat is available again.', room.group, room);
+    self.sendSystemMessage('[Pause]: Chatten er åben igen.', room.group, room);
     // Update the room counts and chat status for all users
     opeka.rooms.updateRoomCounts();
     self.updateUserStatus(self.everyone);
@@ -860,7 +855,7 @@ function Server(config, logger) {
       recieverName = recipient.nickname;
       // Check if we're allowed to whisper to the client
       if (!self.councellors.getClient(whisperClientId) && !this.whisperPartners[clientId]) {
-        self.sendSystemMessage("You are not allowed to whisper to user " + recieverName, this);
+        self.sendSystemMessage("Du har ikke tilladelse til at hviske til " + recieverName, this);
         return;
       }
 
@@ -933,7 +928,7 @@ function Server(config, logger) {
         opeka.rooms.updateRoomCounts();
         self.updateUserStatus(self.everyone);
         self.broadcastChatStatus();
-        self.sendSystemMessage("Room size changed to " + newSize, room.group, room);
+        self.sendSystemMessage("Rumstørrelse ændret til " + newSize, room.group, room);
       }
     }
   });
@@ -1110,23 +1105,21 @@ function Server(config, logger) {
   });
 
   // Remove the user from room - can only remove yourself.
-  self.everyone.addServerMethod('removeUserFromRoom', function (roomId, clientId, activeRoomId, chatStartMin) {
+  self.everyone.addServerMethod('removeUserFromRoom', function (roomId, clientId, activeRoomId) {
     if (this.clientId === clientId) {
       var room = opeka.rooms.list[roomId],
         autoPause = self.config.get('features:automaticPausePairRooms'),
         clientData = {
           'clientId': clientId,
           'activeRoomId': activeRoomId,
-          'chatStartMin': chatStartMin,
+          'chatStartMin': this.chatStartMin,
           'statsId': this.statsId
         };
 
       // Set room on pause if the room is a pair room.
       if (room) {
         if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
-          room.paused = true;
-          self.everyone.remote('roomUpdated', room.id, {paused: true});
-          self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
+          self.pauseRoom(room);
         }
         // Remove the user.
         self.removeUserFromRoom(room, clientData, function (err, users) {
@@ -1310,6 +1303,23 @@ function Server(config, logger) {
     };
     to.remote('receiveWritesMessage', messageObj);
   };
+  
+   /**
+   * Utility function to pause a room.
+   *
+   * @param room
+   *   Room object - the room to be paused.
+   *
+   */
+  self.pauseRoom = function (room) {
+    room.paused = true;
+    self.everyone.remote('roomUpdated', room.id, {paused: true});
+    self.sendSystemMessage('[Pause]: Chatten er blevet sat på pause.', room.group, room);
+
+    // Update the room counts and chat status for all users
+    opeka.rooms.updateRoomCounts();
+    self.updateUserStatus(self.everyone);
+  };
 
   /**
    * Utility function to remove a user from a room.
@@ -1367,9 +1377,7 @@ function Server(config, logger) {
 
     if (room) {
       if (checkPause && (autoPause === true) && (room.maxSize === 2) && !room.paused) {
-        room.paused = true;
-        self.everyone.remote('roomUpdated', room.id, {paused: true});
-        self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
+        self.pauseRoom(room);
       }
 
       room.removeUser(clientId, function (users, queueClientId, removedUserNickname) {
