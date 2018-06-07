@@ -2,7 +2,7 @@
 "use strict";
 
 var drupal = require("drupal"),
-  util = require("util");
+  logger = require('./loginit');
 
 // Save chat session data if the table exists
 module.exports.save = function (age, gender, screening, callback) {
@@ -11,7 +11,7 @@ module.exports.save = function (age, gender, screening, callback) {
       return saveData(age, gender, screening, callback);
     }
     else {
-      util.log('Error: The opeka_stats table does not appear to be present ind the DB.');
+      logger.warning('Error: The opeka_stats table does not appear to be present ind the DB.');
     }
   });
 };
@@ -22,7 +22,7 @@ module.exports.saveChatDuration = function(stats_id, duration) {
       return saveChatDuration(stats_id, duration);
     }
     else {
-      util.log('Error: The opeka_stats table does not appear to be present ind the DB.');
+      logger.warning('Error: The opeka_stats table does not appear to be present ind the DB.');
     }
   });
 }
@@ -50,13 +50,13 @@ function saveData(age, gender, screening, callback) {
 
   drupal.db.query('INSERT INTO opeka_stats SET ?', record, function (err, result) {
     if (result) {
-      util.log('Info: Saved chat sessions stats.');
+      logger.info('Info: Saved preliminary chat sessions stats.');
       if (callback) {
         callback(result.insertId);
       }
     }
     else {
-      util.log('Error: Chat session stats could not be saved.');
+      logger.warning('Error: Chat session stats could not be saved.');
       throw err;
     }
   });
@@ -67,10 +67,10 @@ function saveChatDuration(stats_id, duration) {
 
   drupal.db.query('UPDATE opeka_stats SET chat_duration = ? WHERE submission_id = ?', [duration, stats_id], function (err, result) {
     if (result) {
-      util.log('Info: Saved chat duration into stats.');
+      logger.info('Info: Saved chat duration into stats.');
     }
     else {
-      util.log('Error: Chat duration could not be saved into stats.');
+      logger.warning('Error: Chat duration could not be saved into stats.');
       throw err;
     }
   });

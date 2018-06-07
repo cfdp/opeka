@@ -6,7 +6,7 @@
 
 var _ = require('underscore'),
   uuid = require('node-uuid'),
-  util = require("util"),
+  logger = require('./loginit'),
   drupal = require("drupal"),
   format = require('date-format'),
   PHPUnserialize = require('php-unserialize'),
@@ -28,7 +28,7 @@ var Invite = function (data) {
 
     self.id = self.iid;
 
-    util.log('Invite returned: ' + self.name);
+    logger.info('Invite returned: ' + self.name);
 
     return self;
   };
@@ -53,7 +53,7 @@ var Invite = function (data) {
       if (result) {
         result.forEach(function (row) {
           inviteList[row.token] = new Invite(row);
-          util.log('Invite added to list: ' + row.name);
+          logger.info('Invite added to list: ' + row.name);
         });
       }
     });
@@ -79,7 +79,7 @@ var loadAll = function () {
   drupal.db.query('SELECT * FROM opeka_invite', [], function (err, result, fields) {
     if (result) {
       result.forEach(function (row) {
-        util.log('Invite loaded to list: ' + row.name);
+        logger.info('Invite loaded to list: ' + row.name);
         inviteList[row.token] = new Invite(row);
       });
     }
@@ -88,7 +88,7 @@ var loadAll = function () {
 };
 
 var scheduleCleanUp = function () {
-  util.log('Started invites cleanup');
+  logger.info('Started invites cleanup');
   drupal.db.query("SELECT value FROM variable WHERE name = 'opeka_invite_expire'", [], function (err, result, fields) {
     if (result) {
       result.forEach(function (row) {
@@ -100,14 +100,14 @@ var scheduleCleanUp = function () {
             if (invite.time < threshold) {
               inviteId = invite.id;
               toDelete.push(inviteId);
-              util.log('Invite', inviteId, 'is marked for deletion (scheduled for ' + format('dd/MM/yyyy hh:mm', new Date(invite.time * 1000)) + ')');
+              logger.info('Invite', inviteId, 'is marked for deletion (scheduled for ' + format('dd/MM/yyyy hh:mm', new Date(invite.time * 1000)) + ')');
               delete(inviteList[token]);
               opeka.groups.getGroup('councellors').remote('inviteCancelled', inviteId);
             }
           });
           if (toDelete.length) {
             drupal.db.query("DELETE FROM opeka_invite WHERE iid IN (?)", [toDelete], function (err, result, fields) {
-              util.log('Deleted invites from database:', toDelete.join(', '));
+              logger.info('Deleted invites from database:', toDelete.join(', '));
             });
           }
         }

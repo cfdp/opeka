@@ -23,6 +23,7 @@ var _ = require("underscore"),
   validator = require('validator'),
   opeka = {
     ban: require('./ban'),
+    drupalconfig: require('./drupalconfig'),
     groups: require("./groups"),
     queues: require('./queues'),
     rooms: require('./rooms'),
@@ -30,16 +31,38 @@ var _ = require("underscore"),
     statistics: require('./statistics'),
     user: require('./user'),
     Client: require('./client'),
-    chatOpen: false
-  };
+    chatOpen: false,
+  },
+  drupal_config_keys = [
+    "opeka_reconnect_attempts",
+    "opeka_reconnect_interval"
+  ];
 
 function Server(config, logger) {
   var self = this;
+
+  self.drupalconfig = {};
+
+  self.reloadDrupalConfig = function(cb) {
+    // Load in some drupal config
+    opeka.drupalconfig.load_multiple(
+      drupal_config_keys,
+      function(err, result) {
+        if(err) { return cb(err); }
+        self.config.set("drupalconfig", result);
+        return cb(null, result);
+      }
+    );
+  };
 
   self.construct = function () {
     var queues = config.get('queues');
     self.config = config;
     self.logger = logger;
+
+    self.reloadDrupalConfig(function(err) {
+      if(err) { logger.error("Error while reloading drupal config: " + err); }
+    });
 
     self.browser_script_path = path.normalize(path.join(__dirname, '../static/connect.js'));
 
@@ -68,7 +91,7 @@ function Server(config, logger) {
     var sock = shoe(function (stream) {
       var d = dnode(function (remote, conn) {
         var client = new opeka.Client(self, stream, remote, conn);
-        return client.getServerSideMethods()
+        return client.getServerSideMethods();
       });
       d.pipe(stream).pipe(d);
     });
@@ -243,12 +266,16 @@ function Server(config, logger) {
    * resources required for the safe operation of the chat.
    */
   self.everyone.addServerMethod('signIn', function (clientUser, callback) {
-    var client = this,
+    // Support user re-signin.
+    var oldClient,
+      reconnectTimeout,
+      client = this,
       accessCode = self.config.get('accessCode'),
       accessCodeEnabled = self.config.get('features:accessCodeEnabled'),
       clientData = {
         'isSignedIn': true,
-        'clientId': client.clientId
+        'clientId': client.clientId,
+        'online': client.connectionData.online
       },
       nicknameRange = {min: 1, max: 25},
       genderRange = {min: 1, max: 25},
@@ -256,7 +283,7 @@ function Server(config, logger) {
 
     self.logger.info("Drupal user ID:", clientUser.uid);
 
-    opeka.user.authenticate(clientUser, accessCodeEnabled, accessCode, function (err, account) {
+    opeka.user.authenticate(clientUser, client.clientId, accessCodeEnabled, accessCode, function (err, account) {
       if (err) {
         self.logger.info('Authentication failed: ' + err.message);
         client.remote('accessDenied', client.clientId);
@@ -277,7 +304,7 @@ function Server(config, logger) {
       // Expose the drupal client drupal uid if they provided one and we're configured to do so
       if (self.config.get('features:exposeDrupalUIDs') && account.uid) {
         if (!clientUser.want_to_be_anonymous) {
-          client.drupal_uid = account.uid
+          client.drupal_uid = account.uid;
         }
       }
 
@@ -365,6 +392,55 @@ function Server(config, logger) {
     });
   });
 
+  self.everyone.addServerMethod('reconnect', function (clientUser, callback) {
+    var newClient = this,
+        client,
+        accessCode = self.config.get('accessCode'),
+        accessCodeEnabled = self.config.get('features:accessCodeEnabled');
+
+    if (clientUser.clientId) {
+      client = opeka.groups.getClient(clientUser.clientId);
+      if (client){
+        self.logger.info(
+          "Reconnected user: ", this.clientId, " taking over ",
+          clientUser.clientId
+        );
+      } else {
+        console.log('Reconnect from unknown user, forcing client reload', clientUser.clientId);
+        // This typically happens when the chat server process has restarted.
+        // In this case we need to force the user to log in again, to avoid
+        // stale data on client side.
+        newClient.forceReload();
+        return;
+      }
+      delete(clientUser.clientId);
+    } else {
+      console.log('reconnect: user had no clientId, forcing client reload.');
+      newClient.forceReload();
+      return;
+    }
+
+    // Make sure the user is who they claim to be
+    opeka.user.authenticate(clientUser, client.clientId, accessCodeEnabled, accessCode, function (err, account) {
+      if (err) {
+        self.logger.info('Authentication failed: ' + err.message);
+        newClient.remote('accessDenied', client.clientId);
+        return;
+      }
+      // Check whether the user is required to be logged into Drupal
+      if (self.config.get("features:requireDrupalLogin") && !account.uid) {
+        self.logger.info('User without Drupal login tried to access the chat.');
+        newClient.remote('loginRequiredMessage', client.clientId);
+        return;
+      }
+      // Update the old client with the new remote end
+      client.onReconnect(newClient);
+      // Tell other clients about the reconnect
+      client.updateClientOnlineState();
+      callback();
+    });
+  });
+
   // Give the client a URL where he can sign in and go directly to a
   // room of the requested type.
   self.everyone.addServerMethod('getDirectSignInURL', function (roomType, callback) {
@@ -374,7 +450,7 @@ function Server(config, logger) {
 
     // Check if the requested room type is valid
     if ((roomType !== "pair") && (roomType !== "group")) {
-      console.log('Bad Request: invalid roomType');
+      self.logger.warning('Bad Request: invalid roomType');
       callback('Bad Request: invalid roomType');
       return;
     }
@@ -431,7 +507,7 @@ function Server(config, logger) {
           self.logger.info('Room ' + room.id + ' is found for invite ' + inviteId);
           // Check if room is full, so it is possible to auto join.
           if (!room.isFull() && (autoPause !== true || (!room.paused || room.maxSize > 2))) {
-            self.logger.info('Room ' + room.id + ' is can be entered.');
+            self.logger.info('Room ' + room.id + ' can be entered.');
             roomFound = room.clientData();
           }
         }
@@ -471,7 +547,7 @@ function Server(config, logger) {
 
 // -------- GLOBAL QUEUE FUNCTIONS START -----------
 
-  // Called by the counselors in order to create a new room.
+  // Called by the counselors in order to create a new queue.
   self.councellors.addServerMethod('createQueue', function (attributes, callback) {
     if (attributes.name.length > 0) {
       if (attributes.active === undefined) {
@@ -588,20 +664,15 @@ function Server(config, logger) {
       return;
     }
 
-    room.paused = true;
-    self.everyone.remote('roomUpdated', roomId, {paused: true});
-    self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
-    // Update the room counts and chat status for all users
-    opeka.rooms.updateRoomCounts();
-    self.updateUserStatus(self.everyone);
-
+    self.pauseRoom(room);
+    
     if (callback) {
       callback();
     }
     self.broadcastChatStatus();
   });
 
-  // Allow the everyone to update writingMessage.
+  // Allow the everyone group to update writingMessage.
   self.everyone.addServerMethod('writingMessage', function (roomId, callback) {
     var client = this,
       room = opeka.rooms.list[client.activeRoomId];
@@ -623,7 +694,6 @@ function Server(config, logger) {
 
   // Allow the councellors to unpause a room.
   self.councellors.addServerMethod('unpauseRoom', function (roomId, callback) {
-    //var context = this;
     var room = opeka.rooms.list[roomId],
       client = this;
 
@@ -635,7 +705,7 @@ function Server(config, logger) {
 
     room.paused = false;
     self.everyone.remote('roomUpdated', roomId, {paused: false});
-    self.sendSystemMessage('[Pause]: Chat is available again.', room.group, room);
+    self.sendSystemMessage('[Pause]: Chatten er åben igen.', room.group, room);
     // Update the room counts and chat status for all users
     opeka.rooms.updateRoomCounts();
     self.updateUserStatus(self.everyone);
@@ -714,14 +784,21 @@ function Server(config, logger) {
     // Get room.
     var room = opeka.rooms.list[roomId],
       roomGroup = room.group,
-      client = self.everyone.getClient(clientId);
+      client = self.everyone.getClient(clientId),
+      clientData = {
+        'clientId': clientId,
+        'activeRoomId': client.activeRoomId,
+        'chatStartMin': client.chatStartMin,
+        'stats_id': client.stats_id
+      };
     // Tell that the user is being removed.
     if (client) {
       self.addMsgToHistory(room, {message: messageText, system: true});
       roomGroup.remote('roomUserKicked', roomId, clientId, messageText, client.nickname);
     }
     // Remove the user.
-    self.removeUserFromRoom(room, clientId, roomId, function (users) {
+    self.removeUserFromRoom(room, clientData, function (err, users) {
+      if (err) return self.logger.error(err);
       opeka.user.sendUserList(room.group, room.id, users);
     });
 
@@ -734,18 +811,20 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId],
       roomGroup = opeka.groups.getGroup(roomId),
       userData = room.users[clientId],
-      councillor = this,
+      counselor = this,
       mutedClient = roomGroup.getClient(clientId);
 
     // Mute the user.
-    mutedClient.muted = true;
+    if (mutedClient) {
+      mutedClient.muted = true;
+    }
     userData.muted = true;
 
     // Tell the councellors about the muted user.
     opeka.user.sendUserList(room.counselorGroup, room.id, room.users);
 
     // Tell the user that he was muted.
-    roomGroup.remote('roomUserMuted', roomId, clientId, userData, councillor.nickname);
+    roomGroup.remote('roomUserMuted', roomId, clientId, userData, counselor.nickname);
   });
 
   /* Function used in order to unmute a single user */
@@ -780,7 +859,7 @@ function Server(config, logger) {
       recieverName = recipient.nickname;
       // Check if we're allowed to whisper to the client
       if (!self.councellors.getClient(whisperClientId) && !this.whisperPartners[clientId]) {
-        self.sendSystemMessage("You are not allowed to whisper to user " + recieverName, this);
+        self.sendSystemMessage("Du har ikke tilladelse til at hviske til " + recieverName, this);
         return;
       }
 
@@ -803,7 +882,8 @@ function Server(config, logger) {
 
   // Called by the counselors in order to create a new room.
   self.councellors.addServerMethod('createRoom', function (attributes, callback) {
-    attributes.uid = this.account.uid;
+    attributes.uid = this.account.uid,
+    attributes.soloClientsAllowed = self.config.get('features:soloClientsAllowed');
     if (attributes.name.length > 0) {
       var room = new opeka.rooms.Room(attributes),
         roomClientData = room.clientData();
@@ -837,34 +917,7 @@ function Server(config, logger) {
       queue;
 
     if (room) {
-      queue = opeka.queues.list[room.queueSystem];
-      // Since deleting the room also flushes the queue, we need to give
-      // message in case of the room being last before the room is deleted.
-      if (room.queueSystem !== 'private') {
-        // Check to see if this was the last room for a queue that was deleted.
-        // If so, flush the queue and give notification to the users.
-        _.forEach(opeka.rooms.list, function (loopRoom) {
-          if (room.queueSystem === loopRoom.queueSystem && room.id !== loopRoom.id) {
-            lastRoom = false;
-          }
-        });
-        // Last room, flush the queue which will trigger notification.
-        if (lastRoom) {
-          queue = opeka.queues.list[room.queueSystem];
-          if (queue) {
-            queue.flushQueue(self.everyone.members);
-          }
-        }
-      }
-      self.logger.info('Room ' + room.name + ' (' + roomId + ') deleted.');
-      // Set the activeRoomId for the counselor to null
-      counselor.activeRoomId = null;
-      opeka.rooms.remove(roomId);
-      self.everyone.remote('roomDeleted', roomId, finalMessage);
-
-      self.updateUserStatus(self.everyone);
-
-      self.broadcastChatStatus();
+      self.deleteRoom(room, lastRoom, counselor, queue, finalMessage);
     } else {
       this.remote('displayError', "Error deleting room: a room with the specified ID does not exist.");
       self.logger.warning('deleteRoom: Room could not be deleted by counselor. room undefined.');
@@ -880,7 +933,7 @@ function Server(config, logger) {
         opeka.rooms.updateRoomCounts();
         self.updateUserStatus(self.everyone);
         self.broadcastChatStatus();
-        self.sendSystemMessage("Room size changed to " + newSize, room.group, room);
+        self.sendSystemMessage("Rumstørrelse ændret til " + newSize, room.group, room);
       }
     }
   });
@@ -935,16 +988,15 @@ function Server(config, logger) {
   // This function is used by the clients in order to change rooms
   self.signedIn.addServerMethod('changeRoom', function (roomId, callback, quit) {
     var client = this,
-      //serv = self,
       newRoom = opeka.rooms.list[roomId],
       queueSystem = self.config.get('features:queueSystem'),
       queueFullUrl = self.config.get('features:queueFullUrl');
 
     // Set the chat start time
-    client.chatStart_Min = Math.round((new Date()).getTime() / 60000);
+    client.chatStartMin = Math.round((new Date()).getTime() / 60000);
     // Reset list of whisper partners
     client.whisperPartners = {};
-    self.logger.info('Login: User chat start: ', client.chatStart_Min);
+    self.logger.info('Login: User chat start: ', client.chatStartMin);
 
     // Add the chat session data for client to the db
     if (!client.account.isAdmin) {
@@ -970,13 +1022,21 @@ function Server(config, logger) {
 
     // If user is already in a different room, leave it.
     if (opeka.rooms.list[client.activeRoomId]) {
-      var oldRoom = opeka.rooms.list[client.activeRoomId];
+      var oldRoom = opeka.rooms.list[client.activeRoomId],
+          clientData;
 
       if (client.clientId !== undefined) {
-        self.removeUserFromRoom(oldRoom.id, client.clientId, function (users) {
+        clientData = {
+          'clientId': client.clientId,
+          'activeRoomId': client.activeRoomId,
+          'chatStartMin': client.chatStartMin,
+          'stats_id': client.stats_id
+        };
+        self.removeUserFromRoom(oldRoom.id, clientData, function (err, users) {
+          if (err) return self.logger.error(err);
           opeka.user.sendUserList(oldRoom.group, oldRoom.id, users);
         });
-        self.logger.info('@debug changeRoom: User was removed from different room');
+        self.logger.debug('changeRoom: User was removed from different room');
       }
 
       if (quit) {
@@ -1051,22 +1111,27 @@ function Server(config, logger) {
   });
 
   // Remove the user from room - can only remove yourself.
-  self.everyone.addServerMethod('removeUserFromRoom', function (roomId, clientId, activeRoomId, chatStart_Min) {
+  self.everyone.addServerMethod('removeUserFromRoom', function (roomId, clientId, activeRoomId) {
     if (this.clientId === clientId) {
       var room = opeka.rooms.list[roomId],
-        autoPause = self.config.get('features:automaticPausePairRooms');
+        autoPause = self.config.get('features:automaticPausePairRooms'),
+        clientData = {
+          'clientId': clientId,
+          'activeRoomId': activeRoomId,
+          'chatStartMin': this.chatStartMin,
+          'stats_id': this.stats_id
+        };
 
       // Set room on pause if the room is a pair room.
       if (room) {
         if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
-          room.paused = true;
-          self.everyone.remote('roomUpdated', room.id, {paused: true});
-          self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
+          self.pauseRoom(room);
         }
 
 
         // Remove the user.
-        self.removeUserFromRoom(room, clientId, activeRoomId, chatStart_Min, function (users) {
+        self.removeUserFromRoom(room, clientData, function (err, users) {
+          if (err) return self.logger.error(err);
           opeka.user.sendUserList(room.group, room.id, users);
           self.updateUserStatus(self.everyone);
         });
@@ -1079,6 +1144,11 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId],
       client = this;
 
+    // Make sure there is a room to send the message to
+    if (!room) {
+      return;
+    }
+
     // Verify whether the user is a councellor, so we can set a
     // flag on the message.
     self.councellors.hasClient(client.clientId, function (isCouncellor) {
@@ -1090,7 +1160,7 @@ function Server(config, logger) {
           clientId: client.clientId,
           colorId: client.colorId,
           isCouncellor: isCouncellor,
-          name: client.nickname,
+          name: client.nickname
         }
       };
 
@@ -1109,24 +1179,35 @@ function Server(config, logger) {
    */
   self.everyone.addServerMethod('cleanAfterChat', function (clientId, callback) {
     var user = this,
-      room;
+      room,
+      clientData = {
+        'clientId': clientId,
+        'activeRoomId': user.activeRoomId,
+        'chatStartMin': user.chatStartMin,
+        'stats_id': user.stats_id,
+        'isAdmin': user.account.isAdmin
+      },
+      err = null;
     // If the user is leaving a room, make sure he is removed properly
     if (user.activeRoomId) {
       room = opeka.rooms.list[user.activeRoomId];
       if (room && (user.clientId === clientId)) {
-        self.logger.info('@debug: Cleaned up after chat - user.activeRoomId ' + user.activeRoomId + ' clientId ' + user.clientId);
-
-        // @todo - make sure to shut down the room if there are only clients left &&
-        // noSoloClientsAllowed is true...
-        self.removeUserFromRoom(room, user.clientId, user.activeRoomId);
-        // Update the server status
-        self.updateUserStatus(self.everyone);
-        opeka.user.sendUserList(room.group, room.id, room.users);
+        self.logger.debug('Cleaned up after chat - user.activeRoomId ' + user.activeRoomId + ' clientId ' + user.clientId);
+        self.removeUserFromRoom(room, clientData, function (err, users) {
+          if (err) return self.logger.error(err);
+          opeka.user.sendUserList(room.group, room.id, users);
+          // Update the server status
+          self.updateUserStatus(self.everyone);
+          self.helperUpdateRoomCount(room.id);
+        });
       }
+    }
+    else {
+      err = "Error: User had no activeRoomId, no cleaning done";
     }
     // Call the callback.
     if (callback) {
-      callback();
+      callback(err);
     }
   });
 
@@ -1139,22 +1220,34 @@ function Server(config, logger) {
   self.handleConnectionClosed = function (client) {
     var clientId = client.clientId,
       activeRoomId = client.activeRoomId,
-      chatStart_Min = client.chatStart_Min,
+      chatStartMin = client.chatStartMin,
+      stats_id = client.stats_id,
+      clientData = {
+        'clientId': clientId,
+        'activeRoomId': activeRoomId,
+        'chatStartMin': chatStartMin,
+        'stats_id': stats_id,
+        'isAdmin': client.account.isAdmin
+      },
       queueLeft;
 
     if (client.account !== undefined) {
       if (client.account.isAdmin === true) {
         self.logger.info('Admin user disconnected.', client.clientId);
+        self.logger.info('Admin user disconnected.', clientId);
+        if (activeRoomId) {
+          self.logger.warning('Disconnected admin user had activeRoomId: ', activeRoomId);
+        }
       }
       else {
-        self.logger.info('Regular user disconnected.', client.clientId);
-        if (client.activeRoomId) {
-          self.logger.info('Disconnected user had activeRoomId: ', client.activeRoomId);
+        self.logger.info('Regular user disconnected.', clientId, stats_id);
+        if (activeRoomId) {
+          self.logger.info('Disconnected user had activeRoomId: ', activeRoomId);
         }
       }
     }
     else {
-      // User is not signed in, no reason logging this
+      // User is not signed in
     }
 
     // We need to wait a single tick before updating the online counts,
@@ -1170,7 +1263,8 @@ function Server(config, logger) {
 
       // Remove the user from any rooms he might be in.
       Object.keys(opeka.rooms.list).forEach(function (key) {
-        var room = opeka.rooms.list[key];
+        var room = opeka.rooms.list[key],
+            soloClientsAllowed = self.config.get('features:soloClientsAllowed');
         // Need to call updateQueueStatus on a room belonging to the queue
         // that the user left.
         if (queueLeft && queueLeft.id === room.queueSystem) {
@@ -1185,19 +1279,10 @@ function Server(config, logger) {
         }
 
         // Try to remove user from room.
-        self.removeUserFromRoom(room, clientId, activeRoomId, chatStart_Min, function (users) {
+        self.removeUserFromRoom(room, clientData, function (err, users) {
+          if (err) return self.logger.error(err);
           if (users) {
             opeka.user.sendUserList(room.group, room.id, users);
-            // Try to remove the room if the disconnected user is the last counselor since
-            // no anonymous users should be left without counselor if soloClientsAllowed is false
-            if (client.account.isAdmin && !room.counselorPresent && !room.soloClientsAllowed) {
-              self.logger.warning('Last admin user disconnected - shutting down room. Counselor id: ', client.clientId);
-              //Inform the remaining users that the room is closing down
-              if (client.activeRoomId) {
-                opeka.rooms.remove(client.activeRoomId);
-                self.everyone.remote('roomDeleted', client.activeRoomId, "Beklager, men rådgiveren mistede internetforbindelsen. Du er velkommen til at logge på igen.");
-              }
-            }
             client.activeRoomId = null;
           }
         });
@@ -1231,88 +1316,174 @@ function Server(config, logger) {
     };
     to.remote('receiveWritesMessage', messageObj);
   };
+  
+   /**
+   * Utility function to pause a room.
+   *
+   * @param room
+   *   Room object - the room to be paused.
+   *
+   */
+  self.pauseRoom = function (room) {
+    room.paused = true;
+    self.everyone.remote('roomUpdated', room.id, {paused: true});
+    self.sendSystemMessage('[Pause]: Chatten er blevet sat på pause.', room.group, room);
 
-  // Utility function to remove a user from a room.
-  self.removeUserFromRoom = function (room, clientId, activeRoomId, chatStart_Min, callback) {
+    // Update the room counts and chat status for all users
+    opeka.rooms.updateRoomCounts();
+    self.updateUserStatus(self.everyone);
+  };
+
+  /**
+   * Utility function to remove a user from a room.
+   *
+   * @param room
+   *   Room object.
+   *
+   * @param clientLeaveRoomData
+   *   Client object containing info needed when user leaves a room.
+   */
+  self.removeUserFromRoom = function (room, clientLeaveRoomData, callback) {
     var autoPause = self.config.get('features:automaticPausePairRooms'),
-      removedUser = self.everyone.getClient(clientId),
-      chatEnd_Min,
-      chatDuration,
-      checkPause = false;
+      soloClientsAllowed = self.config.get('features:soloClientsAllowed'),
+      clientId = clientLeaveRoomData.clientId,
+      activeRoomId = clientLeaveRoomData.activeRoomId,
+      chatStartMin = clientLeaveRoomData.chatStartMin,
+      stats_id = clientLeaveRoomData.stats_id,
+      removedUser = self.everyone.getClient(clientLeaveRoomData.clientId),
+      isAdmin = clientLeaveRoomData.isAdmin,
+      ChatEndMin,
+      chatDuration = null,
+      checkPause = false,
+      lastRoom = true;
 
-    // Set room on pause if the room is a pair room.
+    self.logger.debug("removeUserFromRoom:", isAdmin ? "admin" : "regular user", "clientId:", clientId);
+    // Set room on pause.
     if (removedUser) {
-      chatStart_Min = removedUser.chatStart_Min;
       removedUser.activeRoomId = null;
       checkPause = true;
     }
     else {
       // In this case we don't have a valid reference to a signed in client (happens when
       // client closes / refreshes the browser window)
-      // - also from the snippet/chatwidget. The chat should only pause if the user is leaving an
-      // active room.
-      self.logger.info('User logout: No valid reference to client.');
       if (typeof room !== 'undefined') {
         checkPause = (activeRoomId === room.id);
       }
       else {
         checkPause = false;
-        self.logger.warning('@debug removeUserFromRoom: room undefined.');
+        self.logger.warning('RemoveUserFromRoom: room undefined.');
       }
     }
 
     // Calculate the duration of the chat session of the user being removed
-    if (chatStart_Min) {
-      chatEnd_Min = Math.round((new Date()).getTime() / 60000);
-      chatDuration = chatEnd_Min - chatStart_Min;
-      self.logger.info('User logout: Chat duration (minutes): ', chatDuration);
-      if (removedUser) {
-        opeka.statistics.saveChatDuration(removedUser.stats_id, chatDuration);
+    if (typeof chatStartMin === 'number') {
+      ChatEndMin = Math.round((new Date()).getTime() / 60000);
+      chatDuration = ChatEndMin - chatStartMin;
+      self.logger.info('User left room: Chat duration (minutes): ', chatDuration);
+      if (!isAdmin && stats_id) {
+        opeka.statistics.saveChatDuration(stats_id, chatDuration);
       }
     }
 
-    if (room) {
-      if (checkPause && (autoPause === true) && (room.maxSize === 2) && !room.paused) {
-        room.paused = true;
-        self.everyone.remote('roomUpdated', room.id, {paused: true});
-        self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
+    if (!room) { 
+      callback("Could not remove user from room - room undefined."); 
+      return; 
+    };
+
+    if (checkPause && (autoPause === true) && (room.maxSize === 2) && !room.paused) {
+      room.paused = true;
+      self.everyone.remote('roomUpdated', room.id, {paused: true});
+      self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
+    }
+
+    room.removeUser(clientId, function (err, users, queueClientId, removedUserNickname) {
+      // The user has been removed from the queue and should join the chat.
+      if (queueClientId) {
+        self.everyone.getClient(queueClientId).remote('changeRoom', room.id);
+        self.everyone.getClient(queueClientId).remote('roomJoinFromQueue', room.id);
+        self.everyone.remote('updateQueueStatus', room.id);
       }
 
-      room.removeUser(clientId, function (users, queueClientId, removedUserNickname) {
-        // The user has been removed from the queue and should join the chat.
-        if (queueClientId) {
-          self.everyone.getClient(queueClientId).remote('changeRoom', room.id);
-          self.everyone.getClient(queueClientId).remote('roomJoinFromQueue', room.id);
-          self.everyone.remote('updateQueueStatus', room.id);
-        }
+      // We always need to update the room count after a user has tried to
+      // leave the queue
+      self.helperUpdateRoomCount(room.id);
 
-        // We always need to update the room count after a user has tried to
-        // leave the queue
-        self.helperUpdateRoomCount(room.id);
+      // Notify the chat room if we know who left.
+      if (removedUserNickname) {
+        self.addMsgToHistory(room, {
+          message: '@user has left the room. Chat duration: @chatDuration minutes.',
+          system: true,
+          args: {'@user': removedUserNickname, '@chatDuration': chatDuration}
+        });
+        room.group.remote('roomUserLeft', room.id, removedUserNickname, chatDuration);
 
-        // Notify the chat room if we know who left.
-        if (removedUserNickname) {
-          self.addMsgToHistory(room, {
-            message: '@user has left the room. Chat duration: @chatDuration minutes.',
-            system: true,
-            args: {'@user': removedUserNickname, '@chatDuration': chatDuration}
-          });
-          room.group.remote('roomUserLeft', room.id, removedUserNickname, chatDuration);
+        //Update typing message if user left.
+        var writers = _.where(room.users, {'writes': true});
+        writers = _.map(writers, function (keys, value) {
+          return keys.name;
+        });
+        self.sendWritesMessage(writers, room.group);
+      }
 
-          //Update typing message if user left.
-          var writers = _.where(room.users, {'writes': true});
-          writers = _.map(writers, function (keys, value) {
-            return keys.name;
-          });
-          self.sendWritesMessage(writers, room.group);
-        }
+      // If the last admin user navigates away from a room, the room should be shut down
+      if (isAdmin && !soloClientsAllowed && !room.counselorPresent) {
+        self.logger.warning('Last admin user left, shutting down room.');
+        self.deleteRoom(room, lastRoom, removedUser);
+      }
 
-        // Call the callback.
-        if (callback) {
-          callback(users);
+      // Call the callback.
+      if (callback) {
+        callback(null, users);
+      }
+    });
+
+    self.broadcastChatStatus();
+  };
+
+  /**
+   * Utility function to delete a room.
+   *
+   * @param room
+   *   Room object.
+   *
+   * @param lastRoom
+   *   lastRoom boolean.
+   *
+   * @param counselor
+   *   The counselor initiating the deletion of the room
+   */
+  self.deleteRoom = function (room, lastRoom, counselor, queue, finalMessage) {
+    queue = opeka.queues.list[room.queueSystem];
+    // Since deleting the room also flushes the queue, we need to give
+    // message in case of the room being last before the room is deleted.
+    if (room.queueSystem !== 'private') {
+      // Check to see if this was the last room for a queue that was deleted.
+      // If so, flush the queue and give notification to the users.
+      _.forEach(opeka.rooms.list, function (loopRoom) {
+        if (room.queueSystem === loopRoom.queueSystem && room.id !== loopRoom.id) {
+          lastRoom = false;
         }
       });
+      // Last room, flush the queue which will trigger notification.
+      if (lastRoom) {
+        queue = opeka.queues.list[room.queueSystem];
+        if (queue) {
+          queue.flushQueue(self.everyone.members);
+        }
+      }
     }
+    self.logger.info('Room ' + room.name + ' (' + room.id + ') deleted.');
+    // Set the activeRoomId for the counselor to null
+    if (counselor) {
+      counselor.activeRoomId = null;
+    }
+    opeka.rooms.remove(room.id);
+    if (finalMessage === undefined) {
+      finalMessage = "Beklager, rådgiveren mistede forbindelsen. Du er velkommen til at logge på igen.";
+    }
+    self.everyone.remote('roomDeleted', room.id, finalMessage);
+
+    self.updateUserStatus(self.everyone);
 
     self.broadcastChatStatus();
   };

@@ -50,3 +50,15 @@ body.page-admin {
   }
 }
 
+body.page-admin-config-services-opeka-screening {
+  #fieldset-opeka-screening-options {
+    .form-item {
+      max-width: 300px;
+      margin-bottom: .5em;
+    }
+  }
+  .btn.btn-info {
+    margin-bottom: 1em;
+  }
+}
+

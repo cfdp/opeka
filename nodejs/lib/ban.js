@@ -3,7 +3,8 @@
 
 var crypto = require("crypto"),
     drupal = require("drupal"),
-    util = require("util");
+    logger = require('./loginit');
+
 
 // In-memory cache of current bans.
 var bans = {};
@@ -33,7 +34,7 @@ module.exports.create = function (ip, salt) {
 
   // Add the ban to the database for persistance.
   drupal.db.query('INSERT INTO opeka_bans (ip_hash) VALUES (?)', [digest], function (err, result) {
-    util.log('Info: User banned by admin.');
+    logger.info('Info: User banned by admin.');
   });
 };
 

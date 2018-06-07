@@ -6,7 +6,7 @@
 
 var _ = require('underscore'),
     uuid = require('node-uuid'),
-    util = require("util"),
+    logger = require('./loginit'),
     opeka = {
       user: require("./user"),
     },
@@ -29,7 +29,7 @@ var Queue = function (options) {
     // Add our new queue to the queue list.
     queueList[self.id] = self;
 
-    util.log('Queue created: ' + self.name);
+    logger.info('Queue created: ' + self.name);
 
     return self;
   };
@@ -46,7 +46,7 @@ var Queue = function (options) {
 
   // Add a user to the queue.
   self.addToQueue = function (user) {
-    util.log('User added to queue ');
+    logger.info('User added to queue ');
     var position;
     _.forEach(self.queue, function (queueUser, index) {
       if (queueUser.clientId === user.clientId) {
