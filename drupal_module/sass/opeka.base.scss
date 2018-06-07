@@ -771,6 +771,10 @@ ul.chat-message-list {
       white-space: normal;
       z-index: 1010;
     }
+    
+    .glyphicon-info-sign {
+      pointer-events: none;
+    }
 
     /* Chat room view */
 

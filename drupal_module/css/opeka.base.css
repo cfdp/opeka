@@ -789,6 +789,9 @@ ul.chat-message-list {
   white-space: normal;
   z-index: 1010;
 }
+.opeka-counselor #opeka-app .glyphicon-info-sign {
+  pointer-events: none;
+}
 .opeka-counselor #opeka-app .chat-message-list-wrapper {
   margin-top: 0;
 }

@@ -883,7 +883,6 @@ var Opeka = {
     Opeka.DISCONNECTED = 6;
 
     Opeka.changeState = function(newState) {
-      console.log('newstate is ', newState);
       var oldState = Opeka.state;
       switch(newState) {
         case Opeka.CREATED:

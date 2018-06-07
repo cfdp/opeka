@@ -67,7 +67,8 @@
               </div>
               <!-- end dropdown btn-group -->
               <% if (screeningQuestions && user.screening && Drupal.settings.opeka_screening && Drupal.settings.opeka_screening.opeka_screening_options.length) { %>
-                <div class="screening-wrapper btn btn-default dropdown-toggler"><%= labels.screeningInfo + ": " %>
+                <div class="screening-wrapper btn btn-default dropdown-toggler">
+                  <span class="glyphicon glyphicon-info-sign" aria-hidden="true" title="<%= labels.screeningInfo %>"></span>
                   <dl class="screening-question">
                     <dt class="popover-title"><%= user.screening.question %></dt>
                     <dd class="popover-content"><%= user.screening.answer  %></dd>
