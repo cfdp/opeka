@@ -367,16 +367,13 @@ ul.chat-message-list {
   height: 60px;
   resize: none;
   max-width: 640px;
+  padding-right: 70px;
   width: 100%;
-}
-@media (min-width: 480px) {
-  .message-form .form-text {
-    width: 320px;
-  }
 }
 @media (min-width: 586px) {
   .message-form .form-text {
-    width: 400px;
+    width: 450px;
+    padding-right: 4px;
   }
 }
 @media (min-width: 1200px) {
@@ -385,8 +382,19 @@ ul.chat-message-list {
   }
 }
 .message-form .form-submit.send {
-  margin-left: 5px;
-  padding: 5px 10px;
+  /* Place submit button in text field on small devices */
+  position: absolute;
+  right: 5px;
+  top: 6px;
+  padding: 14px 12px;
+  margin: 0;
+}
+@media (min-width: 586px) {
+  .message-form .form-submit.send {
+    position: relative;
+    right: auto;
+    bottom: auto;
+  }
 }
 
 .paused-nowriting {
@@ -394,14 +402,6 @@ ul.chat-message-list {
   border: 1px solid #7e7e7e;
   border-radius: 4px;
   padding: 10px;
-}
-
-.chat-flow-controls {
-  vertical-align: top;
-}
-.chat-flow-controls label {
-  font-size: 13px;
-  font-weight: normal;
 }
 
 /* FIXED TAB - CHAT WIDGET */
@@ -579,7 +579,17 @@ ul.chat-message-list {
   vertical-align: top;
 }
 #opeka-app .chat-flow-controls {
-  display: inline-block;
+  display: none;
+}
+@media (min-width: 586px) {
+  #opeka-app .chat-flow-controls {
+    display: inline-block;
+    vertical-align: top;
+  }
+  #opeka-app .chat-flow-controls label {
+    font-size: 13px;
+    font-weight: normal;
+  }
 }
 #opeka-app .writers-message {
   background-color: #F8F8F8;
