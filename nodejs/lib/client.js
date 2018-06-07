@@ -364,6 +364,16 @@ var Client = function (server, stream, remote, conn) {
       });
     }
   };
+  
+  /**
+   * Forces a client reload, typically used to avoid stale data on 
+   * client side when clients reconnect after a server restart. 
+   */
+  self.forceReload = function() {
+    self.remote('forceReload');
+    // @todo: do more to ensure the connection is closed?
+    // Ending the stream causes the client to reconnect, so thats a nogo.
+  };
 
   self.remote = function (functionName) {
     // Copy arguments to writeable array

@@ -758,6 +758,12 @@ var Opeka = {
       Opeka.router.navigate("rooms", {trigger: true});
     }
   };
+  
+  Opeka.clientSideMethods.forceReload = function () {
+    console.log('forceReload called...');
+    Opeka.changeState(Opeka.DISCONNECTED);
+    Opeka.router.navigate("rooms", {trigger: true});
+  };
 
   /**
    * Make sure user is properly removed from room
@@ -877,6 +883,7 @@ var Opeka = {
     Opeka.DISCONNECTED = 6;
 
     Opeka.changeState = function(newState) {
+      console.log('newstate is ', newState);
       var oldState = Opeka.state;
       switch(newState) {
         case Opeka.CREATED:
@@ -901,7 +908,7 @@ var Opeka = {
           break;
         case Opeka.DISCONNECTED:
           Opeka.state = newState;
-          Opeka.onDisconnect();
+          Opeka.onDisconnect();          
           break;
         default:
           break;
@@ -1069,6 +1076,7 @@ var Opeka = {
     // any attempts to reconnect have failed. Can also be triggered by a
     // client-side or server-side teardown.
     Opeka.onDisconnect = function () {
+
       // If the user is banned, tell him to go away.
       if (Opeka.clientData.isBanned) {
         view = new Opeka.BannedDialogView().render();

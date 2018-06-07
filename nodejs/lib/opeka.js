@@ -302,7 +302,7 @@ function Server(config, logger) {
       // Expose the drupal client drupal uid if they provided one and we're configured to do so
       if (self.config.get('features:exposeDrupalUIDs') && account.uid) {
         if (!clientUser.want_to_be_anonymous) {
-          client.drupal_uid = account.uid
+          client.drupal_uid = account.uid;
         }
       }
 
@@ -405,12 +405,17 @@ function Server(config, logger) {
           clientUser.clientId
         );
       } else {
-        console.log('Reconnect from unknown user', clientUser.clientId);
+        console.log('Reconnect from unknown user, forcing client reload', clientUser.clientId);
+        // This typically happens when the chat server process has restarted.
+        // In this case we need to force the user to log in again, to avoid
+        // stale data on client side.
+        newClient.forceReload();
         return;
       }
       delete(clientUser.clientId);
     } else {
-      console.log('reconnect: user had no clientId');
+      console.log('reconnect: user had no clientId, forcing client reload.');
+      newClient.forceReload();
       return;
     }
 
@@ -807,7 +812,7 @@ function Server(config, logger) {
     var room = opeka.rooms.list[roomId],
       roomGroup = opeka.groups.getGroup(roomId),
       userData = room.users[clientId],
-      councelor = this,
+      counselor = this,
       mutedClient = roomGroup.getClient(clientId);
 
     // Mute the user.
@@ -820,7 +825,7 @@ function Server(config, logger) {
     opeka.user.sendUserList(room.counselorGroup, room.id, room.users);
 
     // Tell the user that he was muted.
-    roomGroup.remote('roomUserMuted', roomId, clientId, userData, councelor.nickname);
+    roomGroup.remote('roomUserMuted', roomId, clientId, userData, counselor.nickname);
   });
 
   /* Function used in order to unmute a single user */
@@ -1135,7 +1140,7 @@ function Server(config, logger) {
   self.everyone.addServerMethod('sendMessageToRoom', function (roomId, messageText) {
     var room = opeka.rooms.list[roomId],
       client = this;
-
+      
     // Verify whether the user is a councellor, so we can set a
     // flag on the message.
     self.councellors.hasClient(client.clientId, function (isCouncellor) {
