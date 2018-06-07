@@ -1140,7 +1140,12 @@ function Server(config, logger) {
   self.everyone.addServerMethod('sendMessageToRoom', function (roomId, messageText) {
     var room = opeka.rooms.list[roomId],
       client = this;
-      
+
+    // Make sure there is a room to send the message to
+    if (!room) {
+      return;
+    }
+
     // Verify whether the user is a councellor, so we can set a
     // flag on the message.
     self.councellors.hasClient(client.clientId, function (isCouncellor) {
@@ -1152,7 +1157,7 @@ function Server(config, logger) {
           clientId: client.clientId,
           colorId: client.colorId,
           isCouncellor: isCouncellor,
-          name: client.nickname,
+          name: client.nickname
         }
       };
 
