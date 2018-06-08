@@ -84,6 +84,9 @@ module.exports.authenticate = function (clientUser, clientId, accessCodeEnabled,
           account.allowPauseAutoScroll = allowPauseAutoScroll;
           drupal.user.access('access chat history', account, function (err, viewChatHistory) {
             account.viewChatHistory = viewChatHistory;
+            // User is now authenticated, remove from auth list
+            index = currentlyAuthenticating.indexOf(clientId);
+            currentlyAuthenticating.splice(index, 1);
             callback(null, account);
           });
         });
