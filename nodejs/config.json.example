@@ -21,7 +21,8 @@
     "exposeDrupalUIDs": false,
     "requireDrupalLogin": false,
     "chatHistory": true,
-    "screeningQuestions": false
+    "screeningQuestions": false,
+    "soloClientsAllowed": false
   },
   "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
   "server": {
@@ -33,5 +34,9 @@
     },
     "user": "www-data",
     "group": "www-data"
+  },
+  "drupalconfig": {
+    "opeka_reconnect_attempts": 10,
+    "opeka_reconnect_interval": 20000
   }
 }

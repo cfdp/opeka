@@ -2,7 +2,9 @@ var drupal = require("drupal"),
     nconf = require("nconf"),
     winston = require("winston"),
     opeka = require("./lib/opeka"),
-    util = require("util");
+    util = require("util"),
+    logger = require("./lib/loginit"),
+    drupalconfig = require("./lib/drupalconfig");
 
 // Use any command-line or environment settings.
 nconf.argv().env();
@@ -42,27 +44,12 @@ nconf.defaults({
       "enabled": false,
     },
     "port": 3000
+  },
+  "drupalconfig": {
+    "opeka_reconnect_attempts": 10,
+    "opeka_reconnect_interval": 20000
   }
 });
-
-// Configure logging to use the console and a log file, but with timestamps (off by default).
-var logger = new (winston.Logger)({
-  transports: [
-    new (winston.transports.Console)({
-      colorize: true,
-      level: nconf.get("logging:level"),
-      timestamp: true
-    }),
-    new (winston.transports.File)({
-      filename: nconf.get("logging:file"),
-      colorize: true,
-      level: nconf.get("logging:level"),
-      timestamp: true
-    }),
-  ]
-});
-
-logger.setLevels(winston.config.syslog.levels);
 
 // Set up the database connection as our first order of business.
 logger.info('Connecting to database...');

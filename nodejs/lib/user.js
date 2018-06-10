@@ -4,20 +4,30 @@
 "use strict";
 
 var _ = require("underscore"),
-util = require("util"),
-drupal = require("drupal");
+logger = require('./loginit'),
+drupal = require("drupal"),
+currentlyAuthenticating = []; // Used to prevent client from initiating more than one auth session at a time
 
 // Authenticate a user logging on to the chat server.
-module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCode, callback) {
-  // If the client claims he's logged in, validate that assertion.
-  util.log("User authenticating, Drupal sid: " + clientUser.sid);
-  util.log("User authenticating, Drupal uid: " + clientUser.uid);
+module.exports.authenticate = function (clientUser, clientId, accessCodeEnabled, accessCode, callback) {
+  var index;
 
+  // If the client claims he's logged in, validate that assertion.
+  logger.info("User authenticating, Drupal sid: " + clientUser.sid);
+  logger.info("User authenticating, Drupal uid: " + clientUser.uid);
+
+  if (_.contains(currentlyAuthenticating, clientId)) {
+    logger.info("Error: user initiated authentication again before authentication process has finished.");
+    return;
+  }
+  currentlyAuthenticating.push(clientId);
+
+  // If the client claims he's logged in, validate that assertion.
   if (clientUser.sid && clientUser.uid) {
     // Validate the user's session.
     drupal.user.session_load(clientUser.sid, function (err, session) {
       if (err) {
-        util.log("Error: Could not load user session.");
+        logger.warning("Error: Could not load user session.");
         callback(err);
         return;
       }
@@ -29,7 +39,7 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
       // Load the user object from Drupal.
       drupal.user.load(session.uid, function (err, account) {
         if (err) {
-          util.log("Error: Could not load user object.");
+          logger.warning("Error: Could not load user object.");
           callback(err);
           return;
         }
@@ -43,6 +53,9 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
                 account.hideTypingMessage = hideTypingMessage;
                 drupal.user.access('access chat history', account, function (err, viewChatHistory) {
                   account.viewChatHistory = viewChatHistory;
+                  // User is now authenticated, remove from auth list
+                  index = currentlyAuthenticating.indexOf(clientId);
+                  currentlyAuthenticating.splice(index, 1);
                   callback(null, account);
                 });
               });
@@ -59,7 +72,7 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
     account.isAdmin = false;
     // If the accessCode functionality is activated, make sure the right access code is given
     if (accessCodeEnabled && clientUser.accessCode !== accessCode) {
-      util.log("Error: Wrong or no access code given on signIn form.");
+      logger.warning("Error: Wrong or no access code given on signIn form.");
       callback(true);
       throw 'Wrong or no access code given on signIn form';
     }
@@ -71,6 +84,9 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
           account.allowPauseAutoScroll = allowPauseAutoScroll;
           drupal.user.access('access chat history', account, function (err, viewChatHistory) {
             account.viewChatHistory = viewChatHistory;
+            // User is now authenticated, remove from auth list
+            index = currentlyAuthenticating.indexOf(clientId);
+            currentlyAuthenticating.splice(index, 1);
             callback(null, account);
           });
         });
@@ -86,8 +102,8 @@ module.exports.authenticate = function (clientUser, accessCodeEnabled, accessCod
 module.exports.filterData = function (client) {
   return {
     age: client.age,
-    chatStart_Min: client.chatStart_Min,
-    chatEnd_Min: client.chatEnd_Min,
+    chatStartMin: client.chatStartMin,
+    chatEndMin: client.chatEndMin,
     clientId: client.clientId,
     colorId: client.colorId,
     gender: client.gender,
@@ -98,7 +114,8 @@ module.exports.filterData = function (client) {
     allowPauseAutoScroll: client.allowPauseAutoScroll,
     viewChatHistory: client.viewChatHistory,
     name: client.nickname || client.account.name,
-    drupal_uid: client.drupal_uid
+    drupal_uid: client.drupal_uid,
+    online: client.online
   };
 };
 
