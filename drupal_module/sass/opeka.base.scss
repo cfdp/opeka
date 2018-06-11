@@ -566,7 +566,7 @@ ul.chat-message-list {
     font-size: .8em;
     font-weight: normal;
     position: fixed;
-    bottom: 103px;
+    bottom: 78px;
 
     @include desktop {
       bottom: inherit;
@@ -892,7 +892,7 @@ body.opeka-client {
     ul.chat-message-list {
       position: fixed;
       top: 45px;
-      bottom: 110px;
+      bottom: 70px;
       width: 90%;
 
       @include narrow {
