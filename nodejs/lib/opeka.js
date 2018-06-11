@@ -1375,6 +1375,15 @@ function Server(config, logger) {
       }
     }
 
+    if (room.removeUser !== "function") {
+      self.logger.warning("Error removing user from room, room.removeUser not a function: ");
+      console.dir(room);
+      if (callback) {
+        callback("Could not remove user from room.");
+      } 
+      return; 
+    }
+
     // Calculate the duration of the chat session of the user being removed
     if (typeof chatStartMin === 'number') {
       ChatEndMin = Math.round((new Date()).getTime() / 60000);
@@ -1384,11 +1393,6 @@ function Server(config, logger) {
         opeka.statistics.saveChatDuration(stats_id, chatDuration);
       }
     }
-
-    if (!room) { 
-      callback("Could not remove user from room - room undefined."); 
-      return; 
-    };
 
     if (checkPause && (autoPause === true) && (room.maxSize === 2) && !room.paused) {
       room.paused = true;

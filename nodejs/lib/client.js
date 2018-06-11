@@ -324,7 +324,8 @@ var Client = function (server, stream, remote, conn) {
     // If state was changed, make sure other clients are notified
     if (old_online_state != self.online) {
       var removeFromRooms = (self.online === "disconnected"),
-          reconnected = (self.online === "online");
+          reconnected = (self.online === "online"),
+          clientData;
 
       _.find(rooms.list, function(room) {
         if (_.contains(_.keys(room.users), self.clientId)) {
@@ -341,9 +342,13 @@ var Client = function (server, stream, remote, conn) {
           }
           // If user was disconnected, just remove them.
           if (removeFromRooms) {
-            self.server.removeUserFromRoom(
-              room, self.clientId, room.id,
-              currentClient.chatStartMin,
+            clientData = {
+              'clientId': self.clientId,
+              'activeRoomId': room.id,
+              'chatStartMin': currentClient.chatStartMin,
+              'stats_id': currentClient.stats_id
+            };
+            self.server.removeUserFromRoom(room, clientData,
               function (err, users) {
                 if (err) return console.warn(err);
                 user.sendUserList(room.group, room.id, users);

@@ -602,7 +602,7 @@ ul.chat-message-list {
   font-size: .8em;
   font-weight: normal;
   position: fixed;
-  bottom: 103px;
+  bottom: 78px;
 }
 @media (min-width: 1200px) and (min-height: 800px) {
   #opeka-app .writers-message {
@@ -915,7 +915,7 @@ body.opeka-client #opeka-app .opeka-chat-sidebar {
 body.opeka-client #opeka-app ul.chat-message-list {
   position: fixed;
   top: 45px;
-  bottom: 110px;
+  bottom: 70px;
   width: 90%;
 }
 @media (min-width: 768px) and (min-height: 500px) {
