@@ -1378,7 +1378,9 @@ function Server(config, logger) {
     if (room.removeUser !== "function") {
       self.logger.warning("Error removing user from room, room.removeUser not a function: ");
       console.dir(room);
-      callback("Could not remove user from room."); 
+      if (callback) {
+        callback("Could not remove user from room.");
+      } 
       return; 
     }
 
