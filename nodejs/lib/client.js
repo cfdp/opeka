@@ -348,9 +348,9 @@ var Client = function (server, stream, remote, conn) {
               'chatStartMin': currentClient.chatStartMin,
               'stats_id': currentClient.stats_id
             };
-            self.server.removeUserFromRoom(room, clientData,
+            self.server.removeUserFromRoom(room.id, clientData,
               function (err, users) {
-                if (err) return console.warn(err);
+                if (err) return server.logger.error(err);
                 user.sendUserList(room.group, room.id, users);
                 self.server.updateUserStatus(self.everyone);
               }
