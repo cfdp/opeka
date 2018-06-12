@@ -18,7 +18,6 @@ var _ = require("underscore"),
   shoe = require('shoe'),
   io = require('socket.io'),
   ecstatic = require('ecstatic'),
-  util = require("util"),
   uuid = require('node-uuid'),
   validator = require('validator'),
   opeka = {
@@ -406,16 +405,16 @@ function Server(config, logger) {
           clientUser.clientId
         );
       } else {
-        console.log('Reconnect from unknown user, forcing client reload', clientUser.clientId);
         // This typically happens when the chat server process has restarted.
         // In this case we need to force the user to log in again, to avoid
         // stale data on client side.
+        self.logger.debug('reconnect: user unknown to server, forcing client reload.', clientUser.clientId);
         newClient.forceReload();
         return;
       }
       delete(clientUser.clientId);
     } else {
-      console.log('reconnect: user had no clientId, forcing client reload.');
+      self.logger.debug('reconnect: user had no clientId, forcing client reload.');
       newClient.forceReload();
       return;
     }
@@ -797,7 +796,7 @@ function Server(config, logger) {
       roomGroup.remote('roomUserKicked', roomId, clientId, messageText, client.nickname);
     }
     // Remove the user.
-    self.removeUserFromRoom(room, clientData, function (err, users) {
+    self.removeUserFromRoom(room.id, clientData, function (err, users) {
       if (err) return self.logger.error(err);
       opeka.user.sendUserList(room.group, room.id, users);
     });
@@ -1130,7 +1129,7 @@ function Server(config, logger) {
 
 
         // Remove the user.
-        self.removeUserFromRoom(room, clientData, function (err, users) {
+        self.removeUserFromRoom(room.id, clientData, function (err, users) {
           if (err) return self.logger.error(err);
           opeka.user.sendUserList(room.group, room.id, users);
           self.updateUserStatus(self.everyone);
@@ -1193,7 +1192,7 @@ function Server(config, logger) {
       room = opeka.rooms.list[user.activeRoomId];
       if (room && (user.clientId === clientId)) {
         self.logger.debug('Cleaned up after chat - user.activeRoomId ' + user.activeRoomId + ' clientId ' + user.clientId);
-        self.removeUserFromRoom(room, clientData, function (err, users) {
+        self.removeUserFromRoom(room.id, clientData, function (err, users) {
           if (err) return self.logger.error(err);
           opeka.user.sendUserList(room.group, room.id, users);
           // Update the server status
@@ -1279,7 +1278,7 @@ function Server(config, logger) {
         }
 
         // Try to remove user from room.
-        self.removeUserFromRoom(room, clientData, function (err, users) {
+        self.removeUserFromRoom(room.id, clientData, function (err, users) {
           if (err) return self.logger.error(err);
           if (users) {
             opeka.user.sendUserList(room.group, room.id, users);
@@ -1337,13 +1336,13 @@ function Server(config, logger) {
   /**
    * Utility function to remove a user from a room.
    *
-   * @param room
-   *   Room object.
+   * @param roomId
+   *   Room id of the room the user is removed from.
    *
    * @param clientLeaveRoomData
    *   Client object containing info needed when user leaves a room.
    */
-  self.removeUserFromRoom = function (room, clientLeaveRoomData, callback) {
+  self.removeUserFromRoom = function (roomId, clientLeaveRoomData, callback) {
     var autoPause = self.config.get('features:automaticPausePairRooms'),
       soloClientsAllowed = self.config.get('features:soloClientsAllowed'),
       clientId = clientLeaveRoomData.clientId,
@@ -1355,7 +1354,9 @@ function Server(config, logger) {
       ChatEndMin,
       chatDuration = null,
       checkPause = false,
-      lastRoom = true;
+      lastRoom = true,
+      room = opeka.rooms.list[roomId],
+      errorMsg;
 
     self.logger.debug("removeUserFromRoom:", isAdmin ? "admin" : "regular user", "clientId:", clientId);
     // Set room on pause.
@@ -1364,22 +1365,26 @@ function Server(config, logger) {
       checkPause = true;
     }
     else {
-      // In this case we don't have a valid reference to a signed in client (happens when
-      // client closes / refreshes the browser window)
+      // In this case we don't have a valid reference to a signed in client.
       if (typeof room !== 'undefined') {
         checkPause = (activeRoomId === room.id);
       }
       else {
         checkPause = false;
-        self.logger.warning('RemoveUserFromRoom: room undefined.');
+        errorMsg = 'Error removing user from room, room  and removedUser undefined.';
+        self.logger.error(errorMsg);
+        if (callback) {
+          callback(errorMsg);
+        } 
+        return;
       }
     }
 
-    if (room.removeUser !== "function") {
-      self.logger.warning("Error removing user from room, room.removeUser not a function: ");
-      console.dir(room);
+    if (typeof room.removeUser !== "function") {
+      errorMsg = "Could not remove user from room. room.removeUser is not a function.";
+      self.logger.error(errorMsg);
       if (callback) {
-        callback("Could not remove user from room.");
+        callback(errorMsg);
       } 
       return; 
     }
