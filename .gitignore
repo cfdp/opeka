@@ -25,3 +25,5 @@
 VERSION
 node_modules
 npm-debug.log
+/NodeJsWebApplication/nbproject/private/
+/nbproject/
