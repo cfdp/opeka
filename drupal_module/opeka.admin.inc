@@ -125,7 +125,16 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#required' => FALSE,
     '#default_value' => variable_get('opeka_signin_footnote', ''),
   );
-
+  
+  $form['opeka_sign_in_settings']['opeka_gender_show_nonbinary'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Show the non-binary gender option on the signin form.'),
+    '#description' => t('Show the non-binary gender option for regular users'
+      . 'when logging in.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_gender_show_nonbinary', 1),
+  ];
+ 
   $form['opeka_widget'] = array(
     '#type' => 'fieldset',
     '#title' => t('Opeka widget settings'),

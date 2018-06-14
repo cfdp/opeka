@@ -646,6 +646,10 @@ ul.chat-message-list {
     }
     li.user-list-item {
       padding-left: 0;
+      .btn {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
     }
     li .name {
       padding-left: 5px;
@@ -755,6 +759,7 @@ ul.chat-message-list {
 
     .screening-wrapper {
       display: inline-block;
+      padding: 6px 8px;
       position: relative;
     }
     .screening-question {

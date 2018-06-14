@@ -684,6 +684,10 @@ ul.chat-message-list {
 #opeka-app ul.user-list li.user-list-item {
   padding-left: 0;
 }
+#opeka-app ul.user-list li.user-list-item .btn {
+  font-size: 12px;
+  padding: 6px 10px;
+}
 #opeka-app ul.user-list li .name {
   padding-left: 5px;
 }
@@ -769,6 +773,7 @@ ul.chat-message-list {
 }
 .opeka-counselor #opeka-app .screening-wrapper {
   display: inline-block;
+  padding: 6px 8px;
   position: relative;
 }
 .opeka-counselor #opeka-app .screening-question {
