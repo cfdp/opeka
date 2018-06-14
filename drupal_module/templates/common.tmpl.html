@@ -164,7 +164,9 @@
             <option value="" selected="selected"></option>
             <option value="m"><%= labels.male %></option>
             <option value="f"><%= labels.female %></option>
-            <option value="n"><%= labels.nonbinary %></option>
+            <% if (genderShowBinary) { %> 
+              <option value="n"><%= labels.nonbinary %></option>
+            <% } %>
           </select>
         </div>
       </div>
