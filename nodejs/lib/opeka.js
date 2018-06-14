@@ -30,7 +30,7 @@ var _ = require("underscore"),
     statistics: require('./statistics'),
     user: require('./user'),
     Client: require('./client'),
-    chatOpen: false,
+    chatOpen: false
   },
   drupal_config_keys = [
     "opeka_reconnect_attempts",
@@ -1435,7 +1435,7 @@ function Server(config, logger) {
       }
 
       // If the last admin user navigates away from a room, the room should be shut down
-      if (isAdmin && !soloClientsAllowed && !room.counselorPresent) {
+      if (isAdmin && !soloClientsAllowed && !room.hasCounselor()) {
         self.logger.warning('Last admin user left, shutting down room.');
         self.deleteRoom(room, lastRoom, removedUser);
       }
