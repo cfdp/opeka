@@ -1976,6 +1976,7 @@
           accessCodeEnabled: Opeka.status.attributes.accessCodeEnabled,
           screeningQuestions: Opeka.status.attributes.screeningQuestions,
           signInFootNote: Drupal.settings.opeka.signin_footnote,
+          genderShowBinary: (Drupal.settings.opeka.gender_show_binary === "1"),
           labels: {
             action: Drupal.t('Ready for chat'),
             age: Drupal.t('Age'),

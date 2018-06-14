@@ -206,8 +206,6 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $age_max = check_plain(variable_get('opeka_age_max', 23));
   $clients_writing_message = check_plain(variable_get('opeka_clients_writing_message', 0));
 
-
-
   // Settings to expose to the JavaScript client.
   $settings['path'] = base_path() . drupal_get_path('module', 'opeka');
   $settings['welcome_message'] = $welcome_message;
@@ -238,6 +236,7 @@ function opeka_add_assets($stylesheets = array(), $scripts = array(), $settings 
   $settings['reconnect'] = variable_get('opeka_reconnect', TRUE) ? 1 : 0;
   $settings['reconnect_attempts'] = variable_get('opeka_reconnect_attempts', 3);
   $settings['reconnect_interval'] = variable_get('opeka_reconnect_interval', 20000);
+  $settings['gender_show_binary'] = check_plain(variable_get('opeka_gender_show_nonbinary', 1));
 
     // Add js files and settings
   drupal_add_js(array('opeka' => $settings), 'setting');
