@@ -193,7 +193,8 @@ function Server(config, logger) {
               memberCount: room.memberCount,
               name: room.name,
               id: room.id,
-              groupId: room.groupId
+              groupId: room.groupId,
+              paused: room.paused
             };
             roomList.push(roomData);
           }
