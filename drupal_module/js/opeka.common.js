@@ -38,7 +38,8 @@ var Opeka = {
     'number_of_reconnects_tried': 0,
     'reconnect_interval': 5000,
     'connection_timeout': 6000,
-    'reconnect_connections': []
+    'reconnect_connections': [],
+    'character_count': 100
   },
   // Initialise window.JST if it does not exist.
   JST = JST || {},
@@ -870,6 +871,19 @@ var Opeka = {
     Opeka.doorBellSound.play();
   };
 
+  // Enforce front-end number of characters limit on message
+Opeka.limitChars = function () {
+  $('textarea').on("input", function(){
+    var maxlength = $(this).attr("maxlength");
+    var currentLength = $(this).val().length;
+
+    if( currentLength >= maxlength ){
+        console.log("You have reached the maximum number of characters.");
+    }else {
+        console.log(maxlength - currentLength + " chars left");
+    }
+  });
+}
   // Basic setup for the app when the DOM is loaded.
   $(function () {
     var view;
