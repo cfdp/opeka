@@ -338,6 +338,7 @@
 
       if (message !== '') {
         Opeka.remote.sendMessageToRoom(this.model.id, message);
+        $('#characters-remaining').hide();
         sender = {'room': this.model.id, 'status': false};
         Opeka.remote.writingMessage(sender, function (err) {
         });
@@ -365,6 +366,7 @@
 
           if (message !== '') {
             this.$el.find('.message-form').submit();
+            $('#characters-remaining').hide();
           }
         }
       }

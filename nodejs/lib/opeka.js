@@ -229,6 +229,7 @@ function Server(config, logger) {
         results.accessCodeEnabled = self.config.get('features:accessCodeEnabled');
         results.screeningQuestions = self.config.get('features:screeningQuestions');
         results.chatOpen = opeka.chatOpen;
+        results.maxMessageLength = self.config.get('maxMessageLength');
 
         context.remote('updateStatus', results);
       }
@@ -1139,11 +1140,19 @@ function Server(config, logger) {
 
   self.everyone.addServerMethod('sendMessageToRoom', function (roomId, messageText) {
     var room = opeka.rooms.list[roomId],
-      client = this;
+      client = this,
+      maxMessageLength = self.config.get('maxMessageLength');
 
     // Make sure there is a room to send the message to
     if (!room) {
       return;
+    }
+
+    // Verify that the message length is within the allowed limit
+    if (!validator.isLength(messageText, 0, maxMessageLength)) {
+      self.logger.warning('Possible hack attempt: client: ',this.clientId,'tried sending', 
+      messageText.length, 'characters. Message truncated.' );
+      messageText = messageText.substring(0,maxMessageLength);
     }
 
     // Verify whether the user is a councellor, so we can set a
