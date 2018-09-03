@@ -229,6 +229,7 @@ function Server(config, logger) {
         results.accessCodeEnabled = self.config.get('features:accessCodeEnabled');
         results.screeningQuestions = self.config.get('features:screeningQuestions');
         results.chatOpen = opeka.chatOpen;
+        results.maxMessageLength = self.config.get('maxMessageLength');
 
         context.remote('updateStatus', results);
       }
@@ -1126,8 +1127,6 @@ function Server(config, logger) {
         if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
           self.pauseRoom(room);
         }
-
-
         // Remove the user.
         self.removeUserFromRoom(room.id, clientData, function (err, users) {
           if (err) return self.logger.error(err);
@@ -1141,11 +1140,19 @@ function Server(config, logger) {
 
   self.everyone.addServerMethod('sendMessageToRoom', function (roomId, messageText) {
     var room = opeka.rooms.list[roomId],
-      client = this;
+      client = this,
+      maxMessageLength = self.config.get('maxMessageLength');
 
     // Make sure there is a room to send the message to
     if (!room) {
       return;
+    }
+
+    // Verify that the message length is within the allowed limit
+    if (!validator.isLength(messageText, 0, maxMessageLength)) {
+      self.logger.warning('Possible hack attempt: client: ',this.clientId,'tried sending', 
+      messageText.length, 'characters. Message truncated.' );
+      messageText = messageText.substring(0,maxMessageLength);
     }
 
     // Verify whether the user is a councellor, so we can set a
@@ -1327,7 +1334,7 @@ function Server(config, logger) {
     room.paused = true;
     self.everyone.remote('roomUpdated', room.id, {paused: true});
     self.sendSystemMessage('[Pause]: Chatten er blevet sat på pause.', room.group, room);
-
+    self.logger.debug('pauseRoom called (opeka.js).');
     // Update the room counts and chat status for all users
     opeka.rooms.updateRoomCounts();
     self.updateUserStatus(self.everyone);
@@ -1400,9 +1407,7 @@ function Server(config, logger) {
     }
 
     if (checkPause && (autoPause === true) && (room.maxSize === 2) && !room.paused) {
-      room.paused = true;
-      self.everyone.remote('roomUpdated', room.id, {paused: true});
-      self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
+      self.pauseRoom(room);
     }
 
     room.removeUser(clientId, function (err, users, queueClientId, removedUserNickname) {

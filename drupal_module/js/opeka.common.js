@@ -38,7 +38,8 @@ var Opeka = {
     'number_of_reconnects_tried': 0,
     'reconnect_interval': 5000,
     'connection_timeout': 6000,
-    'reconnect_connections': []
+    'reconnect_connections': [],
+    'character_count': 100
   },
   // Initialise window.JST if it does not exist.
   JST = JST || {},
@@ -221,6 +222,7 @@ var Opeka = {
           }
           if (queueId === 'private' || response === 'OK') {
             Opeka.appViewInstance.replaceContent(Opeka.chatView.render().el);
+            Opeka.limitCharacters();
           }
           else {
             that.navigate('queues/' + queueId, {trigger: true});
@@ -870,6 +872,29 @@ var Opeka = {
     Opeka.doorBellSound.play();
   };
 
+  // Enforce front-end limit on the number of characters in message
+Opeka.limitCharacters = function () {
+
+  $('#message-text-area').on("input", function(){
+    var maxlength = Opeka.status.maxMessageLength || $(this).attr("maxlength"),
+        currentLength = $(this).val().length,
+        charsLeft;
+
+    if ( currentLength >= maxlength ){
+      $('#characters-remaining').show()
+      .text(Drupal.t('Out of characters!'))
+    } else {
+      charsLeft = maxlength - currentLength;
+      if (charsLeft < 30) {
+        $('#characters-remaining').show()
+        .text(Drupal.t('@charsLeft characters left.' , {'@charsLeft': charsLeft}));
+      }
+      else {
+        $('#characters-remaining').hide();
+      }
+    }
+  });
+}
   // Basic setup for the app when the DOM is loaded.
   $(function () {
     var view;
@@ -1093,7 +1118,8 @@ var Opeka = {
         $(window).unbind('beforeunload.opeka');
         $(Opeka).trigger("disconnected");
         view = new Opeka.FatalErrorDialogView({
-          message: Drupal.t('Your connection to the chat server was lost. Please reconnect. Contact support if problem persists.'),
+          message: Drupal.t(`Your connection to the chat server was lost. 
+          Please reconnect. Contact support if problem persists.`),
           title: Drupal.t('Disconnected')
         }).render();
       }, 5000);
@@ -1104,7 +1130,8 @@ var Opeka = {
       if (!Opeka.serverJSLoaded) {
         $(window).unbind('beforeunload.opeka');
         view = new Opeka.FatalErrorDialogView({
-          message: Drupal.t('Your connection to the chat server was lost. Please reconnect. Contact support if problem persists.'),
+          message: Drupal.t(`Your connection to the chat server was lost. 
+          Please reconnect. Contact support if problem persists.`),
           title: Drupal.t('Disconnected')
         }).render();
       }

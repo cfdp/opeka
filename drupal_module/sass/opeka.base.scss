@@ -545,7 +545,13 @@ ul.chat-message-list {
   .form-submit.send {
     vertical-align: top;
   }
-
+  #characters-remaining {
+    color: $ccGray;
+    position: absolute;
+    right: 0;
+    top: -20px;
+    font-size: $font-smallest;
+  }
   .chat-flow-controls {
     display: none;
     @include tablet-width {

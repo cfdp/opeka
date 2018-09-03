@@ -338,6 +338,7 @@
 
       if (message !== '') {
         Opeka.remote.sendMessageToRoom(this.model.id, message);
+        $('#characters-remaining').hide();
         sender = {'room': this.model.id, 'status': false};
         Opeka.remote.writingMessage(sender, function (err) {
         });
@@ -365,6 +366,7 @@
 
           if (message !== '') {
             this.$el.find('.message-form').submit();
+            $('#characters-remaining').hide();
           }
         }
       }
@@ -859,10 +861,13 @@
       options.title = options.title || Drupal.t('Reconnecting');
 
       // Provide a default message.
-      var disconnectLimit = Math.round((Drupal.settings.opeka.reconnect_interval * Drupal.settings.opeka.reconnect_attempts) / 60000);
-      options.message = options.message
-        || Drupal.t('Your connection to the chat server was lost. Please wait, we are trying to reconnect. If no connection is made within @count minutes, try to log in again.',
-           {'@count': disconnectLimit});
+      var disconnectLimit = Math.round((Drupal.settings.opeka.reconnect_interval * 
+        Drupal.settings.opeka.reconnect_attempts) / 60000) || 1;
+
+        options.message = options.message
+        || Drupal.t(`Your connection to the chat server was lost. Please wait, we are trying to reconnect. 
+        If no connection is made within @count minutes, try to log in again.`,
+        {'@count': disconnectLimit});
 
       options.content = this.make('p', {'class': "message"}, options.message);
 

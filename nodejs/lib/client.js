@@ -138,7 +138,7 @@ var Client = function (server, stream, remote, conn) {
       ip = stream.remoteAddress;
     }
 
-    server.logger.info("Connection ready for user with IP ", ip);
+    server.logger.info("Connection ready for user with IP ", ip, " and clientId ", self.clientId);
 
     var currentTime = (new Date()).getTime();
     self.connectionData.lastPingSuccess = currentTime;
@@ -335,6 +335,7 @@ var Client = function (server, stream, remote, conn) {
           if (!room.hasCounselor()) {
             self.server.sendSystemMessage('Rådgiveren har mistet forbindelsen, vent mens vi genopretter den.', room.group, room);
             self.server.pauseRoom(room);
+            server.logger.debug('Counselor lost connection. Pausing room.');
           }
           // If a user reconnects, make sure she gets the updated room status.
           if (reconnected && room.paused) {
