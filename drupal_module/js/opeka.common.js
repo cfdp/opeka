@@ -874,8 +874,9 @@ var Opeka = {
 
   // Enforce front-end limit on the number of characters in message
 Opeka.limitCharacters = function () {
+
   $('#message-text-area').on("input", function(){
-    var maxlength = $(this).attr("maxlength"),
+    var maxlength = Opeka.status.maxMessageLength || $(this).attr("maxlength"),
         currentLength = $(this).val().length,
         charsLeft;
 
