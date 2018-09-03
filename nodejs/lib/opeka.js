@@ -1126,8 +1126,6 @@ function Server(config, logger) {
         if (autoPause === true && room.maxSize === 2 && room.paused !== true) {
           self.pauseRoom(room);
         }
-
-
         // Remove the user.
         self.removeUserFromRoom(room.id, clientData, function (err, users) {
           if (err) return self.logger.error(err);
@@ -1327,7 +1325,7 @@ function Server(config, logger) {
     room.paused = true;
     self.everyone.remote('roomUpdated', room.id, {paused: true});
     self.sendSystemMessage('[Pause]: Chatten er blevet sat på pause.', room.group, room);
-
+    self.logger.debug('pauseRoom called (opeka.js).');
     // Update the room counts and chat status for all users
     opeka.rooms.updateRoomCounts();
     self.updateUserStatus(self.everyone);
@@ -1400,9 +1398,7 @@ function Server(config, logger) {
     }
 
     if (checkPause && (autoPause === true) && (room.maxSize === 2) && !room.paused) {
-      room.paused = true;
-      self.everyone.remote('roomUpdated', room.id, {paused: true});
-      self.sendSystemMessage('[Pause]: Chat has been paused.', room.group, room);
+      self.pauseRoom(room);
     }
 
     room.removeUser(clientId, function (err, users, queueClientId, removedUserNickname) {

@@ -578,6 +578,13 @@ ul.chat-message-list {
 #opeka-app .form-submit.send {
   vertical-align: top;
 }
+#opeka-app #characters-remaining {
+  color: #BFBFBF;
+  position: absolute;
+  right: 0;
+  top: -20px;
+  font-size: 10px;
+}
 #opeka-app .chat-flow-controls {
   display: none;
 }

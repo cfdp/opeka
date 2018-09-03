@@ -410,9 +410,9 @@
 <script id="opeka_chat_form_tmpl" type="application/template">
   <% if (!room.get('paused') && !activeUser.muted && inQueue === false) { %>
   <form action="#" class="message-form">
-    <!--<input autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" size="50" type="text" />-->
+    <div id="characters-remaining"></div>
     <div class="form-text-container">
-      <textarea autofocus="autofocus" class="form-text message" placeholder="<%= labels.placeholder %>" ></textarea>
+      <textarea autofocus="autofocus" id="message-text-area" class="form-text message" placeholder="<%= labels.placeholder %>" maxlength="100"></textarea>
     </div>
     <input class="form-submit send btn btn-success" type="submit" value="<%= labels.messageButton %>" />
     <div class="chat-flow-controls">
