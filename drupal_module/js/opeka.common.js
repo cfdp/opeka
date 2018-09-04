@@ -217,12 +217,13 @@ var Opeka = {
               return;
             }
             else if (queueId === 'private') {
-              Opeka.chatView.inQueue = response;
+              // Opeka.chatView.inQueue = response; @todo: disabling the queue for now - not working
+              Opeka.router.navigate("rooms", {trigger: true});
             }
           }
           if (queueId === 'private' || response === 'OK') {
             Opeka.appViewInstance.replaceContent(Opeka.chatView.render().el);
-            Opeka.limitCharacters();
+
           }
           else {
             that.navigate('queues/' + queueId, {trigger: true});
@@ -722,15 +723,12 @@ var Opeka = {
   // The server pings client to determine connection status and latency
   Opeka.clientSideMethods.ping = function (serverTime, cb) {
     Opeka.lastPingReceivedServerTime = serverTime;
-    // console.log('PING received, serverTime is ' + serverTime);
     Opeka.lastPingReceivedClientTime = (new Date()).getTime();
-    // console.log('PING received, clientTime is ' + Opeka.lastPingReceivedClientTime);
     cb(null, Opeka.lastPingReceivedClientTime);
   };
 
    // If the client was offline too long, inform him and force a reload
   Opeka.clientSideMethods.reconnectTimeout = function () {
-    console.log('reconnectTimeout called...');
     clearInterval(Opeka.checkOnlineTimerId);
 
     if (Opeka.shownFatalErrorDialog) {
@@ -795,7 +793,6 @@ var Opeka = {
           clientData.roomId = matches[1];
         }
         Opeka.signIn(clientData, function () {
-          console.log('User re-signin.');
           $(window).bind('beforeunload.opeka', function () {
             return Drupal.t('Do you really want to leave this page?');
           });
@@ -872,29 +869,6 @@ var Opeka = {
     Opeka.doorBellSound.play();
   };
 
-  // Enforce front-end limit on the number of characters in message
-Opeka.limitCharacters = function () {
-
-  $('#message-text-area').on("input", function(){
-    var maxlength = Opeka.status.maxMessageLength || $(this).attr("maxlength"),
-        currentLength = $(this).val().length,
-        charsLeft;
-
-    if ( currentLength >= maxlength ){
-      $('#characters-remaining').show()
-      .text(Drupal.t('Out of characters!'))
-    } else {
-      charsLeft = maxlength - currentLength;
-      if (charsLeft < 30) {
-        $('#characters-remaining').show()
-        .text(Drupal.t('@charsLeft characters left.' , {'@charsLeft': charsLeft}));
-      }
-      else {
-        $('#characters-remaining').hide();
-      }
-    }
-  });
-}
   // Basic setup for the app when the DOM is loaded.
   $(function () {
     var view;
@@ -1000,7 +974,6 @@ Opeka.limitCharacters = function () {
       var delay = currentTime - Opeka.lastPingReceivedClientTime;
 
       if (delay > Opeka.connection_timeout) {
-        console.log('Connection timed out after ', delay);
         Opeka.changeState(Opeka.TRYING_RECONNECT);
       }
     };
@@ -1045,7 +1018,6 @@ Opeka.limitCharacters = function () {
           return;
         }
         conn.push(Opeka.connect());
-        console.log("Retry connections", conn);
         Opeka.lastReconnectTime = currentTime;
       }
 
@@ -1074,7 +1046,6 @@ Opeka.limitCharacters = function () {
         // Tell the server to reconnect us with the previous client. If this
         // succeeds the server will call the clientSideMethod "reconnectDone".
         Opeka.remote.reconnect(userdataWithClientId, function() {
-          console.log("Server reconnected us!");
           Opeka.remote.getFeatures(function (features) {
             Opeka.features = features;
             // TODO: Show a message to the user about the connection being
@@ -1118,8 +1089,7 @@ Opeka.limitCharacters = function () {
         $(window).unbind('beforeunload.opeka');
         $(Opeka).trigger("disconnected");
         view = new Opeka.FatalErrorDialogView({
-          message: Drupal.t(`Your connection to the chat server was lost. 
-          Please reconnect. Contact support if problem persists.`),
+          message: Drupal.t('Your connection to the chat server was lost. Please reconnect. Contact support if problem persists.'),
           title: Drupal.t('Disconnected')
         }).render();
       }, 5000);
@@ -1130,8 +1100,7 @@ Opeka.limitCharacters = function () {
       if (!Opeka.serverJSLoaded) {
         $(window).unbind('beforeunload.opeka');
         view = new Opeka.FatalErrorDialogView({
-          message: Drupal.t(`Your connection to the chat server was lost. 
-          Please reconnect. Contact support if problem persists.`),
+          message: Drupal.t('Your connection to the chat server was lost. Please reconnect. Contact support if problem persists.'),
           title: Drupal.t('Disconnected')
         }).render();
       }
@@ -1147,9 +1116,7 @@ Opeka.limitCharacters = function () {
 
   // Set up connect handler.
   Opeka.onStreamConnected = function (remote, dnode_instance) {
-    console.log("Stream connected for ", dnode_instance.connection_id);
     if(dnode_instance._reconnect_handled) {
-      console.log("Skipping handled dnode instance", dnode_instance.connection_id);
       return;
     }
     // Register new remote method proxy.
@@ -1161,7 +1128,6 @@ Opeka.limitCharacters = function () {
       // Try to close any other pending connection attemps. They need to be
       // closed while still in TRYING_RECONNECT as they otherwise would
       // cause the client to go back into TRYING_RECONNECT mode.
-      console.log('Reconnect connection established!');
 
       // Destroy original dnode connection unless it is the one that
       // reconnected.
@@ -1173,7 +1139,6 @@ Opeka.limitCharacters = function () {
       // Destroy any dnode connections except for the one that reconnected.
       var attempts = Opeka.reconnect_connections;
       _.each(attempts, function(attempt) {
-        console.log("Cleaning up old connection: ", attempt.connection_id, dnode_instance.connection_id);
         if(attempt.connection_id !== dnode_instance.connection_id) {
           attempt._reconnect_handled = true;
           attempt.destroy();
@@ -1181,7 +1146,6 @@ Opeka.limitCharacters = function () {
       });
       Opeka.reconnect_connections = [];
     } else {
-      console.log('Initial connection established!');
     }
     Opeka.dnode_instance = dnode_instance;
     Opeka.changeState(Opeka.CONNECTED);
