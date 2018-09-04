@@ -51,6 +51,7 @@
       "click .delete-message": "deleteMessage",
       "submit .message-form": "sendMessage",
       "keyup .form-text": "sendMessageonEnter",
+      "input .form-text": "limitCharacters",
       "click .return-sends-msg": "toggleReturnSendsMessage",
       "click .dont-auto-scroll": "toggleDontAutoScroll",
       "submit .leave-queue-form": "leaveQueue",
@@ -338,7 +339,7 @@
 
       if (message !== '') {
         Opeka.remote.sendMessageToRoom(this.model.id, message);
-        $('#characters-remaining').hide();
+        this.hideCharactersRemaining();
         sender = {'room': this.model.id, 'status': false};
         Opeka.remote.writingMessage(sender, function (err) {
         });
@@ -351,9 +352,9 @@
 
     // Enable sending messages when pressing the ENTER (return) key
     sendMessageonEnter: function (event) {
-      var message = this.$el.find('textarea.message').val();
-      var code = (event.keyCode || event.which);
-      var returnSendsMessage = this.returnSendsMessage;
+      var message = this.$el.find('textarea.message').val(),
+      code = (event.keyCode || event.which),
+      returnSendsMessage = this.returnSendsMessage;
 
       // Listen for the key code
       if (code == 13) {
@@ -366,7 +367,7 @@
 
           if (message !== '') {
             this.$el.find('.message-form').submit();
-            $('#characters-remaining').hide();
+            this.hideCharactersRemaining();
           }
         }
       }
@@ -388,6 +389,36 @@
         });
       }
       ;
+    },
+
+    // Enforce front-end limit on the number of characters in message
+    limitCharacters: function (event) {
+      var maxMessagelength = Opeka.status.maxMessageLength || $(event.currentTarget).attr("maxlength"),
+          currentLength = $(event.currentTarget).val().length,
+          charsLeft,
+          limitText;
+
+      if ( currentLength >= maxMessagelength ){
+        limitText = Drupal.t('Out of characters!');
+        this.showCharactersRemaining(limitText);
+      } else {
+        charsLeft = maxMessagelength - currentLength;
+        if (charsLeft < 30) {
+          limitText = Drupal.t('@charsLeft characters left.' , {'@charsLeft': charsLeft});
+          this.showCharactersRemaining(limitText);
+        }
+        else {
+          this.hideCharactersRemaining();
+        }
+      }
+    },
+
+    hideCharactersRemaining: function() {
+      $('#characters-remaining').hide();
+    },
+
+    showCharactersRemaining: function(limitText) {
+      $('#characters-remaining').show().text(limitText);
     },
 
     toggleReturnSendsMessage: function (event) {
@@ -865,8 +896,7 @@
         Drupal.settings.opeka.reconnect_attempts) / 60000) || 1;
 
         options.message = options.message
-        || Drupal.t(`Your connection to the chat server was lost. Please wait, we are trying to reconnect. 
-        If no connection is made within @count minutes, try to log in again.`,
+        || Drupal.t('Your connection to the chat server was lost. Please wait, we are trying to reconnect. If no connection is made within @count minutes, try to log in again.',
         {'@count': disconnectLimit});
 
       options.content = this.make('p', {'class': "message"}, options.message);
