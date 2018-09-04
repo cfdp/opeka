@@ -2,6 +2,7 @@
  * Created by jubk on 5/21/15.
  */
 var _ = require('underscore'),
+  useragent = require('useragent'),
   groups = require('./groups'),
   uuid = require('node-uuid'),
   ban = require('./ban'),
@@ -81,6 +82,10 @@ var Client = function (server, stream, remote, conn) {
       lastPingSent: 0,
       lastPingSuccess: null,
       pingDelay: null,
+      pingDelayAvg: null,
+      pingDelayArray: [],
+      pingCount: 0,
+      agent: null
     };
     // Load configured reconnect values from Drupal's configuration, making
     // sure to update the server as well.
@@ -130,15 +135,20 @@ var Client = function (server, stream, remote, conn) {
     var stream = self.stream,
       server = self.server,
       ip = null,
-      banInfo = null;
+      banInfo = null,
+      agent = null;
+
+      self.connectionData.agent = agent = useragent.parse(stream.headers['user-agent']);
 
     if (stream.headers['x-real-ip']) {
       ip = stream.headers['x-real-ip'];
     } else {
       ip = stream.remoteAddress;
     }
-
-    server.logger.info("Connection ready for user with IP ", ip);
+    var agent = useragent.parse(stream.headers['user-agent']);
+    server.logger.info(
+      "Connection ready for user with IP ", ip, "UA: ", agent.toString() ,"and clientId ", self.clientId
+    );
 
     var currentTime = (new Date()).getTime();
     self.connectionData.lastPingSuccess = currentTime;
@@ -197,7 +207,8 @@ var Client = function (server, stream, remote, conn) {
           self.server.handleConnectionClosed(self);
         }
         else {
-          server.logger.debug('could not close connection for clientId = ' + self.clientId + ' - self.server undefined.');
+          server.logger.debug('could not close connection for clientId = ' + self.clientId
+          + ' - self.server undefined.');
           return;
         }
         self.breakRelations();
@@ -230,12 +241,6 @@ var Client = function (server, stream, remote, conn) {
     newClient.breakRelations();
     newClient.changeState(DISCONNECTED);
     newClient = null;
-//    for (var id in rooms.list) {
-//      rooms.list[id].replaceUser(self.clientId, newClient);
-//    }
-    //groups.unregisterClient(self);
-
-    //self.breakRelations();
   };
 
   // Break relations to objects that might be troublesome to garbage collect
@@ -255,10 +260,26 @@ var Client = function (server, stream, remote, conn) {
 
     self.remote('ping', pingSent, function(err, clientTime) {
       var pingDelay = (new Date()).getTime() - pingSent;
+
       // Ignore any PONG that arrives after PINGs older than the last
       // successful one.
       if(pingSent >= self.connectionData.lastPingSuccess) {
+        self.connectionData.pingCount++;
         self.connectionData.pingDelay = pingDelay;
+        // Calculate the average ping delay of the latest 5 succesful pings
+        if (self.connectionData.pingDelayArray.push(pingDelay) > 5) {
+          self.connectionData.pingDelayArray.splice(0,1);
+          self.connectionData.pingDelayAvg = self.connectionData.pingDelayArray.reduce(
+            function(acc, val) {
+              return acc + val; 
+            }, 0
+          ) / 5;
+          if ((self.connectionData.pingCount % 5) === 0) {
+            server.logger.debug(
+              ' Avg. ping delay of', self.clientId,
+              'is', self.connectionData.pingDelayAvg, "UA:", self.connectionData.agent.toString());
+          }
+        }
         self.connectionData.lastPingSuccess = pingSent;
       }
     });
@@ -278,8 +299,8 @@ var Client = function (server, stream, remote, conn) {
 
     if (sincePingSuccess > client_timeout) {
       server.logger.debug(
-        'sincePingSuccess = ' + sincePingSuccess + ' > client_timeout = ' + client_timeout + ': Time to put user ' +
-        self.clientId + ' into pending timeout'
+        'sincePingSuccess = ' + sincePingSuccess + ' > client_timeout = ' + client_timeout
+        + ': Time to put user ' + self.clientId + ' into pending timeout'
       );
       self.changeState(PENDING_TIMEOUT);
     }
@@ -333,8 +354,10 @@ var Client = function (server, stream, remote, conn) {
           currentClient.online = self.online;
           // Check if the room still has an online counselor, if not, pause it.
           if (!room.hasCounselor()) {
-            self.server.sendSystemMessage('Rådgiveren har mistet forbindelsen, vent mens vi genopretter den.', room.group, room);
+            self.server.sendSystemMessage('Rådgiveren har mistet forbindelsen, vent mens vi genopretter den.',
+            room.group, room);
             self.server.pauseRoom(room);
+            server.logger.debug('Counselor lost connection. Pausing room.');
           }
           // If a user reconnects, make sure she gets the updated room status.
           if (reconnected && room.paused) {

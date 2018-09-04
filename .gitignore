@@ -17,6 +17,7 @@
 /drupal_module/bin/
 /logs
 .brackets.json
+.vscode/
 /db-template
 /*.komodoproject
 /.idea

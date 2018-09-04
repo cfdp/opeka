@@ -31,14 +31,14 @@
     "shoe": "git+https://git@github.com/benjamin-dk/shoe.git",
     "socket.io": "^1.7.2",
     "underscore": "^1.8.3",
+    "useragent": "^2.3.0",
     "validator": "^7.0.0",
     "winston": "^2.3.0"
   },
   "devDependencies": {
-    "browserify": "^16.2.2",
+    "browserify": "*",
     "expect.js": "^0.3.1",
-    "forever": "0.10.x",
-    "browserify": "*"
+    "forever": "0.10.x"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
