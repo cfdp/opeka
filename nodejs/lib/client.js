@@ -85,7 +85,7 @@ var Client = function (server, stream, remote, conn) {
       pingDelayAvg: null,
       pingDelayArray: [],
       pingCount: 0,
-      agent: null
+      agent: "not-set"
     };
     // Load configured reconnect values from Drupal's configuration, making
     // sure to update the server as well.
