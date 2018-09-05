@@ -412,7 +412,7 @@
   <form action="#" class="message-form">
     <div id="characters-remaining"></div>
     <div class="form-text-container">
-      <textarea autofocus="autofocus" id="message-text-area" class="form-text message" placeholder="<%= labels.placeholder %>" maxlength="100"></textarea>
+      <textarea autofocus="autofocus" id="message-text-area" class="form-text message" placeholder="<%= labels.placeholder %>" maxlength="<%= maxMessageLength %>"></textarea>
     </div>
     <input class="form-submit send btn btn-success" type="submit" value="<%= labels.messageButton %>" />
     <div class="chat-flow-controls">

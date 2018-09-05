@@ -145,7 +145,6 @@ var Client = function (server, stream, remote, conn) {
     } else {
       ip = stream.remoteAddress;
     }
-    var agent = useragent.parse(stream.headers['user-agent']);
     server.logger.info(
       "Connection ready for user with IP ", ip, "UA: ", agent.toString() ,"and clientId ", self.clientId
     );
@@ -266,23 +265,28 @@ var Client = function (server, stream, remote, conn) {
       if(pingSent >= self.connectionData.lastPingSuccess) {
         self.connectionData.pingCount++;
         self.connectionData.pingDelay = pingDelay;
-        // Calculate the average ping delay of the latest 5 succesful pings
-        if (self.connectionData.pingDelayArray.push(pingDelay) > 5) {
-          self.connectionData.pingDelayArray.splice(0,1);
-          self.connectionData.pingDelayAvg = self.connectionData.pingDelayArray.reduce(
-            function(acc, val) {
-              return acc + val; 
-            }, 0
-          ) / 5;
-          if ((self.connectionData.pingCount % 5) === 0) {
-            server.logger.debug(
-              ' Avg. ping delay of', self.clientId,
-              'is', self.connectionData.pingDelayAvg, "UA:", self.connectionData.agent.toString());
-          }
-        }
         self.connectionData.lastPingSuccess = pingSent;
+        self.averagePingDelay(pingDelay);
       }
     });
+  };
+
+  // Calculate average delay of the last 5 succesful pings
+  self.averagePingDelay = function (pingDelay) {
+    if (self.connectionData.pingDelayArray.push(pingDelay) > 5) {
+      self.connectionData.pingDelayArray.splice(0,1);
+      self.connectionData.pingDelayAvg = self.connectionData.pingDelayArray.reduce(
+        function(acc, val) {
+          return acc + val; 
+        }, 0
+      ) / 5;
+      if ((self.connectionData.pingCount % 5) === 0) {
+        server.logger.debug(
+          ' Avg. ping delay of', self.clientId,
+          'is', self.connectionData.pingDelayAvg, "UA:", self.connectionData.agent.toString()
+        );
+      }
+    }
   };
 
   // Checks if the client connection has been idle for too long. Will also
@@ -314,7 +318,8 @@ var Client = function (server, stream, remote, conn) {
     if (sincePingSuccess > disconnect_limit) {
       server.logger.debug(
         "Client disconnected: sincePingSuccess (" + sincePingSuccess + " ms) > disconnect_limit for " +
-        self.clientId
+        self.clientId + " avg. pingDelay = " + self.connectionData.averagePingDelay + 
+        " UA: " + self.connectionData.agent.toString()
       );
       self.changeState(DISCONNECTED);
     }
