@@ -201,6 +201,8 @@ ul.chat-message-list {
     padding: 8px;
     background: $messageBgColor;
     border-radius: $borderRadius;
+    word-break: break-all;
+    overflow-wrap: break-word;
   }
   h4 {
     margin-top: 0;
@@ -537,7 +539,6 @@ ul.chat-message-list {
   }
   .message {
     white-space: pre-wrap;
-    word-break: break-all;
   }
   .chat-message-list-wrapper {
     position: relative;
