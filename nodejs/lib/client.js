@@ -316,9 +316,9 @@ var Client = function (server, stream, remote, conn) {
     }
     var sincePingSuccess = self.now - self.connectionData.lastPingSuccess;
     if (sincePingSuccess > disconnect_limit) {
-      server.logger.debug(
+      server.logger.info(
         "Client disconnected: sincePingSuccess (" + sincePingSuccess + " ms) > disconnect_limit for " +
-        self.clientId + " avg. pingDelay = " + self.connectionData.averagePingDelay + 
+        self.clientId + " avg. pingDelay = " + self.connectionData.pingDelayAvg + 
         " UA: " + self.connectionData.agent.toString()
       );
       self.changeState(DISCONNECTED);
