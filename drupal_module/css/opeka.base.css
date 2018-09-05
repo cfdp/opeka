@@ -224,6 +224,8 @@ ul.chat-message-list {
   padding: 8px;
   background: whitesmoke;
   border-radius: 5px;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 .bs-callout h4 {
   margin-top: 0;
@@ -570,7 +572,6 @@ ul.chat-message-list {
 }
 #opeka-app .message {
   white-space: pre-wrap;
-  word-break: break-all;
 }
 #opeka-app .chat-message-list-wrapper {
   position: relative;
