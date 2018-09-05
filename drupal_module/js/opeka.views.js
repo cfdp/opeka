@@ -71,6 +71,8 @@
       this.writersMessage = '';
       this.dontAutoScroll = -1; // Variable tied to user defined behaviour of input text area
       this.scrolling = false;
+      this.maxMessageLength = (this.admin || this.model.get('maxSize') === 2)
+      ? Opeka.status.attributes.maxMessageLength : Opeka.status.attributes.maxMessageLengthGroup;
       this.model.on('change', this.render, this);
       return this;
     },
@@ -193,7 +195,8 @@
           returnSendsMessage: this.returnSendsMessage,
           returnWritersMessage: true,
           hideTypingMessage: Opeka.clientData.hideTypingMessage,
-          dontAutoScroll: this.dontAutoScroll
+          dontAutoScroll: this.dontAutoScroll,
+          maxMessageLength: this.maxMessageLength
         }));
       }
       // Render the writersMessage if the conditions are met
@@ -393,16 +396,15 @@
 
     // Enforce front-end limit on the number of characters in message
     limitCharacters: function (event) {
-      var maxMessagelength = Opeka.status.maxMessageLength || $(event.currentTarget).attr("maxlength"),
-          currentLength = $(event.currentTarget).val().length,
+      var currentLength = $(event.currentTarget).val().length,
           charsLeft,
           limitText;
 
-      if ( currentLength >= maxMessagelength ){
+      if ( currentLength >= this.maxMessageLength ){
         limitText = Drupal.t('Out of characters!');
         this.showCharactersRemaining(limitText);
       } else {
-        charsLeft = maxMessagelength - currentLength;
+        charsLeft = this.maxMessageLength - currentLength;
         if (charsLeft < 30) {
           limitText = Drupal.t('@charsLeft characters left.' , {'@charsLeft': charsLeft});
           this.showCharactersRemaining(limitText);

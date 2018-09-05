@@ -570,6 +570,7 @@ ul.chat-message-list {
 }
 #opeka-app .message {
   white-space: pre-wrap;
+  word-break: break-all;
 }
 #opeka-app .chat-message-list-wrapper {
   position: relative;

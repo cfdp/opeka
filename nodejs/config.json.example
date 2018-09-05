@@ -25,7 +25,8 @@
     "soloClientsAllowed": false
   },
   "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
-  "maxMessageLength": 100,
+  "maxMessageLength": 2000,
+  "maxMessageLengthGroup": 200,
   "server": {
     "port": 3000,
     "https": {
