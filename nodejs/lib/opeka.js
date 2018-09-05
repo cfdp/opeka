@@ -229,7 +229,8 @@ function Server(config, logger) {
         results.accessCodeEnabled = self.config.get('features:accessCodeEnabled');
         results.screeningQuestions = self.config.get('features:screeningQuestions');
         results.chatOpen = opeka.chatOpen;
-        results.maxMessageLength = self.config.get('maxMessageLength');
+        results.maxMessageLength = self.config.get('maxMessageLength')  || 2000;
+        results.maxMessageLengthGroup = self.config.get('maxMessageLengthGroup') || 200;
 
         context.remote('updateStatus', results);
       }
@@ -1141,7 +1142,9 @@ function Server(config, logger) {
   self.everyone.addServerMethod('sendMessageToRoom', function (roomId, messageText) {
     var room = opeka.rooms.list[roomId],
       client = this,
-      maxMessageLength = self.config.get('maxMessageLength');
+      // Admins can write longer messages - and in 1-1 chats it is allowed as well
+      maxMessageLength = (this.account.isAdmin || room.maxSize === 2) ?
+      self.config.get('maxMessageLength') : self.config.get('maxMessageLengthGroup');
 
     // Make sure there is a room to send the message to
     if (!room) {
@@ -1239,14 +1242,13 @@ function Server(config, logger) {
 
     if (client.account !== undefined) {
       if (client.account.isAdmin === true) {
-        self.logger.info('Admin user disconnected.', client.clientId);
         self.logger.info('Admin user disconnected.', clientId);
         if (activeRoomId) {
           self.logger.warning('Disconnected admin user had activeRoomId: ', activeRoomId);
         }
       }
       else {
-        self.logger.info('Regular user disconnected.', clientId, stats_id);
+        self.logger.info('Regular user disconnected.', clientId, 'stats_id',stats_id);
         if (activeRoomId) {
           self.logger.info('Disconnected user had activeRoomId: ', activeRoomId);
         }

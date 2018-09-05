@@ -35,7 +35,8 @@ nconf.defaults({
     "chatHistory": true,
     "screeningQuestions": false
   },
-  "maxMessageLength": 100,
+  "maxMessageLength": 2000,
+  "maxMessageLengthGroup": 200,
   "authentication": {
     "accessCode": ""
   },
