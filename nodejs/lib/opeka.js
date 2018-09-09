@@ -21,7 +21,7 @@ var _ = require("underscore"),
   uuid = require('node-uuid'),
   validator = require('validator'),
   opeka = {
-    ban: require('./ban'),
+    ipcheck: require('./ipcheck'),
     drupalconfig: require('./drupalconfig'),
     groups: require("./groups"),
     queues: require('./queues'),
@@ -729,7 +729,7 @@ function Server(config, logger) {
 
   // Function used by the counselors to ban a user from the chat.
   self.councellors.addServerMethod('banUser', function (clientId, banCode, callback) {
-    if (opeka.ban.validCode(banCode)) {
+    if (opeka.ipcheck.validCode(banCode)) {
       opeka.groups.getClient(clientId, function () {
         var client = this,
           stream = client.stream,
@@ -747,7 +747,7 @@ function Server(config, logger) {
         }
 
         // Register the ban.
-        opeka.ban.create(ip, self.config.get('ban:salt'));
+        opeka.ipcheck.create(ip, self.config.get('ban:salt'));
 
         // Mark banned user's session as banned.
         this.remote('setIsBanned', true);
@@ -759,7 +759,7 @@ function Server(config, logger) {
         }, 500);
 
         // Invalidate the ban code so it can't be used again.
-        opeka.ban.invalidateCode(banCode);
+        opeka.ipcheck.invalidateCode(banCode);
 
         // Let the calling user know we've successfully banned someone.
         callback();
@@ -772,7 +772,7 @@ function Server(config, logger) {
 
   // Function used by admins to get a ban code.
   self.banCodeGenerator.addServerMethod('getBanCode', function (callback) {
-    callback(opeka.ban.getCode());
+    callback(opeka.ipcheck.getCode());
   });
 
   // Function used by admins to open or close the chat.
@@ -1152,7 +1152,7 @@ function Server(config, logger) {
     }
 
     // Verify that the message length is within the allowed limit
-    if (!validator.isLength(messageText, 0, maxMessageLength)) {
+    if (!validator.isLength(messageText, 0, maxMessageLength+1)) {
       self.logger.warning('Possible hack attempt: client: ',this.clientId,'tried sending', 
       messageText.length, 'characters. Message truncated.' );
       messageText = messageText.substring(0,maxMessageLength);

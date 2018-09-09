@@ -13,8 +13,7 @@ module.exports.authenticate = function (clientUser, clientId, accessCodeEnabled,
   var index;
 
   // If the client claims he's logged in, validate that assertion.
-  logger.info("User authenticating, Drupal sid: " + clientUser.sid);
-  logger.info("User authenticating, Drupal uid: " + clientUser.uid);
+  logger.info("User authenticating, Drupal sid: " + clientUser.sid + " uid: " + clientUser.uid);
 
   if (_.contains(currentlyAuthenticating, clientId)) {
     logger.info("Error: user initiated authentication again before authentication process has finished.");

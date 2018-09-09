@@ -5,7 +5,7 @@ var _ = require('underscore'),
   useragent = require('useragent'),
   groups = require('./groups'),
   uuid = require('node-uuid'),
-  ban = require('./ban'),
+  ipcheck = require('./ipcheck'),
   rooms = require('./rooms'),
   user = require('./user.js'),
 
@@ -135,8 +135,10 @@ var Client = function (server, stream, remote, conn) {
     var stream = self.stream,
       server = self.server,
       ip = null,
-      banInfo = null,
-      agent = null;
+      ipBanInfo = null,
+      agent = null,
+      ipGeoDbKey = server.config.get('features:ipGeoDbKey'),
+      allowedLocations = server.config.get('features:ipGeoLocations');
 
       self.connectionData.agent = agent = useragent.parse(stream.headers['user-agent']);
 
@@ -155,16 +157,31 @@ var Client = function (server, stream, remote, conn) {
 
     self.changeState(CONNECTED);
 
-    banInfo = ban.checkIP(ip, server.config.get('ban:salt'));
+    ipBanInfo = ipcheck.checkIP(ip, server.config.get('ban:salt'));
 
-    if (banInfo.isBanned) {
-      server.logger.warning('User ' + self.clientId + ' tried to connect with banned address ' + banInfo.digest);
+    if (ipBanInfo.isBanned) {
+      server.logger.warning('User ' + self.clientId + ' tried to connect with banned address ' + ipBanInfo.digest);
       self.remote('setIsBanned', true);
 
       // Close the socket after data has been synced.
       setTimeout(function () {
         stream.end();
       }, 500);
+    }
+
+    if (ipGeoDbKey) {
+      ipcheck.checkIPLocation(ip, ipGeoDbKey, allowedLocations, function(err, ipGeoInfo) {
+        if (ipGeoInfo && ipGeoInfo.outsideGeoLimits) {
+          server.logger.warning('User ' + self.clientId +
+          ' tried to connect with address outside geo limits, country:' + ipGeoInfo.location); 
+          self.remote('outsideGeoLimits', true);
+
+          // Close the socket after data has been synced.
+          setTimeout(function () {
+            stream.end();
+          }, 500);
+        }
+      });
     }
 
     server.updateUserStatus(self);
