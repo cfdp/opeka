@@ -883,6 +883,34 @@
     }
   });
 
+
+  // Message dialog lets the user know he's outside geo limits
+  Opeka.OutsideGeoLimitsDialogView = Opeka.DialogView.extend({
+    initialize: function (options) {
+      // Make sure options is an object.
+      options = options || {};
+
+      // Leave the page when the dialog is closed.
+      options.dialogOptions = {
+        close: function () {
+          window.location = '/';
+        }
+      };
+
+      // Provide a default title.
+      options.title = options.title || Drupal.t('You are outside geographical limits.');
+
+      // Provide a default message.
+      options.message = options.message
+        || Drupal.t('The IP address you are currently visiting the site from is not within the geographical zone supported by the system. You will not be able to participate in the chat.');
+
+      options.content = this.make('p', {'class': "message"}, options.message);
+
+      // Call the parent initialize once we're done customising.
+      return Opeka.DialogView.prototype.initialize.call(this, options);
+    }
+  });
+
   // Message dialog lets the user know the connection is lost and we are attempting
   // a reconnect.
   Opeka.ReconnectingDialogView = Opeka.DialogView.extend({

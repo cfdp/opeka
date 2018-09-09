@@ -18,6 +18,7 @@ var Opeka = {
     'clientData': {
       'clientId': null,
       'isBanned': false,
+      'outsideGeoLimits': false,
       'isAdmin': false,
       'isSignedIn': false
     },
@@ -219,6 +220,7 @@ var Opeka = {
             else if (queueId === 'private') {
               // Opeka.chatView.inQueue = response; @todo: disabling the queue for now - not working
               Opeka.router.navigate("rooms", {trigger: true});
+              return;
             }
           }
           if (queueId === 'private' || response === 'OK') {
@@ -453,15 +455,13 @@ var Opeka = {
 
   // For when the server has an updated invites list for us.
   Opeka.clientSideMethods.receiveInviteList = function (invites) {
-    // This triggers a reset even on the queueList instance, so any views
+    // This triggers a reset even on the inviteList instance, so any views
     // that use this list can listen to that for updates.
     Opeka.inviteList.reset(invites);
   };
 
-  // For when the server has an updated invites list for us.
+  //
   Opeka.clientSideMethods.inviteCreated = function (newInvite) {
-    // This triggers a reset even on the queueList instance, so any views
-    // that use this list can listen to that for updates.
     var existing  = _.find(Opeka.inviteList.models, function (invite, delta) {
       return invite.id == newInvite.id;
     });
@@ -471,10 +471,8 @@ var Opeka = {
     }
   };
 
-  // For when the server has an updated invites list for us.
+  // 
   Opeka.clientSideMethods.inviteCancelled = function (inviteId) {
-    // This triggers a reset even on the queueList instance, so any views
-    // that use this list can listen to that for updates.
     _.each(Opeka.inviteList.models, function (invite, delta) {
       if (invite.id == inviteId) {
         Opeka.inviteList.models[delta].set('status', false);
@@ -483,10 +481,8 @@ var Opeka = {
     Opeka.inviteList.trigger('change');
   };
 
-  // For when the server has an updated invites list for us.
+  // 
   Opeka.clientSideMethods.inviteDeleted = function (inviteId) {
-    // This triggers a reset even on the queueList instance, so any views
-    // that use this list can listen to that for updates.
     _.each(Opeka.inviteList.models, function (invite, delta) {
       if (invite.id == inviteId) {
         delete(Opeka.inviteList.models[delta]);
@@ -687,6 +683,12 @@ var Opeka = {
 
   Opeka.clientSideMethods.setIsBanned = function (isBanned) {
     Opeka.clientData.isBanned = isBanned;
+    Opeka.changeState(Opeka.DISCONNECTED);
+  };
+
+  Opeka.clientSideMethods.outsideGeoLimits = function (outsideGeoLimits) {
+    Opeka.clientData.outsideGeoLimits = outsideGeoLimits;
+    Opeka.changeState(Opeka.DISCONNECTED);
   };
 
   // Response to a user when server responds with access denied
@@ -728,13 +730,10 @@ var Opeka = {
 
    // If the client was offline too long, inform him and force a reload
   Opeka.clientSideMethods.reconnectTimeout = function () {
-    clearInterval(Opeka.checkOnlineTimerId);
-
     if (Opeka.shownFatalErrorDialog) {
       return;
     }
     $(window).unbind('beforeunload.opeka');
-    $(Opeka).trigger("disconnected");
     Opeka.cleanAfterChat();
     Opeka.router.navigate("rooms", {trigger: true});
     Opeka.shownFatalErrorDialog = true;
@@ -868,29 +867,11 @@ var Opeka = {
     Opeka.doorBellSound.play();
   };
 
-  // Enforce front-end limit on the number of characters in message
-Opeka.limitCharacters = function () {
-
-  $('#message-text-area').on("input", function(){
-    var maxlength = Opeka.status.maxMessageLength || $(this).attr("maxlength"),
-        currentLength = $(this).val().length,
-        charsLeft;
-
-    if ( currentLength >= maxlength ){
-      $('#characters-remaining').show()
-      .text(Drupal.t('Out of characters!'))
-    } else {
-      charsLeft = maxlength - currentLength;
-      if (charsLeft < 30) {
-        $('#characters-remaining').show()
-        .text(Drupal.t('@charsLeft characters left.' , {'@charsLeft': charsLeft}));
-      }
-      else {
-        $('#characters-remaining').hide();
-      }
-    }
+  // Make sure dialog windows are centered on resize
+  $(window).resize(function() {
+    $(".ui-dialog-content").dialog("option", "position", "center");
   });
-}
+
   // Basic setup for the app when the DOM is loaded.
   $(function () {
     var view;
@@ -1078,9 +1059,13 @@ Opeka.limitCharacters = function () {
 
     // If the connection is dropped, try to reconnect if we have timed out
     // (and are configured to reconnect), else drop connection.
+    // Don't reconnect if we are disconnected from server (ie banned )
     Opeka.onStreamDisconnected = function() {
       if(Opeka.use_reconnect) {
-        if(Opeka.state != Opeka.TRYING_RECONNECT) {
+        if(Opeka.state != Opeka.TRYING_RECONNECT 
+          && !Opeka.clientData.isBanned 
+          && !Opeka.clientData.outsideGeoLimits
+          && !shownFatalErrorDialog) {
           Opeka.changeState(Opeka.TRYING_RECONNECT);
         }
       } else {
@@ -1097,6 +1082,12 @@ Opeka.limitCharacters = function () {
         return;
       }
 
+      // If the user is outside geo limits, tell him to go away.
+      if (Opeka.clientData.outsideGeoLimits) {
+        view = new Opeka.OutsideGeoLimitsDialogView().render();
+        return;
+      }
+
       // Wait five seconds before showing the dialog, in case the
       // disconnect was caused by the user reloading the page.
       window.setTimeout(function () {
@@ -1109,10 +1100,8 @@ Opeka.limitCharacters = function () {
         }
         Opeka.shownFatalErrorDialog = true;
         $(window).unbind('beforeunload.opeka');
-        $(Opeka).trigger("disconnected");
         view = new Opeka.FatalErrorDialogView({
-          message: Drupal.t(`Your connection to the chat server was lost. 
-          Please reconnect. Contact support if problem persists.`),
+          message: Drupal.t("Your connection to the chat server was lost. Please reconnect. Contact support if problem persists."),
           title: Drupal.t('Disconnected')
         }).render();
       }, 5000);
@@ -1123,8 +1112,7 @@ Opeka.limitCharacters = function () {
       if (!Opeka.serverJSLoaded) {
         $(window).unbind('beforeunload.opeka');
         view = new Opeka.FatalErrorDialogView({
-          message: Drupal.t(`Your connection to the chat server was lost. 
-          Please reconnect. Contact support if problem persists.`),
+          message: Drupal.t("Your connection to the chat server was lost. Please reconnect. Contact support if problem persists."),
           title: Drupal.t('Disconnected')
         }).render();
       }

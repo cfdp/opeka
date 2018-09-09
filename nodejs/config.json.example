@@ -22,7 +22,8 @@
     "requireDrupalLogin": false,
     "chatHistory": true,
     "screeningQuestions": false,
-    "soloClientsAllowed": false
+    "soloClientsAllowed": false,
+    "ipGeoDbKey": ""
   },
   "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
   "maxMessageLength": 2000,

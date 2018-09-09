@@ -224,8 +224,12 @@ ul.chat-message-list {
   padding: 8px;
   background: whitesmoke;
   border-radius: 5px;
-  word-break: break-all;
   overflow-wrap: break-word;
+  word-wrap: break-word;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
 }
 .bs-callout h4 {
   margin-top: 0;
@@ -314,7 +318,13 @@ ul.chat-message-list {
 .sender-name,
 .time {
   text-transform: uppercase;
-  font-size: 13px;
+  font-size: 10px;
+}
+@media (min-width: 586px) {
+  .sender-name,
+  .time {
+    font-size: 13px;
+  }
 }
 
 .system-message,
@@ -366,6 +376,7 @@ ul.chat-message-list {
   position: relative;
 }
 .message-form .form-text {
+  font-size: 16px;
   height: 60px;
   resize: none;
   max-width: 640px;

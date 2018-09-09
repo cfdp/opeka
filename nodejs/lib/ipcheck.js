@@ -1,8 +1,9 @@
-// Handles baning of users.
+// Handles banning of users and checks if ip is valid e.g. within a certain .
 "use strict";
 
 var crypto = require("crypto"),
     drupal = require("drupal"),
+    ipstack = require("ipstack"),
     logger = require('./loginit');
 
 
@@ -25,6 +26,18 @@ var getDigest = module.exports.getDigest = function (ip, salt) {
   return shasum.digest('hex');
 };
 
+// Lookup ip geodata in ipstack database
+var getIpGeoData = function (ip, apiKey, callback) {
+  ipstack(ip, apiKey, (err, response) => {
+    if (err) {
+      logger.error("The geo ip database reported an error: ", err);
+      callback(err);
+      return;
+    }
+    callback(null, response.country_code);
+  })
+};
+
 // Create a new ban.
 module.exports.create = function (ip, salt) {
   var digest = getDigest(ip, salt);
@@ -42,10 +55,25 @@ module.exports.create = function (ip, salt) {
 module.exports.checkIP = function (ip, salt) {
   var digest = getDigest(ip, salt);
 
-  return {
-    digest: digest,
-    isBanned: !!bans[digest],
-  };
+    return {
+      digest: digest,
+      isBanned: !!bans[digest],
+    };
+};
+
+// Check if an IP adress is outside geographical limits.
+module.exports.checkIPLocation = function (ip, apiKey, allowedLocations, callback) {
+  var outsideGeoLimits = false;
+
+  getIpGeoData(ip, apiKey, function(err, location) {
+    if (location) {
+      outsideGeoLimits = (allowedLocations.indexOf(location) === -1);
+    }
+    callback(null, {
+      outsideGeoLimits: outsideGeoLimits,
+      location: location
+    })
+  });
 };
 
 // Check if a ban code is valid.
@@ -68,7 +96,7 @@ module.exports.validCode = function (banCode) {
 };
 
 // Load all current bans from the database.
-module.exports.loadAll = function () {
+module.exports.loadAllBans = function () {
   drupal.db.query('SELECT ip_hash FROM opeka_bans WHERE expiry IS NULL OR expiry > UNIX_TIMESTAMP()', [], function (err, result, fields) {
     if (result){
       result.forEach(function (row) {
