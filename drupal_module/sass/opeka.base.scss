@@ -201,8 +201,12 @@ ul.chat-message-list {
     padding: 8px;
     background: $messageBgColor;
     border-radius: $borderRadius;
-    word-break: break-all;
     overflow-wrap: break-word;
+    word-wrap: break-word;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
   }
   h4 {
     margin-top: 0;
@@ -270,7 +274,10 @@ ul.chat-message-list {
 .sender-name,
 .time {
   text-transform: uppercase;
-  font-size: $font-sm;
+  font-size: $font-smallest;
+  @include tablet-width {
+    font-size: $font-sm;
+  }
 }
 
 .system-message,
@@ -320,6 +327,7 @@ ul.chat-message-list {
 .message-form {
   position: relative;
   .form-text {
+    font-size: 16px; // Needed to avoid Safari auto-zooming
     height: 60px;
     resize: none;
     max-width: 640px;
