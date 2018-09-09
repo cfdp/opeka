@@ -23,7 +23,8 @@
     "chatHistory": true,
     "screeningQuestions": false,
     "soloClientsAllowed": false,
-    "ipGeoDbKey": ""
+    "ipGeoDbKey": "",
+    "ipGeoLocations": ["DK"]
   },
   "queues": [{"id": "queue1", "name": "Test queue 1"}, {"id": "queue2", "name": "Test queue 2"}],
   "maxMessageLength": 2000,

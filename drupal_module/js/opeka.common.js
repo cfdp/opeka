@@ -1065,7 +1065,7 @@ var Opeka = {
         if(Opeka.state != Opeka.TRYING_RECONNECT 
           && !Opeka.clientData.isBanned 
           && !Opeka.clientData.outsideGeoLimits
-          && !shownFatalErrorDialog) {
+          && !Opeka.shownFatalErrorDialog) {
           Opeka.changeState(Opeka.TRYING_RECONNECT);
         }
       } else {
