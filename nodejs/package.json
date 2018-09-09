@@ -25,6 +25,7 @@
     "drupal": "git+https://git@github.com/benjamin-dk/node-drupal.git",
     "ecstatic": "^2.1.0",
     "emoticons": "^0.1.8",
+    "ipstack": "^0.1.1",
     "nconf": "^0.8.4",
     "node-uuid": "^1.4.7",
     "php-unserialize": "^0.0.1",

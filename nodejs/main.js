@@ -33,7 +33,9 @@ nconf.defaults({
     "exposeDrupalUIDs": false,
     "requireDrupalLogin": false,
     "chatHistory": true,
-    "screeningQuestions": false
+    "screeningQuestions": false,
+    "ipGeoDbKey": "",
+    "ipGeoLocations": ["DK"]
   },
   "maxMessageLength": 2000,
   "maxMessageLengthGroup": 200,
@@ -62,7 +64,7 @@ if (!client) {
 }
 
 // Load bans from the database before starting the server.
-opeka.ban.loadAll();
+opeka.ipcheck.loadAllBans();
 
 // Load invites from the database before starting the server.
 opeka.invites.loadAll();
