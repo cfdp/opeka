@@ -52,6 +52,7 @@
       "submit .message-form": "sendMessage",
       "keyup .form-text": "sendMessageonEnter",
       "input .form-text": "limitCharacters",
+      "focus .form-text": "scrollToBottom",
       "click .return-sends-msg": "toggleReturnSendsMessage",
       "click .dont-auto-scroll": "toggleDontAutoScroll",
       "submit .leave-queue-form": "leaveQueue",
@@ -206,12 +207,15 @@
       else {
         this.$el.find('.writers-message').remove();
       }
-
-      // Keep the scrollbar at the bottom of the .chat-message-list
-      var message_list = this.$el.find('.chat-message-list');
-      message_list.scrollTop(this.dontAutoScroll >= 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
+      this.scrollToBottom();
 
       return this;
+    },
+
+    // Keep the scrollbar at the bottom of the .chat-message-list
+    scrollToBottom: function() {
+      var message_list = this.$el.find('.chat-message-list');
+      message_list.scrollTop(this.dontAutoScroll >= 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
     },
 
     // For when the delete button next to a message is pressed.

@@ -500,6 +500,9 @@ ul.chat-message-list {
         }
       }
     }
+    .form-control.nickname {
+      font-size: 16px; // To avoid autozoom in Safari
+    }
   }
 
   /* The room list */
