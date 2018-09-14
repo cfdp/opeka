@@ -149,6 +149,9 @@ ul.chat-message-list {
   @media only screen {
     height: 80px;
   }
+  @include micro-height {
+    height: 160px;
+  }
   @include tiny-height {
     height: 300px;
   }

@@ -13,7 +13,7 @@
 /*
 * — Mixins —
 */
-/* Trying to target case when soft keyboard pops up */
+/* Trying to properly target case when soft keyboard pops up */
 /*
 * — General styles —
 */
@@ -165,6 +165,11 @@ ul.chat-message-list {
 @media only screen {
   ul.chat-message-list {
     height: 80px;
+  }
+}
+@media (min-height: 230px) {
+  ul.chat-message-list {
+    height: 160px;
   }
 }
 @media (min-height: 300px) {
