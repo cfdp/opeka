@@ -65,6 +65,7 @@
       _.bindAll(this);
 
       this.admin = options.admin;
+      this.messages = Opeka.clientData.viewChatHistory ? this.translateMessages(this.model.attributes.messages) : [];
       this.inQueue = options.inQueue;
       this.returnSendsMessage = 'checked'; // Variable tied to user defined behaviour of input text area
       this.writersMessage = '';
@@ -74,6 +75,17 @@
       ? Opeka.status.attributes.maxMessageLength : Opeka.status.attributes.maxMessageLengthGroup;
       this.model.on('change', this.render, this);
       return this;
+    },
+
+    translateMessages: function (messages) {
+      if (messages.length) {
+        for (var n in messages) {
+          if (messages[n].args !== undefined) {
+            messages[n].message = Drupal.t('@message', {'@message': messages[n].message}, messages[n].args);
+          }
+        }
+      }
+      return messages;
     },
 
     formatTimestamp: function (date) {
