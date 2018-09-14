@@ -702,6 +702,16 @@ var Opeka = {
   };
 
   // Response to a user not being logged in when required
+  Opeka.clientSideMethods.chatClosedMessage = function (clientId) {
+    var view = new Opeka.FatalErrorDialogView({
+      message: Drupal.t("Sorry, you can't log in. The chat is closed."),
+      title: Drupal.t('Chat closed')
+    });
+
+    view.render();
+  };
+
+  // Response to a user not being logged in when required
   Opeka.clientSideMethods.loginRequiredMessage = function (clientId) {
     var view = new Opeka.FatalErrorDialogView({
       message: Drupal.t("To access the chat you must be logged in to the website. Please log in and try again."),
