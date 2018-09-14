@@ -65,7 +65,6 @@
       _.bindAll(this);
 
       this.admin = options.admin;
-      this.messages = Opeka.clientData.viewChatHistory ? this.translateMessages(this.model.attributes.messages) : [];
       this.inQueue = options.inQueue;
       this.returnSendsMessage = 'checked'; // Variable tied to user defined behaviour of input text area
       this.writersMessage = '';
@@ -77,28 +76,12 @@
       return this;
     },
 
-    translateMessages: function (messages) {
-      if (messages.length) {
-        for (var n in messages) {
-          if (messages[n].args !== undefined) {
-            messages[n].message = Drupal.t(messages[n].message, messages[n].args);
-          }
-        }
-      }
-      return messages;
-    },
-
     formatTimestamp: function (date) {
-
       // Convert to date object if it is not one already.
-
       if (!_.isDate(date)) {
         date = new Date(date);
-
       }
-
       return date.toLocaleTimeString();
-
     },
 
     render: function () {
