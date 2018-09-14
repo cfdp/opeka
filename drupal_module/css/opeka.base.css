@@ -162,6 +162,36 @@ ul.chat-message-list {
   margin: 0 0 10px 0;
   overflow-y: auto;
 }
+@media only screen {
+  ul.chat-message-list {
+    height: 80px;
+  }
+}
+@media (min-height: 300px) {
+  ul.chat-message-list {
+    height: 300px;
+  }
+}
+@media (min-height: 480px) {
+  ul.chat-message-list {
+    height: 400px;
+  }
+}
+@media (min-width: 230px) and (min-height: 560px) {
+  ul.chat-message-list {
+    height: 420px;
+  }
+}
+@media (min-height: 640px) {
+  ul.chat-message-list {
+    height: 495px;
+  }
+}
+@media (min-width: 586px) and (min-height: 1024px) {
+  ul.chat-message-list {
+    height: 630px;
+  }
+}
 
 .chat-message,
 .system-message,
@@ -218,6 +248,12 @@ ul.chat-message-list {
   position: absolute;
   top: 0;
   margin: 10px;
+  max-width: 50px;
+}
+@media (min-width: 586px) {
+  .bs-callout .meta-info {
+    max-width: 150px;
+  }
 }
 .bs-callout .chat-message-content {
   width: 75%;
@@ -824,36 +860,6 @@ ul.chat-message-list {
   border: 1px solid #cccccc;
   border-radius: 5px;
 }
-@media (min-height: 230px) {
-  .opeka-counselor #opeka-app ul.chat-message-list {
-    height: 80px;
-  }
-}
-@media (min-height: 320px) {
-  .opeka-counselor #opeka-app ul.chat-message-list {
-    height: 130px;
-  }
-}
-@media (min-height: 480px) {
-  .opeka-counselor #opeka-app ul.chat-message-list {
-    height: 300px;
-  }
-}
-@media (min-width: 230px) and (min-height: 560px) {
-  .opeka-counselor #opeka-app ul.chat-message-list {
-    height: 370px;
-  }
-}
-@media (min-width: 352px) and (min-height: 640px) {
-  .opeka-counselor #opeka-app ul.chat-message-list {
-    height: 470px;
-  }
-}
-@media (min-width: 586px) and (min-height: 1024px) {
-  .opeka-counselor #opeka-app ul.chat-message-list {
-    height: 630px;
-  }
-}
 .opeka-counselor #opeka-app .writers-message {
   position: absolute;
   bottom: 0px;
@@ -946,6 +952,11 @@ body.opeka-client #opeka-app ul.chat-message-list {
 @media (min-width: 768px) and (min-height: 500px) {
   body.opeka-client #opeka-app ul.chat-message-list {
     width: 80%;
+  }
+}
+@media (min-width: 586px) and (min-height: 1024px) {
+  body.opeka-client #opeka-app ul.chat-message-list {
+    height: 850px;
   }
 }
 @media (min-width: 1200px) {

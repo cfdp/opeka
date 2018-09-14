@@ -714,7 +714,7 @@ var Opeka = {
   // Show error message
   Opeka.clientSideMethods.displayError = function (messageText) {
     var view = new Opeka.FatalErrorDialogView({
-      message: Drupal.t(messageText),
+      message: Drupal.t('@messageText', {'@messageText': messageText}),
       title: Drupal.t('Error')
     });
 
