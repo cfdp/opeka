@@ -701,7 +701,7 @@ var Opeka = {
     view.render();
   };
 
-  // Response to a user not being logged in when required
+  // Response to a non admin user trying to login when chat is closed
   Opeka.clientSideMethods.chatClosedMessage = function (clientId) {
     var view = new Opeka.FatalErrorDialogView({
       message: Drupal.t("Sorry, you can't log in. The chat is closed."),
@@ -740,6 +740,7 @@ var Opeka = {
 
    // If the client was offline too long, inform him and force a reload
   Opeka.clientSideMethods.reconnectTimeout = function () {
+    console.log('we have a reconnectTimeout, Opeka.shownFatalErrorDialog ' + Opeka.shownFatalErrorDialog)
     if (Opeka.shownFatalErrorDialog) {
       return;
     }
@@ -938,8 +939,12 @@ var Opeka = {
         Opeka.initial_connections += 1;
         d.connection_id = "initial_" + Opeka.initial_connections;
         Opeka.changeState(Opeka.CONNECTING);
+        console.log('Opeka.connect - Opeka.CONNECTING , Opeka.initial_connections ' + Opeka.initial_connections)
+
       } else if(Opeka.state == Opeka.TRYING_RECONNECT) {
         d.connection_id = "reconnect_" + Opeka.number_of_reconnects_tried;
+        console.log('Opeka.connect - Opeka.TRYING_RECONNECT, Opeka.number_of_reconnects_tried ' + Opeka.number_of_reconnects_tried)
+
       }
 
       return d;
