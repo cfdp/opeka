@@ -14,12 +14,6 @@
 }
 
 /* Trying to target case when soft keyboard pops up */
-@mixin micro-height {
-  @media (min-height: #{$micro-height}) {
-    @content;
-  }
-}
-
 @mixin tiny-height {
   @media (min-height: #{$tiny-height}) {
     @content;
@@ -39,7 +33,7 @@
 }
 
 @mixin small-height {
-  @media (min-width: #{$small-height}) {
+  @media (min-height: #{$small-height}) {
     @content;
   }
 }
@@ -52,6 +46,12 @@
 
 @mixin small-smart-width {
   @media (min-width: #{$small-smart-width}) {
+    @content;
+  }
+}
+
+@mixin small-smart-height {
+  @media (min-height: #{$small-smart-height}) {
     @content;
   }
 }
