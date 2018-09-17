@@ -291,6 +291,13 @@ function Server(config, logger) {
         return;
       }
 
+      // Make sure that only admins can log in when the chat is closed
+      if (!account.isAdmin && !opeka.chatOpen ) {
+        self.logger.info('Regular user tried to access the chat even though it is closed.');
+        client.remote('chatClosedMessage', client.clientId);
+        return;
+      }
+
       // Check whether the user is required to be logged into Drupal
       if (self.config.get("features:requireDrupalLogin") && !account.uid) {
         self.logger.info('User without Drupal login tried to access the chat.');

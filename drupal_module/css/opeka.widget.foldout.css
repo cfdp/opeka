@@ -16,7 +16,7 @@
 /*
 * — Mixins —
 */
-/* Trying to target case when soft keyboard pops up */
+/* Trying to properly target case when soft keyboard pops up */
 .opeka-chat-foldout-wrapper {
   top: 15%;
   position: fixed;

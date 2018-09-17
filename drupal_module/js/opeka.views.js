@@ -52,6 +52,7 @@
       "submit .message-form": "sendMessage",
       "keyup .form-text": "sendMessageonEnter",
       "input .form-text": "limitCharacters",
+      "focus .form-text": "scrollToBottom",
       "click .return-sends-msg": "toggleReturnSendsMessage",
       "click .dont-auto-scroll": "toggleDontAutoScroll",
       "submit .leave-queue-form": "leaveQueue",
@@ -65,6 +66,7 @@
       _.bindAll(this);
 
       this.admin = options.admin;
+      this.messages = Opeka.clientData.viewChatHistory ? this.translateMessages(this.model.attributes.messages) : [];
       this.inQueue = options.inQueue;
       this.returnSendsMessage = 'checked'; // Variable tied to user defined behaviour of input text area
       this.writersMessage = '';
@@ -74,6 +76,17 @@
       ? Opeka.status.attributes.maxMessageLength : Opeka.status.attributes.maxMessageLengthGroup;
       this.model.on('change', this.render, this);
       return this;
+    },
+
+    translateMessages: function (messages) {
+      if (messages.length) {
+        for (var n in messages) {
+          if (messages[n].args !== undefined) {
+            messages[n].message = Drupal.t('@message', {'@message': messages[n].message}, messages[n].args);
+          }
+        }
+      }
+      return messages;
     },
 
     formatTimestamp: function (date) {
@@ -194,12 +207,15 @@
       else {
         this.$el.find('.writers-message').remove();
       }
-
-      // Keep the scrollbar at the bottom of the .chat-message-list
-      var message_list = this.$el.find('.chat-message-list');
-      message_list.scrollTop(this.dontAutoScroll >= 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
+      this.scrollToBottom();
 
       return this;
+    },
+
+    // Keep the scrollbar at the bottom of the .chat-message-list
+    scrollToBottom: function() {
+      var message_list = this.$el.find('.chat-message-list');
+      message_list.scrollTop(this.dontAutoScroll >= 0 ? this.dontAutoScroll : message_list.prop("scrollHeight"));
     },
 
     // For when the delete button next to a message is pressed.
@@ -2018,8 +2034,8 @@
       if (isAdmin) {
         name = Drupal.t('Counselor');
       }
-      // If the chat is closed, only authenticated Drupal users is presented with the sign in form
-      if (Drupal.settings.opeka.user || chatOpen) {
+      // If the chat is closed, only admin users is presented with the sign in form
+      if (isAdmin || chatOpen) {
         form = JST.opeka_connect_form_tmpl({
           accessCodeEnabled: Opeka.status.attributes.accessCodeEnabled,
           screeningQuestions: Opeka.status.attributes.screeningQuestions,

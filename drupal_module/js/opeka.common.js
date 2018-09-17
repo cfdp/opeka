@@ -701,6 +701,16 @@ var Opeka = {
     view.render();
   };
 
+  // Response to a non admin user trying to login when chat is closed
+  Opeka.clientSideMethods.chatClosedMessage = function (clientId) {
+    var view = new Opeka.FatalErrorDialogView({
+      message: Drupal.t("Sorry, you can't log in. The chat is closed."),
+      title: Drupal.t('Chat closed')
+    });
+
+    view.render();
+  };
+
   // Response to a user not being logged in when required
   Opeka.clientSideMethods.loginRequiredMessage = function (clientId) {
     var view = new Opeka.FatalErrorDialogView({
@@ -730,6 +740,7 @@ var Opeka = {
 
    // If the client was offline too long, inform him and force a reload
   Opeka.clientSideMethods.reconnectTimeout = function () {
+    console.log('we have a reconnectTimeout, Opeka.shownFatalErrorDialog ' + Opeka.shownFatalErrorDialog)
     if (Opeka.shownFatalErrorDialog) {
       return;
     }
@@ -928,8 +939,10 @@ var Opeka = {
         Opeka.initial_connections += 1;
         d.connection_id = "initial_" + Opeka.initial_connections;
         Opeka.changeState(Opeka.CONNECTING);
+        console.log('Opeka.connect - Opeka.CONNECTING , Opeka.initial_connections ' + Opeka.initial_connections)
       } else if(Opeka.state == Opeka.TRYING_RECONNECT) {
         d.connection_id = "reconnect_" + Opeka.number_of_reconnects_tried;
+        console.log('Opeka.connect - Opeka.TRYING_RECONNECT, Opeka.number_of_reconnects_tried ' + Opeka.number_of_reconnects_tried)
       }
 
       return d;
@@ -977,6 +990,7 @@ var Opeka = {
       var delay = currentTime - Opeka.lastPingReceivedClientTime;
 
       if (delay > Opeka.connection_timeout) {
+        console.log('Opeka.checkTimeout, delay > Opeka.connection_timeout (' + Opeka.connection_timeout + '), delay: '+ delay)
         Opeka.changeState(Opeka.TRYING_RECONNECT);
       }
     };
@@ -1035,26 +1049,27 @@ var Opeka = {
     };
 
     Opeka.onReconnect = function() {
-        Opeka.shownReconnectingDialog = false;
-        if(Opeka.reconnectView) {
-          Opeka.reconnectView.remove();
-        }
-        // Sign the user in again to re-establish their permissions, adding
-        // the clientId to the userdata sent to the server, so it can know
-        // we are reconnecting.
-        var  userdataWithClientId = _.extend(
-          Drupal.settings.opeka.user,
-          {'clientId': Opeka.clientData.clientId}
-        );
-        // Tell the server to reconnect us with the previous client. If this
-        // succeeds the server will call the clientSideMethod "reconnectDone".
-        Opeka.remote.reconnect(userdataWithClientId, function() {
-          Opeka.remote.getFeatures(function (features) {
-            Opeka.features = features;
-            // TODO: Show a message to the user about the connection being
-            // reestablished?
-          });
+      Opeka.shownReconnectingDialog = false;
+      Opeka.number_of_reconnects_tried = 0;
+      if(Opeka.reconnectView) {
+        Opeka.reconnectView.remove();
+      }
+      // Sign the user in again to re-establish their permissions, adding
+      // the clientId to the userdata sent to the server, so it can know
+      // we are reconnecting.
+      var  userdataWithClientId = _.extend(
+        Drupal.settings.opeka.user,
+        {'clientId': Opeka.clientData.clientId}
+      );
+      // Tell the server to reconnect us with the previous client. If this
+      // succeeds the server will call the clientSideMethod "reconnectDone".
+      Opeka.remote.reconnect(userdataWithClientId, function() {
+        Opeka.remote.getFeatures(function (features) {
+          Opeka.features = features;
+          // TODO: Show a message to the user about the connection being
+          // reestablished?
         });
+      });
     };
 
     // If the connection is dropped, try to reconnect if we have timed out
@@ -1165,6 +1180,7 @@ var Opeka = {
 
   Opeka.onConnect = function() {
     updateReconnectTimes();
+    // Reset reconnects counter when connection succeeds
     Opeka.number_of_reconnects_tried = 0;
     Opeka.remote.getFeatures(function (features) {
       Opeka.features = features;
