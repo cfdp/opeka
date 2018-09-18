@@ -282,7 +282,6 @@ var Opeka = {
             }
           }
           else {
-            // alert(Drupal.t('It seems your counselor is not available yet, try again in a few minutes'));
             self.navigate('rooms', {trigger: true});
             var view = new Opeka.DialogView({
               content: Backbone.View.prototype.make('p', 'message', Drupal.t('It seems your counselor is not available yet, try again in a few minutes.')),
