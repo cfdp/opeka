@@ -1,11 +1,10 @@
 /**
  * @file
- * Code for managing chat queues.
+ * Code for managing chat invites.
  */
 "use strict";
 
 var _ = require('underscore'),
-  uuid = require('node-uuid'),
   logger = require('./loginit'),
   drupal = require("drupal"),
   format = require('date-format'),
@@ -17,7 +16,7 @@ var _ = require('underscore'),
   inviteList = {};
 
 
-// The main queue object.
+// The main invite object.
 var Invite = function (data) {
   var self = this;
 
@@ -62,7 +61,7 @@ var Invite = function (data) {
   return self.construct();
 };
 
-// Provide a list of queues for the client.
+// Provide a list of invites for the client.
 var clientData = function () {
   var invites = _.map(inviteList, function (invite) {
     return invite.clientData();

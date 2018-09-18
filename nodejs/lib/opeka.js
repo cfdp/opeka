@@ -268,9 +268,7 @@ function Server(config, logger) {
    */
   self.everyone.addServerMethod('signIn', function (clientUser, callback) {
     // Support user re-signin.
-    var oldClient,
-      reconnectTimeout,
-      client = this,
+    var client = this,
       accessCode = self.config.get('accessCode'),
       accessCodeEnabled = self.config.get('features:accessCodeEnabled'),
       clientData = {
@@ -291,8 +289,9 @@ function Server(config, logger) {
         return;
       }
 
-      // Make sure that only admins can log in when the chat is closed
-      if (!account.isAdmin && !opeka.chatOpen ) {
+      // Make sure that only admins or invited chat clients can log in when the chat is closed
+      if (!account.isAdmin && !opeka.chatOpen
+          && (clientUser.roomId && !self.inviteRoomAvailable(clientUser.roomId))) {
         self.logger.info('Regular user tried to access the chat even though it is closed.');
         client.remote('chatClosedMessage', client.clientId);
         return;
@@ -307,7 +306,6 @@ function Server(config, logger) {
 
       // Add the user to the signedIn group.
       self.signedIn.addUser(client.clientId);
-
 
       // Expose the drupal client drupal uid if they provided one and we're configured to do so
       if (self.config.get('features:exposeDrupalUIDs') && account.uid) {
@@ -1332,6 +1330,25 @@ function Server(config, logger) {
     to.remote('receiveWritesMessage', messageObj);
   };
   
+  /**
+   * Utility function to check if a invite room id provided by the
+   * client corresponds with a currently available invite room.
+   *
+   * @param roomId
+   *   roomId String - the roomId to check
+   *
+   */
+  self.inviteRoomAvailable = function (roomId) {
+    var room = opeka.rooms.list[roomId];
+    if (room && room.invite) {
+      return true;
+    }
+    else {
+      self.logger.warning('No available invite room found for client when signing in.');
+      return false;
+    }
+  };
+
    /**
    * Utility function to pause a room.
    *
@@ -1473,7 +1490,8 @@ function Server(config, logger) {
    *   lastRoom boolean.
    *
    * @param counselor
-   *   The counselor initiating the deletion of the room
+   *   counselor client,
+   *   the user initiating the deletion of the room
    */
   self.deleteRoom = function (room, lastRoom, counselor, queue, finalMessage) {
     queue = opeka.queues.list[room.queueSystem];

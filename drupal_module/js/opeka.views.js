@@ -2034,8 +2034,9 @@
       if (isAdmin) {
         name = Drupal.t('Counselor');
       }
-      // If the chat is closed, only admin users is presented with the sign in form
-      if (isAdmin || chatOpen) {
+      // If the chat is closed, only admin users 
+      // and users with a room id (given by invite tokens) is presented with the sign in form
+      if (isAdmin || chatOpen || Drupal.settings.opeka.user.roomId) {
         form = JST.opeka_connect_form_tmpl({
           accessCodeEnabled: Opeka.status.attributes.accessCodeEnabled,
           screeningQuestions: Opeka.status.attributes.screeningQuestions,
