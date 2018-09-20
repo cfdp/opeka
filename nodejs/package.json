@@ -9,7 +9,9 @@
     "Jakob Torp <jakob@revealit.dk> (http://googletorp.com/)",
     "Mikkel Hoegh <mikkel@hoegh.org> (http://mikkel.hoegh.org/)",
     "Benjamin Christensen <benjamin@greenvolcano.dk> (https://greenvolcano.dk/)",
-    "Alex Bukach"
+    "Alex Bukach",
+    "Stefanos Petrakis (https://petrakis.design)",
+    "Jørgen Ulrik B. Krag (https://magenta.dk)"
   ],
   "main": "main.js",
   "directories": {
