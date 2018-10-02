@@ -1,0 +1,4 @@
+administer opeka invite links:
+  title: 'Administer invitation links'
+  description: 'Allow managing invitations for Opeka chat.'
+  restrict access: true

@@ -1,0 +1,13 @@
+type: module
+name: 'Opeka Invitations'
+description: 'An Opeka submodule, allowing to create the invitations to private channels.'
+package: 'Opeka'
+
+configure: opeka_invite.invite_settings_form
+# TODO add dependence date:date_popup
+dependencies:
+#  - date:date_popup
+
+version: '8.x-1.0'
+core: '8.x'
+project: 'opeka'
