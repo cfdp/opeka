@@ -26,3 +26,4 @@ VERSION
 node_modules
 npm-debug.log
 /nbproject
+/nodejs/package-lock.json
