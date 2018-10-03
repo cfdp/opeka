@@ -1,0 +1,34 @@
+
+opeka_invite.invite_settings_form:
+  path: '/admin/config/services/opeka/invite'
+  defaults:
+    _form: '\Drupal\opeka_invite\Form\InviteSettingsForm'
+    _title: 'Invitation settings'
+  requirements:
+    _permission: 'administer opeka invite links'
+  options:
+    _admin_route: TRUE
+
+opeka_invite.list_invites:
+  path: '/admin/reports/opeka-invites'
+  defaults:
+    _controller: '\Drupal\opeka_invite\Controller\ListInvitesController::content'
+    _title: 'Opeka Invitations'
+  requirements:
+    _permission: 'administer opeka invite links'
+
+opeka_invite.ajax_create_invite:
+  path: '/admin/opeka/invite/ajax'
+  defaults:
+    _controller: '\Drupal\opeka_invite\Controller\InviteAjaxController::createInvite'
+    _title: 'Create an invitation via AJAX'
+  requirements:
+    _permission: 'administer opeka invite links'
+
+opeka_invite.ajax_cancel_invite:
+  path: '/admin/opeka/invite/cancel/ajax'
+  defaults:
+    _controller: '\Drupal\opeka_invite\Controller\InviteAjaxController::cancelInvite'
+    _title: 'Cancel an invitation via AJAX'
+  requirements:
+    _permission: 'administer opeka invite links'
