@@ -26,7 +26,7 @@ opeka_invite.ajax_create_invite:
     _permission: 'administer opeka invite links'
 
 opeka_invite.ajax_cancel_invite:
-  path: '/admin/opeka/invite/ajax'
+  path: '/admin/opeka/invite/cancel/ajax'
   defaults:
     _controller: '\Drupal\opeka_invite\Controller\InviteAjaxController::cancelInvite'
     _title: 'Cancel an invitation via AJAX'
