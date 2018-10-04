@@ -1,0 +1,381 @@
+<?php
+/**
+ * @file
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function opeka_report_user_menu() {
+  $items = array();
+
+  $items['admin/config/services/opeka/report-user'] = array(
+    'title' => 'Report user settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('opeka_report_user_setting_form'),
+    'access arguments' => array('administer opeka report user links'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 100,
+  );
+
+  // Link to report a user via AJAX.
+  $items['admin/opeka/report_user/ajax'] = array(
+    'page callback' => 'opeka_report_user_create_ajax',
+    'access arguments' => array('administer opeka report user links'),
+    'type' => MENU_CALLBACK,
+  );
+
+  // Link to cancel a user report via AJAX.
+  $items['admin/opeka/report_user/cancel/ajax'] = array(
+    'page callback' => 'opeka_invite_cancel_ajax',
+    'access arguments' => array('administer opeka report user links'),
+    'type' => MENU_CALLBACK,
+  );
+
+  // List of all reports.
+  $items['admin/reports/opeka-user-reports'] = array(
+    'title' => 'Opeka User Reports',
+    'page callback' => 'opeka_report_user_reports',
+    'access arguments' => array('administer opeka report user links'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function opeka_report_user_permission() {
+  return array(
+    'administer opeka report user links' => array(
+      'title' => t('Administer report user links'),
+      'description' => t('Allow managing user reports for Opeka chat.'),
+      'restrict access' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Reports a user via AJAX.
+ */
+function opeka_report_user_create_ajax() {
+  $values = $_POST;
+  $errors = array();
+  global $user;
+
+  // Fetch the IP, User Agent and login times of the reported user
+   
+  $mail = trim(check_plain($values['email']));
+  if ($message = user_validate_mail($mail)) {
+    $errors['email'] = $message;
+  }
+  foreach (array(
+             'invitee' => 'invitee',
+             'date' => 'datetime-date',
+             'time' => 'datetime-time'
+           ) as $field => $class) {
+    if (empty($values[$field]) || !trim(check_plain($values[$field]))) {
+      $errors[$class] = t('This field cannot be empty');
+    }
+  }
+
+  if ($errors) {
+    $response = array(
+      'error' => $errors,
+    );
+    drupal_json_output($response);
+    return;
+  }
+
+  $name = trim(check_plain($values['name']));
+  $counselor = trim(check_plain($values['counselor']));
+  $comment = trim(check_plain($values['comment']));
+  $invitee = trim(check_plain($values['invitee']));
+  $time = strtotime($values['date'] . ' ' . $values['time']);
+  $record = array(
+    'name' => $name ?: t('Chat with !name', array('!name' => $invitee)),
+    'time' => $time ?: REQUEST_TIME,
+    'counselor' => $counselor ?: t('Counselor'),
+    'invitee' => $invitee,
+    'comment' => $comment,
+    'email' => $mail,
+    'token' => drupal_random_key(),
+  );
+  if (drupal_write_record('opeka_invite', $record)) {
+    // Send email to the invited user.
+    drupal_mail('opeka_invite', 'invite', $invitee . '<' . $mail . '>', language_default(), $record);
+    // counselor name and email
+    $c_name = $user->name;
+    $c_mail = $user->mail;
+    // Send copy of email to the counselor.
+    drupal_mail('opeka_invite', 'invite_copy', $c_name . '<' . $c_mail . '>', language_default(), $record);
+
+    // Prepare record.
+    unset($record['token']);
+
+    drupal_json_output($record);
+  }
+}
+
+/**
+ * Cancels a user report.
+ */
+function opeka_report_user_cancel_ajax() {
+  $values = $_POST;
+  global $user;
+
+  if (isset($values['invite_id']) && is_numeric($values['invite_id'])) {
+    $query = db_select('opeka_invite', ' oi');
+    $query
+      ->condition('iid', $values['invite_id'])
+      ->fields('oi')
+      ->condition('status', 1);
+    if ($record = $query->execute()->fetchAssoc()) {
+      if (db_update('opeka_invite')
+        ->condition('iid', $values['invite_id'])
+        ->fields(array('status' => 0))
+        ->execute()
+      ) {
+        // Send email.
+        drupal_mail('opeka_invite', 'cancel', $record['invitee'] . '<' . $record['email'] . '>', language_default(), $record);
+        // counselor name and email
+        $c_name = $user->name;
+        $c_mail = $user->mail;
+        // Send copy of email to the counselor.
+        drupal_mail('opeka_invite', 'cancel_copy', $c_name . '<' . $c_mail . '>', language_default(), $record);
+        drupal_json_output($values['invite_id']);
+        return;
+      }
+    }
+
+  }
+
+  drupal_json_output(0);
+}
+
+/**
+ * Implements hook_page_alter().
+ */
+function opeka_report_user_page_alter(&$page) {
+  if (current_path() == 'admin/opeka') {
+  
+  }
+}
+
+/**
+ * Admin settings form.
+ */
+function opeka_report_user_setting_form($form, $form_state) {
+  $form = array();
+
+  $form['description'] = array(
+    '#markup' => t('<p>You can use the following tokens:</p> <ul><li><strong>[name]</strong> for invitee name,</li> 
+      <li><strong>[mail]</strong> for invitee mail,</li> <li><strong>[chat]</strong> for chat name,</li> <li><strong>[date]</strong> for chat date and time,</li> 
+      <li><strong>[link]</strong> for invitation link,</li> <li><strong>[counselor]</strong> for counselor name,</li>
+      <li><strong>[message]</strong> for personal message with the prefix (see below).</li></ul>')
+  );
+
+  $defaults = opeka_invite_settings();
+
+  $form['invite'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Invitation email'),
+  );
+
+  $form['invite']['opeka_invite_subject'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subject'),
+    '#default_value' => $defaults['subject'],
+  );
+
+  $form['invite']['opeka_invite_body'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Body'),
+    '#default_value' => $defaults['body'],
+  );
+
+  $form['invite']['opeka_invite_message'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Personal message prefix'),
+    '#description' => t('If a counselor leaves a personal message, the prefix will be displayed before the message.'),
+    '#default_value' => $defaults['prefix'],
+  );
+
+  $form['cancel'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Cancellation email'),
+  );
+
+  $form['cancel']['opeka_invite_cancel_subject'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subject'),
+    '#default_value' => $defaults['cancel_subject'],
+  );
+
+  $form['cancel']['opeka_invite_cancel_body'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Body'),
+    '#default_value' => $defaults['cancel_body'],
+  );
+
+  $form['opeka_invite_expire'] = array(
+    '#title' => t('Expiration time'),
+    '#description' => t('The invites will be deleted after this time past since their scheduled date and time.'),
+    '#type' => 'select',
+    '#options' => array(
+      0 => t('Never delete'),
+      1 => t('1 hour'),
+      6 => t('6 hours'),
+      12 => t('12 hours'),
+      24 => t('1 day'),
+      72 => t('3 days'),
+      168 => t('1 week'),
+      336 => t('2 weeks'),
+      672 => t('4 weeks'),
+    ),
+    '#default_value' => variable_get('opeka_invite_expire', 0),
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Returns admin settings.
+ */
+function opeka_report_user_settings() {
+  return array(
+    'body' => variable_get('opeka_invite_body', 'Dear [name],
+
+[counselor] has invited you to a chat on [date]. Please click the link below that time to enter the chat.
+
+[link]
+
+[message]
+
+--
+Opeka chat team.'),
+    'subject' => variable_get('opeka_invite_subject', 'Invitation to [chat]'),
+    'prefix' => variable_get('opeka_invite_message', 'Also [counselor] left a message for you:'),
+    'cancel_subject' => variable_get('opeka_invite_cancel_subject', '[chat] has been cancelled'),
+    'cancel_body' => variable_get('opeka_invite_cancel_body', 'Dear [name],
+
+[counselor] has just cancelled your chat previously scheduled on [date].
+
+--
+Opeka chat team.'),
+  );
+}
+
+function opeka_report_user_link($token) {
+  return url('opeka', array(
+    'fragment' => 'invites/' . $token,
+    'absolute' => TRUE
+  ));
+}
+
+/**
+ * Implements hook_mail().
+ */
+function opeka_report_user_mail($key, &$message, $invite) {
+  $defaults = opeka_report_user_settings();
+  $variables = array(
+    '[name]' => $invite['invitee'],
+    '[mail]' => $invite['email'],
+    '[chat]' => $invite['name'],
+    '[date]' => format_date($invite['time'], 'custom', 'l j F Y, G:i'),
+    '[link]' => opeka_invite_link($invite['token']),
+    '[counselor]' => $invite['counselor'],
+    '[message]' => $invite['comment'],
+  );
+
+  if ($key == 'invite' || $key == 'invite_copy') {
+    $subject = $defaults['subject'];
+    $body = $defaults['body'];
+
+    if ($variables['[message]']) {
+      if ($defaults['prefix']) {
+        $variables['[message]'] = $defaults['prefix'] . "\n\n" . $variables['[message]'];
+      }
+    }
+    if ($key == 'invite_copy') {
+      $subject = t('Copy of invitation: ') . $defaults['subject'];
+      $text = t('The following invitation has just been sent to @invitee: ', array('@invitee' => $variables['[name]'])) . "\n\n" ;
+      $body = $text . $defaults['body'];
+    }
+  }
+  elseif ($key == 'cancel' || $key == 'cancel_copy') {
+    $subject = $defaults['cancel_subject'];
+    $body = $defaults['cancel_body'];
+    if ($key == 'cancel_copy') {
+      $subject = t('Copy of cancellation: ') . $defaults['cancel_subject'];
+      $text = t('The following cancellation has just been sent to @invitee: ', array('@invitee' => $variables['[name]'])) . "\n\n" ;
+      $body = $text . $defaults['cancel_body'];
+    }
+  }
+
+  if ($variables['[message]']) {
+    $variables['[message]'] = "\n\n" . $variables['[message]'] . "\n\n";
+  }
+  else {
+    // We need a few newlines between the link and the rest of the body to avoid a malformed URL
+    $variables['[message]'] = "\n\n";
+  }
+
+  $body = implode($variables['[message]'], array_map('trim', explode('[message]', $body)));
+
+  $subject = strtr($subject, $variables);
+  $body = strtr($body, $variables);
+  $message['subject'] = str_replace(array("\r", "\n"), '', $subject);
+  $message['body'][] = drupal_html_to_text($body);
+}
+
+/**
+ * Displays the list of all reported users.
+ */
+function opeka_report_user_reports() {
+  $query = db_select('opeka_report_user', 'oi')->extend('PagerDefault');
+  $count_query = clone $query;
+  $count_query->addExpression('COUNT(rid)');
+  $query
+    ->fields('oi')
+    ->orderBy('rid', 'DESC')
+    ->limit(50)
+    ->setCountQuery($count_query);
+  $result = $query->execute();
+  $rows = array();
+  foreach ($result as $record) {
+    $link = opeka_report_user_link($record->token);
+    $rows[] = array(
+      'id' => $record->rid,
+      'date' => format_date($record->time, 'custom', 'Y/m/j G:i'),
+      'counselor' => $record->counselor,
+      'reported_user' => $record->reported_user,
+      'comment' => $record->comment,
+      'ip_address' => $record->ip_address,
+      'user_agent' => $record->user_agent,
+      'login_dates' => $record->login_dates
+    );
+  }
+
+  $header = array(
+    'id' => t('Report ID'),
+    'date' => t('Date & time of report'),
+    'counselor' => t('Counselor'),
+    'reported_user' => t('Reported user'),
+    'comment' => t('Reason for report'),
+    'ip_address' => t('IP address'),
+    'user_agent' => t('User agent'),
+    'login_dates' => t('Login-tidspunkter for den rapporterede bruger'),
+
+  );
+  return array(
+    'table' => array(
+      '#theme' => 'table',
+      '#header' => $header,
+      '#rows' => $rows,
+      '#empty' => t('Der er ingen underretninger pt.')
+    ),
+    array('#theme' => 'pager')
+  );
+}

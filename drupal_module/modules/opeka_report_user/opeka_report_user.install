@@ -1,0 +1,74 @@
+<?php
+/**
+ * @file
+ * Installation and update functions.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function opeka_report_user_schema() {
+  return array(
+    'opeka_report_user' => array(
+      'description' => 'Opeka Report User.',
+      'fields' => array(
+        'rid' => array(
+          'description' => 'Unique report ID.',
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'time' => array(
+          'description' => 'Unix timestamp for the time of the report.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'counselor' => array(
+          'description' => 'The username of the counselor making the report.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => TRUE,
+          'default' => '',
+        ),
+        'ip_address' => array(
+          'description' => 'The IP address of the reported user.',
+          'type' => 'varchar',
+          'length' => 15,
+          'not null' => FALSE,
+        ),
+        'user_agent' => array(
+          'description' => 'The User agent of the reported user.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+        'login_dates' => array(
+          'description' => 'A comma separated list of formatted dates of when the reported user IP has accessed the chat.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+        'chat_duration' => array(
+          'description' => 'Session duration in minutes.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => FALSE,
+        ),
+        'reported_user' => array(
+          'description' => 'Nickname of the reported user.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => TRUE,
+          'default' => '',
+        ),
+        'comment' => array(
+          'description' => 'The counselor\'s reason for reporting the user.',
+          'type' => 'text',
+          'not null' => FALSE,
+        ),
+      ),
+      'primary key' => array('rid'),
+    ),
+  );
+}

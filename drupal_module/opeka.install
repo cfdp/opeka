@@ -98,6 +98,18 @@ function opeka_schema() {
         'unsigned' => TRUE,
         'not null' => FALSE,
       ),
+      'ip_address' => array(
+        'description' => 'We store the IP address of the user temporarily to allow for reporting.',
+        'type' => 'varchar',
+        'length' => 15,
+        'not null' => FALSE,
+      ),
+      'user_agent' => array(
+        'description' => 'We store the User agent temporarily to allow for reporting.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
     ),
     'primary key' => array('submission_id'),
     'indexes' => array('submission_date' => array('submission_date')),
@@ -210,4 +222,14 @@ function opeka_update_7005() {
   opeka_disable_block($module, $delta);
   $delta = "powered-by";
   opeka_disable_block($module, $delta);
+}
+
+/**
+ * Add chat IP and User agent column to the statistics table.
+ */
+function opeka_update_7006() {
+  $schema = opeka_schema();
+  db_add_field('opeka_stats', 'ip_address', $schema['opeka_stats']['fields']['ip_address']);
+  db_add_field('opeka_stats', 'user_agent', $schema['opeka_stats']['fields']['user_agent']);
+
 }
