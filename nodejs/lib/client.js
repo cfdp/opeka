@@ -382,7 +382,7 @@ var Client = function (server, stream, remote, conn) {
             server.logger.debug('Counselor lost connection. Pausing room.');
           }
           // If a user reconnects, make sure she gets the updated room status.
-          if (reconnected && room.paused) {
+          if ((typeof self.clientSideMethods.roomUpdated === "function") && reconnected && room.paused) {
             self.clientSideMethods.roomUpdated(room.id, {paused: true});
           }
           // If user was disconnected, just remove them.
