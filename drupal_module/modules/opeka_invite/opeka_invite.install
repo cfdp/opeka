@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Installation and update functions.
@@ -8,76 +9,76 @@
  * Implements hook_schema().
  */
 function opeka_invite_schema() {
-  return array(
-    'opeka_invite' => array(
+  return [
+    'opeka_invite' => [
       'description' => 'Opeka invitations.',
-      'fields' => array(
-        'iid' => array(
+      'fields' => [
+        'iid' => [
           'description' => 'Unique invitation ID.',
           'type' => 'serial',
           'unsigned' => TRUE,
           'not null' => TRUE,
-        ),
-        'name' => array(
+        ],
+        'name' => [
           'description' => 'Invitation name.',
           'type' => 'varchar',
           'length' => 128,
           'not null' => TRUE,
-        ),
-        'time' => array(
+        ],
+        'time' => [
           'description' => 'Unix timestamp for the invitation scheduled time.',
           'type' => 'int',
           'unsigned' => TRUE,
           'not null' => TRUE,
-        ),
-        'token' => array(
+        ],
+        'token' => [
           'description' => 'Random token used for user authentication.',
           'type' => 'varchar',
           'length' => 128,
           'not null' => TRUE,
-        ),
-        'invitee' => array(
+        ],
+        'invitee' => [
           'description' => 'Invitee name.',
           'type' => 'varchar',
           'length' => 128,
           'not null' => TRUE,
           'default' => '',
-        ),
-        'email' => array(
+        ],
+        'email' => [
           'description' => 'Invitee email.',
           'type' => 'varchar',
           'length' => 128,
           'not null' => TRUE,
           'default' => '',
-        ),
-        'counselor' => array(
+        ],
+        'counselor' => [
           'description' => 'Counselor name.',
           'type' => 'varchar',
           'length' => 128,
           'not null' => TRUE,
           'default' => '',
-        ),
-        'comment' => array(
+        ],
+        'comment' => [
           'description' => 'Personal message.',
           'type' => 'text',
           'not null' => FALSE,
-        ),
-        'status' => array(
+        ],
+        'status' => [
           'description' => '1 if the invitation is active, 0 otherwise',
           'type' => 'int',
           'unsigned' => TRUE,
           'not null' => TRUE,
           'default' => 1,
-        ),
-        'count' => array(
+        ],
+        'count' => [
           'description' => 'How many times the token has been checked against.',
           'type' => 'int',
           'unsigned' => TRUE,
           'not null' => TRUE,
           'default' => 0,
-        ),
-      ),
-      'primary key' => array('iid'),
-    ),
-  );
+        ],
+      ],
+      'primary key' => ['iid'],
+    ],
+  ];
 }
