@@ -7,9 +7,35 @@ namespace Drupal\opeka_invite;
  */
 interface InviteServiceInterface {
 
-  public function createInvite();
+  /**
+   * Crate Invite.
+   *
+   * @param \stdClass $invite
+   *   Invite data.
+   *
+   * @return \stdClass
+   *   Created Invite.
+   *
+   * @throws \Exception
+   */
+  public function createInvite(\stdClass $invite);
 
-  public function cancelInvite();
+  /**
+   * Cancel invite.
+   *
+   * @param integer $invite_id
+   *   Invite id.
+   *
+   * @return \stdClass
+   *   Canceled invite.
+   */
+  public function cancelInvite($invite_id);
 
+  /**
+   * Get Invites.
+   *
+   * @return array
+   *   Array of invites.
+   */
   public function getAllInvites();
 }

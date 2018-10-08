@@ -27,23 +27,31 @@ class InviteService implements InviteServiceInterface {
 
   /**
    * {@inheritdoc}
-   **/
-  public function createInvite() {
-    // TODO: Implement createInvite() method.
+   */
+  public function createInvite(\stdClass $invite) {
+    return $this->database->insert('opeka_invite')
+      ->fields(
+        ['name', 'time', 'counselor', 'invitee', 'comment', 'email', 'token']
+      )
+      ->values((array) $invite)
+      ->execute();
   }
 
   /**
    * {@inheritdoc}
    **/
-  public function cancelInvite() {
-    // TODO: Implement cancelInvite() method.
+  public function cancelInvite($invite_id) {
+    return $this->database->update('opeka_invite')
+      ->fields(['status' => 0])
+      ->condition('iid', $invite_id)
+      ->execute();
   }
 
   /**
    * {@inheritdoc}
    **/
   public function getAllInvites() {
-    // TODO: Implement getAllInvites() method.
+    return [];
   }
 
 }
