@@ -1,0 +1,31 @@
+id: d7_invite
+migration_tags:
+- 'Drupal 7'
+migration_group: opeka_invite
+label: 'Migrate invite'
+source:
+  plugin: d7_invite_source
+process:
+  iid:
+    source: iid
+  name:
+    source: name
+  time:
+    source: time
+  token:
+    source: token
+  invitee:
+    source: invitee
+  email:
+    source: email
+  counselor:
+    source: counselor
+  comment:
+    source: comment
+  status:
+    source: status
+  count:
+    source: count
+destination:
+  plugin: d7_invites_destination
+migration_dependencies: null

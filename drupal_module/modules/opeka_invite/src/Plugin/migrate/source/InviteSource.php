@@ -11,7 +11,7 @@ use Drupal\migrate\Plugin\migrate\source\SqlBase;
  *   id = "d7_invite_source"
  * )
  */
-class Invite extends SqlBase {
+class InviteSource extends SqlBase {
 
   /**
    * {@inheritdoc}
