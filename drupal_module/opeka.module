@@ -130,10 +130,12 @@ function opeka_library_info_build() {
  */
 function opeka_preprocess_opeka_chat(&$variables) {
   $opeka_settings = _opeka_compile_javascript_settings();
-  // Make sure to merge in any previously set opeka variables, typically 
+   // Make sure to merge in any previously set opeka variables, typically 
   // defined by custom modules
-  $variables['#attached']['drupalSettings']['opeka'] = array_replace_recursive($opeka_settings, 
-    $variables['#attached']['drupalSettings']['opeka']);
+  // NOTE: this seems not to be needed since the opeka array is NULL at this point
+  //$variables['#attached']['drupalSettings']['opeka'] = array_replace_recursive($opeka_settings, 
+  //  $variables['#attached']['drupalSettings']['opeka']);
+  $variables['#attached']['drupalSettings']['opeka'] = $opeka_settings;
   $variables['#attached']['library'][] = 'opeka/chat';
   $variables['#attached']['drupalSettings']['opeka']['user']['admin'] = FALSE;
   $variables['#attached']['library'][] = 'opeka/dnode.connect';
@@ -144,10 +146,8 @@ function opeka_preprocess_opeka_chat(&$variables) {
  */
 function opeka_preprocess_opeka_admin_chat(&$variables) {
   $opeka_settings = _opeka_compile_javascript_settings();
-  // Make sure to merge in any previously set opeka variables, typically 
-  // defined by custom modules
-  $variables['#attached']['drupalSettings']['opeka'] = array_replace_recursive($opeka_settings, 
-    $variables['#attached']['drupalSettings']['opeka']);
+   // As mentioned above - merging vars seems not to be needed
+  $variables['#attached']['drupalSettings']['opeka'] = $opeka_settings;
   $variables['#attached']['library'][] = 'opeka/admin.chat';
   $variables['#attached']['drupalSettings']['opeka']['user']['admin'] = TRUE;
   $variables['#attached']['library'][] = 'opeka/dnode.connect';
