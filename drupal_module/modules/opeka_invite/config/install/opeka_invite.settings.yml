@@ -1,0 +1,6 @@
+opeka_invite_subject: 'Invitation to [chat]'
+opeka_invite_body: "Dear [name],\r\n\r\n[counselor] has invited you to a chat on [date]. Please click the link below that time to enter the chat.\r\n\r\n[link]\r\n\r\n[message]\r\n\r\n--\r\nOpeka chat team."
+opeka_invite_message: 'Also [counselor] left a message for you:'
+opeka_invite_cancel_subject: '[chat] has been cancelled'
+opeka_invite_cancel_body: "Dear [name],\r\n\r\n[counselor] has just cancelled your chat previously scheduled on [date].\r\n\r\n--\r\nOpeka chat team."
+opeka_invite_expire: '0'

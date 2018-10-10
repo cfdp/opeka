@@ -1,0 +1,4 @@
+services:
+  opeka_invite.invite:
+    class: Drupal\opeka_invite\InviteService
+    arguments: ['@database']
