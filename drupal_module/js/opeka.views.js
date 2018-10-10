@@ -2099,7 +2099,7 @@
       
       user.roomId = user.roomId ? user.roomId : this.roomId;
       user.queueId = this.queueId;
-      user.groupId = JSON.parse(drupalSettings.opeka.user.groupId);
+      user.groupId = drupalSettings.opeka.user.groupId ? JSON.parse(drupalSettings.opeka.user.groupId) : null;
 
       Opeka.signIn(user, function () {
         view.$el.fadeOut();
