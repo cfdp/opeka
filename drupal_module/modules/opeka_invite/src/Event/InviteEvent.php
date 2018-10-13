@@ -26,10 +26,10 @@ class InviteEvent extends Event {
   /**
    * InviteEvent constructor.
    *
-   * @param \stdClass $invite
+   * @param array $invite
    *   Invite.
    */
-  public function __construct(\stdClass $invite) {
+  public function __construct(array $invite) {
     $this->invite = $invite;
   }
 
