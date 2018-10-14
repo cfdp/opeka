@@ -5,21 +5,22 @@ namespace Drupal\opeka_invite\EventSubscriber;
 use Drupal\opeka_invite\Event\InviteEvent;
 
 /**
- * Class InviteCreateSubscriber.
+ * Class InviteCancelSubscriber.
  */
-class InviteCreateSubscriber extends InviteEventsBaseSubscriber {
+class InviteCancelSubscriber extends InviteEventsBaseSubscriber {
 
   /**
    * {@inheritdoc}
    */
   static function getSubscribedEvents() {
     return [
-      InviteEvent::OPEKA_INVITE_CREATE => [
+      InviteEvent::OPEKA_INVITE_CANCEL => [
         ['mailToAdmin'],
         ['mailToUser'],
       ],
     ];
   }
+
 
   /**
    * Send the email to a user with invite information.
@@ -29,12 +30,6 @@ class InviteCreateSubscriber extends InviteEventsBaseSubscriber {
    */
   public function mailToUser(InviteEvent $event) {
     $invite = $event->getInvite();
-
-    $prefix = $this->configs->get('opeka_invite_message');
-    $invite['comment'] = $prefix && $invite['comment']
-      ? $prefix . "\n\n" . $invite['comment']
-      : $invite['comment'];
-
     $mail = $this->getMailText(self::CANCEL, $invite);
 
     $this->mail(
@@ -53,23 +48,16 @@ class InviteCreateSubscriber extends InviteEventsBaseSubscriber {
    */
   public function mailToAdmin(InviteEvent $event) {
     $invite = $event->getInvite();
-
-    $prefix = $this->configs->get('opeka_invite_message');
-    $invite['comment'] = $prefix && $invite['comment']
-      ? $prefix . "\n\n" . $invite['comment']
-      : $invite['comment'];
-
-    $mailText = $this->getMailText(self::CREATE, $invite);
+    $mail = $this->getMailText(self::CANCEL, $invite);
 
     $this->mail(
       'invite',
       $this->user->getAccountName() . '<' . $this->user->getEmail() . '>',
-      $this->t('Copy of invitation: ') . $mailText['subject'],
+      $this->t('Copy of cancellation: ') . $mail['subject'],
       $this->t(
-        'The following invitation has just been sent to @invitee: ',
+        'The following cancellation has just been sent to @invitee: ',
         ['@invitee' => $invite['invitee']]
-      ) . $mailText['body']
+      ) . $mail['body']
     );
   }
-
 }

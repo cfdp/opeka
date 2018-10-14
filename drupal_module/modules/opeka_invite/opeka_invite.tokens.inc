@@ -71,8 +71,6 @@ function opeka_invite_tokens($type, $tokens, array $data, array $options, Bubble
   $urlGenerator = \Drupal::service('url_generator');
   /* @var \Drupal\Core\Datetime\DateFormatterInterface $dateFormatter */
   $dateFormatter = \Drupal::service('date.formatter');
-  /* @var \Drupal\Core\Config\ImmutableConfig $opeka_config */
-  $opeka_config = \Drupal::config('opeka_invite.settings');
 
   if ($type == 'opeka_invite' && !empty($data['invite'])) {
     $invite = $data['invite'];
@@ -102,14 +100,7 @@ function opeka_invite_tokens($type, $tokens, array $data, array $options, Bubble
           $replacements[$original] = $invite['counselor'];
           break;
         case 'message':
-          $prefix = $opeka_config->get('opeka_invite_message');
-          $message = $prefix && $invite['comment']
-            ? $prefix . "\n\n" . $invite['comment']
-            : $invite['comment'];
-
-          $replacements[$original] = $message
-            ? "\n\n" . $message . "\n\n"
-            : "\n\n";
+          $replacements[$original] = $invite['comment'];
           break;
       }
     }

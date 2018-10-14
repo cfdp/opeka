@@ -8,3 +8,9 @@ services:
     arguments: ['@plugin.manager.mail', '@current_user', '@language_manager', '@token', '@config.factory']
     tags:
       - { name: event_subscriber }
+
+  opeka_invite.invite_cancel:
+    class: Drupal\opeka_invite\EventSubscriber\InviteCancelSubscriber
+    arguments: ['@plugin.manager.mail', '@current_user', '@language_manager', '@token', '@config.factory']
+    tags:
+      - { name: event_subscriber }
