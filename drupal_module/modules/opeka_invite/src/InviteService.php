@@ -79,7 +79,19 @@ class InviteService implements InviteServiceInterface {
    * {@inheritdoc}
    **/
   public function getAllInvites() {
-    return [];
+    $query = db_select('opeka_invite', 'oi')
+      ->extend('Drupal\Core\Database\Query\PagerSelectExtender');
+
+    $count_query = clone $query;
+    $count_query->addExpression('COUNT(iid)');
+
+    $query
+      ->fields('oi')
+      ->orderBy('iid', 'DESC')
+      ->limit(50)
+      ->setCountQuery($count_query);
+
+    return $query->execute();
   }
 
   /**
