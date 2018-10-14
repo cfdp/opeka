@@ -36,7 +36,7 @@ class InviteEvent extends Event {
   /**
    * Returns invite.
    */
-  public function getVariables() {
+  public function getInvite() {
     return $this->invite;
   }
 

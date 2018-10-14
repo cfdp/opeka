@@ -1,7 +1,7 @@
 opeka_invite.invite_settings_form:
   title: 'Invitation settings'
   route_name: opeka_invite.invite_settings_form
-  parent: system.admin_config_services
+  parent: opeka.settings
   weight: 100
 
 opeka_invite.list_invites:

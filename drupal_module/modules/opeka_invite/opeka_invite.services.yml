@@ -2,3 +2,9 @@ services:
   opeka_invite.invite:
     class: Drupal\opeka_invite\InviteService
     arguments: ['@database', '@event_dispatcher']
+
+  opeka_invite.invite_create:
+    class: Drupal\opeka_invite\EventSubscriber\InviteCreateSubscriber
+    arguments: ['@plugin.manager.mail', '@current_user', '@language_manager', '@token', '@config.factory']
+    tags:
+      - { name: event_subscriber }
