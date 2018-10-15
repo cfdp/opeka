@@ -1,6 +1,8 @@
 <?php
+
 /**
  * @file
+ * This is the module allowing to create the invitations to private channels.
  */
 
 use Drupal\Core\Mail\MailFormatHelper;
@@ -11,4 +13,31 @@ use Drupal\Core\Mail\MailFormatHelper;
 function opeka_invite_mail($key, &$message, $params) {
   $message['subject'] = str_replace(["\r", "\n"], '', $params['subject']);
   $message['body'][] = MailFormatHelper::htmlToText($params['body']);
+}
+
+/**
+ * Implements hook_page_top().
+ */
+function opeka_invite_page_top(array &$page_bottom) {
+  $drupalSettings = [
+    'opeka' => ['invite' => TRUE],
+  ];
+  $current_route = \Drupal::routeMatch()->getRouteName();
+
+  if ($current_route === 'opeka.chat_controller_adminChatPage') {
+    // Determine offset between server time and user time (for nodejs).
+    try {
+      $user_timezone = new DateTimeZone(drupal_get_user_timezone());
+      $offset = $user_timezone->getOffset(new DateTime('now', new DateTimeZone('UTC')));
+    } catch (Exception $e) {
+      $offset = 0;
+    }
+
+    $drupalSettings['userTimeZoneOffset'] = $offset;
+    $drupalSettings['userLang'] = \Drupal::languageManager()
+      ->getCurrentLanguage()
+      ->getId();
+  }
+
+  $page_bottom['#attached'] = ['drupalSettings' => $drupalSettings];
 }
