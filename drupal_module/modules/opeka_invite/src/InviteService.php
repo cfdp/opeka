@@ -2,8 +2,10 @@
 
 namespace Drupal\opeka_invite;
 
+use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Database\Driver\mysql\Connection;
+use Drupal\opeka_invite\Event\InviteEvent;
 
 /**
  * Class InviteService.
@@ -18,19 +20,29 @@ class InviteService implements InviteServiceInterface {
   protected $database;
 
   /**
+   * Event dispatcher.
+   *
+   * @var \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher
+   */
+  protected $dispatcher;
+
+  /**
    * Constructs a new InviteService object.
    *
    * @param \Drupal\Core\Database\Driver\mysql\Connection $database
    *   Database connection.
+   * @param \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher $dispatcher
+   *   Event dispatcher.
    */
-  public function __construct(Connection $database) {
+  public function __construct(Connection $database, ContainerAwareEventDispatcher $dispatcher) {
     $this->database = $database;
+    $this->dispatcher = $dispatcher;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createInvite(\stdClass $invite) {
+  public function createInvite(array $invite) {
     $inviteId = $this->database
       ->insert('opeka_invite', ['return' => Database::RETURN_INSERT_ID])
       ->fields(
@@ -39,27 +51,47 @@ class InviteService implements InviteServiceInterface {
       ->values((array) $invite)
       ->execute();
 
-    return $this->loadInviteByID($inviteId);
+    $invite = $this->loadInviteByID($inviteId);
+
+    $this->dispatcher->dispatch(InviteEvent::OPEKA_INVITE_CREATE, new InviteEvent($invite));
+
+    return $invite;
   }
 
   /**
    * {@inheritdoc}
    **/
   public function cancelInvite($inviteId) {
-    $inviteId = $this->database
-      ->update('opeka_invite', ['return' => Database::RETURN_INSERT_ID])
+    $this->database
+      ->update('opeka_invite', ['return' => Database::RETURN_AFFECTED])
       ->fields(['status' => 0])
       ->condition('iid', $inviteId)
       ->execute();
 
-    return $this->loadInviteByID($inviteId);
+    $invite = $this->loadInviteByID($inviteId);
+
+    $this->dispatcher->dispatch(InviteEvent::OPEKA_INVITE_CANCEL, new InviteEvent($invite));
+
+    return $invite;
   }
 
   /**
    * {@inheritdoc}
    **/
   public function getAllInvites() {
-    return [];
+    $query = db_select('opeka_invite', 'oi')
+      ->extend('Drupal\Core\Database\Query\PagerSelectExtender');
+
+    $count_query = clone $query;
+    $count_query->addExpression('COUNT(iid)');
+
+    $query
+      ->fields('oi')
+      ->orderBy('iid', 'DESC')
+      ->limit(50)
+      ->setCountQuery($count_query);
+
+    return $query->execute();
   }
 
   /**
@@ -68,7 +100,7 @@ class InviteService implements InviteServiceInterface {
    * @param integer $inviteId
    *   Invite id.
    *
-   * @return \stdClass
+   * @return array
    *   Invite.
    */
   protected function loadInviteByID($inviteId) {
@@ -80,7 +112,7 @@ class InviteService implements InviteServiceInterface {
 
     return $query
       ->execute()
-      ->fetchObject();
+      ->fetchAssoc();
   }
 
 }

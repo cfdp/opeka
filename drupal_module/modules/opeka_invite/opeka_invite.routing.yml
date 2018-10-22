@@ -1,4 +1,3 @@
-
 opeka_invite.invite_settings_form:
   path: '/admin/config/services/opeka/invite'
   defaults:

@@ -34,10 +34,17 @@ class InviteSettingsForm extends ConfigFormBase {
 
     $form['description'] = [
       '#markup' => $this->t(
-        '<p>You can use the following tokens:</p> <ul><li><strong>[name]</strong> for invitee name,</li> 
-      <li><strong>[mail]</strong> for invitee mail,</li> <li><strong>[chat]</strong> for chat name,</li> <li><strong>[date]</strong> for chat date and time,</li> 
-      <li><strong>[link]</strong> for invitation link,</li> <li><strong>[counselor]</strong> for counselor name,</li>
-      <li><strong>[message]</strong> for personal message with the prefix (see below).</li></ul>'
+        '
+        <p>You can use the following tokens:</p>
+        <ul>
+          <li><strong>[opeka_invite:name]</strong> for invitee name,</li> 
+          <li><strong>[opeka_invite:mail]</strong> for invitee mail,</li> 
+          <li><strong>[opeka_invite:chat]</strong> for chat name,</li> 
+          <li><strong>[opeka_invite:date]</strong> for chat date and time,</li> 
+          <li><strong>[opeka_invite:link]</strong> for invitation link,</li> 
+          <li><strong>[opeka_invite:counselor]</strong> for counselor name,</li>
+          <li><strong>[opeka_invite:message]</strong> for personal message with the prefix (see below).</li>
+        </ul>'
       ),
     ];
 
@@ -64,20 +71,21 @@ class InviteSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('opeka_invite_message'),
     ];
 
-    $form['cancel'] = [
+    $form['cancel_invite'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Cancellation email'),
     ];
-    $form['cancel']['opeka_invite_cancel_subject'] = [
+    $form['cancel_invite']['opeka_invite_cancel_subject'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Subject'),
       '#default_value' => $config->get('opeka_invite_cancel_subject'),
     ];
-    $form['cancel']['opeka_invite_cancel_body'] = [
+    $form['cancel_invite']['opeka_invite_cancel_body'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Body'),
       '#default_value' => $config->get('opeka_invite_cancel_body'),
     ];
+
     $form['opeka_invite_expire'] = [
       '#title' => $this->t('Expiration time'),
       '#description' => $this->t(

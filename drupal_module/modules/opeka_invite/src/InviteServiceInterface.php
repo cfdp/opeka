@@ -10,15 +10,15 @@ interface InviteServiceInterface {
   /**
    * Crate Invite.
    *
-   * @param \stdClass $invite
+   * @param array $invite
    *   Invite data.
    *
-   * @return \stdClass
+   * @return array
    *   Created Invite.
    *
    * @throws \Exception
    */
-  public function createInvite(\stdClass $invite);
+  public function createInvite(array $invite);
 
   /**
    * Cancel invite.
