@@ -69,6 +69,20 @@ function opeka_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
+      'client_id' => array(
+        'description' => 'The client ID of the user.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'counselor_name' => array(
+        'description' => 'The full name of the counselor making the report.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
       'age' => array(
         'description' => 'User age.',
         'type' => 'varchar',
@@ -96,18 +110,6 @@ function opeka_schema() {
         'description' => 'Session duration in minutes.',
         'type' => 'int',
         'unsigned' => TRUE,
-        'not null' => FALSE,
-      ),
-      'ip_address' => array(
-        'description' => 'We store the IP address of the user temporarily to allow for reporting.',
-        'type' => 'varchar',
-        'length' => 15,
-        'not null' => FALSE,
-      ),
-      'user_agent' => array(
-        'description' => 'We store the User agent temporarily to allow for reporting.',
-        'type' => 'varchar',
-        'length' => 255,
         'not null' => FALSE,
       ),
     ),
@@ -225,11 +227,12 @@ function opeka_update_7005() {
 }
 
 /**
- * Add chat IP and User agent column to the statistics table.
+ * Add new columns for client id and counselor name to the opeka_stats table.
  */
 function opeka_update_7006() {
   $schema = opeka_schema();
-  db_add_field('opeka_stats', 'ip_address', $schema['opeka_stats']['fields']['ip_address']);
-  db_add_field('opeka_stats', 'user_agent', $schema['opeka_stats']['fields']['user_agent']);
+  db_add_field('opeka_stats', 'client_id', $schema['opeka_stats']['fields']['client_id']);
+  db_add_field('opeka_stats', 'counselor_name', $schema['opeka_stats']['fields']['counselor_name']);
+
 
 }

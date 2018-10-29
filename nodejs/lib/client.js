@@ -75,6 +75,7 @@ var Client = function (server, stream, remote, conn) {
     self.city = null;
     self.state = null;
 
+    self.reported = null;
     self.chatStartMin = null;
     self.online = "not-connected";
     self.connectionData = {
@@ -85,7 +86,9 @@ var Client = function (server, stream, remote, conn) {
       pingDelayAvg: null,
       pingDelayArray: [],
       pingCount: 0,
-      agent: "not-set"
+      agent: "not-set",
+      ip: null,
+      remotePort: null
     };
     // Load configured reconnect values from Drupal's configuration, making
     // sure to update the server as well.
@@ -140,15 +143,18 @@ var Client = function (server, stream, remote, conn) {
       ipGeoDbKey = server.config.get('features:ipGeoDbKey'),
       allowedLocations = server.config.get('features:ipGeoLocations');
 
-      self.connectionData.agent = agent = useragent.parse(stream.headers['user-agent']);
+      self.connectionData.agent = agent = useragent.parse(stream.headers['user-agent']).toString();
 
     if (stream.headers['x-real-ip']) {
       ip = stream.headers['x-real-ip'];
     } else {
       ip = stream.remoteAddress;
     }
+    self.connectionData.ip = ip;
+    self.connectionData.remotePort = stream.remotePort;
+
     server.logger.info(
-      "Connection ready for user with IP ", ip, "UA: ", agent.toString() ,"and clientId ", self.clientId
+      "Connection ready for user with IP ", ip, "UA: ", agent ,"and clientId ", self.clientId
     );
 
     var currentTime = (new Date()).getTime();
@@ -300,7 +306,7 @@ var Client = function (server, stream, remote, conn) {
       if ((self.connectionData.pingCount % 5) === 0) {
         server.logger.debug(
           ' Avg. ping delay of', self.clientId,
-          'is', self.connectionData.pingDelayAvg, "UA:", self.connectionData.agent.toString()
+          'is', self.connectionData.pingDelayAvg, "UA:", self.connectionData.agent
         );
       }
     }
@@ -336,7 +342,7 @@ var Client = function (server, stream, remote, conn) {
       server.logger.info(
         "Client disconnected: sincePingSuccess (" + sincePingSuccess + " ms) > disconnect_limit for " +
         self.clientId + " avg. pingDelay = " + self.connectionData.pingDelayAvg + 
-        " UA: " + self.connectionData.agent.toString()
+        " UA: " + self.connectionData.agent
       );
       self.changeState(DISCONNECTED);
     }
@@ -379,7 +385,7 @@ var Client = function (server, stream, remote, conn) {
             self.server.sendSystemMessage('Rådgiveren har mistet forbindelsen, vent mens vi genopretter den.',
             room.group, room);
             self.server.pauseRoom(room);
-            server.logger.debug('Counselor lost connection. Pausing room.');
+            server.logger.warning('Counselor lost connection. Pausing room.');
           }
           // If a user reconnects, make sure she gets the updated room status.
           if (reconnected && room.paused) {

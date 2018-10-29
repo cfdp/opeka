@@ -5,10 +5,10 @@ var drupal = require("drupal"),
   logger = require('./loginit');
 
 // Save chat session data if the table exists
-module.exports.save = function (age, gender, screening, callback) {
+module.exports.save = function (clientId, age, gender, screening, callback) {
   drupal.db.query('SHOW TABLES LIKE ?', ['opeka_stats'], function (err, result) {
     if (result) {
-      return saveData(age, gender, screening, callback);
+      return saveData(clientId, age, gender, screening, callback);
     }
     else {
       logger.warning('Error: The opeka_stats table does not appear to be present ind the DB.');
@@ -28,7 +28,7 @@ module.exports.saveChatDuration = function(stats_id, duration) {
 }
 
 // Add the submissions to the database.
-function saveData(age, gender, screening, callback) {
+function saveData(clientId, age, gender, screening, callback) {
   // Get the current UNIX timestamp
   var timestamp = (+new Date() / 1000);
   var question;
@@ -41,6 +41,7 @@ function saveData(age, gender, screening, callback) {
   }
 
   var record = {
+    client_id: clientId,
     age: age,
     gender: gender,
     question: question,
@@ -67,10 +68,10 @@ function saveChatDuration(stats_id, duration) {
 
   drupal.db.query('UPDATE opeka_stats SET chat_duration = ? WHERE submission_id = ?', [duration, stats_id], function (err, result) {
     if (result) {
-      logger.info('Info: Saved chat duration into stats.');
+      logger.info('Saved chat duration to statistics.');
     }
     else {
-      logger.warning('Error: Chat duration could not be saved into stats.');
+      logger.error('Chat duration could not be saved to opeka_stats table.');
       throw err;
     }
   });
