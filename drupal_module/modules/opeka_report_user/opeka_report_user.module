@@ -40,6 +40,20 @@ function opeka_report_user_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
+  $items['admin/reports/opeka-report-user/%/delete'] = array(
+    'title' => 'Delete Report',
+    'page callback' => 'drupal_get_form',
+    'access arguments' => array('administer opeka report user links'),
+    'page arguments' => array('opeka_report_user_delete_report_form', 1),
+  );
+
+  $items['admin/reports/opeka-report-user/%/send'] = array(
+    'title' => 'Send Report',
+    'page callback' => 'drupal_get_form',
+    'access arguments' => array('administer opeka report user links'),
+    'page arguments' => array('opeka_report_user_send_report_form', 1),
+  );
+
   return $items;
 }
 
@@ -59,7 +73,7 @@ function opeka_report_user_permission() {
 /**
  * Reports a user via AJAX.
  * 
- * @todo: The IP address and user agent data is saved via the Node server
+ * The IP address and user agent data is saved via the Node server
  * to avoid exposing this data in the front end.
  */
 function opeka_report_user_create_ajax() {
@@ -135,17 +149,17 @@ function opeka_report_user_create_ajax() {
     'comment' => $comment,
   );
 
-  $report_admin_mail = "ujvikl@greenvolcano.dk";
-  $report_admin_name = "Boji";
+  $default_mail = "info@curachat.com";
+  $report_admin_mail = variable_get('opeka_report_user_admin', $default_mail);
 
   if (drupal_write_record('opeka_report_user', $record)) {
-    // Send email to the report admin.
-    //drupal_mail('opeka_report_user', 'report_admin', $report_admin_name . '<' . $report_admin_mail . '>', language_default(), $record);
-    // counselor name and email
+    // Send notification email to the report admin.
+    drupal_mail('opeka_report_user', 'report_admin', $report_admin_mail . '<' . $report_admin_mail . '>', language_default(), $record);
+    // Get counselor name and email from user account
     $c_name = $user->name;
     $c_mail = $user->mail;
     // Send copy of email to the counselor.
-    //drupal_mail('opeka_report_user', '', $c_name . '<' . $c_mail . '>', language_default(), $record);
+    drupal_mail('opeka_report_user', 'report_counselor', $c_name . '<' . $c_mail . '>', language_default(), $record);
     drupal_json_output($record);
   }
   else {
@@ -204,7 +218,6 @@ function opeka_report_user_page_alter(&$page) {
   }
 }
 
-
 function opeka_report_user_link($token) {
   return url('opeka', array(
     'fragment' => 'invites/' . $token,
@@ -216,49 +229,99 @@ function opeka_report_user_link($token) {
  * Implements hook_mail().
  */
 function opeka_report_user_mail($key, &$message, $report) {
+  global $base_url;
+  $report_page_url = url('/admin/reports/opeka-report-user', array('absolute'=>TRUE));
   $variables = array(
     '[client_alias]' => $report['client_alias'],
     '[counselor_name]' => $report['counselor_name'],
     '[counselor_email]' => $report['counselor_email'],
     '[date]' => format_date($report['time'], 'custom', 'l j F Y, G:i:s'),
-    '[ip_address]' => $report['ip_address'],
-    '[user_agent]' => $report['user_agent'],
     '[message]' => $report['comment'],
+    '[login_dates]' => format_date($report['login_dates'], 'custom', 'l j F Y, G:i:s'),
   );
-
-  if ($key == 'report_admin') {
-
-  }
+  $site_name = variable_get('site_name', '');
 
   if ($variables['[message]']) {
     $variables['[message]'] = "\n\n" . $variables['[message]'] . "\n\n";
   }
   else {
-    // We need a few newlines between the link and the rest of the body to avoid a malformed URL
+    // We need a few newlines in case we want to add content
     $variables['[message]'] = "\n\n";
   }
 
-  $subject = t("A report has just been made at @sitename",  array(
-    '@sitename' => 'some site',
-  ));
-  $body = t("Report made by: @counselor_name. Date of report: @date. Message from counselor: @message", array(
-    '@counselor_name' => $variables['[counselor_name]'],
-    '@date' => $variables['[date]'],
-    '@message' => $variables['[message]'],
-  ));
+  switch ($key) {
+    case 'report_authority':
+      $variables['[ip_address]'] = $report['ip_address'];
+      $variables['[remote_port]'] = $report['remote_port'];
+      $variables['[user_agent]'] = $report['user_agent'];
 
-  //$subject = strtr($subject, $variables);
-  //$body = strtr($body, $variables);
+      $subject = t("Report from @counselor_name",  array(
+        '@counselor_name' => $variables['[counselor_name]'],
+      ));
+      $body = t('Report made by: @counselor_name (contact email: @counselor_email) at @sitename
+
+Date of report: @date. 
+Message from counselor: @message
+Collected log data for reported client:
+Login time: @login_dates.
+Alias: @client_alias.
+IP address: @ip_address.
+Remote port: @remote_port.
+User Agent: @user_agent.',
+        array(
+          '@counselor_name' => $variables['[counselor_name]'],
+          '@counselor_email' => $variables['[counselor_email]'],
+          '@date' => $variables['[date]'],
+          '@message' => $variables['[message]'],
+          '@client_alias' => $variables['[client_alias]'],
+          '@login_dates' => $variables['[login_dates]'],
+          '@ip_address' => $variables['[ip_address]'],
+          '@remote_port' => $variables['[remote_port]'],
+          '@user_agent' => $variables['[user_agent]'],
+          '@sitename' => $site_name,
+      ));
+      break;
+    case 'report_admin':
+      $subject = t("A report has just been made from @sitename",  array(
+        '@sitename' => $site_name,
+      ));
+      $body = t("Report made by: @counselor_name (contact email: @counselor_email). 
+Date of report: @date. 
+Message from counselor: @message
+
+You can review and send the report via @report_page_url", 
+        array(
+          '@counselor_name' => $variables['[counselor_name]'],
+          '@date' => $variables['[date]'],
+          '@message' => $variables['[message]'],
+          '@report_page_url' => $report_page_url
+      ));
+      break;
+    case 'report_counselor':
+      $subject = t("You have just made a report from @sitename",  array(
+        '@sitename' => $site_name,
+      ));
+      $body = t("Report made by: @counselor_name (contact email: @counselor_email). 
+Date of report: @date. 
+Message from counselor: @message",
+        
+        array(
+          '@counselor_name' => $variables['[counselor_name]'],
+          '@date' => $variables['[date]'],
+          '@message' => $variables['[message]'],
+      ));
+    break;
+  }
+
   $message['subject'] = str_replace(array("\r", "\n"), '', $subject);
   $message['body'][] = drupal_html_to_text($body);
 }
 
 /**
- * Displays the list of all reported users.
+ * Displays the list of all reports.
  */
 function opeka_report_user_reports() {
-
-  // Show warning if email addresses haven't been defined in the admin settings
+  // Show warning if necessary email addresses haven't been defined in the admin settings
   if (empty(variable_get('opeka_report_user_admin', '')) || empty(variable_get('opeka_report_user_authority', ''))) {
     drupal_set_message(t('The report user admin or authority email have not been defined! 
     Please go to <a href="/admin/config/services/opeka/report-user">the settings</a> and define it.'), 'error');
@@ -274,22 +337,23 @@ function opeka_report_user_reports() {
     ->setCountQuery($count_query);
   $result = $query->execute();
   $rows = array();
-  $report_actions_send = l(t('Send'), 'send-report', array(
-    'attributes' => array(
-      'class' => array(
-        'btn', 'btn-success')
-      )
-    )
-  );
-  $report_actions_delete = l(t('Delete'), 'delete-report', array(
-    'attributes' => array(
-      'class' => array(
-        'btn', 'btn-warning')
-      )
-    )
-  );
+
   foreach ($result as $record) {
     $link = opeka_report_user_link($record->token);
+    $report_actions_send = l(t('Send'), 'admin/reports/opeka-report-user/' . $record->rid . '/send', array(
+      'attributes' => array(
+        'class' => array(
+          'btn', 'btn-success')
+        )
+      )
+    );
+    $report_actions_delete = l(t('Delete'), 'admin/reports/opeka-report-user/' . $record->rid . '/delete', array(
+      'attributes' => array(
+        'class' => array(
+          'btn', 'btn-warning')
+        )
+      )
+    );
     $rows[] = array(
       'id' => $record->rid,
       'date' => format_date($record->time, 'custom', 'Y/m/j G:i'),
@@ -334,6 +398,102 @@ function opeka_report_user_reports() {
   );
 }
 
+/**
+ * Delete report confirmation form
+ */
+function opeka_report_user_delete_report_form($form, &$form_state) {
+  $report_id = check_plain(arg(3));
+  $form['report_id'] = array(
+		'#type' => 'value',
+		'#value' => $report_id,
+	);
+  $form = confirm_form($form,
+    'Are you sure you want to delete the report with ID ' . $report_id . '?',
+    'admin/reports/opeka-report-user',
+    'The action cannot be undone.',
+    'Delete',
+    'Cancel'
+  );
+  return $form;
+}
+
+/**
+ * Delete report submit handler
+ */
+function opeka_report_user_delete_report_form_submit($form, &$form_state) {
+  $report_id = $form_state['values']['report_id'];
+  $deleted = db_delete('opeka_report_user')
+  ->condition('rid', $report_id)
+  ->execute();
+  if ($deleted) {
+    watchdog('opeka_report_user', "User report with id %report-id was deleted", array(
+      '%report-id' => $report_id
+    ), WATCHDOG_NOTICE);
+    drupal_set_message(t('The report was deleted'));
+  }
+  else {
+    watchdog('opeka_report_user', "User report with id %report-id could not be deleted", array(
+      '%report-id' => $report_id
+    ), WATCHDOG_ERROR);
+    drupal_set_message(t('The report id could not be found in the database. Report not deleted.'), 'error');
+  }
+  $form_state['redirect'] = 'admin/reports/opeka-report-user';
+}
+
+/**
+ * Send report confirmation form
+ */
+function opeka_report_user_send_report_form($form, &$form_state) {
+  $report_id = check_plain(arg(3));
+  $form['report_id'] = array(
+		'#type' => 'value',
+		'#value' => $report_id,
+	);
+  $form = confirm_form($form,
+    'Are you sure, you want to send the report with ID ' . $report_id . '?',
+    'admin/reports/opeka-report-user',
+    'The action cannot be undone.',
+    'Confirm',
+    'Cancel'
+  );
+  return $form;
+}
+
+/**
+ * Send report submit handler
+ */
+function opeka_report_user_send_report_form_submit($form, &$form_state) {
+  $report_id = $form_state['values']['report_id'];
+  $default_mail = "info@curachat.com";
+
+  $query = db_select('opeka_report_user', 'ou');
+  $query
+    ->condition('rid', $report_id)
+    ->fields('ou');
+
+  if ($record = $query->execute()->fetchAssoc()) {
+    $report_admin_mail = variable_get('opeka_report_user_admin', $default_mail);
+    $report_authority_mail = variable_get('opeka_report_user_authority', $default_mail);
+
+    drupal_mail('opeka_report_user', 'report_authority', $report_authority_mail . '<' . $report_authority_mail . '>', language_default(), $record);
+    watchdog('opeka_report_user', "User report with id %report-id was sent", array(
+      '%report-id' => $report_id
+    ), WATCHDOG_NOTICE);
+    drupal_set_message(t('The report was sent'));
+    // update times_sent counter
+    $updated = db_update('opeka_report_user')
+      ->expression('times_sent', 'times_sent + 1')
+      ->condition('rid', $report_id)
+      ->execute();
+  }
+  else {
+    watchdog('opeka_report_user', "User report with id %report-id could not be sent", array(
+      '%report-id' => $report_id
+    ), WATCHDOG_ERROR);
+    drupal_set_message(t('The report id could not be found in the database. Report not sent.'), 'error');
+  }
+  $form_state['redirect'] = 'admin/reports/opeka-report-user';
+}
 /**
  * Admin settings form.
  */

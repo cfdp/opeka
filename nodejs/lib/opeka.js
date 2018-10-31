@@ -473,7 +473,9 @@ function Server(config, logger) {
   // Called by the counselors in order to create a new user report.
   self.councellors.addServerMethod('createReport', function (attributes, callback) {
     var report = new opeka.reports.Report(attributes);
-    report.saveIPandUserAgent(function(err, result) {
+    report.saveIPandUserAgent(function(err, result, roomId, clientId) {
+      var room,
+          client;
       if (err) {
         logger.error(err);
         if (callback) {
@@ -485,9 +487,17 @@ function Server(config, logger) {
       if (callback) {
         callback(null, report.clientData());
       }
-  
+
+      room = opeka.rooms.list[roomId];
+      console.dir(room);
+      client = room.users[clientId];
+      console.dir(client);
+      client.reported = true;
+      console.dir(room);
+
+      opeka.user.sendUserList(room.counselorGroup, room.id, room.users);
       self.councellors.remote('reportCreated', report.clientData());
-  
+
       self.logger.info('Report made by ' + report.counselor_name + ' (id: ' + report.id + ') .');
     });
   });

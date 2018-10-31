@@ -544,6 +544,7 @@
             banUser: Drupal.t('Ban user'),
             muteUser: Drupal.t('Mute user'),
             reportUser: Drupal.t('Report user'),
+            userReported: Drupal.t('User has been reported!'),
             screeningInfo: Drupal.t('Screening info'),
             pauseToggle: pauseLabel,
             placeholder: Drupal.t('No users'),

@@ -11,7 +11,7 @@ var _ = require('underscore'),
   PHPUnserialize = require('php-unserialize'),
   opeka = {
     user: require("./user"),
-    groups: require("./groups"),
+    groups: require("./groups")
   },
   reportList = {};
 
@@ -40,6 +40,7 @@ var Report = function (data) {
       name: self.name,
       time: self.time,
       counselor_name: self.counselor_name,
+      client_id: self.client_id,
       client_alias: self.client_alias,
       comment: self.comment,
       status: self.status,
@@ -60,6 +61,7 @@ var Report = function (data) {
         // @todo: check if the ip updates after a reconnect!
         if (!reportedClient || !reportedClient.connectionData) {
           callback('Could not save user report: The reported client could not be found on the server!');
+          return;
         }
         ip = reportedClient.connectionData.ip || null;
         agent = reportedClient.connectionData.agent || null;
@@ -71,11 +73,13 @@ var Report = function (data) {
             callback(err);
             return;
           }
-          callback(null, result);
+
+          callback(null, result, reportedClient.activeRoomId, self.client_id);
         });
       }
       else {
         callback(err);
+        return;
       }
     });
   };

@@ -82,12 +82,6 @@ function opeka_report_user_schema() {
           'length' => 255,
           'not null' => FALSE,
         ),
-        'chat_duration' => array(
-          'description' => 'Latest session duration in minutes.',
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => FALSE,
-        ),
         'comment' => array(
           'description' => 'The counselor\'s reason for reporting the user.',
           'type' => 'text',
@@ -105,8 +99,3 @@ function opeka_report_user_schema() {
     ),
   );
 }
-
-/* function opeka_report_user_update_7001() {
-  $schema = opeka_report_user_schema();
-  db_add_field('opeka_report_user', 'remote_port', $schema['opeka_report_user']['fields']['remote_port']);
-} */
