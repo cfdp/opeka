@@ -27,6 +27,7 @@ var _ = require("underscore"),
     queues: require('./queues'),
     rooms: require('./rooms'),
     invites: require('./invites'),
+    reports: require('./reports'),
     statistics: require('./statistics'),
     user: require('./user'),
     Client: require('./client'),
@@ -469,8 +470,39 @@ function Server(config, logger) {
     callback(null, signInURL + '#signIn/' + nonce + '/' + roomType);
   });
 
+  // Called by the counselors in order to create a new user report.
+  self.councellors.addServerMethod('createReport', function (attributes, callback) {
+    var report = new opeka.reports.Report(attributes);
+    report.saveIPandUserAgent(function(err, result, roomId, clientId) {
+      var room,
+          client;
+      if (err) {
+        logger.error(err);
+        if (callback) {
+          callback("Could not report user: Data could not be saved to database. Please contact support.");
+        }
+        return;
+      }
+      // Success - the data was added
+      if (callback) {
+        callback(null, report.clientData());
+      }
 
-  // Called by the counselors in order to create a new room.
+      room = opeka.rooms.list[roomId];
+      console.dir(room);
+      client = room.users[clientId];
+      console.dir(client);
+      client.reported = true;
+      console.dir(room);
+
+      opeka.user.sendUserList(room.counselorGroup, room.id, room.users);
+      self.councellors.remote('reportCreated', report.clientData());
+
+      self.logger.info('Report made by ' + report.counselor_name + ' (id: ' + report.id + ') .');
+    });
+  });
+
+  // Called by the counselors in order to create a new invite.
   self.councellors.addServerMethod('createInvite', function (attributes, callback) {
     var invite = new opeka.invites.Invite(attributes);
     invite.addToList();
@@ -1006,7 +1038,7 @@ function Server(config, logger) {
 
     // Add the chat session data for client to the db
     if (!client.account.isAdmin) {
-      opeka.statistics.save(client.age, client.gender, client.screening, function (session_id) {
+      opeka.statistics.save(client.clientId, client.age, client.gender, client.screening, function (session_id) {
         client.stats_id = session_id;
       });
     }

@@ -1,8 +1,7 @@
 <?php
 
-/** Generate a table with screening results
- *
- * Inspired by http://www.rahulsingla.com/blog/2011/05/drupal-7-creating-drupal-style-tables-with-paging-sorting-and-sticky-headers
+/** 
+ * Generate a table with user data and screening results
  **/
 
 function opeka_statistics_display_results_table() {

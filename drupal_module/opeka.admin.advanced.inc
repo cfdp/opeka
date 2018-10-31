@@ -167,7 +167,7 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     ),
   );
 
-  $form['submit']['#validate'][] = 'opeka_admin_settings_form_validate';
+  $form['submit']['#validate'][] = 'opeka_admin_advanced_settings_form_validate';
   return system_settings_form($form);
 }
 

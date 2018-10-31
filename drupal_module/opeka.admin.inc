@@ -84,7 +84,7 @@ function opeka_admin_settings_form($form, &$form_state) {
 
   $form['opeka_sign_in_settings'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Opeka sign in related settings'),
+    '#title' => t('Sign in related settings'),
     '#weight' => 4,
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
@@ -136,7 +136,7 @@ function opeka_admin_settings_form($form, &$form_state) {
  
   $form['opeka_widget'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Opeka widget settings'),
+    '#title' => t('Widget settings'),
     '#weight' => 4,
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
@@ -180,7 +180,7 @@ function opeka_admin_settings_form($form, &$form_state) {
 
   $form['opeka_reg_urls'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Opeka registration url settings'),
+    '#title' => t('Registration url settings'),
     '#weight' => 5,
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
@@ -202,5 +202,13 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('opeka_reg_group_url', ''),
   );
 
+
+  # $form['submit']['#validate'][] = 'opeka_admin_settings_form_validate';
+
   return system_settings_form($form);
 }
+
+/* Validate form input */
+/* function opeka_admin_settings_form_validate(&$form, &$form_state) {
+  
+} */

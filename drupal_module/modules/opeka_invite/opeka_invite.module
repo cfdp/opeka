@@ -10,12 +10,12 @@ function opeka_invite_menu() {
   $items = array();
 
   $items['admin/config/services/opeka/invite'] = array(
-    'title' => 'Invitation settings',
+    'title' => 'Invitations',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('opeka_invite_setting_form'),
     'access arguments' => array('administer opeka invite links'),
     'type' => MENU_LOCAL_TASK,
-    'weight' => 100,
+    'weight' => 3,
   );
 
   // Link to create an invitation via AJAX.
