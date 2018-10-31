@@ -301,7 +301,7 @@ You can review and send the report via @report_page_url",
       $subject = t("You have just made a report from @sitename",  array(
         '@sitename' => $site_name,
       ));
-      $body = t("Report made by: @counselor_name (contact email: @counselor_email). 
+      $body = t("Report made by: @counselor_name (contact email: @counselor_email).
 Date of report: @date. 
 Message from counselor: @message",
         
@@ -339,7 +339,6 @@ function opeka_report_user_reports() {
   $rows = array();
 
   foreach ($result as $record) {
-    $link = opeka_report_user_link($record->token);
     $report_actions_send = l(t('Send'), 'admin/reports/opeka-report-user/' . $record->rid . '/send', array(
       'attributes' => array(
         'class' => array(
