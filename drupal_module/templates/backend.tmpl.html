@@ -222,6 +222,31 @@
   </form>
 </script>
 
+<script id="opeka_report_user_tmpl" type="application/template">
+  <form action="#" class="report-user-form" id="opeka-report-user-create-form" accept-charset="UTF-8" _lpchecked="1">
+    <input type="hidden" id="reported-client-id" name="reported-client-id" value=<%= clientId %> >
+    <input type="hidden" id="counselor-id" name="counselor-id" value=<%= counselorId %> >
+    <input type="hidden" id="client-alias" name="client-alias" value="<%= clientAlias %>" >
+    <div>
+    <div class="control-group form-type-textfield form-item-counselor-name form-item">
+        <label for="edit-counselor-name" class="control-label"><%= labels.counselorName %><span class="form-required">*</span></label>
+        <div class="controls">
+          <input type="text" id="edit-counselor-name" name="counselor-name" value="" size="60" maxlength="128" class="form-text" placeholder="Your name">
+        </div>
+      </div>
+      <div class="control-group form-type-textarea form-item-comment form-item">
+        <label for="edit-comment" class="control-label"><%= labels.comment %><span class="form-required">*</span></label>
+        <div class="controls">
+          <div class="form-textarea-wrapper resizable textarea-processed resizable-textarea"><textarea id="edit-comment" name="comment" cols="60" rows="5" class="form-textarea" placeholder="Please state your reason for reporting the user."></textarea>
+            <div class="grippie"></div>
+          </div>
+        </div>
+        <div class="alert alert-warning"><%= labels.warning %></div>
+      </div>
+    </div>
+  </form>
+</script>
+
 <script id="opeka_queue_edit_tmpl" type="application/template">
   <form action="#" class="room-edit-form">
     <div class="form-item">

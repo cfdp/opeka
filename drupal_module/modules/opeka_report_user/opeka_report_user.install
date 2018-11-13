@@ -1,0 +1,101 @@
+<?php
+/**
+ * @file
+ * Installation and update functions.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function opeka_report_user_schema() {
+  return array(
+    'opeka_report_user' => array(
+      'description' => 'Opeka Report User.',
+      'fields' => array(
+        'rid' => array(
+          'description' => 'Unique report ID.',
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'time' => array(
+          'description' => 'Unix timestamp for the time of the report.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'counselor_name' => array(
+          'description' => 'The full name of the counselor making the report.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => TRUE,
+          'default' => '',
+        ),
+        'counselor_uid' => array(
+          'description' => 'The Drupal user id of the counselor making the report.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'counselor_email' => array(
+          'description' => 'Counselors email address.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => TRUE,
+          'default' => '',
+        ),
+        'client_id' => array(
+          'description' => 'The Opeka client ID of the reported user.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => TRUE,
+          'default' => '',
+        ),
+        'client_alias' => array(
+          'description' => 'The Opeka client alias of the reported user.',
+          'type' => 'varchar',
+          'length' => 128,
+          'not null' => FALSE,
+          'default' => '',
+        ),
+        'ip_address' => array(
+          'description' => 'The IP address of the reported user.',
+          'type' => 'varchar',
+          'length' => 32,
+          'not null' => FALSE,
+        ),
+        'remote_port' => array(
+          'description' => 'The remote port of the reported user.',
+          'type' => 'varchar',
+          'length' => 16,
+          'not null' => FALSE,
+        ),
+        'user_agent' => array(
+          'description' => 'The User agent of the reported user.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+        'login_dates' => array(
+          'description' => 'Unix timestamp for when the client logged into the chat.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+        'comment' => array(
+          'description' => 'The counselor\'s reason for reporting the user.',
+          'type' => 'text',
+          'not null' => FALSE,
+        ),
+        'times_sent' => array(
+          'description' => 'The number of times this report has been sent to the Authority email address.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+      ),
+      'primary key' => array('rid'),
+    ),
+  );
+}

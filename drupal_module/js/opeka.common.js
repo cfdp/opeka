@@ -452,6 +452,17 @@ var Opeka = {
     Opeka.queueList.reset(queues);
   };
 
+// -------- REPORT USER FUNCTIONS START -----------
+
+  // For when the server has registered a new report
+  Opeka.clientSideMethods.reportCreated = function (newReport) {
+    console.log('New report modified on server!', newReport);
+  };
+
+// -------- REPORT USER FUNCTIONS END -----------
+
+// -------- INVITATION FUNCTIONS START -----------
+
   // For when the server has an updated invites list for us.
   Opeka.clientSideMethods.receiveInviteList = function (invites) {
     // This triggers a reset even on the inviteList instance, so any views
@@ -459,7 +470,7 @@ var Opeka = {
     Opeka.inviteList.reset(invites);
   };
 
-  //
+  // For when the server has registered a new invite
   Opeka.clientSideMethods.inviteCreated = function (newInvite) {
     var existing  = _.find(Opeka.inviteList.models, function (invite, delta) {
       return invite.id == newInvite.id;
@@ -489,6 +500,9 @@ var Opeka = {
     });
     Opeka.inviteList.trigger('delete');
   };
+
+// -------- INVITATION FUNCTIONS END -----------
+
 
   // Add the new room to our local room list.
   Opeka.clientSideMethods.roomCreated = function (room) {

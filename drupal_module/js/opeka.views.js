@@ -82,7 +82,7 @@
       if (messages.length) {
         for (var n in messages) {
           if (messages[n].args !== undefined) {
-            messages[n].message = Drupal.t('@message', {'@message': messages[n].message}, messages[n].args);
+            messages[n].message = Drupal.t(messages[n].message, messages[n].args);
           }
         }
       }
@@ -499,6 +499,7 @@
       "click .kick-user": "kickUser",
       "click .ban-user": "banUser",
       "click .mute-user": "muteUser",
+      "click .report-user": "reportUser",
       "click .pause-toggle": "pauseToggle",
       "click .unmute-user": "unmuteUser",
       "click .whisper": "whisper",
@@ -521,7 +522,9 @@
 
     render: function () {
       var pauseLabel = Drupal.t('Pause chat'),
-        screeningQuestions = Opeka.status.attributes.screeningQuestions;
+        screeningQuestions = Opeka.status.attributes.screeningQuestions,
+        reportUserEnabled = (Drupal.settings.opeka_report_user && Drupal.settings.opeka_report_user.enabled) 
+          || false;
 
       if (this.model.get('paused')) {
         pauseLabel = Drupal.t('Unpause chat');
@@ -531,6 +534,7 @@
         this.$el.html(JST.opeka_chat_sidebar_tmpl({
           admin: this.admin,
           clientId: Opeka.clientData.clientId,
+          reportUserEnabled: reportUserEnabled,
           banCodeGenerator: this.banCodeGenerator,
           labels: {
             userListHeading: Drupal.t('User list'),
@@ -542,6 +546,8 @@
             kickUser: Drupal.t('Kick user'),
             banUser: Drupal.t('Ban user'),
             muteUser: Drupal.t('Mute user'),
+            reportUser: Drupal.t('Report user'),
+            userReported: Drupal.t('User has been reported!'),
             screeningInfo: Drupal.t('Screening info'),
             pauseToggle: pauseLabel,
             placeholder: Drupal.t('No users'),
@@ -658,6 +664,21 @@
     unmuteUser: function (event) {
       var clientId = $(event.currentTarget).closest('.user-list-item').attr('data-client-id');
       Opeka.remote.unmute(this.model.id, clientId);
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+    // For when you need to report a user.
+    reportUser: function (event) {
+      var view = new Opeka.ReportUserView({
+        clientId: $(event.currentTarget).closest('.user-list-item').attr('data-client-id'),
+        clientAlias: $(event.currentTarget).closest('.user-list-item').children().find('.name').text(),
+        model: this.model
+      });
+
+      view.render();
 
       if (event) {
         event.preventDefault();
@@ -1370,6 +1391,109 @@
           view.options.invite.save(data, {
             success: function (self, newInvite) {
               view.remove();
+            }
+          });
+        }
+      });
+
+      if (event) {
+        event.preventDefault();
+      }
+    },
+
+  });
+
+  // Dialog to create user report.
+  Opeka.ReportUserView = Opeka.DialogView.extend({
+    initialize: function (options) {
+      // Options passed to DialogView.
+      this.clientId = options.clientId,
+      this.clientAlias = options.clientAlias;
+
+      _.bindAll(this);
+
+      // For when creating new user report.
+      if (!options.report) {
+        options.content = JST.opeka_report_user_tmpl({
+          labels: {
+            counselorName: Drupal.t('Your full name'),
+            comment: Drupal.t('Reason for making the report'),
+            warning: Drupal.t('Are you sure you want to report this user to the authorities and log data?')
+          },
+          clientId: this.clientId,
+          clientAlias: this.clientAlias,
+          counselorId: Drupal.settings.opeka.user.uid,
+        });
+        options.report = new Opeka.Report();
+        options.dialogOptions = {
+          buttons: {},
+          title: Drupal.t('Report user: @clientAlias', {'@clientAlias': this.clientAlias}),
+          width: 500
+        };
+
+        options.dialogOptions.buttons[Drupal.t('Create new user report')] = this.saveUserReport;
+      }
+
+      options.dialogOptions.buttons[Drupal.t('Discard changes')] = this.remove;
+
+      // Call the parent initialize once we're done customising.
+      Opeka.DialogView.prototype.initialize.call(this, options);
+
+      return this;
+    },
+
+    render: function () {
+      Opeka.DialogView.prototype.render.call(this);
+
+      this.dialogElement.find('form').submit(this.saveUserReport);
+    },
+
+    // When the save room button is clicked.
+    saveUserReport: function (event) {
+      var form = $(this.dialogElement).find('form'),
+        values = {
+          clientAlias: form.find('input#client-alias').val(),
+          counselorName: form.find('input#edit-counselor-name').val(),
+          counselorId: form.find('input#counselor-id').val(),
+          comment: form.find('textarea#edit-comment').val(),
+          reportedClientId: form.find('input#reported-client-id').val(),
+        },
+        view = this;
+
+        $.post('/admin/opeka/report-user/ajax', values, function (data) {
+        var messageClientIdError,
+            otherError;
+        if (data.error) {
+          form.find('.control-group').removeClass('error');
+          form.find('.error-message').remove('.error-message');
+          _.each(data.error, function (message, field) {
+            form.find('.form-item-' + field).addClass('error').append('<p class="error-message">' + message + '</p>');
+          });
+          messageClientIdError = data.error["reported-client-id"];
+          if (messageClientIdError) {
+            $('.report-user-form').after('<div class="error"><p class="report-user-error error-message"></p></div>');
+            $('.report-user-error').append(messageClientIdError);
+          }
+          otherError = data.error["other-error"];
+          if (otherError) {
+            $('.report-user-form').after('<div class="error"><p class="other-error error-message"></p></div>');
+            $('.other-error').append(otherError);
+          }
+        }
+        else {
+          view.remove();
+          view.options.report.save(data, {
+            success: function (self, newReport) {
+              console.log(newReport);
+              var dialog = new Opeka.DialogView({
+                title: Drupal.t('@alias reported.', {'@alias': newReport.client_alias}),
+                content: view.make('p', {'class': "message"}, Drupal.t('The report will be reviewed by the Report Admin shortly.'))
+              });
+  
+              dialog.addButton('Ok', function () {
+                dialog.remove();
+              });
+              dialog.render();
             }
           });
         }

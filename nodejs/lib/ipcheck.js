@@ -1,4 +1,4 @@
-// Handles banning of users and checks if ip is valid e.g. within a certain .
+// Handles banning of users and checks if the IP is valid e.g. within a certain geographical zone.
 "use strict";
 
 var crypto = require("crypto"),

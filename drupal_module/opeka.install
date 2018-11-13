@@ -69,6 +69,20 @@ function opeka_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
+      'client_id' => array(
+        'description' => 'The client ID of the user.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'counselor_name' => array(
+        'description' => 'The full name of the counselor making the report.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
       'age' => array(
         'description' => 'User age.',
         'type' => 'varchar',
@@ -164,7 +178,6 @@ function opeka_update_7003() {
     drupal_set_message(t('Creating table opeka_stats.'), 'status');
     db_create_table('opeka_stats', $schema['opeka_stats']);
     if (db_table_exists('opeka_screening_submissions')) {
-      // @todo: move existing entries from opeka_submissions to new table
       drupal_set_message(t('Moving existing data from table opeka_screening_submissions.'), 'status');
       $query = "INSERT INTO opeka_stats (age, gender, question, answer, submission_date) SELECT age, gender, question, answer, submission_date FROM opeka_screening_submissions;";
       $result = db_query($query);
@@ -210,4 +223,13 @@ function opeka_update_7005() {
   opeka_disable_block($module, $delta);
   $delta = "powered-by";
   opeka_disable_block($module, $delta);
+}
+
+/**
+ * Add new columns for client id and counselor name to the opeka_stats table.
+ */
+function opeka_update_7006() {
+  $schema = opeka_schema();
+  db_add_field('opeka_stats', 'client_id', $schema['opeka_stats']['fields']['client_id']);
+  db_add_field('opeka_stats', 'counselor_name', $schema['opeka_stats']['fields']['counselor_name']);
 }
