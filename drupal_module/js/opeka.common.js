@@ -456,7 +456,7 @@ var Opeka = {
 
   // For when the server has registered a new report
   Opeka.clientSideMethods.reportCreated = function (newReport) {
-    console.log('new report modified on server!', newReport);
+    console.log('New report modified on server!', newReport);
   };
 
 // -------- REPORT USER FUNCTIONS END -----------

@@ -178,7 +178,6 @@ function opeka_update_7003() {
     drupal_set_message(t('Creating table opeka_stats.'), 'status');
     db_create_table('opeka_stats', $schema['opeka_stats']);
     if (db_table_exists('opeka_screening_submissions')) {
-      // @todo: move existing entries from opeka_submissions to new table
       drupal_set_message(t('Moving existing data from table opeka_screening_submissions.'), 'status');
       $query = "INSERT INTO opeka_stats (age, gender, question, answer, submission_date) SELECT age, gender, question, answer, submission_date FROM opeka_screening_submissions;";
       $result = db_query($query);
@@ -233,6 +232,4 @@ function opeka_update_7006() {
   $schema = opeka_schema();
   db_add_field('opeka_stats', 'client_id', $schema['opeka_stats']['fields']['client_id']);
   db_add_field('opeka_stats', 'counselor_name', $schema['opeka_stats']['fields']['counselor_name']);
-
-
 }

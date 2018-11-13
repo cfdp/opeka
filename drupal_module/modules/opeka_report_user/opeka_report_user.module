@@ -214,15 +214,8 @@ function opeka_report_user_cancel_ajax() {
  */
 function opeka_report_user_page_alter(&$page) {
   if (current_path() == 'admin/opeka') {
-  
+    drupal_add_js(array('opeka_report_user' => array('enabled' => TRUE)), 'setting');
   }
-}
-
-function opeka_report_user_link($token) {
-  return url('opeka', array(
-    'fragment' => 'invites/' . $token,
-    'absolute' => TRUE
-  ));
 }
 
 /**
