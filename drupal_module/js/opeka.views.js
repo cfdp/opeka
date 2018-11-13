@@ -82,7 +82,7 @@
       if (messages.length) {
         for (var n in messages) {
           if (messages[n].args !== undefined) {
-            messages[n].message = Drupal.t('@message', {'@message': messages[n].message}, messages[n].args);
+            messages[n].message = Drupal.t(messages[n].message, messages[n].args);
           }
         }
       }
@@ -522,7 +522,9 @@
 
     render: function () {
       var pauseLabel = Drupal.t('Pause chat'),
-        screeningQuestions = Opeka.status.attributes.screeningQuestions;
+        screeningQuestions = Opeka.status.attributes.screeningQuestions,
+        reportUserEnabled = (Drupal.settings.opeka_report_user && Drupal.settings.opeka_report_user.enabled) 
+          || false;
 
       if (this.model.get('paused')) {
         pauseLabel = Drupal.t('Unpause chat');
@@ -532,6 +534,7 @@
         this.$el.html(JST.opeka_chat_sidebar_tmpl({
           admin: this.admin,
           clientId: Opeka.clientData.clientId,
+          reportUserEnabled: reportUserEnabled,
           banCodeGenerator: this.banCodeGenerator,
           labels: {
             userListHeading: Drupal.t('User list'),
