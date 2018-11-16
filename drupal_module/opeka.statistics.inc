@@ -7,6 +7,7 @@
 function opeka_statistics_display_results_table() {
   $header = array(
     array('data' => t('Date'), 'field' => 'submission_date', 'sort' => 'desc'),
+    array('data' => t('Counselor'), 'field' => 'counselor_name', 'sort' => 'desc'),
     array('data' => t('Chat duration (min)'), 'field' => 'chat_duration'),
     array('data' => t('Age'), 'field' => 'age'),
     array('data' => t('Gender'), 'field' => 'gender'),
@@ -23,6 +24,7 @@ function opeka_statistics_display_results_table() {
     ->orderByHeader($header)//Field to sort on is picked from $header
     ->fields('n', array(
       'submission_date',
+      'counselor_name',
       'chat_duration',
       'age',
       'gender',
@@ -36,8 +38,9 @@ function opeka_statistics_display_results_table() {
     $rows[] = array(
       'data' => array(
         format_date($subm->submission_date),
+        $subm->counselor_name !== ("") ? $subm->counselor_name : t("-"),
         $subm->chat_duration !== NULL ? $subm->chat_duration : t('-'),
-        $subm->age !== ("") ? $subm->age : t("age not set"),
+        $subm->age !== ("") ? $subm->age : t("-"),
         _opeka_statistics_expand_gender($subm->gender),
         $subm->question,
         $subm->answer
@@ -84,7 +87,7 @@ function _opeka_statistics_expand_gender($gender) {
       $res = t("non-binary");
       break;
     default:
-      $res = t("gender not set");
+      $res = t("-");
   }
   return $res;
 }
