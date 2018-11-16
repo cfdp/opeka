@@ -57,8 +57,7 @@ function saveData(clientId, age, gender, screening, callback) {
       }
     }
     else {
-      logger.warning('Error: Chat session stats could not be saved.');
-      throw err;
+      logger.error('Error: Chat session stats could not be saved.');
     }
   });
 }
@@ -72,7 +71,6 @@ function saveChatDuration(stats_id, duration) {
     }
     else {
       logger.error('Chat duration could not be saved to opeka_stats table.');
-      throw err;
     }
   });
 }
