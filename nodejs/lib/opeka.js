@@ -1028,7 +1028,8 @@ function Server(config, logger) {
     var client = this,
       newRoom = opeka.rooms.list[roomId],
       queueSystem = self.config.get('features:queueSystem'),
-      queueFullUrl = self.config.get('features:queueFullUrl');
+      queueFullUrl = self.config.get('features:queueFullUrl'),
+      counselorUid = newRoom.uid;
 
     // Set the chat start time
     client.chatStartMin = Math.round((new Date()).getTime() / 60000);
@@ -1038,7 +1039,7 @@ function Server(config, logger) {
 
     // Add the chat session data for client to the db
     if (!client.account.isAdmin) {
-      opeka.statistics.save(client.clientId, client.age, client.gender, client.screening, function (session_id) {
+      opeka.statistics.save(client.clientId, counselorUid, client.age, client.gender, client.screening, function (session_id) {
         client.stats_id = session_id;
       });
     }

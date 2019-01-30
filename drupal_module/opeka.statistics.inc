@@ -2,11 +2,14 @@
 
 /** 
  * Generate a table with user data and screening results
+ * 
+ * @todo: add db column with counselor name and populate it if is has no value in this function
  **/
 
 function opeka_statistics_display_results_table() {
   $header = array(
     array('data' => t('Date'), 'field' => 'submission_date', 'sort' => 'desc'),
+    array('data' => t('Counselor'), 'field' => 'counselor_uid', 'sort' => 'desc'),
     array('data' => t('Chat duration (min)'), 'field' => 'chat_duration'),
     array('data' => t('Age'), 'field' => 'age'),
     array('data' => t('Gender'), 'field' => 'gender'),
@@ -23,6 +26,7 @@ function opeka_statistics_display_results_table() {
     ->orderByHeader($header)//Field to sort on is picked from $header
     ->fields('n', array(
       'submission_date',
+      'counselor_uid',
       'chat_duration',
       'age',
       'gender',
@@ -33,11 +37,16 @@ function opeka_statistics_display_results_table() {
   $results = $query->execute();
   $rows = array();
   foreach ($results as $subm) {
+    $uid = $subm->counselor_uid;
+    if (!empty($uid)) {
+      $counselor = user_load($uid);
+    }
     $rows[] = array(
       'data' => array(
         format_date($subm->submission_date),
+        $counselor !== NULL ? $counselor->name : t("-"),
         $subm->chat_duration !== NULL ? $subm->chat_duration : t('-'),
-        $subm->age !== ("") ? $subm->age : t("age not set"),
+        $subm->age !== ("") ? $subm->age : t("-"),
         _opeka_statistics_expand_gender($subm->gender),
         $subm->question,
         $subm->answer
@@ -84,7 +93,7 @@ function _opeka_statistics_expand_gender($gender) {
       $res = t("non-binary");
       break;
     default:
-      $res = t("gender not set");
+      $res = t("-");
   }
   return $res;
 }
