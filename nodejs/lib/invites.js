@@ -87,7 +87,6 @@ var loadAll = function () {
 };
 
 var scheduleCleanUp = function () {
-  logger.info('Started invites cleanup');
   drupal.db.query("SELECT value FROM variable WHERE name = 'opeka_invite_expire'", [], function (err, result, fields) {
     if (result) {
       result.forEach(function (row) {

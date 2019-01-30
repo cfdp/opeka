@@ -76,12 +76,11 @@ function opeka_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
-      'counselor_name' => array(
-        'description' => 'The full name of the counselor making the report.',
-        'type' => 'varchar',
-        'length' => 128,
-        'not null' => TRUE,
-        'default' => '',
+      'counselor_uid' => array(
+        'description' => 'The counselor UID of the user creating the room.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
       ),
       'age' => array(
         'description' => 'User age.',
@@ -211,7 +210,9 @@ function opeka_update_7003() {
  */
 function opeka_update_7004() {
   $schema = opeka_schema();
-  db_add_field('opeka_stats', 'chat_duration', $schema['opeka_stats']['fields']['chat_duration']);
+  if (!db_field_exists('opeka_stats', 'chat_duration')) {
+    db_add_field('opeka_stats', 'chat_duration', $schema['opeka_stats']['fields']['chat_duration']);
+  }
 }
 
 /**
@@ -230,6 +231,24 @@ function opeka_update_7005() {
  */
 function opeka_update_7006() {
   $schema = opeka_schema();
-  db_add_field('opeka_stats', 'client_id', $schema['opeka_stats']['fields']['client_id']);
-  db_add_field('opeka_stats', 'counselor_name', $schema['opeka_stats']['fields']['counselor_name']);
+  if (!db_field_exists('opeka_stats', 'client_id')) {
+    db_add_field('opeka_stats', 'client_id', $schema['opeka_stats']['fields']['client_id']);
+  }
+  if (!db_field_exists('opeka_stats', 'counselor_name')) {
+    db_add_field('opeka_stats', 'counselor_name', $schema['opeka_stats']['fields']['counselor_name']);   
+  }
+}
+
+/**
+ * Remove the counselor_name field - adding counselor_id instead
+ */
+function opeka_update_7007() {
+  $schema = opeka_schema();
+
+  if (db_field_exists('opeka_stats', 'counselor_name')) {
+    db_query("ALTER TABLE opeka_stats DROP COLUMN counselor_name");
+  }
+  if (!db_field_exists('opeka_stats', 'counselor_uid')) {
+    db_add_field('opeka_stats', 'counselor_uid', $schema['opeka_stats']['fields']['counselor_uid']);
+  }
 }
