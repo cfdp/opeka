@@ -120,7 +120,7 @@ function opeka_screening_ajax($form, $form_state) {
  *
  * The new item will be added in the form callback automatically.
  */
-function opeka_screening_submit_add_more($form, &$form_state, $arg) {
+function opeka_screening_submit_add_more($form, &$form_state, $arg = NULL) {
   $form_state['rebuild'] = TRUE;
 }
 
