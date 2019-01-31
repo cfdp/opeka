@@ -126,7 +126,7 @@ function opeka_opening_hours_ajax($form, $form_state) {
 /**
  * This function will make sure the form is rebuilt.
  */
-function opeka_opening_hours_submit_add_more($form, &$form_state, $arg) {
+function opeka_opening_hours_submit_add_more($form, &$form_state, $arg = NULL) {
   $form_state['rebuild'] = TRUE;
 }
 
@@ -134,7 +134,7 @@ function opeka_opening_hours_submit_add_more($form, &$form_state, $arg) {
 /**
  * Delete requested item.
  */
-function opeka_opening_hours_submit_remove_one($form, &$form_state, $arg) {
+function opeka_opening_hours_submit_remove_one($form, &$form_state, $arg = NULL) {
   $parents = $form_state['triggering_element']['#parents'];
 
   // Remove button key.
