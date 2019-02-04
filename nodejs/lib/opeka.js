@@ -1150,7 +1150,12 @@ function Server(config, logger) {
   });
 
   // Remove the user from room - can only remove yourself.
-  self.everyone.addServerMethod('removeUserFromRoom', function (roomId, clientId, activeRoomId) {
+  self.everyone.addServerMethod('removeUserFromRoom', function (roomId, clientId, activeRoomId, leaveRoomBtnClicked) {
+    console.log('hey' + leaveRoomBtnClicked);
+    leaveRoomBtnClicked = (typeof leaveRoomBtnClicked === 'undefined') ? false : leaveRoomBtnClicked;
+    if (leaveRoomBtnClicked && clientId) {
+      self.logger.debug('User clicked the leave room button, clientId ' + clientId);
+    }
     if (this.clientId === clientId) {
       var room = opeka.rooms.list[roomId],
         autoPause = self.config.get('features:automaticPausePairRooms'),

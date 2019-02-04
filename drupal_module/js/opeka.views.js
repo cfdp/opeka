@@ -252,8 +252,9 @@
 
     // Make the user leave the chat room.
     leaveRoom: function (event) {
-      var maxSize = this.model.get('maxSize');
-      var chatType = "pair";
+      var maxSize = this.model.get('maxSize'),
+        chatType = "pair",
+        leaveRoomBtnClicked = true;
 
       // Special case for owner leaving the room.
       if (maxSize === 2 && (Drupal.settings.opeka.user && this.model.get('uid') === Drupal.settings.opeka.user.uid)) {
@@ -264,7 +265,8 @@
       }
       else {
         // Remove the user from the room.
-        Opeka.remote.removeUserFromRoom(this.model.id, Opeka.clientData.clientId);
+        console.log(leaveRoomBtnClicked);
+        Opeka.remote.removeUserFromRoom(this.model.id, Opeka.clientData.clientId, this.model.id, leaveRoomBtnClicked);
         $(window).trigger('leaveRoom');
 
         // @todo: Going to a feedback page should be an option

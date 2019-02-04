@@ -257,7 +257,8 @@ var Client = function (server, stream, remote, conn) {
 
     server.logger.debug(
       'onReconnect: ' + self.clientId + ' takes over ' +
-      newClient.clientId + 's remote, stream and connection.'
+      newClient.clientId + 's remote, stream and connection. ' +
+      'UA: ' + self.connectionData.agent
     );
     self.changeState(CONNECTED);
     newClient.breakRelations();
@@ -303,12 +304,6 @@ var Client = function (server, stream, remote, conn) {
           return acc + val; 
         }, 0
       ) / 5;
-      if ((self.connectionData.pingCount % 5) === 0) {
-        server.logger.debug(
-          ' Avg. ping delay of', self.clientId,
-          'is', self.connectionData.pingDelayAvg, "UA:", self.connectionData.agent
-        );
-      }
     }
   };
 
