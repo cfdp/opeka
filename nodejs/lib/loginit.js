@@ -12,17 +12,23 @@ nconf.file({ file: 'config.json' });
 
 // Configure logging to use the console and a log file, but with timestamps (off by default).
 var logger = new (winston.Logger)({
+  rewriters: [
+    (level, msg, meta) => {
+        meta.app = nconf.get("server:user") + "-chat";
+        return meta;
+    }
+  ],
   transports: [
     new (winston.transports.Console)({
       colorize: true,
       level: nconf.get("logging:level"),
-      timestamp: true
+      timestamp: true,
     }),
     new (winston.transports.File)({
       filename: nconf.get("logging:file"),
       colorize: true,
       level: nconf.get("logging:level"),
-      timestamp: true
+      timestamp: true,
     })
   ]
 });
