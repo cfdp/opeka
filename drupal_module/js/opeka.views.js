@@ -945,12 +945,12 @@
         },
         buttons: [
           {
-            text: "Yes",
+            text: Drupal.t('Yes'),
             value: "true",
             click: this.sendFeedback
           },
           {
-            text: "No",
+            text: Drupal.t('No'),
             value: "false",
             click: this.sendFeedback
           },
