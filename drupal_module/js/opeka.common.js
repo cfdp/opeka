@@ -101,17 +101,9 @@ var Opeka = {
     // signIn page.
     checkSignIn: function (roomId) {
       if (!Opeka.clientData.isSignedIn) {
-        // wait a bit before activating the feedback window to allow 
-        // the Opeka object to initialize
-        setTimeout(function() {
-          if (roomId && Opeka.features && (Opeka.features.simpleFeedback === true)) {
-            var view = new Opeka.SimpleFeedbackDialogView({
-              model: this.Model
-            });
-            view.render();
-          }
-        }, 2000);
-
+        if (roomId) {
+          Opeka.simpleFeedback();
+        }
         this.navigate("", {trigger: true});
       }
       else {
@@ -792,9 +784,30 @@ var Opeka = {
     }
   };
 
+   /**
+   * Display the feedback dialog if the feature is active
+   */
+  Opeka.simpleFeedback = function () {
+    // wait a bit before activating the feedback window to allow 
+    // the Opeka object to initialize
+    setTimeout(function() {
+      if (Opeka.features && (Opeka.features.simpleFeedback === true)) {
+        var view = new Opeka.SimpleFeedbackDialogView({
+          model: this.Model
+        });
+        view.render();
+      }
+    }, 2000);
+  };
+
+   /**
+   * A forced window reload can be requested by the server if the connection
+   * was closed e.g. by a disconnect interval > disconnect_limit or a server restart
+   */
   Opeka.clientSideMethods.forceReload = function () {
     Opeka.changeState(Opeka.DISCONNECTED);
     Opeka.router.navigate("rooms", {trigger: true});
+    Opeka.simpleFeedback();
   };
 
   /**
