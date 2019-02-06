@@ -265,7 +265,6 @@
       }
       else {
         // Remove the user from the room.
-        console.log(leaveRoomBtnClicked);
         Opeka.remote.removeUserFromRoom(this.model.id, Opeka.clientData.clientId, this.model.id, leaveRoomBtnClicked);
         $(window).trigger('leaveRoom');
 
@@ -933,6 +932,55 @@
     }
   });
 
+  // Message dialog to get feedback from users
+  Opeka.SimpleFeedbackDialogView = Opeka.DialogView.extend({
+    initialize: function (options) {
+      _.bindAll(this);
+      // Make sure options is an object.
+      options = options || {};
+
+      options.dialogOptions = {
+        close: function () {
+          this.sendFeedback;
+        },
+        buttons: [
+          {
+            text: "Yes",
+            value: "true",
+            click: this.sendFeedback
+          },
+          {
+            text: "No",
+            value: "false",
+            click: this.sendFeedback
+          },
+        ],
+        title: Drupal.t('Give feedback')
+      };
+
+      // Provide a default message.
+      options.message = options.message
+        || Drupal.t('Help us improve by answering this question: Have you lost connection to the chat today?');
+
+      options.content = this.make('p', {'class': "message"}, options.message);
+
+      // Call the parent initialize once we're done customising.
+      return Opeka.DialogView.prototype.initialize.call(this, options);
+    },
+
+    sendFeedback: function (event) {
+      var feedback = event.target.value || null;
+      Opeka.remote.simpleFeedback(feedback, function(err, result) {
+        if (err) { console.warn("Error: feedback not saved.")};
+      });
+      this.remove();
+
+      if (event) {
+        event.preventDefault();
+      }
+    }
+  });
+
   // Message dialog lets the user know the connection is lost and we are attempting
   // a reconnect.
   Opeka.ReconnectingDialogView = Opeka.DialogView.extend({
@@ -1010,10 +1058,10 @@
           statusTextGuests,
           statusTextcounselors,
           guests = this.model.get('guests'),
-          counselors = this.model.get('councellors');
+          counselors = this.model.get('counselors');
 
       // Don’t render if we don’t have a status.
-      if (this.model.has('councellors') && this.model.has('guests')) {
+      if (this.model.has('counselors') && this.model.has('guests')) {
         if (this.model.get('chatOpen') === true) {
           chatStatus = "chat-open";
         }

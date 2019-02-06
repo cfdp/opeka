@@ -395,7 +395,7 @@
         <div class="message"><%- message.message %></div>
       </li>
     <% } else { %>
-      <li class="chat-message bs-callout color-id-<%- message.sender.colorId %> <% if(message.sender.isCouncellor) { %>bs-callout-counselor<% }else{%>bs-callout-client<% } %>" data-message-id="<%= message.messageId %>">
+      <li class="chat-message bs-callout color-id-<%- message.sender.colorId %> <% if(message.sender.isCounselor) { %>bs-callout-counselor<% }else{%>bs-callout-client<% } %>" data-message-id="<%= message.messageId %>">
         <div class="chat-message-content">
           <span class="sender-name"><%- message.sender.name %></span>
           <span class="message"><%- message.message %></span>

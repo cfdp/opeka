@@ -34,9 +34,10 @@ nconf.defaults({
     "requireDrupalLogin": false,
     "chatHistory": true,
     "screeningQuestions": false,
-    "ipGeoDbKey": "",
-    "ipGeoLocations": ["DK"]
+    "simpleFeedback": false
   },
+  "ipGeoDbKey": "",
+  "ipGeoLocations": ["DK"],
   "maxMessageLength": 2000,
   "maxMessageLengthGroup": 200,
   "authentication": {

@@ -66,6 +66,9 @@ module.exports.checkIPLocation = function (ip, apiKey, allowedLocations, callbac
   var outsideGeoLimits = false;
 
   getIpGeoData(ip, apiKey, function(err, location) {
+    if (err) {
+      callback(err);
+    }
     if (location) {
       outsideGeoLimits = (allowedLocations.indexOf(location) === -1);
     }
