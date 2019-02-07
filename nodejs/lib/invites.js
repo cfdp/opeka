@@ -100,7 +100,7 @@ var scheduleCleanUp = function () {
               toDelete.push(inviteId);
               logger.info('Invite', inviteId, 'is marked for deletion (scheduled for ' + format('dd/MM/yyyy hh:mm', new Date(invite.time * 1000)) + ')');
               delete(inviteList[token]);
-              opeka.groups.getGroup('councellors').remote('inviteCancelled', inviteId);
+              opeka.groups.getGroup('counselors').remote('inviteCancelled', inviteId);
             }
           });
           if (toDelete.length) {
