@@ -243,7 +243,7 @@ var Client = function (server, stream, remote, conn) {
     var userType = self.account.isAdmin ? "Admin" : "Regular";
 
     server.logger.debug(
-      userType + " disconnected: onConnectionClosed " + self.clientId + " UA = " + self.connectionData.agent 
+      userType + " user disconnected: onConnectionClosed " + self.clientId + " UA = " + self.connectionData.agent 
     );
     self.changeState(PENDING_TIMEOUT);
   };
@@ -263,13 +263,12 @@ var Client = function (server, stream, remote, conn) {
       'UA = ' + self.connectionData.agent
     );
     self.changeState(CONNECTED);
-    newClient.breakRelations();
     newClient.changeState(DISCONNECTED);
+    newClient.breakRelations();
     newClient = null;
   };
 
   // Break relations to objects that might be troublesome to garbage collect
-  // @todo: maybe end stream before setting it to null??
   self.breakRelations = function() {
     self.server = null;
     self.stream = null;

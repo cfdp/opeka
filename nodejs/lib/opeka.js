@@ -487,11 +487,8 @@ function Server(config, logger) {
       }
 
       room = opeka.rooms.list[roomId];
-      console.dir(room);
       client = room.users[clientId];
-      console.dir(client);
       client.reported = true;
-      console.dir(room);
 
       opeka.user.sendUserList(room.counselorGroup, room.id, room.users);
       self.counselors.remote('reportCreated', report.clientData());
@@ -1443,7 +1440,7 @@ function Server(config, logger) {
       room = opeka.rooms.list[roomId],
       errorMsg;
 
-    self.logger.debug("removeUserFromRoom:", isAdmin ? "admin" : "regular user", "clientId:", clientId);
+    self.logger.debug("removeUserFromRoom:", isAdmin ? "admin" : "regular", "user, clientId:", clientId);
     // Set room on pause.
     if (removedUser) {
       removedUser.activeRoomId = null;
