@@ -101,10 +101,12 @@ var Opeka = {
     // signIn page.
     checkSignIn: function (roomId) {
       if (!Opeka.clientData.isSignedIn) {
+        if (roomId) {
+          Opeka.simpleFeedback();
+        }
         this.navigate("", {trigger: true});
       }
       else {
-        Opeka.simpleFeedback();
         return true;
       }
     },

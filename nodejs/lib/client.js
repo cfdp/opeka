@@ -154,7 +154,7 @@ var Client = function (server, stream, remote, conn) {
     self.connectionData.remotePort = stream.remotePort;
 
     server.logger.info(
-      "Connection ready for user with IP ", ip, "UA: ", agent ,"and clientId ", self.clientId
+      "Connection ready for user with IP ", ip, "UA = ", agent ,"and clientId ", self.clientId
     );
 
     var currentTime = (new Date()).getTime();
@@ -243,7 +243,7 @@ var Client = function (server, stream, remote, conn) {
     var userType = self.account.isAdmin ? "Admin" : "Regular";
 
     server.logger.debug(
-      userType + " disconnected: onConnectionClosed " + self.clientId + " UA: " + self.connectionData.agent 
+      userType + " disconnected: onConnectionClosed " + self.clientId + " UA = " + self.connectionData.agent 
     );
     self.changeState(PENDING_TIMEOUT);
   };
@@ -260,7 +260,7 @@ var Client = function (server, stream, remote, conn) {
     server.logger.debug(
       'onReconnect: ' + userType + ' user ' + self.clientId + ' takes over ' +
       newClient.clientId + 's remote, stream and connection. ' +
-      'UA: ' + self.connectionData.agent
+      'UA = ' + self.connectionData.agent
     );
     self.changeState(CONNECTED);
     newClient.breakRelations();
@@ -330,7 +330,7 @@ var Client = function (server, stream, remote, conn) {
       server.logger.debug(
         'sincePingSuccess = ' + sincePingSuccess + ' > client_timeout = ' + client_timeout +
         ': Time to put ' + userType + ' user ' + self.clientId + ' into pending timeout' +
-        ' UA' + self.connectionData.agent 
+        ' UA = ' + self.connectionData.agent 
       );
       self.changeState(PENDING_TIMEOUT);
     }
@@ -348,7 +348,7 @@ var Client = function (server, stream, remote, conn) {
       server.logger.info(
         userType + " user disconnected: sincePingSuccess (" + sincePingSuccess + " ms) > disconnect_limit for " +
         self.clientId + " avg. pingDelay = " + self.connectionData.pingDelayAvg + 
-        " UA: " + self.connectionData.agent
+        " UA = " + self.connectionData.agent
       );
       self.changeState(DISCONNECTED);
     }
