@@ -752,6 +752,12 @@ ul.chat-message-list {
   font-size: 12px;
   padding: 6px 10px;
 }
+#opeka-app ul.user-list li.user-list-item a.btn {
+  background-color: #f0b37e;
+}
+#opeka-app ul.user-list li.user-list-item a.btn.online {
+  background-color: #fff;
+}
 #opeka-app ul.user-list li .name {
   padding-left: 5px;
 }

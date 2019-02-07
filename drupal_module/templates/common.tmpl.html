@@ -33,7 +33,7 @@
 
             <% if (user.clientId !== clientId && admin) { %>
               <div class="actions btn-group">
-                <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
+                <a class="btn btn-default dropdown-toggle <%- user.online %>" data-toggle="dropdown" href="#">
             <% } %>
 
                 <span class="glyphicon glyphicon-user"></span><span class="name"><%- user.name %></span>
