@@ -531,8 +531,8 @@ msgid "Reload"
 msgstr "Genindlæs"
 
 #: js/opeka.views.js:0
-msgid "There are !guests guests and !councellors councellors online"
-msgstr "Der er !guests brugere and !councellors rådgivere online"
+msgid "There are !guests guests and !counselors counselors online"
+msgstr "Der er !guests brugere and !counselors rådgivere online"
 
 #: js/opeka.views.js:0
 msgid "Please confirm that all messages in this room should be deleted."

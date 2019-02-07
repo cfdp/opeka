@@ -16,13 +16,13 @@ var logger = new (winston.Logger)({
     new (winston.transports.Console)({
       colorize: true,
       level: nconf.get("logging:level"),
-      timestamp: true
+      timestamp: true,
     }),
     new (winston.transports.File)({
       filename: nconf.get("logging:file"),
       colorize: true,
       level: nconf.get("logging:level"),
-      timestamp: true
+      timestamp: true,
     })
   ]
 });
