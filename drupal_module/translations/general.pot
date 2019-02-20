@@ -488,7 +488,7 @@ msgid "Reload"
 msgstr ""
 
 #: js/opeka.views.js:0
-msgid "There are !guests guests and !counselors counselors online"
+msgid "There are !guests guests and !councellors councellors online"
 msgstr ""
 
 #: js/opeka.views.js:0
