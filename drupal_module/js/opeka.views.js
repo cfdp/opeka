@@ -252,9 +252,8 @@
 
     // Make the user leave the chat room.
     leaveRoom: function (event) {
-      var maxSize = this.model.get('maxSize'),
-        chatType = "pair",
-        leaveRoomBtnClicked = true;
+      var maxSize = this.model.get('maxSize');
+      var chatType = "pair";
 
       // Special case for owner leaving the room.
       if (maxSize === 2 && (Drupal.settings.opeka.user && this.model.get('uid') === Drupal.settings.opeka.user.uid)) {
@@ -265,7 +264,7 @@
       }
       else {
         // Remove the user from the room.
-        Opeka.remote.removeUserFromRoom(this.model.id, Opeka.clientData.clientId, this.model.id, leaveRoomBtnClicked);
+        Opeka.remote.removeUserFromRoom(this.model.id, Opeka.clientData.clientId);
         $(window).trigger('leaveRoom');
 
         // @todo: Going to a feedback page should be an option
@@ -932,55 +931,6 @@
     }
   });
 
-  // Message dialog to get feedback from users
-  Opeka.SimpleFeedbackDialogView = Opeka.DialogView.extend({
-    initialize: function (options) {
-      _.bindAll(this);
-      // Make sure options is an object.
-      options = options || {};
-
-      options.dialogOptions = {
-        close: function () {
-          this.sendFeedback;
-        },
-        buttons: [
-          {
-            text: Drupal.t('Yes'),
-            value: "true",
-            click: this.sendFeedback
-          },
-          {
-            text: Drupal.t('No'),
-            value: "false",
-            click: this.sendFeedback
-          },
-        ],
-        title: Drupal.t('Give feedback')
-      };
-
-      // Provide a default message.
-      options.message = options.message
-        || Drupal.t('Help us improve by answering this question: Have you lost connection to the chat today?');
-
-      options.content = this.make('p', {'class': "message"}, options.message);
-
-      // Call the parent initialize once we're done customising.
-      return Opeka.DialogView.prototype.initialize.call(this, options);
-    },
-
-    sendFeedback: function (event) {
-      var feedback = event.target.value || null;
-      Opeka.remote.simpleFeedback(feedback, function(err, result) {
-        if (err) { console.warn("Error: feedback not saved.")};
-      });
-      this.remove();
-
-      if (event) {
-        event.preventDefault();
-      }
-    }
-  });
-
   // Message dialog lets the user know the connection is lost and we are attempting
   // a reconnect.
   Opeka.ReconnectingDialogView = Opeka.DialogView.extend({
@@ -1058,10 +1008,10 @@
           statusTextGuests,
           statusTextcounselors,
           guests = this.model.get('guests'),
-          counselors = this.model.get('counselors');
+          counselors = this.model.get('councellors');
 
       // Don’t render if we don’t have a status.
-      if (this.model.has('counselors') && this.model.has('guests')) {
+      if (this.model.has('councellors') && this.model.has('guests')) {
         if (this.model.get('chatOpen') === true) {
           chatStatus = "chat-open";
         }

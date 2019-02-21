@@ -137,7 +137,7 @@ var Room = function (options) {
     // Is it allowed for clients to be alone in a room without a counselor?
     self.soloClientsAllowed = options.soloClientsAllowed || false;
 
-    // Create groups for connected users and counselors.
+    // Create groups for connected users and councellors.
     self.group = opeka.groups.getGroup(self.id);
     self.counselorGroup = opeka.groups.getGroup("counselors-" + self.id);
 
@@ -221,12 +221,10 @@ var Room = function (options) {
       // Start the timer in order to retrieve at the end the duration of the chat
       if (client.account.isAdmin) {
         self.counselorGroup.addUser(client.clientId);
-        logger.info('Admin user added to room ' + self.id +
-        ' UA: ' + client.connectionData.agent);
+        logger.info('Admin user added to room ' + self.id);
       }
       else {
-        logger.info('Regular user added to room ' + self.id +
-        ' UA: ' + client.connectionData.agent);
+        logger.info('Regular user added to room ' + self.id);
       }
 
       updateRoomCounts();

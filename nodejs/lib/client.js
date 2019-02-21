@@ -140,8 +140,8 @@ var Client = function (server, stream, remote, conn) {
       ip = null,
       ipBanInfo = null,
       agent = null,
-      ipGeoDbKey = server.config.get('ipGeoDbKey'),
-      allowedLocations = server.config.get('ipGeoLocations');
+      ipGeoDbKey = server.config.get('features:ipGeoDbKey'),
+      allowedLocations = server.config.get('features:ipGeoLocations');
 
       self.connectionData.agent = agent = useragent.parse(stream.headers['user-agent']).toString();
 
@@ -154,7 +154,7 @@ var Client = function (server, stream, remote, conn) {
     self.connectionData.remotePort = stream.remotePort;
 
     server.logger.info(
-      "Connection ready for user with IP ", ip, "UA = ", agent ,"and clientId ", self.clientId
+      "Connection ready for user with IP ", ip, "UA: ", agent ,"and clientId ", self.clientId
     );
 
     var currentTime = (new Date()).getTime();
@@ -177,10 +177,6 @@ var Client = function (server, stream, remote, conn) {
 
     if (ipGeoDbKey) {
       ipcheck.checkIPLocation(ip, ipGeoDbKey, allowedLocations, function(err, ipGeoInfo) {
-        if (err) {
-          server.logger.error('IP geo service reported error: ', err); 
-          return;
-        }
         if (ipGeoInfo && ipGeoInfo.outsideGeoLimits) {
           server.logger.warning('User ' + self.clientId +
           ' tried to connect with address outside geo limits, country:' + ipGeoInfo.location); 
@@ -232,6 +228,11 @@ var Client = function (server, stream, remote, conn) {
         if (self.server) {
           self.server.handleConnectionClosed(self);
         }
+        else {
+          server.logger.debug('could not close connection for clientId = ' + self.clientId
+          + ' - self.server undefined.');
+          return;
+        }
         self.breakRelations();
         break;
       default:
@@ -240,10 +241,8 @@ var Client = function (server, stream, remote, conn) {
   };
 
   self.onConnectionClosed = function () {
-    var userType = self.account.isAdmin ? "Admin" : "Regular";
-
     server.logger.debug(
-      userType + " user disconnected: onConnectionClosed " + self.clientId + " UA = " + self.connectionData.agent 
+      "Client disconnected: onConnectionClosed " + self.clientId
     );
     self.changeState(PENDING_TIMEOUT);
   };
@@ -255,16 +254,14 @@ var Client = function (server, stream, remote, conn) {
     self.stream = newClient.stream;
     self.conn = newClient.conn;
     self.connectionData = newClient.connectionData;
-    var userType = self.account.isAdmin ? "Admin" : "Regular";
 
     server.logger.debug(
-      'onReconnect: ' + userType + ' user ' + self.clientId + ' takes over ' +
-      newClient.clientId + 's remote, stream and connection. ' +
-      'UA = ' + self.connectionData.agent
+      'onReconnect: ' + self.clientId + ' takes over ' +
+      newClient.clientId + 's remote, stream and connection.'
     );
     self.changeState(CONNECTED);
-    newClient.changeState(DISCONNECTED);
     newClient.breakRelations();
+    newClient.changeState(DISCONNECTED);
     newClient = null;
   };
 
@@ -306,15 +303,18 @@ var Client = function (server, stream, remote, conn) {
           return acc + val; 
         }, 0
       ) / 5;
+      if ((self.connectionData.pingCount % 5) === 0) {
+        server.logger.debug(
+          ' Avg. ping delay of', self.clientId,
+          'is', self.connectionData.pingDelayAvg, "UA:", self.connectionData.agent
+        );
+      }
     }
   };
 
   // Checks if the client connection has been idle for too long. Will also
   // issue a ping to the client every PING_INTERVAL.
   self.checkTimeout = function () {
-    var userType,
-      sincePingSuccess;
-
     if(self.state != CONNECTED) {
       return;
     }
@@ -322,32 +322,27 @@ var Client = function (server, stream, remote, conn) {
       self.pingClient();
     }
 
-    sincePingSuccess = self.now - self.connectionData.lastPingSuccess;
+    var sincePingSuccess = self.now - self.connectionData.lastPingSuccess;
 
     if (sincePingSuccess > client_timeout) {
-      userType = self.account.isAdmin ? "Admin" : "Regular";
       server.logger.debug(
-        'sincePingSuccess = ' + sincePingSuccess + ' > client_timeout = ' + client_timeout +
-        ': Time to put ' + userType + ' user ' + self.clientId + ' into pending timeout' +
-        ' UA = ' + self.connectionData.agent 
+        'sincePingSuccess = ' + sincePingSuccess + ' > client_timeout = ' + client_timeout
+        + ': Time to put user ' + self.clientId + ' into pending timeout'
       );
       self.changeState(PENDING_TIMEOUT);
     }
   };
 
   self.checkDisconnect = function () {
-    var userType;
-
     if(self.state != PENDING_TIMEOUT) {
       return;
     }
     var sincePingSuccess = self.now - self.connectionData.lastPingSuccess;
     if (sincePingSuccess > disconnect_limit) {
-      userType = self.account.isAdmin ? "Admin" : "Regular";
       server.logger.info(
-        userType + " user disconnected: sincePingSuccess (" + sincePingSuccess + " ms) > disconnect_limit for " +
+        "Client disconnected: sincePingSuccess (" + sincePingSuccess + " ms) > disconnect_limit for " +
         self.clientId + " avg. pingDelay = " + self.connectionData.pingDelayAvg + 
-        " UA = " + self.connectionData.agent
+        " UA: " + self.connectionData.agent
       );
       self.changeState(DISCONNECTED);
     }
@@ -429,11 +424,7 @@ var Client = function (server, stream, remote, conn) {
   self.forceReload = function() {
     self.remote('forceReload');
     // @todo: do more to ensure the connection is closed?
-    // Doublecheck: Ending the stream causes the client to reconnect, so thats a nogo.
-    // Close the socket after data has been synced.
-    // setTimeout(function () {
-    //   self.stream.end();
-    // }, 500);
+    // Ending the stream causes the client to reconnect, so thats a nogo.
   };
 
   self.remote = function (functionName) {

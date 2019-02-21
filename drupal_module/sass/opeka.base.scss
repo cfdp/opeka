@@ -695,12 +695,6 @@ ul.chat-message-list {
         font-size: 12px;
         padding: 6px 10px;
       }
-      a.btn {
-        background-color: lighten($ccOrange, 20%);
-        &.online {
-          background-color: $ccWhite;
-        }
-      }
     }
     li .name {
       padding-left: 5px;
