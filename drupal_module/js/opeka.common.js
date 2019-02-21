@@ -99,11 +99,8 @@ var Opeka = {
 
     // Check that the user is signed in, and if not, redirect to the
     // signIn page.
-    checkSignIn: function (roomId) {
+    checkSignIn: function () {
       if (!Opeka.clientData.isSignedIn) {
-        if (roomId) {
-          Opeka.simpleFeedback();
-        }
         this.navigate("", {trigger: true});
       }
       else {
@@ -175,7 +172,7 @@ var Opeka = {
         that = this;
 
       Drupal.settings.opeka.user.roomId = roomId;
-      if (this.checkSignIn(roomId)) {
+      if (this.checkSignIn()) {
         // Try to load room (it might be private).
         if (!room) {
           if (Opeka.remote) {
@@ -784,26 +781,6 @@ var Opeka = {
     }
   };
 
-   /**
-   * Display the feedback dialog if the feature is active
-   */
-  Opeka.simpleFeedback = function () {
-    // wait a bit before activating the feedback window to allow 
-    // the Opeka object to initialize
-    setTimeout(function() {
-      if (Opeka.features && (Opeka.features.simpleFeedback === true)) {
-        var view = new Opeka.SimpleFeedbackDialogView({
-          model: this.Model
-        });
-        view.render();
-      }
-    }, 2000);
-  };
-
-   /**
-   * A forced window reload can be requested by the server if the connection
-   * was closed e.g. by a disconnect interval > disconnect_limit or a server restart
-   */
   Opeka.clientSideMethods.forceReload = function () {
     Opeka.changeState(Opeka.DISCONNECTED);
     Opeka.router.navigate("rooms", {trigger: true});
@@ -1110,7 +1087,7 @@ var Opeka = {
 
     // If the connection is dropped, try to reconnect if we have timed out
     // (and are configured to reconnect), else drop connection.
-    // Don't reconnect if we are disconnected from server (ie banned / outsideGeoLimits )
+    // Don't reconnect if we are disconnected from server (ie banned )
     Opeka.onStreamDisconnected = function() {
       if(Opeka.use_reconnect) {
         if(Opeka.state != Opeka.TRYING_RECONNECT 
