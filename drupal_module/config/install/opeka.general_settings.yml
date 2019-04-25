@@ -17,3 +17,5 @@ form_build_id: form-Qkk_nbFwkpc-0knWkxFpR65nXrwXvOeJcVTHwBt9xPI
 form_token: QwlzaYchUI7mGwe6lhSlKwnCSJjHNqDASYXoos58syE
 form_id: opeka_admin_general_settings_form
 op: 'Save configuration'
+opening_hours_simple: 'The chat opening hours will be provided shortly...'
+

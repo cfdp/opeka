@@ -32,6 +32,17 @@ class ChatController extends ControllerBase {
       '#theme' => 'opeka_admin_chat',
     ];
   }
-  
+
+   /**
+   * Action for the chat's header widget page.
+   *
+   * @return string
+   *   Return page render array.
+   */
+  public function headerWidgetPage() {  
+    return [
+      '#theme' => 'opeka_header_widget',
+    ];
+  } 
 
 }

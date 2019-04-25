@@ -4,7 +4,8 @@
 var _ = require('underscore'),
     groups = require('./groups'),
     uuid = require('node-uuid'),
-    ban = require('./ban');
+    ban = require('./ban'),
+    validator = require('validator');
 
 /**
  * Represents a client instance
@@ -70,11 +71,16 @@ var Client = function(server, stream, remote, conn) {
             ip = null,
             banInfo = null;
 
-        if (stream.headers['x-real-ip']) {
+        if (stream.headers['x-real-ip'] && (validator.isIP(stream.headers['x-real-ip']))) {
           ip = stream.headers['x-real-ip'];
         }
-        else {
+        else if (validator.isIP(stream.remoteAddress)) {
           ip = stream.remoteAddress;
+        }
+        else {
+          self.logger.warning('User ' + self.clientId + '  tried to access the chat from an invalid IP.');
+          self.remote('accessDenied', self.clientId);
+          return;
         }
 
         banInfo = ban.checkIP(ip, server.config.get('ban:salt'));

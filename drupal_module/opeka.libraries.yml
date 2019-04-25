@@ -1,7 +1,7 @@
 chat:
   version: 1.x
   css:
-    theme:
+    base:
       css/opeka.base.css: {}
   js:
     js/opeka.frontend.js: {}
@@ -23,7 +23,7 @@ chat:
 admin.chat:
   version: 1.x
   css:
-    theme:
+    base:
       css/opeka.base.css: {}
       css/opeka.admin.css: {}
   js:
@@ -37,6 +37,23 @@ admin.chat:
     emoticons/lib/emoticons.js: {}
     js/howler.min.js: {}
     js/opeka.backend.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.ui.dialog
+    - core/drupal
+    - core/drupalSettings
+
+header.widget:
+  version: 1.x
+  css:
+    base:
+      css/opeka.base.css: {}
+      css/opeka.admin.css: {}
+      css/widget.css: {}
+      css/widget.header.css: {}
+  js:
+    js/socket.io.min.js: {}
+    widgets/js/chatstatus.js: {}
   dependencies:
     - core/jquery
     - core/jquery.ui.dialog

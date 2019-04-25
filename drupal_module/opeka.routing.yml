@@ -16,6 +16,14 @@ opeka.chat_controller_adminChatPage:
   options:
     _admin_route: FALSE
 
+opeka.chat_controller_headerWidgetPage:
+  path: '/opeka-widgets/header'
+  defaults:
+    _controller: '\Drupal\opeka\Controller\ChatController::headerWidgetPage'
+    _title: 'Chat widget'
+  requirements:
+    _permission: 'access content'
+
 opeka.chat_configuration_main:
   path: '/admin/config/services/opeka'
   defaults:

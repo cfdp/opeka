@@ -54,6 +54,15 @@ class ChatConfigurationFormGeneralSettings extends ConfigFormBase {
 
     $config = $this->config('opeka.general_settings');
 
+    $form['opening_hours_simple'] = [
+      '#type' => 'textarea',
+      '#title' => t('Opening hours'),
+      '#description' => t('Opening hours for the chat.'),
+      '#required' => FALSE,
+      '#default_value' => $config->get('opening_hours_simple'),
+      '#maxlength' => 400,
+    ];
+
     $form['enter_site'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('"Enter site" settings'),

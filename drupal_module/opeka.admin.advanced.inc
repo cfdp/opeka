@@ -27,7 +27,7 @@ function opeka_admin_advanced_settings_form($form, &$form_state) {
     '#title' => t('Login sound file'),
     '#description' => t('URL to a sound file that is played for the counselor when a client logs in.'),
     '#required' => FALSE,
-    '#default_value' => variable_get('opeka_client_login_sound', '../modules/custom/opeka/media/doorbell.mp3'),
+    '#default_value' => variable_get('opeka_client_login_sound', '/modules/custom/opeka/media/doorbell.mp3'),
   );
 
   $form['opeka_pairchat_user_list'] = array(

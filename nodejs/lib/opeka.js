@@ -288,13 +288,18 @@ function Server(config, logger) {
         return;
       }
       
-      // Check whether the counselors' access is restricted by IP address
+      // Check for valid IP and whether the counselors' access is restricted by IP address
       if (account.isAdmin && validCounselorIPs.length > 0) {
-        if (stream.headers['x-real-ip']) {
+        if (stream.headers['x-real-ip'] && (validator.isIP(stream.headers['x-real-ip']))) {
           ip = stream.headers['x-real-ip'];
         }
-        else {
+        else if (validator.isIP(stream.remoteAddress)) {
           ip = stream.remoteAddress;
+        }
+        else {
+          self.logger.warning('Counselor tried to access the chat from an invalid IP.');
+          client.remote('accessDenied', client.clientId);
+          return;
         }
         if (!(_.contains(validCounselorIPs, ip))) {
           self.logger.warning('Counselor tried to access the chat from non-whitelisted IP.');

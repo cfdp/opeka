@@ -56,33 +56,13 @@ module.exports.authenticate = function (authData, callback) {
       });
     });
   }
-  // Otherwise, we need to check if the accessCode feature is enabled
+  // @todo: Fix accessCode functionality
   else {
-
     var account = {};
     account.isAdmin = false;
-    // If the accessCode functionality is activated, make sure the right access code is given
-    if (authData.accessCodeEnabled && authData.clientUser.accessCode !== accessCode) {
-      util.log("Error: Wrong or no access code given on signIn form.");
-      callback(true);
-      throw 'Wrong or no access code given on signIn form';
-    }
-
-    drupal.user.load(0, function (err, account) {
-      drupal.user.access('hide typing message', account, function (err, hideTypingMessage) {
-        account.hideTypingMessage = hideTypingMessage;
-        drupal.user.access('pause opeka chat autoscroll', account, function (err, allowPauseAutoScroll) {
-          account.allowPauseAutoScroll = allowPauseAutoScroll;
-          drupal.user.access('access chat history', account, function (err, viewChatHistory) {
-            account.viewChatHistory = viewChatHistory;
-            callback(null, account);
-          });
-        });
-      });
-    });
-
+    callback("There was an error validating credentials. Please contact support");
+    return;
   }
-
 };
 
 // Filters the user data and remove personal/security sensitive data and

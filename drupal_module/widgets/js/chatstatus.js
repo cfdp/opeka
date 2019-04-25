@@ -1,18 +1,19 @@
-var Opeka = Opeka || {};
+var Drupal = Drupal || {},
+    drupalSettings = drupalSettings || {};
 
-(function (Drupal, Opeka, $, undefined) {
+(function (Drupal, drupalSettings, $, undefined) {
   
   Drupal.behaviors.opeka = {
     attach: function (context, settings) {
       // Setting the variables
       var chatStatus = {},
           io_socket = null,
-          opekaClientURL = Drupal.settings.opeka.client_url || null,
+          opekaClientURL = drupalSettings.opeka.client_url || null,
           opekaBaseURL = location.protocol + '//' + location.hostname || "https://localhost:3000",
-          defaultChatName = Drupal.settings.opeka.default_chat_name || Drupal.t("The chat"),
-          pairChatName = Drupal.settings.opeka.pair_chat_name || Drupal.t("The 1-to-1 chat"),
-          groupChatName = Drupal.settings.opeka.group_chat_name || Drupal.t("The group chat"),
-          pairChatRoomListEntry = Drupal.settings.opeka.pairchat_room_list_entry || false,
+          defaultChatName = drupalSettings.opeka.default_chat_name || Drupal.t("The chat"),
+          pairChatName = drupalSettings.opeka.pair_chat_name || Drupal.t("The 1-to-1 chat"),
+          groupChatName = drupalSettings.opeka.group_chat_name || Drupal.t("The group chat"),
+          pairChatRoomListEntry = drupalSettings.opeka.pairchat_room_list_entry || false,
           textStrings = {
             buttonAvailable : Drupal.t("The chat is open"),
             buttonOccupied : Drupal.t("The chat is occupied"),
@@ -30,7 +31,7 @@ var Opeka = Opeka || {};
             statusAvailable_pair: Drupal.t("@pairChatName is available", {'@pairChatName': pairChatName}),
             statusAvailable_group : Drupal.t('@groupChatName is available', {'@groupChatName': groupChatName}),
           };
-      io_url = Drupal.settings.opeka.socket_io_url || 'https://localhost:3000/opeka';
+      io_url = drupalSettings.opeka.socket_io_url || 'https://localhost:3000/opeka';
       
       io_socket = io(io_url, {'reconnection': false});
 
@@ -225,4 +226,4 @@ var Opeka = Opeka || {};
       };
     },
   };
-})(Drupal, Opeka, jQuery);
+})(Drupal, drupalSettings, jQuery);

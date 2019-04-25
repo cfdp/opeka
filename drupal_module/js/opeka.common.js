@@ -829,7 +829,7 @@ var Opeka = {
   
   // Check if user has group access
   Opeka.userHasGroupAccess = function (roomId) {
-    var userGroups = drupalSettings.opeka.user.groupId,
+    var userGroups = drupalSettings.opeka.user.groupId ? null : {},
       hasAccess = false;
 
     Object.keys(userGroups).forEach(function(key) {

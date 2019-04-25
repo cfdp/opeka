@@ -29,7 +29,6 @@ body.opeka-counselor,
 body.opeka-regular {
   background-color: #F8F8F8;
   font-size: 14px;
-  font-family: "Montserrat", sans-serif;
   /* Drupal messages */
   /* Forms */
 }
@@ -440,28 +439,6 @@ ul.chat-message-list {
 
 .footer {
   border: none;
-}
-
-/* MODAL DIALOG / POPUP WINDOWS */
-.path-opeka .ui-icon,
-.path-opeka .ui-dialog .ui-dialog-titlebar-close,
-.page-admin-opeka .ui-icon,
-.page-admin-opeka .ui-dialog .ui-dialog-titlebar-close {
-  overflow: hidden;
-  background-repeat: no-repeat;
-  background-position: -96px -128px;
-}
-.path-opeka .ui-widget-header .ui-icon,
-.path-opeka .ui-dialog .ui-dialog-titlebar-close,
-.page-admin-opeka .ui-widget-header .ui-icon,
-.page-admin-opeka .ui-dialog .ui-dialog-titlebar-close {
-  background-image: url(images/ui-icons_222222_256x240.png);
-}
-.path-opeka .ui-dialog .ui-dialog-titlebar-close span,
-.page-admin-opeka .ui-dialog .ui-dialog-titlebar-close span {
-  display: block;
-  margin: 1px;
-  text-indent: 9999px;
 }
 
 /* Opeka app */

@@ -1,5 +1,4 @@
 // Utilities
-@import url("https://fonts.googleapis.com/css?family=Montserrat:400,500,700,800");
 @import "compass";
 @import "variables";
 @import "mixins";
@@ -9,7 +8,6 @@ body {
   background: none transparent;
   background-image: none;
   color: #fff;
-  font-family: "Montserrat", sans-serif;
   font-size: 13px;
   height: 100%;
   line-height: 1.3;
