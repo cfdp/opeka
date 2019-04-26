@@ -13,6 +13,7 @@ module.exports.authenticate = function (authData, callback) {
   util.log("User authenticating, Drupal sid: " + authData.clientUser.sid);
   util.log("User authenticating, Drupal uid: " + authData.clientUser.uid);
 
+  // We have an authenticated Drupal user (uid > 0)
   if (authData.clientUser.sid && authData.clientUser.uid) {
     // Validate the user's session.
     drupal.user.session_load(authData.clientUser.sid, function (err, session) {
@@ -48,6 +49,7 @@ module.exports.authenticate = function (authData, callback) {
                 drupal.user.access('access chat history', account, function (err, viewChatHistory) {
                   account.viewChatHistory = viewChatHistory;
                   callback(null, account);
+                  return;
                 });
               });
             });
@@ -56,12 +58,33 @@ module.exports.authenticate = function (authData, callback) {
       });
     });
   }
-  // @todo: Fix accessCode functionality
+  // @todo: Fix accessCode functionality and handle errors properly
+  // We have an anonymous user and/or some problem regarding credentials
   else {
-    var account = {};
+    var account = {},
+      err = { message: "There was an error validating credentials. Please contact support" };
     account.isAdmin = false;
-    callback("There was an error validating credentials. Please contact support");
-    return;
+    // If the accessCode functionality is activated, make sure the right access code is given
+    if (authData.accessCodeEnabled && authData.clientUser.accessCode !== accessCode) {
+      err.message = "Error: Wrong or no access code given on signIn form.";
+      util.log(err.message);
+      callback(err);
+      return;
+    }
+
+    drupal.user.load(0, function (err, account) {
+      drupal.user.access('hide typing message', account, function (err, hideTypingMessage) {
+        account.hideTypingMessage = hideTypingMessage;
+        drupal.user.access('pause opeka chat autoscroll', account, function (err, allowPauseAutoScroll) {
+          account.allowPauseAutoScroll = allowPauseAutoScroll;
+          drupal.user.access('access chat history', account, function (err, viewChatHistory) {
+            account.viewChatHistory = viewChatHistory;
+            callback(null, account);
+            return;
+          });
+        });
+      });
+    });
   }
 };
 
