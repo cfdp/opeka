@@ -5,6 +5,8 @@
  *
  * Available variables:
  *   - opening_hours_simple
+ *   - connect
+ *   - subtext
  *
  * @see template_preprocess_opeka_header_widget()
  *
@@ -13,14 +15,13 @@
 #}
 
 <div class="status-wrapper">
-    <div class="status-tab">1-til-1 chat er lukket</div>
+    <div class="status-tab">{{ connect }}</div>
   <div id="output"></div>
   <div class="status-content">
     <p>{{ opening_hours_simple }}</p>
   </div>
   <div class="login-button">
-    <a id="join-chat" class="btn chat" href="#">Chatten er lukket lige nu</a>
-    <div class="button-subtext">
-      Alle chats er for unge i alderen 9-23 år.    </div>
+    <a id="join-chat" class="btn chat" href="#">{{ connect }}</a>
+    <div class="button-subtext">{{ subtext }}</div>
   </div>
 </div>

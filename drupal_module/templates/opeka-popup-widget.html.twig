@@ -1,0 +1,33 @@
+{#
+/**
+ * @file
+ * Default theme implementation to print the Opeka popup widget.
+ *
+ * Available variables:
+ *   - connect
+ *   - widget_popup_text
+ *   - widget_popup_link_url
+ *   - widget_popup_link_text
+ *   - pair_chat_name
+
+ *
+ * @see template_preprocess_opeka_popup_widget()
+ *
+ * @ingroup themeable
+ */
+#}
+
+<div class="status-wrapper popup">
+  <div class="chat-name">{{ pair_chat_name }}</div>
+  <div class="login-button">
+    <a id="join-chat" class="btn chat" href="#"></a>
+  </div>
+  <div class="status-content"> {{ widget_popup_text }}
+    {% if widget_popup_link_url %}
+      <a class="popup-link" target="_parent" href="{{ widget_popup_link_url }}">{{ widget_popup_link_text }}</a>
+    {% endif %}
+  </div>
+  <div class="button-wrapper">
+    <a href="#" class="close opeka-chat-popup"></a>
+  </div>
+</div>

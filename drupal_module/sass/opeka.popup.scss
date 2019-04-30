@@ -1,0 +1,32 @@
+/* Styling for the popup widget
+ * This file must be added on all pages where the popup should be embedded.
+ */
+// Utilities
+@import "variables";
+@import "mixins";
+
+.curachat-widgets {
+  bottom: 0px;
+  display: block;
+  margin: 0;
+  padding: 0px;
+  position: fixed;
+  right: 0;
+  text-align: center;
+  width: 100%;
+  z-index: 20;
+  iframe {
+    border-bottom: 1px solid #ffffff;
+    display: block;
+    height: 35px;
+    width: 100%;
+  }
+}
+
+.opeka-chat-popup-wrapper {
+  display: none;
+  position: relative;
+  width: 100%;
+  z-index: 10;
+  top: 400px;
+}

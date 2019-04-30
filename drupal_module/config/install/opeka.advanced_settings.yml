@@ -26,12 +26,8 @@ schedule: 'Online thursday the 22. of september\r\n10.00-10.30 CET'
 screening_main: 'Her er mit spørgsmål til dig...'
 screening_options: {  }
 signin_footnote: ''
-test_mode: 1
+test_mode: 0
 welcome_message: 'Velkommen til demo-versionen af CuraChat!'
-widget_header_button_subtext: 'Chats are for young people aged 9 to 23 years.'
-widget_popup_link_text: ''
-widget_popup_link_url: ''
-widget_popup_text: 'Chat anonymously with a counselor'
 connectjs_url_validate: 0
 opeka_schedule: 'Online thursday the 22. of september\r\n10.00-10.30 CET'
 feedback_url_validate: 0

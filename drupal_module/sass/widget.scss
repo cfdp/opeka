@@ -18,11 +18,14 @@ body {
     color: #fff;
     margin: 0 0 5px 0;
   }
-  body.admin-menu.page-opeka-widgets {
+  &.admin-menu.page-opeka-widgets {
     margin-top: 0px !important;
   }
-  body.admin-menu.page-opeka-widgets #admin-menu {
+  &.admin-menu.page-opeka-widgets #admin-menu {
     display: none;
+  }
+  &.path-opeka-widgets {
+    background-color: $color-gray;
   }
 }
 

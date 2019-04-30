@@ -14,6 +14,7 @@
 /drupal_module/scripts/stopchat.sh
 /drupal_module/scripts/restart_wrapper.sh
 /drupal_module/translations/*.po~
+drupal_module/widgets/popup/js/data.js
 /drupal_module/bin/
 /logs
 .brackets.json

@@ -24,6 +24,14 @@ opeka.chat_controller_headerWidgetPage:
   requirements:
     _permission: 'access content'
 
+opeka.chat_controller_popupWidgetPage:
+  path: '/opeka-widgets/popup'
+  defaults:
+    _controller: '\Drupal\opeka\Controller\ChatController::popupWidgetPage'
+    _title: 'Chat widget'
+  requirements:
+    _permission: 'access content'
+
 opeka.chat_configuration_main:
   path: '/admin/config/services/opeka'
   defaults:

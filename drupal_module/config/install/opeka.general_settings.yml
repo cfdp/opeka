@@ -3,9 +3,10 @@ enter_site_message: 'Chat 100% anonymously with counselors from X municipality. 
 enter_site_confirm: 'Yes, I am from X municipality'
 enter_site_leave: 'I am from another municipality, what do I do?'
 widget_header_button_subtext: 'Chats are for young people aged 9 to 23 years.'
-widget_popup_text: 'Chat anonymously with a counselor'
+widget_popup_feature: 0
 widget_popup_link_text: ''
 widget_popup_link_url: ''
+widget_popup_text: 'Chat anonymously with a counselor'
 age_min: '9'
 age_max: '23'
 welcome_message: 'Velkommen til demo-versionen af CuraChat!'

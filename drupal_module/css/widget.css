@@ -31,13 +31,17 @@ body p {
   color: #fff;
   margin: 0 0 5px 0;
 }
-html body.admin-menu.page-opeka-widgets,
-body body.admin-menu.page-opeka-widgets {
+html.admin-menu.page-opeka-widgets,
+body.admin-menu.page-opeka-widgets {
   margin-top: 0px !important;
 }
-html body.admin-menu.page-opeka-widgets #admin-menu,
-body body.admin-menu.page-opeka-widgets #admin-menu {
+html.admin-menu.page-opeka-widgets #admin-menu,
+body.admin-menu.page-opeka-widgets #admin-menu {
   display: none;
+}
+html.path-opeka-widgets,
+body.path-opeka-widgets {
+  background-color: #c7c7c7;
 }
 
 body.chat-open,

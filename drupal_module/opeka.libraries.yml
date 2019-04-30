@@ -59,4 +59,37 @@ header.widget:
     - core/jquery.ui.dialog
     - core/drupal
     - core/drupalSettings
+
+popup:
+  version: 1.x
+  css:
+    theme:
+      css/opeka.popup.css: {}
+  js:
+    widgets/popup/js/data.js: {}
+    widgets/popup/js/opeka.popup.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/jquery.ui.dialog
+    - core/drupal
+    - core/drupalSettings
+
+popup.widget:
+  version: 1.x
+  css:
+    base:
+      css/opeka.base.css: {}
+      css/opeka.admin.css: {}
+      css/widget.css: {}
+      css/widget.popup.css: {}
+  js:
+    js/socket.io.min.js: {}
+    widgets/js/chatstatus.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/jquery.ui.dialog
+    - core/drupal
+    - core/drupalSettings
         

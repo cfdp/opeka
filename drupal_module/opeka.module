@@ -37,6 +37,17 @@ function opeka_preprocess_html(&$vars) {
 }
 
 /**
+ * Add popup widget to all pages except chat pages and admin pages
+ */
+function opeka_preprocess_page(&$variables) {
+  $popup_activated = \Drupal::config('opeka.general_settings')->get('widget_popup_feature');
+  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
+  if ($popup_activated && !opeka_is_chat_page() && !($is_admin)) {
+    $variables['#attached']['library'][] =  'opeka/popup';
+  }
+}
+
+/**
  * Helper function that loads the current users profile image URI into the
  * drupalSettings javascript object.
  *
@@ -112,6 +123,10 @@ function opeka_theme() {
       'variables' => [
       ],
     ],
+    'opeka_popup_widget' => [
+      'variables' => [
+      ],
+    ],
   ];
 }
 
@@ -134,15 +149,7 @@ function opeka_library_info_build() {
  * Implements hook_preprocess_THEME().
  */
 function opeka_preprocess_opeka_chat(&$variables) {
-  $opeka_settings = _opeka_compile_javascript_settings();
-  // Merge in variables from custom modules if present
-  if (isset($variables['#attached']['drupalSettings']['opeka'])) {
-    $variables['#attached']['drupalSettings']['opeka'] = array_replace_recursive($opeka_settings, 
-    $variables['#attached']['drupalSettings']['opeka']);
-  }
-  else {
-    $variables['#attached']['drupalSettings']['opeka'] = $opeka_settings;
-  }
+  opeka_merge_vars($variables);
   $variables['#attached']['library'][] = 'opeka/chat';
   $variables['#attached']['drupalSettings']['opeka']['user']['admin'] = FALSE;
   $variables['#attached']['library'][] = 'opeka/dnode.connect';
@@ -152,15 +159,7 @@ function opeka_preprocess_opeka_chat(&$variables) {
  * Implements hook_preprocess_THEME().
  */
 function opeka_preprocess_opeka_admin_chat(&$variables) {
-  $opeka_settings = _opeka_compile_javascript_settings();
-  // Merge in variables from custom modules if present
-  if (isset($variables['#attached']['drupalSettings']['opeka'])) {
-    $variables['#attached']['drupalSettings']['opeka'] = array_replace_recursive($opeka_settings, 
-    $variables['#attached']['drupalSettings']['opeka']);
-  }
-  else {
-    $variables['#attached']['drupalSettings']['opeka'] = $opeka_settings;
-  }
+  opeka_merge_vars($variables);
   $variables['#attached']['library'][] = 'opeka/admin.chat';
   $variables['#attached']['drupalSettings']['opeka']['user']['admin'] = TRUE;
   $variables['#attached']['library'][] = 'opeka/dnode.connect';
@@ -170,6 +169,32 @@ function opeka_preprocess_opeka_admin_chat(&$variables) {
  * Implements hook_preprocess_THEME().
  */
 function opeka_preprocess_opeka_header_widget(&$variables) {
+  opeka_merge_vars($variables);
+  $variables['#attached']['library'][] = 'opeka/header.widget';
+  $variables['opening_hours_simple'] = \Drupal::config('opeka.general_settings')->get('opening_hours_simple');
+  $variables['connect'] = t('Connecting...');
+  $variables['subtext'] = \Drupal::config('opeka.advanced_settings')->get('widget_header_button_subtext');
+}
+
+/**
+ * Implements hook_preprocess_THEME().
+ */
+function opeka_preprocess_opeka_popup_widget(&$variables) {
+  opeka_merge_vars($variables);
+  $variables['#attached']['library'][] = 'opeka/popup.widget';
+  $variables['connect'] = t('Connecting...');
+  $variables['pair_chat_name'] = \Drupal::config('opeka.advanced_settings')->get('pair_chat_name');
+  $variables['widget_popup_text'] = \Drupal::config('opeka.general_settings')->get('widget_popup_text');
+  $variables['widget_popup_link_text'] = \Drupal::config('opeka.general_settings')->get('widget_popup_link_text');
+  $variables['widget_popup_link_url'] = \Drupal::config('opeka.general_settings')->get('widget_popup_link_url');
+}
+
+
+/**
+ * Merge vars from other modules if present
+ */
+
+function opeka_merge_vars(&$variables) {
   $opeka_settings = _opeka_compile_javascript_settings();
   // Merge in variables from custom modules if present
   if (isset($variables['#attached']['drupalSettings']['opeka'])) {
@@ -179,8 +204,6 @@ function opeka_preprocess_opeka_header_widget(&$variables) {
   else {
     $variables['#attached']['drupalSettings']['opeka'] = $opeka_settings;
   }
-  $variables['#attached']['library'][] = 'opeka/header.widget';
-  $variables['opening_hours_simple'] = \Drupal::config('opeka.general_settings')->get('opening_hours_simple');
 }
 
 /**

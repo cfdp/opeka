@@ -121,6 +121,14 @@ class ChatConfigurationFormGeneralSettings extends ConfigFormBase {
       '#maxlength' => 200,
     ];
 
+    $form['widget']['widget_popup_feature'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Activate the popup widget'),
+      '#description' => $this->t('If activated, the popup will appear on all non-admin pages on the site.'),
+      '#required' => FALSE,
+      '#default_value' => $config->get('widget_popup_feature'),
+    ];
+
     $form['widget']['widget_popup_text'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Text for the popup widget'),

@@ -43,6 +43,18 @@ class ChatController extends ControllerBase {
     return [
       '#theme' => 'opeka_header_widget',
     ];
-  } 
+  }
+
+     /**
+   * Action for the chat's popup widget page.
+   *
+   * @return string
+   *   Return page render array.
+   */
+  public function popupWidgetPage() {  
+    return [
+      '#theme' => 'opeka_popup_widget',
+    ];
+  }
 
 }
