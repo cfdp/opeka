@@ -6,7 +6,7 @@
 @import "variables";
 @import "mixins";
 
-body.path-opeka-widgets {
+body.path-opeka-widgets.widget-popup {
   .status-wrapper {
     color: #ffffff;
     margin: 0 auto;
@@ -124,9 +124,8 @@ body.path-opeka-widgets {
       background-color: $ccWhite;
       background-image: none;
       font-size: 12px;
-      padding: 0.65em 1.2em;
+      padding: 0.65em 1em;
       border-radius: 2em;
-      width: 150px;
       //@include vertical-align();
       
 

@@ -13,27 +13,38 @@ use Drupal\image\Entity\ImageStyle;
 /**
  * Implements template_preprocess_html().
  *
- * Adds user permission classes to body
+ * Adds user permission classes and widget classes to body
  */
 function opeka_preprocess_html(&$vars) {
   $user = \Drupal::currentUser();
-  $opeka_role = 'opeka-no-access';
-  if ($user->hasPermission('administer opeka chat')) {
-    $opeka_role = 'opeka-counselor';
-  }
-  else if ($user->hasPermission('access opeka chat')) {
-    $opeka_role = 'opeka-regular';
+  $path = \Drupal::service('path.current')->getPath();
+
+  if(substr($path, 0, 14) === '/opeka-widgets') {
+    $popup_type = explode('/', $path);
+    if (isset($popup_type[2])) {
+      $popup_type = $popup_type[2];
+    }
+      // Remove toolbar on widget pages
+    if (isset($vars['page_top']['toolbar'])) {
+      $vars['page_top']['toolbar'] = null;
+    }
   }
 
+  $classes = 'opeka-no-access';
+  if ($user->hasPermission('administer opeka chat')) {
+    $classes = 'opeka-counselor';
+  }
+  else if ($user->hasPermission('access opeka chat')) {
+    $classes = 'opeka-regular';
+  }
+
+  if (isset($popup_type)) {
+    $classes .= ' widget-' . $popup_type;
+  }
   if (is_array($vars['attributes'])) {
     $vars['attributes'] = new Attribute();
   }
-  $vars['attributes']->addClass($opeka_role);
-
-  // Remove toolbar
-  if (opeka_is_chat_page() && isset($vars['page_top']['toolbar'])) {
-    $vars['page_top']['toolbar'] = null;
-  }
+  $vars['attributes']->addClass($classes);
 }
 
 /**
