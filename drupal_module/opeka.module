@@ -28,7 +28,7 @@ function opeka_preprocess_html(&$vars) {
     $classes = 'opeka-regular';
   }
 
-  if (isset($widget_type_classes)) {
+  if ($widget_type_classes !== '') {
     $classes .= ' widget-' . $widget_type_classes;
     // Remove toolbar on widget pages
     if (isset($vars['page_top']['toolbar'])) {
