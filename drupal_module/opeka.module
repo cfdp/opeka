@@ -30,10 +30,10 @@ function opeka_preprocess_html(&$vars) {
 
   if (isset($widget_type_classes)) {
     $classes .= ' widget-' . $widget_type_classes;
-  }
-  // Remove toolbar on widget pages
-  if (isset($vars['page_top']['toolbar'])) {
-    $vars['page_top']['toolbar'] = null;
+    // Remove toolbar on widget pages
+    if (isset($vars['page_top']['toolbar'])) {
+      $vars['page_top']['toolbar'] = null;
+    }
   }
   if (is_array($vars['attributes'])) {
     $vars['attributes'] = new Attribute();
