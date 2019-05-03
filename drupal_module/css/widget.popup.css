@@ -18,7 +18,6 @@
 */
 /* Trying to target case when soft keyboard pops up */
 body.path-opeka-widgets.widget-popup .status-wrapper {
-  color: #ffffff;
   margin: 0 auto;
   max-width: 1180px;
   padding: .6em 1em;
@@ -47,28 +46,6 @@ body.path-opeka-widgets.widget-popup .status-wrapper {
     padding-bottom: .3em;
   }
 }
-body.path-opeka-widgets.widget-popup.chat-open {
-  background-color: #80B45A;
-}
-body.path-opeka-widgets.widget-popup.chat-open .login-button .btn {
-  background-color: #3C5E22;
-}
-body.path-opeka-widgets.widget-popup.chat-busy {
-  background-color: #F5D9AD;
-}
-body.path-opeka-widgets.widget-popup.chat-busy .status-wrapper {
-  background-color: #F5D9AD;
-}
-body.path-opeka-widgets.widget-popup.chat-busy .chat-name {
-  color: #1b1d1f;
-}
-body.path-opeka-widgets.widget-popup.chat-busy .login-button .btn {
-  background-color: #EBB560;
-  color: #ffffff;
-}
-body.path-opeka-widgets.widget-popup.chat-closed .login-button .btn {
-  background-color: #fff;
-}
 body.path-opeka-widgets.widget-popup .chat-name {
   display: inline-block;
   font-size: 14px;
@@ -95,14 +72,12 @@ body.path-opeka-widgets.widget-popup .status-content {
   max-width: 50%;
 }
 body.path-opeka-widgets.widget-popup .status-content, body.path-opeka-widgets.widget-popup .status-content p {
-  color: #1b1d1f;
   margin: 0;
 }
 body.path-opeka-widgets.widget-popup .status-content ul, body.path-opeka-widgets.widget-popup .status-content li, body.path-opeka-widgets.widget-popup .status-content p {
   display: inline;
 }
 body.path-opeka-widgets.widget-popup .status-content a {
-  color: #1b1d1f;
   font-weight: 700;
 }
 @media (max-width: 1023px) {
@@ -131,7 +106,6 @@ body.path-opeka-widgets.widget-popup .login-button {
   }
 }
 body.path-opeka-widgets.widget-popup .login-button .btn {
-  background-color: #fff;
   background-image: none;
   font-size: 12px;
   padding: 0.65em 1em;

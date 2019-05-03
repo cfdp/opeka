@@ -18,17 +18,7 @@ use Drupal\image\Entity\ImageStyle;
 function opeka_preprocess_html(&$vars) {
   $user = \Drupal::currentUser();
   $path = \Drupal::service('path.current')->getPath();
-
-  if(substr($path, 0, 14) === '/opeka-widgets') {
-    $popup_type = explode('/', $path);
-    if (isset($popup_type[2])) {
-      $popup_type = $popup_type[2];
-    }
-      // Remove toolbar on widget pages
-    if (isset($vars['page_top']['toolbar'])) {
-      $vars['page_top']['toolbar'] = null;
-    }
-  }
+  $widget_type_classes = opeka_get_widget_classes($path);
 
   $classes = 'opeka-no-access';
   if ($user->hasPermission('administer opeka chat')) {
@@ -38,8 +28,12 @@ function opeka_preprocess_html(&$vars) {
     $classes = 'opeka-regular';
   }
 
-  if (isset($popup_type)) {
-    $classes .= ' widget-' . $popup_type;
+  if (isset($widget_type_classes)) {
+    $classes .= ' widget-' . $widget_type_classes;
+  }
+  // Remove toolbar on widget pages
+  if (isset($vars['page_top']['toolbar'])) {
+    $vars['page_top']['toolbar'] = null;
   }
   if (is_array($vars['attributes'])) {
     $vars['attributes'] = new Attribute();
@@ -56,6 +50,28 @@ function opeka_preprocess_page(&$variables) {
   if ($popup_activated && !opeka_is_chat_page() && !($is_admin)) {
     $variables['#attached']['library'][] =  'opeka/popup';
   }
+}
+
+/**
+ * Helper function that return the appropriate css classes
+ * for the widget pages based on the path
+ *
+ * @return string - css classes to add to the body element
+ */
+function opeka_get_widget_classes($path) {
+  $widget_type_classes = "";
+  $allowed_widgets = ['header', 'popup'];
+  $allowed_room_types = ['pair', 'group'];
+  if(substr($path, 0, 14) === '/opeka-widgets') {
+    $widget_type = explode('/', $path);
+    if (isset($widget_type[2]) && in_array($widget_type[2],$allowed_widgets)) {
+      $widget_type_classes = $widget_type[2];
+    }
+    if (isset($widget_type[3]) && in_array($widget_type[3],$allowed_room_types)) {
+      $widget_type_classes .= ' ' . $widget_type[3];
+    }
+  }
+  return $widget_type_classes;
 }
 
 /**

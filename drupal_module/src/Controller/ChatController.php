@@ -39,7 +39,7 @@ class ChatController extends ControllerBase {
    * @return string
    *   Return page render array.
    */
-  public function headerWidgetPage() {  
+  public function headerWidgetPage($room_type) {
     return [
       '#theme' => 'opeka_header_widget',
     ];

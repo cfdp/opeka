@@ -17,18 +17,20 @@ opeka.chat_controller_adminChatPage:
     _admin_route: FALSE
 
 opeka.chat_controller_headerWidgetPage:
-  path: '/opeka-widgets/header'
+  path: '/opeka-widgets/header/{room_type}'
   defaults:
     _controller: '\Drupal\opeka\Controller\ChatController::headerWidgetPage'
     _title: 'Chat widget'
+    room_type: ''
   requirements:
     _permission: 'access content'
 
 opeka.chat_controller_popupWidgetPage:
-  path: '/opeka-widgets/popup'
+  path: '/opeka-widgets/popup/{room_type}'
   defaults:
     _controller: '\Drupal\opeka\Controller\ChatController::popupWidgetPage'
     _title: 'Chat widget'
+    room_type: ''
   requirements:
     _permission: 'access content'
 

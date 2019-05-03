@@ -8,7 +8,6 @@
 
 body.path-opeka-widgets.widget-popup {
   .status-wrapper {
-    color: #ffffff;
     margin: 0 auto;
     max-width: 1180px;
     padding: .6em 1em;
@@ -29,33 +28,6 @@ body.path-opeka-widgets.widget-popup {
       padding-bottom: .3em;
     }
     @media (max-height: 50px) and (min-width: 768px){
-    }
-  }
-
-  &.chat-open {
-    background-color: $color-green-light;
-    .login-button .btn {
-      background-color: $color-green-dark;
-    }
-  }
-
-  &.chat-busy {
-    background-color: $color-sand;
-    .status-wrapper {
-      background-color: $color-sand;
-    }
-
-    .chat-name {
-      color: $text-color;
-    }
-    .login-button .btn {
-      background-color: $color-orange-light;
-      color: #ffffff;
-    }
-  }
-  &.chat-closed {
-    .login-button .btn {
-      background-color: $ccWhite;
     }
   }
 
@@ -84,14 +56,12 @@ body.path-opeka-widgets.widget-popup {
     //@include vertical-align();
 
     &, p {
-      color: #1b1d1f;
       margin: 0;
     }
     ul, li, p {
       display: inline;
     }
     a {
-      color: $text-color;
       font-weight: 700;
     }
     @media (max-height: 50px) {
@@ -121,7 +91,6 @@ body.path-opeka-widgets.widget-popup {
     }
 
     .btn {
-      background-color: $ccWhite;
       background-image: none;
       font-size: 12px;
       padding: 0.65em 1em;
