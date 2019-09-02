@@ -17,15 +17,18 @@
 * — Mixins —
 */
 /* Trying to properly target case when soft keyboard pops up */
+body.page-opeka-widgets-popup {
+  background-color: transparent;
+}
 body.page-opeka-widgets-popup .status-wrapper {
+  background-color: transparent;
   color: #ffffff;
-  margin: 0 auto;
+  display: inline-block;
   max-width: 1180px;
-  padding: .6em 1em;
+  padding: 0;
 }
 @media (min-width: 768px) {
   body.page-opeka-widgets-popup .status-wrapper {
-    padding: 1em 0;
     max-width: 700px;
   }
 }
@@ -39,23 +42,14 @@ body.page-opeka-widgets-popup .status-wrapper {
     max-width: 1180px;
   }
 }
-@media (max-height: 50px) {
-  body.page-opeka-widgets-popup .status-wrapper {
-    padding-top: .3em;
-    padding-bottom: .3em;
-  }
-}
-body.page-opeka-widgets-popup.chat-open {
-  background-color: #80B45A;
+body.page-opeka-widgets-popup.chat-open .status-wrapper {
+  background-color: transparent;
 }
 body.page-opeka-widgets-popup.chat-open .login-button .btn {
-  background-color: #3C5E22;
-}
-body.page-opeka-widgets-popup.chat-busy {
-  background-color: #F5D9AD;
+  background-color: #80B45A;
 }
 body.page-opeka-widgets-popup.chat-busy .status-wrapper {
-  background-color: #F5D9AD;
+  background-color: transparent;
 }
 body.page-opeka-widgets-popup.chat-busy .chat-name {
   color: #1b1d1f;
@@ -64,6 +58,12 @@ body.page-opeka-widgets-popup.chat-busy .login-button .btn {
   background-color: #EBB560;
   color: #ffffff;
 }
+body.page-opeka-widgets-popup.chat-closed .status-wrapper {
+  background-color: transparent;
+}
+body.page-opeka-widgets-popup.chat-closed .name-tab {
+  background-color: transparent;
+}
 body.page-opeka-widgets-popup.chat-closed .login-button .btn {
   background-color: #fff;
 }
@@ -71,36 +71,19 @@ body.page-opeka-widgets-popup .chat-name {
   display: inline-block;
   font-size: 14px;
   font-weight: 700;
-  width: 100px;
   line-height: 16px;
   margin-right: 1em;
   vertical-align: top;
-  position: relative;
-  top: 50%;
-  -webkit-transform: perspective(1px) translateY(-50%);
-  -ms-transform: perspective(1px) translateY(-50%);
-  transform: perspective(1px) translateY(-50%);
 }
 @media (min-width: 768px) {
   body.page-opeka-widgets-popup .chat-name {
     font-size: 16px;
-    width: 200px;
-  }
-}
-@media (min-width: 1200px) {
-  body.page-opeka-widgets-popup .chat-name {
-    width: 250px;
   }
 }
 body.page-opeka-widgets-popup .status-content {
   display: inline-block;
-  padding-left: 1em;
-  max-width: 50%;
-  position: relative;
-  top: 50%;
-  -webkit-transform: perspective(1px) translateY(-50%);
-  -ms-transform: perspective(1px) translateY(-50%);
-  transform: perspective(1px) translateY(-50%);
+  vertical-align: middle;
+  line-height: 2;
 }
 body.page-opeka-widgets-popup .status-content, body.page-opeka-widgets-popup .status-content p {
   color: #1b1d1f;
@@ -111,57 +94,43 @@ body.page-opeka-widgets-popup .status-content ul, body.page-opeka-widgets-popup 
 }
 body.page-opeka-widgets-popup .status-content a {
   color: #1b1d1f;
-  font-weight: 700;
+  font-size: 12px;
 }
-@media (max-width: 1023px) {
+@media (max-height: 26px) {
   body.page-opeka-widgets-popup .status-content {
-    display: none;
+    line-height: 1.5;
   }
 }
 body.page-opeka-widgets-popup .login-button {
-  border-left: 1px solid white;
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
   display: inline-block;
   height: 100%;
-  padding-left: .5em;
   position: relative;
-  bottom: auto;
-  right: auto;
   vertical-align: top;
   /* Avoid text overflow */
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
-@media (min-width: 768px) {
-  body.page-opeka-widgets-popup .login-button {
-    padding-left: 2em;
-  }
-}
 body.page-opeka-widgets-popup .login-button .btn {
   background-color: #fff;
   background-image: none;
-  font-size: 12px;
-  padding: 0.65em 1.2em;
-  border-radius: 2em;
-  width: 150px;
-  position: relative;
-  top: 50%;
-  -webkit-transform: perspective(1px) translateY(-50%);
-  -ms-transform: perspective(1px) translateY(-50%);
-  transform: perspective(1px) translateY(-50%);
+  font-weight: 700;
+  line-height: 1.7;
+  padding: .2em;
+  border-radius: 0;
+  border: 1px solid #ccc;
+  height: 100%;
 }
 @media (min-width: 768px) {
   body.page-opeka-widgets-popup .login-button .btn {
     font-size: 14px;
     padding: 0.85em 1em;
-    width: 200px;
   }
 }
-@media (max-height: 50px) {
+@media (min-height: 30px) {
   body.page-opeka-widgets-popup .login-button .btn {
-    font-size: 10px;
-    padding: .7em 1em;
+    font-size: 12px;
+    line-height: 2;
   }
 }
 body.page-opeka-widgets-popup .button-wrapper {

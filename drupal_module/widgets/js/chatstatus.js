@@ -18,6 +18,7 @@ var Opeka = Opeka || {};
             buttonOccupied : Drupal.t("The chat is occupied"),
             buttonClosed : Drupal.t("The chat is closed"),
             buttonError : Drupal.t("Error connecting."),
+            popup : Drupal.settings.opeka.popup_short_name || Drupal.t("Noname"),
             statusFetching : Drupal.t("Connecting..."),
             statusClosed_default : Drupal.t('@defaultChatName is closed', {'@defaultChatName': defaultChatName}),
             statusClosed_pair : Drupal.t('@pairChatName is closed', {'@pairChatName': pairChatName}),
@@ -48,7 +49,8 @@ var Opeka = Opeka || {};
             chatLink = false,
             body = $('body'),
             roomType = "default",
-            closeBtn = $(".opeka-chat-popup.close");
+            closeBtn = $(".opeka-chat-popup.close"),
+            popupWidget = false;
 
         // The group or pair class is added to the body tag by requesting the widget URL and appending e.g. /group at the end
         // e.g. https://demo.curachat.com/opeka-widgets/header/group
@@ -58,6 +60,10 @@ var Opeka = Opeka || {};
         else if (body.hasClass("pair")) {
           roomType = "pair";
         }
+        // Check if we are on a widget popup page
+        if (chatButton.hasClass("popup")) {
+          popupWidget = true;
+        }
         // Send close iframe message to parent window when button is clicked
         closeBtn.on( "click",  function() {
           var closeMsg = roomType+"-CloseIframe";
@@ -66,7 +72,7 @@ var Opeka = Opeka || {};
         
         // Set the temporary status text
         statusTab.text(textStrings.statusFetching);
-        chatButton.text(textStrings.statusFetching);
+        updateChatButtonText('fetching');
 
         // Update status text if no connection could be made to server after 10 sec
         function checkConnection(){
@@ -74,7 +80,7 @@ var Opeka = Opeka || {};
             console.warn('Error: No connection to Opeka chat server');
             body.removeClass('chat-busy chat-open').addClass('chat-closed');
             statusTab.text(textStrings.statusError);
-            chatButton.text(textStrings.buttonError);
+            updateChatButtonText('error');
           }
         }
         setTimeout( checkConnection, 10000 );
@@ -86,7 +92,7 @@ var Opeka = Opeka || {};
           if (debugchat) {
             body.removeClass('chat-busy chat-open').addClass('chat-closed');
             statusTab.text(textStrings.statusClosed);
-            chatButton.text(textStrings.buttonClosed);
+            updateChatButtonText('closed');
             chatLink = false;
             return;
           }
@@ -97,7 +103,7 @@ var Opeka = Opeka || {};
                 body.removeClass('chat-closed chat-busy').addClass('chat-open');
                 statusTab.text(textStrings.statusAvailable_pair);
                 chatLink = true;
-                chatButton.text(textStrings.buttonAvailable);
+                updateChatButtonText('available');
                 opekaChatPopup(roomType+"-Open");
               }
               else {
@@ -110,7 +116,7 @@ var Opeka = Opeka || {};
                 body.removeClass('chat-closed chat-busy').addClass('chat-open');
                 statusTab.text(textStrings.statusAvailable_group);
                 chatLink = true;
-                chatButton.text(textStrings.buttonAvailable);
+                updateChatButtonText('available');
                 opekaChatPopup(roomType+"-Open");
               }
               else {
@@ -123,7 +129,7 @@ var Opeka = Opeka || {};
                 body.removeClass('chat-closed chat-busy').addClass('chat-open');
                 statusTab.text(textStrings.statusAvailable_default);
                 chatLink = true;
-                chatButton.text(textStrings.buttonAvailable);
+                updateChatButtonText('available');
                 opekaChatPopup(roomType+"-Open");
               }
               else {
@@ -143,14 +149,14 @@ var Opeka = Opeka || {};
             body.removeClass('chat-closed chat-open').addClass('chat-busy');
             statusTab.text(textStrings.statusFetching);
             chatLink = false;
-            chatButton.text(textStrings.buttonOccupied);
+            updateChatButtonText('occupied');
           }
           // If not, it might be busy? Check if chat app is turned on (chat busy).
           else if (chatStatus.chatOpen) {
             body.removeClass('chat-closed chat-open').addClass('chat-busy');
             statusTab.text(textStrings["statusOccupied_"+roomType]);
             chatLink = false;
-            chatButton.text(textStrings.buttonOccupied);
+            updateChatButtonText('occupied');
             opekaChatPopup(roomType+"-Occupied");
           }
           // The chat app not turned on or is not initialized / unreachable.
@@ -158,7 +164,7 @@ var Opeka = Opeka || {};
             body.removeClass('chat-busy chat-open').addClass('chat-closed');
             statusTab.text(textStrings["statusClosed_"+roomType]);
             chatLink = false;
-            chatButton.text(textStrings.buttonClosed);
+            updateChatButtonText('closed')
             opekaChatPopup(roomType+"-Closed");
           }
           // If all fails - probably the server is down...
@@ -166,9 +172,34 @@ var Opeka = Opeka || {};
             body.removeClass('chat-busy chat-open').addClass('chat-closed');
             statusTab.text(textStrings.statusError);
             chatLink = false;
-            chatButton.text(textStrings.buttonError);
+            updateChatButtonText('error');
             opekaChatPopup(roomType+"-Closed");
             console.warn('Opeka chat app error. Server might be down. chatStatus: ', chatStatus);
+          }
+        }
+        
+        function updateChatButtonText(state) {
+          // Dont change text on the popup widget button
+          if (popupWidget) {
+            chatButton.text(textStrings.popup);
+            return;
+          }
+          switch(state) {
+            case "fetching":
+              chatButton.text(textStrings.statusFetching);
+              break;
+            case "available":
+              chatButton.text(textStrings.buttonAvailable);
+              break;
+            case "occupied":
+              chatButton.text(textStrings.buttonOccupied);
+              break;
+            case "closed":
+              chatButton.text(textStrings.buttonClosed);
+              break;
+            case "error":
+              chatButton.text(textStrings.buttonError);
+              break;              
           }
         }
 

@@ -7,13 +7,14 @@
 @import "mixins";
 
 body.page-opeka-widgets-popup {
+  background-color: transparent;
   .status-wrapper {
+    background-color: transparent;
     color: #ffffff;
-    margin: 0 auto;
+    display: inline-block;
     max-width: 1180px;
-    padding: .6em 1em;
+    padding: 0;
     @include narrow-width {
-      padding: 1em 0;
       max-width: 700px;
     }
     @include small-desktop-width {
@@ -23,24 +24,23 @@ body.page-opeka-widgets-popup {
       max-width: 1180px;
     }
     @media (max-height: 50px) {
-      padding-top: .3em;
-      padding-bottom: .3em;
     }
     @media (max-height: 50px) and (min-width: 768px){
     }
   }
 
   &.chat-open {
-    background-color: $color-green-light;
+    .status-wrapper {
+      background-color: transparent;
+    }
     .login-button .btn {
-      background-color: $color-green-dark;
+      background-color: $color-green-light;
     }
   }
 
   &.chat-busy {
-    background-color: $color-sand;
     .status-wrapper {
-      background-color: $color-sand;
+      background-color: transparent;
     }
 
     .chat-name {
@@ -52,6 +52,12 @@ body.page-opeka-widgets-popup {
     }
   }
   &.chat-closed {
+    .status-wrapper {
+      background-color: transparent;
+    }
+    .name-tab {
+      background-color: transparent;
+    }
     .login-button .btn {
       background-color: $ccWhite;
     }
@@ -61,25 +67,23 @@ body.page-opeka-widgets-popup {
     display: inline-block;
     font-size: $font-std;
     font-weight: 700;
-    width: 100px;
     line-height: 16px;
     margin-right: 1em;
     vertical-align: top;
-    @include vertical-align();
 
     @include narrow-width {
       font-size: $font-large;
-      width: 200px;
     }
     @include desktop-width {
-      width: 250px;
+      //width: 250px;
     }
   }
   .status-content {
     display: inline-block;
-    padding-left: 1em;
-    max-width: 50%;
-    @include vertical-align();
+    vertical-align: middle;
+    line-height: 2;
+    //max-width: 50%;
+    //@include vertical-align();
 
     &, p {
       color: #1b1d1f;
@@ -90,24 +94,22 @@ body.page-opeka-widgets-popup {
     }
     a {
       color: $text-color;
-      font-weight: 700;
+      font-size: $font-smaller;
     }
-    @media (max-height: 50px) {
+    @media (max-height: 26px) {
+      line-height: 1.5;
     }
     @media (max-width: 1023px) {
-      display: none;
+      //display: none;
     }
   }
 
   .login-button {
-    border-left: 1px solid rgb(255, 255, 255);
-    border-left: 1px solid rgba(255, 255, 255, .2);
     display: inline-block;
     height: 100%;
-    padding-left: .5em;
     position: relative;
-    bottom:auto;
-    right: auto;
+    //bottom:auto;
+    //right: auto;
     vertical-align: top;
     /* Avoid text overflow */
     text-overflow: ellipsis;
@@ -115,26 +117,26 @@ body.page-opeka-widgets-popup {
     overflow: hidden;
 
     @include narrow-width {
-      padding-left: 2em;
+      //padding-left: 2em;
     }
 
     .btn {
       background-color: $ccWhite;
       background-image: none;
-      font-size: 12px;
-      padding: 0.65em 1.2em;
-      border-radius: 2em;
-      width: 150px;
-      @include vertical-align();
+      font-weight: 700;
+      line-height: 1.7;
+      padding: .2em;
+      border-radius: 0;
+      border: 1px solid #ccc;
+      height: 100%;
 
       @include narrow-width {
         font-size: 14px;
         padding: 0.85em 1em;
-        width: 200px;
       }
-      @media (max-height: 50px) {
-        font-size: 10px;
-        padding: .7em 1em;
+      @media (min-height: 30px) {
+        font-size: 12px;
+        line-height: 2;
       }
     }
   }
