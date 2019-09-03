@@ -84,7 +84,7 @@ var Opeka = Opeka || {};
           }
         }
         setTimeout( checkConnection, 10000 );
-        
+      
         // Updates the actual status text.
         var updateDisplay = function (attributes) {
          //For debugging set debugchat to true...
@@ -142,6 +142,11 @@ var Opeka = Opeka || {};
         // to have it update automatically later.
         $(window).on('opekaChatStatusUpdate', updateDisplay);
         
+        // When a popup window is shown/hidden in the parent window, we update it's width
+        if (popupWidget) {
+          $(window).on("resize", opekaChatPopupWidth);
+        }
+
         /* Figure out the exact passive state of the chat and set properties */
         function calculatePassiveState() {
           // The chat app is not initialized yet
@@ -179,7 +184,8 @@ var Opeka = Opeka || {};
         }
         
         function updateChatButtonText(state) {
-          // Dont change text on the popup widget button
+          // Don't change text on the popup widget button
+          // Send width of content to parent window
           if (popupWidget) {
             chatButton.text(textStrings.popup);
             return;
@@ -248,10 +254,19 @@ var Opeka = Opeka || {};
         });
       });
 
-       /* This will successfully queue a message to be sent to the parent window */
+       /* This will queue a message about a chat state change to be sent to the parent window*/
       function opekaChatPopup(popupAction) {
         if (opekaClientURL) {
           parent.postMessage(popupAction, opekaClientURL);
+        }
+      };
+       /* This will queue a message about the width of the content in the popup to be sent to the parent window*/
+      function opekaChatPopupWidth() {
+        if (opekaClientURL) {
+          setTimeout(function() {
+            var popupWidth = $('.status-wrapper').outerWidth();
+            parent.postMessage('width-'+popupWidth, opekaClientURL);
+          }, 200);
         }
       };
     },
