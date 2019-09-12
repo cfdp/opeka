@@ -259,10 +259,14 @@ var Opeka = Opeka || {};
         });
       });
 
-       /* This will queue a message about a chat state change to be sent to the parent window*/
+     /*
+      * This will queue a message about a chat state change and content width
+      * to be sent to the parent window
+      */
       function opekaChatPopup(popupAction) {
         if (opekaClientURL) {
           parent.postMessage(popupAction, opekaClientURL);
+          opekaChatPopupWidth();
         }
       };
        /* This will queue a message about the width of the content in the popup to be sent to the parent window*/
