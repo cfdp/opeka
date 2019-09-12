@@ -187,6 +187,14 @@ function opeka_admin_settings_form($form, &$form_state) {
     '#maxlength' => 50,
   );
 
+  $form['opeka_widget']['opeka_widget_popup_short_name_group'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Short name of the group chat.'),
+    '#description' => t('This name is shown on the chat button in the popup widget, if it is a group chat.'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('opeka_widget_popup_short_name_group', ''),
+    '#maxlength' => 50,
+  );
   $form['opeka_reg_urls'] = array(
     '#type' => 'fieldset',
     '#title' => t('Registration url settings'),
