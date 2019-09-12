@@ -19,6 +19,7 @@ var Opeka = Opeka || {};
             buttonClosed : Drupal.t("The chat is closed"),
             buttonError : Drupal.t("Error connecting."),
             popup : Drupal.settings.opeka.popup_short_name || Drupal.t("Noname"),
+            popupGroup : Drupal.settings.opeka.popup_short_name_group || Drupal.t("Noname Group"),
             statusFetching : Drupal.t("Connecting..."),
             statusClosed_default : Drupal.t('@defaultChatName is closed', {'@defaultChatName': defaultChatName}),
             statusClosed_pair : Drupal.t('@pairChatName is closed', {'@pairChatName': pairChatName}),
@@ -187,6 +188,10 @@ var Opeka = Opeka || {};
           // Don't change text on the popup widget button
           // Send width of content to parent window
           if (popupWidget) {
+            if (roomType === 'group') {
+              chatButton.text(textStrings.popupGroup);
+              return;
+            }
             chatButton.text(textStrings.popup);
             return;
           }
