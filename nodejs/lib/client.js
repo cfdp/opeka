@@ -151,7 +151,6 @@ var Client = function (server, stream, remote, conn) {
       ip = stream.remoteAddress;
     }
     self.connectionData.ip = ip;
-    self.connectionData.remotePort = stream.remotePort;
 
     server.logger.info(
       "Connection ready for user with IP ", ip, "UA: ", agent ,"and clientId ", self.clientId

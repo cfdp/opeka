@@ -1448,7 +1448,7 @@
       this.dialogElement.find('form').submit(this.saveUserReport);
     },
 
-    // When the save room button is clicked.
+    // When the report user button is clicked.
     saveUserReport: function (event) {
       var form = $(this.dialogElement).find('form'),
         values = {
