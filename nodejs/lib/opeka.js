@@ -362,6 +362,12 @@ function Server(config, logger) {
       else {
         client.gender = "";
       }
+      if ((clientUser.remotePort != null) && validator.isInt(clientUser.remotePort)) {
+        client.connectionData.remotePort = clientUser.remotePort;
+      }
+      else {
+        client.connectionData.remotePort = "";
+      }
       if ((clientUser.age != null) && validator.isInt(clientUser.age, ageRange)) {
         client.age = clientUser.age;
       }

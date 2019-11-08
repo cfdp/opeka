@@ -6,15 +6,19 @@
 
 /**
  * The main, user-facing, chat-page.
+ * 
+ * Build assets and templates for client side javascript
  */
 function opeka_main_page() {
   global $user;
+  $port = $_SERVER['REMOTE_PORT'];
   opeka_add_assets(array(), array('opeka.frontend.js', 'jquery.geowidget-1.0.js'), array(
     'user' => array(
       'name' => isset($user->name) ? $user->name : '',
       'uid' => (integer) $user->uid,
       'sid' => isset($user->sid) ? $user->sid : '',
       'admin' => FALSE,
+      'remotePort' => $port
     )));
 
   $output = array();
